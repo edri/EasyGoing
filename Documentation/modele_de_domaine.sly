@@ -161,6 +161,7 @@
       <attribute const="false" defaultValue="" isStatic="false" name="prenom" type="void" visibility="PRIVATE"/>
       <attribute const="false" defaultValue="" isStatic="false" name="photo" type="void" visibility="PRIVATE"/>
       <attribute const="false" defaultValue="" isStatic="false" name="receptionNotifications" type="void" visibility="PRIVATE"/>
+      <attribute const="false" defaultValue="" isStatic="false" name="veutSuivreTutoriel" type="void" visibility="PRIVATE"/>
     </entity>
     <entity entityType="CLASS" id="511" isAbstract="false" name="Projet" visibility="PUBLIC">
       <attribute const="false" defaultValue="" isStatic="false" name="titre" type="void" visibility="PRIVATE"/>
@@ -295,7 +296,7 @@
       <line>
         <point>
           <x>150</x>
-          <y>205</y>
+          <y>220</y>
         </point>
         <point>
           <x>150</x>
@@ -318,7 +319,7 @@
       </labelAssociation>
       <roleAssociation>
         <x>147</x>
-        <y>209</y>
+        <y>224</y>
         <w>0</w>
         <h>17</h>
       </roleAssociation>
@@ -330,7 +331,7 @@
       </roleAssociation>
       <multipliciteAssociation>
         <x>129</x>
-        <y>209</y>
+        <y>224</y>
         <w>7</w>
         <h>17</h>
       </multipliciteAssociation>
@@ -686,7 +687,7 @@
         <x>100</x>
         <y>69</y>
         <w>187</w>
-        <h>135</h>
+        <h>150</h>
       </geometry>
     </componentView>
     <componentView color="-1" componentID="2572" displayAttributes="true" displayDefault="true" displayMethods="false">
