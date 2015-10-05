@@ -175,6 +175,7 @@
       <attribute const="false" defaultValue="" isStatic="false" name="description" type="void" visibility="PRIVATE"/>
       <attribute const="false" defaultValue="" isStatic="false" name="duree" type="void" visibility="PRIVATE"/>
       <attribute const="false" defaultValue="" isStatic="false" name="priorite" type="void" visibility="PRIVATE"/>
+      <attribute const="false" defaultValue="" isStatic="false" name="couleur" type="void" visibility="PRIVATE"/>
     </entity>
   </diagramElements>
   <umlView grid="1" name="view no name">
@@ -306,7 +307,7 @@
         </point>
         <point>
           <x>913</x>
-          <y>374</y>
+          <y>389</y>
         </point>
       </line>
       <labelAssociation>
@@ -323,7 +324,7 @@
       </roleAssociation>
       <roleAssociation>
         <x>870</x>
-        <y>378</y>
+        <y>393</y>
         <w>0</w>
         <h>17</h>
       </roleAssociation>
@@ -335,7 +336,7 @@
       </multipliciteAssociation>
       <multipliciteAssociation>
         <x>914</x>
-        <y>379</y>
+        <y>394</y>
         <w>7</w>
         <h>17</h>
       </multipliciteAssociation>
@@ -431,8 +432,8 @@
     <relationView color="-12566464" relationId="2678">
       <line>
         <point>
-          <x>615</x>
-          <y>48</y>
+          <x>616</x>
+          <y>47</y>
         </point>
         <point>
           <x>208</x>
@@ -445,13 +446,13 @@
       </line>
       <labelAssociation>
         <x>415</x>
-        <y>50</y>
+        <y>49</y>
         <w>105</w>
         <h>17</h>
       </labelAssociation>
       <roleAssociation>
-        <x>579</x>
-        <y>50</y>
+        <x>580</x>
+        <y>49</y>
         <w>0</w>
         <h>17</h>
       </roleAssociation>
@@ -462,8 +463,8 @@
         <h>17</h>
       </roleAssociation>
       <multipliciteAssociation>
-        <x>602</x>
-        <y>23</y>
+        <x>603</x>
+        <y>22</y>
         <w>7</w>
         <h>17</h>
       </multipliciteAssociation>
@@ -477,7 +478,7 @@
     <relationView color="-12566464" relationId="2793">
       <line>
         <point>
-          <x>765</x>
+          <x>766</x>
           <y>45</y>
         </point>
         <point>
@@ -486,13 +487,13 @@
         </point>
       </line>
       <labelAssociation>
-        <x>843</x>
+        <x>844</x>
         <y>49</y>
         <w>0</w>
         <h>17</h>
       </labelAssociation>
       <roleAssociation>
-        <x>769</x>
+        <x>770</x>
         <y>49</y>
         <w>0</w>
         <h>17</h>
@@ -504,7 +505,7 @@
         <h>17</h>
       </roleAssociation>
       <multipliciteAssociation>
-        <x>769</x>
+        <x>770</x>
         <y>22</y>
         <w>7</w>
         <h>17</h>
@@ -529,7 +530,7 @@
       </line>
       <labelAssociation>
         <x>604</x>
-        <y>212</y>
+        <y>209</y>
         <w>58</w>
         <h>17</h>
       </labelAssociation>
@@ -570,7 +571,7 @@
         </point>
       </line>
       <labelAssociation>
-        <x>758</x>
+        <x>753</x>
         <y>217</y>
         <w>58</w>
         <h>17</h>
@@ -640,7 +641,7 @@
         </point>
         <point>
           <x>692</x>
-          <y>87</y>
+          <y>86</y>
         </point>
       </line>
     </relationView>
@@ -660,7 +661,7 @@
         </point>
         <point>
           <x>692</x>
-          <y>87</y>
+          <y>86</y>
         </point>
       </line>
     </relationView>
@@ -669,7 +670,7 @@
         <x>820</x>
         <y>253</y>
         <w>150</w>
-        <h>120</h>
+        <h>135</h>
       </geometry>
     </componentView>
     <componentView color="-1" componentID="511" displayAttributes="true" displayDefault="true" displayMethods="false">
@@ -690,8 +691,8 @@
     </componentView>
     <componentView color="-1" componentID="2572" displayAttributes="true" displayDefault="true" displayMethods="false">
       <geometry>
-        <x>614</x>
-        <y>11</y>
+        <x>615</x>
+        <y>10</y>
         <w>150</w>
         <h>75</h>
       </geometry>
