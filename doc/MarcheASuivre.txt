@@ -1,0 +1,19 @@
+1.	Placer le dossier du projet dans le répertoire "www" de "Wamp".
+2.	"C:/Windows/System32/drivers/etc" => 127.0.0.1	easygoing ; si problème => ouvrir en tant qu'administrateur.
+3. 	Wamp/bin/apache/conf/httpd.conf 
+	Décommenter les lignes suivantes :
+		# Include conf/extra/httpd-vhosts.conf		
+		# LoadModule rewrite_module modules/mod_rewrite.so
+4. 	Ajouter un vhost dans httpd-vhosts.conf
+		<VirtualHost *:80>
+			ServerName easygoing
+			DocumentRoot "REPERTOIRE_DE_WAMP/www/EasyGoing/public" # ATTENTION A METTRE DES "/" ET NON DES "\" !
+			SetEnv APPLICATION_ENV "development"
+			<Directory "REPERTOIRE_DE_WAMP/www/EasyGoing/public">
+				DirectoryIndex index.php
+				AllowOverride All
+				Order allow,deny
+				Allow from all
+				Require all granted
+			</Directory>
+		</VirtualHost>
