@@ -52,6 +52,7 @@ return array(
                     ),
                 ),
             ),
+			// Add new routes thereafter.
 		),
     ),
     'service_manager' => array(
@@ -100,7 +101,7 @@ return array(
         'config' => array(
             'class' => 'Zend\Session\Config\SessionConfig',
             'options' => array(
-                'name' => 'chic-paradise',
+                'name' => 'easygoing',
             ),
         ),
         'storage' => 'Zend\Session\Storage\SessionArrayStorage',

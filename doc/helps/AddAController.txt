@@ -1,0 +1,38 @@
+Dans cet exemple, nous créerons un contrôleur appelé "TestController" possédant les actions "indexAction" et "testAction".
+Notre contrôleur sera donc identifié dans le framework Zend par l'appelation "test" ; si nous avions fait un contrôleur "LoginController",
+il aurait été identifié par l'appelation "login", etc.
+
+	1.	Créer le fichier contrôleur dans "EasyGoing\module\Application\src\Application\Controller", en s'inspirant du IndexController.php.
+		Attention à renommer la classe (ici, TestController).
+		
+	2.	Ajouter les actions désirées dans le contrôleur (ici, indexAction et testAction). Rappel : les URLs sont de la form "controller/action".
+	
+	3. 	Créer un dossier dans "EasyGoing\module\Application\view\application", du nom du contrôleur (ici, "test").
+	
+	4.	Créer une vue par action, du nom de l'action, et portant l'extention ".phtml" : phtml peut être interprété comme une version "améliorée" 
+		de .html nous permettant d'appeler des variables, un peu à la manière des fichiers .jsp dans Java EE.
+		Le framework Zend fera donc automatiquement le lien entre le nom et l'action et le nom du fichier, à l'aide de l'appel "new ViewModel();"
+		dans le contrôleur.
+		Dans notre exemple, nous créerons deux fichiers "index.phtml" et "test.phtml".
+		
+	5.	Se rendre dans le fichier "EasyGoing\module\Application\config\module.config.php", et inscrire le contrôleur (rechercher le commentaire
+		"// Add new controllers here." et l'ajouter dans le tableau "invokables".
+		Dans notre exemple, nous ajouterons la ligne 
+			'Application\Controller\Test' => 'Application\Controller\TestController',
+			
+	6.	Finalement, toujours dans le fichier "EasyGoing\module\Application\config\module.config.php", juste en-dessous du  commentaire 
+		"// Add new routes thereafter." s'il s'agit du premier contrôleur créé, ou en-dessous des routes déjà existantes sinon. S'inspirer de 
+		l'exemple ci-dessous pour créer la route :
+			'test' => array(
+				'type'    => 'segment',
+				'options' => array(
+					'route'    => '/test[/][:action]',					// Creating the route, identified by the controller's name.
+					'constraints' => array(
+						'action' => '[a-zA-Z][a-zA-Z0-9_-]*',			// Regular expression for the action's name ; should not be modified.
+					),
+					'defaults' => array(
+						'controller' => 'Application\Controller\Test',	// Controller's name.
+						'action'     => 'index',						// Default action ; should not be modified.
+					),
+				),
+			),
