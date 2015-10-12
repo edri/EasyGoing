@@ -1,0 +1,14 @@
+Une seule spécialisation ?
+Deadline ? A réfléchir => Plusieurs dates, 5 max.
+Historique == "fichier logs"
+Etats	=>	3 pour le moment ? Permettre à l'utilisateur d'en rajouter
+Notification de validation lors de l'ajout à une tâche
+L'envoi de mails ne doit pas ajouter d'informations non-visibles dans l'application
+Clés dans la DB
+Cardinalité Utilisateur > Evenement
+Noter nos heures
+
+Durées exprimées en quelle unité ?
+Contrôles au niveau DB
+Responsable du rapport	=> Miguel
+Planification en heures (attention à l'unité "J" - limite mettre des heures dans les cases)

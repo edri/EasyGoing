@@ -36,3 +36,14 @@ il aurait été identifié par l'appelation "login", etc.
 					),
 				),
 			),
+
+Pour transférer des données du contrôleur à la vue, il faut passer un array en paramètre du ViewModel créé, contenant les données. Si nous 
+souhaitons par exemple passer 2 variables, il faudra écrire :
+	return new ViewModel(array(
+		'var1'	=> $var1,
+		'var2'	=> $var2
+	));
+Il est ensuite possible de les récupérer dans la vue à l'aide de PHP, en écrivant :
+	<?php echo $this->escapeHtml($phone); ?>
+A noter que nous aurions simplement pu mettre <?php echo $phone; ?>, mais la méthode escapteHtml permet d'éviter d'éventuelles injections html,
+et renforce donc la sécurité de l'application.
