@@ -5,7 +5,7 @@ il aurait été identifié par l'appelation "login", etc.
 	1.	Créer le fichier contrôleur dans "EasyGoing\module\Application\src\Application\Controller", en s'inspirant du IndexController.php.
 		Attention à renommer la classe (ici, TestController).
 		
-	2.	Ajouter les actions désirées dans le contrôleur (ici, indexAction et testAction). Rappel : les URLs sont de la form "controller/action".
+	2.	Ajouter les actions désirées dans le contrôleur (ici, indexAction et testAction). Rappel : les URLs sont de la forme "controller/action".
 	
 	3. 	Créer un dossier dans "EasyGoing\module\Application\view\application", du nom du contrôleur (ici, "test").
 	

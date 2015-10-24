@@ -1,0 +1,19 @@
+Les modèles sont représentés par les classes [Nom] (User, etc. => transforment les éléments d'une table de la DB en objets PHP à l'aide de la méthode "exchangeArray()"), ainsi que par les classes [Nom]Table (UserTable, etc. => méthodes sur les objets PHP de la table).
+Les vues sont en HTML et appelées par les contrôleurs. Ils ne sont donc pas représentés en tant que classe dans le schéma, néanmoins les actions possédant une vue ont été indiquée par une '*'.
+Les actions  ne possèdent pas réellement de paramètres de fonction à proprement parlé. Ceux indiqués sur le schéma sont en réalité des variables passées en paramètre l'URL et récupérés à l'aide de la méthode HTML GET.
+UserController sera le contrôleur par défaut de notre site. Voici l'architecture des URL :
+	UserController :
+		- easygoing/
+		- easygoing/edit?user=123
+		- easygoing/registration
+	AboutController :
+		- easygoing/about
+	ProjectsController :
+		- easygoing/projects
+		- easygoing/projects/add
+	ProjectController :
+		- easygoing/project/232
+		- easygoing/project/232/task?id=280
+		- easygoing/project/232/addTask
+		- easygoing/project/232/editTask
+		- easygoing/project/232/addMember
