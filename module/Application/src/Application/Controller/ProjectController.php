@@ -27,16 +27,43 @@ class ProjectController extends AbstractActionController
          ));
    }
 
-   public function addMemberAction()
+   public function taskAction()
    {
-      return new ViewModel();
+      return new ViewModel(array(
+            'id' => $this->params('id')
+         ));
    }
 
    public function addTaskAction()
    {
       return new ViewModel();
    }
-   
+
+   public function editTaskAction()
+   {
+      return new ViewModel();
+   }
+
+   public function deleteTaskAction()
+   {
+
+   }
+
+   public function addMemberAction()
+   {
+      return new ViewModel();
+   }
+
+   public function removeMemberAction()
+   {
+      
+   }
+
+   public function loadEventAction()
+   {
+
+   }
+
 }
 
 

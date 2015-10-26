@@ -2,6 +2,7 @@
     SQL script to create database EasyGoing
     Author : Raphael Racine
     Creation Date : 25.10.2015
+	Last Modified : 26.10.2015
 */
 
 /* Delete the schema if already exists and creation of a new schema */
@@ -16,7 +17,7 @@ CREATE TABLE users
     id INT NOT NULL AUTO_INCREMENT,
     email VARCHAR(50) NOT NULL,
 	username VARCHAR(30) NOT NULL,
-    hashedPassword VARCHAR(64) NOT NULL,
+    hashedPassword VARCHAR(64) NOT NULL, /* Algorithm SHA-256 */
     firstName VARCHAR(30) NOT NULL,
     lastName VARCHAR(30) NOT NULL,
     filePhoto VARCHAR(30),
@@ -148,7 +149,7 @@ VALUES(
 	null, 
 	"raphael.racine@heig-vd.ch",
 	"raphaelracine",
-	"1bfbdf35b1359fc6b6f93893874cf23a50293de5",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
 	"Raphaël",
 	"Racine",
 	"raphael.jpg",
@@ -160,7 +161,7 @@ VALUES(
 	null, 
 	"karim.ghozlani@heig-vd.ch",
 	"karimghozlani",
-	"1bfbdf35b1359fc6b6f93893874cf23a50293de5",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
 	"Karim",
 	"Ghozlani",
 	"karim.jpg",
@@ -172,7 +173,7 @@ VALUES(
 	null, 
 	"thibault.duchoud@heig-vd.ch",
 	"thibaudduchoud",
-	"1bfbdf35b1359fc6b6f93893874cf23a50293de5",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
 	"Thibault",
 	"Duchoud",
 	"thibault.jpg",
@@ -184,7 +185,7 @@ VALUES(
 	null, 
 	"miguel.santamaria@heig-vd.ch",
 	"miguelsantamaria",
-	"1bfbdf35b1359fc6b6f93893874cf23a50293de5",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
 	"Miguel",
 	"Santamaria",
 	"miguel.jpg",
@@ -196,7 +197,7 @@ VALUES(
 	null, 
 	"vanessa.meguep@heig-vd.ch",
 	"vanessameguep",
-	"1bfbdf35b1359fc6b6f93893874cf23a50293de5",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
 	"Vanessa",
 	"Meguep",
 	"vanessa.jpg",
@@ -224,5 +225,9 @@ BEGIN
 	);
 END $$
 DELIMITER ;
+
+
+
+
 
 
