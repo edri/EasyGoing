@@ -27,6 +27,40 @@ class UserController extends AbstractActionController
 	public function indexAction()
 	{
 		// For linking the right action's view.
-		return new ViewModel();
+				// click on "Sign in"
+			// retrieve user and password fields
+		/*
+		$username = "user";
+		$password = "pass";
+		if (isset($_POST["username"])) 
+		{
+			$username = $_POST["username"];
+			$password $_POST["password"];
+		}
+		else 
+		{
+			$username = "none";
+			$password = "none";
+		}	
+			// send them to DB
+			// if creditentials are correct 
+				//go to projectsController.php
+			// else
+				// send a message error
+				// reset password field
+
+
+		// click on inscription
+			// go to subscribeController.php
+
+		// click on about
+			//go to AboutController.php
+
+		return new ViewModel(array(
+		'username'	=> $username,
+		'password'	=> $password
+		));
+		*/
+			return new ViewModel();
 	}
 }
