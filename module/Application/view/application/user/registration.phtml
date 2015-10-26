@@ -1,0 +1,29 @@
+<p class="sectionTitle"><?php echo "Create an account"?></p>
+      <p>
+        <label for="username">* <?php echo "Username" ?></label><br/>
+        <input class="coordinateField" type="text" name="username" maxlength=16 value="<?php if (isset($username)) echo $this->escapeHtml($username); ?>" required><br/>
+      </p>
+
+      <table class="coordinatesTable">
+        <tr>
+          <td>
+            <label for="password1">* <?php echo "Password" ?></label><br/>
+            <input class="tableCoordinateField" type="password" name="password1" maxlength=32 required>
+          </td>
+          <td class="rightCoordonate">
+            <label for="password2">* <?php echo "Repeat password" ?></label><br/>
+            <input class="tableCoordinateField" type="password" name="password2" maxlength=32 required>
+          </td>
+        </tr>
+      </table>
+
+      <p>
+        <label for="mail">* <?php echo "Email" ?></label><br/>
+        <input class="coordinateField" type="email" name="mail" maxlength=128 value="<?php if (isset($mail)) echo $this->escapeHtml($mail); ?>" required>
+      </p>
+
+      <hr/>
+      <p>
+        <label for="photo">* <?php echo "Photo" ?></label><br/>
+        <input class="coordinateField" type="email" name="mail" maxlength=128 value="<?php if (isset($mail)) echo $this->escapeHtml($mail); ?>" required>
+      </p>

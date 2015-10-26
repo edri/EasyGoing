@@ -23,7 +23,7 @@
 		else
 		{
 			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
-                	->prependStylesheet($this->basePath() . '/css/style.min.css')
+                	->prependStylesheet($this->basePath() . '/css/style.css')
 						->prependStylesheet($this->basePath() . '/css/bootstrap.min.css');
 		}
 	?>
@@ -50,7 +50,7 @@
 		</div>
 		<div class="footer">
 			EasyGoing! &copy; 2015
-
+			<a href="" class="about">About</a>
 		</div>
       </div> <!-- /container -->
       <?php echo $this->inlineScript() ?>
