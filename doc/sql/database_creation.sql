@@ -2,6 +2,7 @@
     SQL script to create database EasyGoing
     Author : Raphael Racine
     Creation Date : 25.10.2015
+	Last Modified : 26.10.2015
 */
 
 /* Delete the schema if already exists and creation of a new schema */
@@ -224,5 +225,9 @@ BEGIN
 	);
 END $$
 DELIMITER ;
+
+
+
+
 
 
