@@ -29,4 +29,19 @@ class UserController extends AbstractActionController
 		// For linking the right action's view.
 		return new ViewModel();
 	}
+	public function registrationAction()
+	{
+		// For linking the right action's view.
+		return new ViewModel();
+	}
+	public function logoutAction()
+	{
+		// For linking the right action's view.
+		return new ViewModel();
+	}
+	public function editAction()
+	{
+		// For linking the right action's view.
+		return new ViewModel();
+	}
 }
