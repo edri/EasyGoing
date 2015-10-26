@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #myform {
     font-size: 1em;
     margin: 0 auto;
@@ -112,7 +111,8 @@
 #myform #submit:hover {
     border: 0 none;
     cursor: pointer;
-=======
+}
+
 /* HEADER BAR */
 .header {
    background-color: #212121;
@@ -189,5 +189,4 @@ title:focus, .title:hover {
 
 .about:hover {
    color: #7AC7A8;
->>>>>>> 486a4b040b5ffa43cd77e0417a0bc17731d6b28b
 }
