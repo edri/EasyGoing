@@ -19,7 +19,7 @@ use Zend\Session\Container;
 
 // Default controller ; will be calling when the user access the "mySite.com/" page.
 // Be careful about the class' name, which must be the same as the file's name.
-class IndexController extends AbstractActionController
+class UserController extends AbstractActionController
 {
 	// Default action of the controller.
 	// In normal case, it will be calling when the user access the "mySite.com/myController/" page,
