@@ -17,7 +17,7 @@ return array(
                 'options' => array(
                     'route'    => '/',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\Index',
+                        'controller' => 'Application\Controller\User',
                         'action'     => 'index',
                     ),
                 ),
@@ -53,6 +53,20 @@ return array(
                 ),
             ),
 			// Add new routes thereafter.
+            'project' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'    => '/project[/:id][/][:action][/:id]',                  // Creating the route, identified by the controller's name.
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'     => '[0-9]+'           // Regular expression for the action's name ; should not be modified.
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Application\Controller\Project',  // Controller's name.
+                        'action'     => 'index',                        // Default action ; should not be modified.
+                    ),
+                ),
+            ),
             'user' => array(
 				'type'    => 'segment',
 				'options' => array(
@@ -80,7 +94,8 @@ return array(
 	// Add new controllers here.
     'controllers' => array(
         'invokables' => array(
-            'Application\Controller\Index' => 'Application\Controller\IndexController',
+            'Application\Controller\Index'   => 'Application\Controller\IndexController',
+            'Application\Controller\Project' => 'Application\Controller\ProjectController',
             'Application\Controller\User' => 'Application\Controller\UserController'
         ),
     ),

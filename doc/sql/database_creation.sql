@@ -2,6 +2,7 @@
     SQL script to create database EasyGoing
     Author : Raphael Racine
     Creation Date : 25.10.2015
+	Last Modified : 26.10.2015
 */
 
 /* Delete the schema if already exists and creation of a new schema */
@@ -15,7 +16,8 @@ CREATE TABLE users
 (
     id INT NOT NULL AUTO_INCREMENT,
     email VARCHAR(50) NOT NULL,
-    hashedPassword VARCHAR(32) NOT NULL,
+	username VARCHAR(30) NOT NULL,
+    hashedPassword VARCHAR(64) NOT NULL, /* Algorithm SHA-256 */
     firstName VARCHAR(30) NOT NULL,
     lastName VARCHAR(30) NOT NULL,
     filePhoto VARCHAR(30),
@@ -140,3 +142,92 @@ CREATE TABLE usersTasksProductions
     FOREIGN KEY(user) REFERENCES users(id),
     FOREIGN KEY(task) REFERENCES tasks(id)
 );
+
+/* Insert some data */
+INSERT INTO users
+VALUES(
+	null, 
+	"raphael.racine@heig-vd.ch",
+	"raphaelracine",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
+	"Raphaël",
+	"Racine",
+	"raphael.jpg",
+	true, true
+);
+
+INSERT INTO users
+VALUES(
+	null, 
+	"karim.ghozlani@heig-vd.ch",
+	"karimghozlani",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
+	"Karim",
+	"Ghozlani",
+	"karim.jpg",
+	false, true
+);
+
+INSERT INTO users
+VALUES(
+	null, 
+	"thibault.duchoud@heig-vd.ch",
+	"thibaudduchoud",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
+	"Thibault",
+	"Duchoud",
+	"thibault.jpg",
+	true, false
+);
+
+INSERT INTO users
+VALUES(
+	null, 
+	"miguel.santamaria@heig-vd.ch",
+	"miguelsantamaria",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
+	"Miguel",
+	"Santamaria",
+	"miguel.jpg",
+	false, false
+);
+
+INSERT INTO users
+VALUES(
+	null, 
+	"vanessa.meguep@heig-vd.ch",
+	"vanessameguep",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
+	"Vanessa",
+	"Meguep",
+	"vanessa.jpg",
+	true, true
+);
+
+/* Stored procedures and functions */
+USE easygoing;
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS checkLogin $$
+
+/* This function check if a user can login or not */
+CREATE FUNCTION checkLogin
+(
+	username VARCHAR(30),
+	hashedPassword VARCHAR(64)
+)
+RETURNS BOOLEAN
+BEGIN
+	RETURN EXISTS(
+		SELECT * 
+		FROM users AS u 
+		WHERE u.username = username AND u.hashedPassword = hashedPassword
+	);
+END $$
+DELIMITER ;
+
+
+
+
+
+
