@@ -8,7 +8,7 @@
  */
 
 $display_exceptions = ($_SERVER['APPLICATION_ENV'] == 'development' ? true : false);
- 
+
 return array(
     'router' => array(
         'routes' => array(
@@ -53,6 +53,19 @@ return array(
                 ),
             ),
 			// Add new routes thereafter.
+            'user' => array(
+				'type'    => 'segment',
+				'options' => array(
+					'route'    => '/user[/][:action]',					// Creating the route, identified by the controller's name.
+					'constraints' => array(
+						'action' => '[a-zA-Z][a-zA-Z0-9_-]*',			// Regular expression for the action's name ; should not be modified.
+					),
+					'defaults' => array(
+						'controller' => 'Application\Controller\User',	// Controller's name.
+						'action'     => 'index',						// Default action ; should not be modified.
+					),
+				),
+			),
 		),
     ),
     'service_manager' => array(
@@ -67,7 +80,8 @@ return array(
 	// Add new controllers here.
     'controllers' => array(
         'invokables' => array(
-            'Application\Controller\Index' => 'Application\Controller\IndexController'
+            'Application\Controller\Index' => 'Application\Controller\IndexController',
+            'Application\Controller\User' => 'Application\Controller\UserController'
         ),
     ),
     'view_manager' => array(
