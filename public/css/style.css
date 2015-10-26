@@ -1,0 +1,114 @@
+#myform {
+    font-size: 1em;
+    margin: 0 auto;
+    width: 560px;
+}
+
+#myform fieldset {
+    background-color: #F2F9FE;
+    border: 1px solid #AEDCF5;
+    margin: 10px 0 20px;
+    padding: 20px 15px 10px;
+    position: relative;
+}
+
+#myform fieldset:hover {
+    background-color: #FFFCCD;
+    border: 1px solid #FFDB60;
+}
+
+#myform fieldset:hover input, #myform fieldset:hover textarea {
+    background-color: #FFFFFF;
+    border: 1px solid #FFDB60;
+}
+
+#myform fieldset:hover select {
+    background-color: #FFFFFF;
+    border: 1px solid #FFDB60;
+}
+#myform legend {
+    color: #FF5A00;
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 16px;
+    font-style: italic;
+    left: 10px;
+    position: absolute;
+    top: -8px;
+}
+
+#myform fieldset:hover legend, .designField:hover legend {
+    color: #3F87E9;
+}
+
+#myform label {
+    color: #000000;
+    display: block;
+    float: left;
+    font-weight: bold;
+    margin: 0 10px 0px 0;
+    padding: 0;
+    text-align: right;
+    width: 190px;
+	font-size: 12px;
+}
+#myform input {
+    border: 1px solid #AEDCF5;
+    color: #3F87E9;
+    font-size: 12px;
+	line-height: 24px;
+    height: 24px;
+    margin: 0 0 13px;
+    padding: 7px 3px 3px 3px;
+    width: 210px;
+}
+#myform span {
+	margin-right: 20px;
+	display:block;
+	float: left;
+	width: 190px;
+	text-align: right;
+}
+#myform input:hover {
+    border: 1px solid #41A9D8;
+}
+#myform textarea {
+    border: 1px solid #AEDCF5;
+    color: #3F87E9;
+    font-size: 1em;
+    width: 215px;
+}
+#myform select {
+    border: 1px solid #AEDCF5;
+    color: #3F87E9;
+    font-size: 12px;
+    height: 29px;
+    margin: 0 0 13px;
+    padding: 4px 3px 2px;
+    width: 220px;
+}
+#myform select option {
+	padding-left: 10px;
+}
+#myform select:hover {
+    border: 1px solid #41A9D8;
+}
+
+#myform p {
+	text-align: center;
+}
+#myform #submit {
+    border: 1px solid #000;
+    height: 35px;
+	padding: 5px;
+    width: 92px;
+	font-weight: bold;
+	color: #000;
+	background: #c0c0c0;
+	line-height: 35px;
+	font-variant: small-caps;
+	margin: 0;
+}
+#myform #submit:hover {
+    border: 0 none;
+    cursor: pointer;
+}
