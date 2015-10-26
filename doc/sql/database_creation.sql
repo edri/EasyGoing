@@ -29,7 +29,7 @@ CREATE TABLE projects
 (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
-    description TINYTEXT, /* Maximum of 255 characters */
+    description TEXT, /* Maximum of 65'535 characters */
     startDate DATE NOT NULL,
     deadLineDate DATE,
     fileLogo VARCHAR(50),
