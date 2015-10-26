@@ -1,38 +1,58 @@
-<?php 
+<?php
 	echo $this->doctype();
 ?>
 
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <?php echo $this->headTitle('MON SITE')->setSeparator(' - ')->setAutoEscape(false) ?>
+        <?php echo $this->headTitle('EasyGoing')->setSeparator(' - ')->setAutoEscape(false) ?>
 
         <?php echo $this->headMeta()
             ->appendName('viewport', 'width=device-width, initial-scale=1.0')
             ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
         ?>
 
-        <!-- Le styles -->
-		<?php
-			if ($_SERVER['APPLICATION_ENV'] == 'development')
-			{
-				echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
-                        ->prependStylesheet($this->basePath() . '/css/style.css');
-			}
-			else
-			{
-				echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
-                        ->prependStylesheet($this->basePath() . '/css/style.min.css');
-			}
-		?>
+        <!-- Styles -->
+	<?php
+		if ($_SERVER['APPLICATION_ENV'] == 'development')
+		{
+			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+                        ->prependStylesheet($this->basePath() . '/css/style.css')
+						->prependStylesheet($this->basePath() . '/css/bootstrap.min.css');
+		}
+		else
+		{
+			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+                	->prependStylesheet($this->basePath() . '/css/style.css')
+						->prependStylesheet($this->basePath() . '/css/bootstrap.min.css');
+		}
+	?>
 
         <!-- Scripts -->
-        <?php echo $this->headScript()->prependFile($this->basePath() . '/js/jquery.min.js'); ?>
+	<?php echo $this->headScript()->prependFile($this->basePath() . '/js/jquery.min.js')
+										->prependFile($this->basePath() . '/js/bootstrap.min.js'); ?>
     </head>
     <body>
-        <div class="container">
+	<div class="header">
+	   <div class="container">
+	      <a href="" class="title">EasyGoing!</a>
+	      <button class="btn btnHeaderSelected btn-link" type="button">Projects</button>
+	      <button class="btn btnHeader btn-link" type="button">Account</button>
+	      <div class="headerRight">
+	         <span class="loginInformation">Logged in as <b>edri</b></span>
+	         <button id="btnLogout" class="btn btnLogout btnEasygoing" type="button">Logout</button>
+	      </div>
+	   </div>
+	</div>
+	<div class="container">
+		<div class="content">
 			<?php echo $this->content; ?>
-        </div> <!-- /container -->
-        <?php echo $this->inlineScript() ?>
+		</div>
+		<div class="footer">
+			EasyGoing! &copy; 2015
+			<a href="" class="about">About</a>
+		</div>
+      </div> <!-- /container -->
+      <?php echo $this->inlineScript() ?>
     </body>
 </html>
