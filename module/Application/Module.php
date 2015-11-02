@@ -18,23 +18,25 @@ use Zend\Session\Validator\HttpUserAgent;
 use Zend\Session\Validator\RemoteAddr;
 use Zend\Session\SessionManager;
 use Zend\Session\Container;
+use Application\Model\User;
+use Application\Model\UserTable;
 
 class Module
-{	
+{
     public function onBootstrap(MvcEvent $e)
     {
 		$e->getApplication()->getServiceManager()->get('viewhelpermanager')->setFactory('controllerName', function($sm) use ($e) {
 			$viewHelper = new View\Helper\ControllerName($e->getRouteMatch());
 			return $viewHelper;
 		});
-		
+
 		$eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-		
+
 		// Calls the bootstrap used for the session management.
 		$this->initSession(array(
-			'remember_me_seconds' => 300,	// The session stay persisting 5 minutes after the browser closing. 
+			'remember_me_seconds' => 300,	// The session stay persisting 5 minutes after the browser closing.
 			'use_cookies' => true,
 			'cookie_httponly' => true,
 		));
@@ -45,13 +47,13 @@ class Module
 	{
 		$sessionConfig = new SessionConfig();
 		$sessionConfig->setOptions($config);
-		
+
 		$sessionManager = new SessionManager($sessionConfig);
 		$sessionManager->getValidatorChain()
 			->attach(
 				'session.validate',
 				array(new RemoteAddr(), 'isValid')		// Validate the session by the user's IP address, for avoiding hijacking.
-			);	
+			);
 		$sessionManager->getValidatorChain()
 			->attach(
 				'session.validate',
@@ -60,7 +62,7 @@ class Module
 		$sessionManager->start();
 		Container::setDefaultManager($sessionManager);
 	}
-	
+
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
@@ -76,12 +78,27 @@ class Module
             ),
         );
     }
-	
+
 	// Load objects related to the database's data.
 	public function getServiceConfig()
 	{
 		return array(
 			'factories' => array(
+                // Declare the gateway between the database's entity (table,
+                //  view, ...) and the exchange's class.
+                'UserTableGateway' => function ($sm) { // Change the gateway's name.
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new User()); // Change the instance's class name.
+                    return new TableGateway('users', $dbAdapter, null, $resultSetPrototype); // Change the table's name (this IS the table's name in the database).
+                },
+                // Use the gateway to give the [NameTable]Table's file the
+                // exchange's class as parameter.
+                'Application\Model\UserTable' =>  function($sm) { // Change the class' name.
+                    $tableGateway = $sm->get('UserTableGateway'); // Change the gateway's name.
+                    $table = new UserTable($tableGateway); // Change the instance's class name.
+                    return $table;
+                },
 				// Configure the session service.
 				'Zend\Session\SessionManager' => function ($sm) {
                     $config = $sm->get('config');
