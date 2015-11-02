@@ -6,11 +6,16 @@
 */
 
 /* Delete the schema if already exists and creation of a new schema */
+
+
 DROP SCHEMA IF EXISTS easygoing;
 CREATE SCHEMA easygoing;
 
 /* Creation of tables */
 USE easygoing;
+
+/* To avoid error 1418 while creating functions and procedures */
+SET GLOBAL log_bin_trust_function_creators = 1; 
 
 CREATE TABLE users
 (
@@ -226,6 +231,7 @@ BEGIN
 END $$
 DELIMITER ;
 
+SET GLOBAL log_bin_trust_function_creators = 0; 
 
 
 
