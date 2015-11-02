@@ -77,10 +77,18 @@ class UserController extends AbstractActionController
 							// The mail address must be valid.
 							if (filter_var($email, FILTER_VALIDATE_EMAIL))
 							{
-								
+								//the email must not already exist
+								if(!$this->getUserTable()->checkIfMailExists($email)){
+									//then we allow the registration
+											$userId = $this->getUserTable()->addUser($username, $this->hashPassword($password1),
+										  $fname, $lname, $email, $picture);
+								}
+								else
+									$result	= 'errorMailAlreadyExist';
 							}
-							else
-								$result	= 'errorMailAddress';
+							else{
+										$result	= 'errorMailInvalid';
+								}
 						}
 						else
 							$result	= 'errorPasswordsDontMatch';
@@ -114,4 +122,19 @@ class UserController extends AbstractActionController
 		// For linking the right action's view.
 		return new ViewModel();
 	}
+
+	public function validationAction()
+{
+
+		$this->redirect()->toRoute('/');
+
+	return new ViewModel();
+}
+
+public function cancelAction()
+{
+		$this->redirect()->toRoute('/registration');
+}
+
+
 }
