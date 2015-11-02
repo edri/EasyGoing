@@ -1,10 +1,10 @@
 Pour communiquer avec la base de données, il faut tout d'abord configurer le projet (DB) pour s'y connecter (à ne faire qu'une seule fois) :
-	1. config/autoload/global.php : dans 'driver_options', configurer le nom de la DB, ainsi que l'host.
+	1. config/autoload/global.php : dans 'dsn', configurer le nom de la DB, ainsi que l'host.
 	2. config/autoload/local.php : configurer le nom d'utilisateur ainsi que le mot de passe.
 
 
 Pour ajouter une nouvelle table/vue/etc. au framework (nous prendrons pour cette exemple la table "users", possédant les champs "id", "username" et "password") :
-	1. Il faut tout d'abord créer un nouveau modèle ; créer deux nouvelles fichiers dans module/Application/src/Application/Model, nommés [NomTable].php et [NomTable]Table.php, avec une majuscule pour le nom de la table, ainsi qu'une utilisation du singulier. Ces noms ne sont pas obligatoires, mais il s'agit d'une convention utilisée ; il est donc conseillé de les nommer ainsi. Ici nous aurons donc deux fichiers User.php et UserTable.php.
+	1. Il faut tout d'abord créer un nouveau modèle ; créer deux nouveaux fichiers dans module/Application/src/Application/Model, nommés [NomTable].php et [NomTable]Table.php, avec une majuscule pour le nom de la table, ainsi qu'une utilisation du singulier. Ces noms ne sont pas obligatoires, mais il s'agit d'une convention utilisée ; il est donc conseillé de les nommer ainsi. Ici nous aurons donc deux fichiers User.php et UserTable.php.
 	(Pour la suite, s'inspirer des fichiers déjà existants)
 	2. Créer une classe du nom du fichier dans [NomTable].php ; cette classe va servir à transformer les entités de la table en objets. Pour se faire, il suffit de déclarer un attribut dans la classe pour chaque champ de la table que nous souhaitons utiliser. Ici, nous aurons donc les attributs "$id", "$username" et "$password". Utiliser ensuite la méthode exchangeArray($data) pour transformer les données en objets : "$this->id  = (!empty($data['id'])) ? $data['id'] : null;", etc.
 	3. Le fichier [NomTable]Table.php va contenir toutes les différentes méthodes qui nous seront utiles pour travailler sur la table (par exemple : bool checkCreditentials($username, $password)). Il faut déclarer la classe du même nom que le fichier ; pour ajouter une méthode, s'inspirer des fichiers existants.
