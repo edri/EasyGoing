@@ -115,7 +115,7 @@ CREATE TABLE projectsUsersMembers
     FOREIGN KEY(project) REFERENCES projects(id)
 );
 
-CREATE TABLE projectsUsersSpecifications
+CREATE TABLE projectsUsersSpecializations
 (
     user INT NOT NULL,
     project INT NOT NULL,
@@ -225,5 +225,11 @@ BEGIN
 	);
 END $$
 DELIMITER ;
+
+
+
+
+
+
 
 
