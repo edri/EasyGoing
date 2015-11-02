@@ -20,8 +20,8 @@ class UserTable
 		// Try to get the row that matchs with the given username and hashed
 		// password.
 		$rowset = $this->tableGateway->select(array(
-			'login' => $username,
-			'password' => $hashedPassword
+			'username' => $username,
+			'hashedPassword' => $hashedPassword
 		));
 		$row = $rowset->current();
 
