@@ -12,11 +12,11 @@
       <label class="control-label col-sm-2" for="name">Deadline</label>
       <label class="control-label col-sm-2" for="name">To</label>
       <div class="col-sm-3">
-         <input type="text" name="name" class="form-control" placeholder="Enter name" required="required" />
+         <input type="text" name="name" class="form_datetime form-control" placeholder="yyyy-mm-dd hh:ii" required="required" />
       </div>
       <label class="control-label col-sm-2" for="name">From</label>
       <div class="col-sm-3">
-         <input type="text" name="name" class="form-control" placeholder="Enter name" required="required" />
+         <input type="text" name="name" class="form_datetime form-control" placeholder="yyyy-mm-dd hh:ii" required="required" />
       </div>
    </div>
 
@@ -31,4 +31,7 @@
       <button type="submit" class="btn btn-success">Create</button>
    </div>
 </form>
-</div>
+ 
+<script type="text/javascript">
+    $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+</script>  
