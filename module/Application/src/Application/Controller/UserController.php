@@ -36,9 +36,11 @@ class UserController extends AbstractActionController
 		}
 		return $this->userTable;
 	}
-	private function hashPassword(String $password){
-			return hash ( "sha256" , $password, bool $raw_output = false ] );
-		}
+
+	private function hashPassword($password)
+	{
+		return hash ( "sha256" , $password);
+	}
 
 	// Default action of the controller.
 	// In normal case, it will be calling when the user access the "mySite.com/myController/" page,
@@ -52,6 +54,7 @@ class UserController extends AbstractActionController
 			'test'	=>	$test
 		));
 	}
+	
 	public function registrationAction()
 	{
 		// For linking the right action's view
@@ -77,8 +80,7 @@ class UserController extends AbstractActionController
 							// The mail address must be valid.
 							if (filter_var($email, FILTER_VALIDATE_EMAIL))
 							{
-								// the username most not exist
-								if($username)
+								
 							}
 							else
 								$result	= 'errorMailAddress';
@@ -104,7 +106,7 @@ class UserController extends AbstractActionController
 					));
 
 	}
-	}
+	
 	public function logoutAction()
 	{
 		// For linking the right action's view.
