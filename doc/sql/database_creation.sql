@@ -296,9 +296,9 @@ END $$
 
 DELIMITER ;
 
-/*
-•	Réalisation de tâche : Un utilisateur ne peut pas réaliser une tâche s’il n’y est pas affecté.
-•	Sous tâche : Une tâche qui a déjà une tâche parente ne peut pas avoir de sous-tâche. Autrement dit, on s’arrête à un seul niveau de sous-tâche.*/
+
+
+/*Sous tâche : Une tâche qui a déjà une tâche parente ne peut pas avoir de sous-tâche. Autrement dit, on s’arrête à un seul niveau de sous-tâche.*/
 
 
 /* Insert some data */
