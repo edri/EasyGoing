@@ -93,7 +93,7 @@ class UserController extends AbstractActionController
 				else
 					return new ViewModel(array(
 						'result' 			=> $result,
-						'login' 			=> $login,
+						'login' 				=> $login,
 						'email'				=> $email,
 						'fName'				=> $fname,
 						'lName'				=> $lname,
