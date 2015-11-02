@@ -32,7 +32,7 @@ return array(
                     'route'    => '/application',
                     'defaults' => array(
                         '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'Index',
+                        'controller'    => 'User',
                         'action'        => 'index',
                     ),
                 ),
@@ -53,6 +53,19 @@ return array(
                 ),
             ),
 			// Add new routes thereafter.
+            'user' => array(
+				'type'    => 'segment',
+				'options' => array(
+					'route'    => '/[:action]',					// Creating the route, identified by the controller's name.
+					'constraints' => array(
+						'action' => '[a-zA-Z][a-zA-Z0-9_-]*',			// Regular expression for the action's name ; should not be modified.
+					),
+					'defaults' => array(
+						'controller' => 'Application\Controller\User',	// Controller's name.
+						'action'     => 'index',						// Default action ; should not be modified.
+					),
+				),
+			),
             'project' => array(
                 'type'    => 'segment',
                 'options' => array(
@@ -67,15 +80,15 @@ return array(
                     ),
                 ),
             ),
-            'user' => array(
+            'about' => array(
 				'type'    => 'segment',
 				'options' => array(
-					'route'    => '/[:action]',					// Creating the route, identified by the controller's name.
+					'route'    => '/about[/][:action]',					// Creating the route, identified by the controller's name.
 					'constraints' => array(
 						'action' => '[a-zA-Z][a-zA-Z0-9_-]*',			// Regular expression for the action's name ; should not be modified.
 					),
 					'defaults' => array(
-						'controller' => 'Application\Controller\User',	// Controller's name.
+						'controller' => 'Application\Controller\About',	// Controller's name.
 						'action'     => 'index',						// Default action ; should not be modified.
 					),
 				),
@@ -94,9 +107,9 @@ return array(
 	// Add new controllers here.
     'controllers' => array(
         'invokables' => array(
-            'Application\Controller\Index'   => 'Application\Controller\IndexController',
+            'Application\Controller\User' => 'Application\Controller\UserController',
             'Application\Controller\Project' => 'Application\Controller\ProjectController',
-            'Application\Controller\User' => 'Application\Controller\UserController'
+            'Application\Controller\About'   => 'Application\Controller\AboutController'
         ),
     ),
     'view_manager' => array(
