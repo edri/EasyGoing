@@ -22,7 +22,7 @@ class ProjectController extends AbstractActionController
    public function indexAction()
    {
       return new ViewModel(array(
-            'title'       => 'Index projet ' . $this->params('id'),
+            'id'       => $this->params('id'),
             'description' => 'Description projet'
          ));
    }
