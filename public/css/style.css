@@ -112,7 +112,10 @@
     border: 0 none;
     cursor: pointer;
 }
-
+#myform #btnCreate{
+ background-color: #212121;
+ text-align: center;
+}
 /* HEADER BAR */
 .header {
    background-color: #212121;
@@ -126,12 +129,14 @@
    font-size: 22px;
    font-weight: bold;
    margin-right: 75px;
+
 }
 
 title:focus, .title:hover {
    color: white;
    text-decoration: none;
 }
+
 
 .btnHeader {
    color: #DEDEDE;
