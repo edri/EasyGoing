@@ -32,4 +32,4 @@ Pour utiliser le modèle créé auparavant (dans cet exemple, le modèle User ; 
 			return $this->userTable;
 		}
 	3. Voilà, il est désormais possible d'utiliser le modèle à l'aide de $this->get[NomTable]Table(). Exemple :
-		$areCreditentialsCorrect = $this->getUserTable()->checkCreditentials("jean-louis", "jla$cawm39cjaéwsà23cnoiqw");
+		$areCreditentialsCorrect = $this->getUserTable()->checkCreditentials("jean-louis", "jlaacawm39cjaéwsà23cnoiqw");
