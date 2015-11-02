@@ -18,19 +18,25 @@
 		{
 			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
                   ->prependStylesheet($this->basePath() . '/css/style.css')
+                  ->prependStylesheet($this->basePath() . '/css/bootstrap-datetimepicker.min.css')
 						->prependStylesheet($this->basePath() . '/css/bootstrap.min.css');
+                  
 		}
 		else
 		{
 			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
                 	->prependStylesheet($this->basePath() . '/css/style.css')
+                  ->prependStylesheet($this->basePath() . '/css/bootstrap-datetimepicker.min.css')
 						->prependStylesheet($this->basePath() . '/css/bootstrap.min.css');
+                  
 		}
 	?>
 
         <!-- Scripts -->
-		<?php echo $this->headScript()->prependFile($this->basePath() . '/js/bootstrap.min.js')
-										->prependFile($this->basePath() . '/js/jquery.min.js'); ?>
+		<?php echo $this->headScript()->prependFile($this->basePath() . '/js/bootstrap-datetimepicker.min.js')
+                              ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+										->prependFile($this->basePath() . '/js/jquery.min.js');
+                               ?>
     </head>
     <body>
 	<div class="header">
