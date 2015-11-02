@@ -37,7 +37,7 @@ class UserController extends AbstractActionController
 		return $this->userTable;
 	}
 	private function hashPassword(String $password){
-			return hash ( "sha256" , $password, bool $raw_output = false ] );
+			return hash ( "sha256" , $password, $raw_output = false ] );
 		}
 
 	// Default action of the controller.
