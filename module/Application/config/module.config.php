@@ -80,6 +80,20 @@ return array(
                     ),
                 ),
             ),
+            'projects' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'    => '/projects[/][:action]',                  // Creating the route, identified by the controller's name.
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'     => '[0-9]+'           // Regular expression for the action's name ; should not be modified.
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Application\Controller\Projects',  // Controller's name.
+                        'action'     => 'index',                        // Default action ; should not be modified.
+                    ),
+                ),
+            ),
             'about' => array(
 				'type'    => 'segment',
 				'options' => array(
@@ -109,6 +123,7 @@ return array(
         'invokables' => array(
             'Application\Controller\User' => 'Application\Controller\UserController',
             'Application\Controller\Project' => 'Application\Controller\ProjectController',
+            'Application\Controller\Projects' => 'Application\Controller\ProjectsController',
             'Application\Controller\About'   => 'Application\Controller\AboutController'
         ),
     ),
