@@ -175,6 +175,7 @@ BEGIN
 END $$
 DELIMITER;
 
+/* This function check if a user can produce in a task */
 USE easygoing;
 
 DELIMITER $$
@@ -218,6 +219,27 @@ BEGIN
 END $$
 DELIMITER ;
 
+/* This function check if a task have a parent task */
+USE easygoing;
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS taskHasParent $$
+
+CREATE FUNCTION taskHasParent
+(
+	task INT
+)
+RETURNS BOOLEAN
+BEGIN
+	RETURN EXISTS(
+		SELECT parentTask 
+		FROM tasks 
+		WHERE id = task AND parentTask <> NULL
+	);
+END $$
+DELIMITER ;
+END $$
+DELIMITER ;
 
 /* TRIGGERS */
 USE easygoing;
@@ -296,9 +318,45 @@ END $$
 
 DELIMITER ;
 
+USE easygoing;
+DROP TRIGGER IF EXISTS tasksBeforeInsert
+
+DELIMITER $$
+USE easygoing $$
+
+CREATE TRIGGER tasksBeforeInsert
+BEFORE INSERT ON tasks
+FOR EACH ROW
+BEGIN
+
+	IF taskHasParent(NEW.parent_task) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "The parent_task has a parent.";
+	END IF;
+	
+END $$
+
+DELIMITER ;
+USE easygoing;
+DROP TRIGGER IF EXISTS tasksBeforeUpdate
+
+DELIMITER $$
+USE easygoing $$
+
+CREATE TRIGGER tasksBeforeUpdate
+BEFORE UPDATE ON tasks
+FOR EACH ROW
+BEGIN
+
+	IF taskHasParent(NEW.parent_task) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "The parent_task has a parent.";
+	END IF;
+	
+END $$
+
+DELIMITER ;
 
 
-/*Sous tâche : Une tâche qui a déjà une tâche parente ne peut pas avoir de sous-tâche. Autrement dit, on s’arrête à un seul niveau de sous-tâche.*/
+
 
 
 /* Insert some data */
