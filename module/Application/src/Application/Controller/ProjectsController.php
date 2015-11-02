@@ -29,4 +29,9 @@ class ProjectsController extends AbstractActionController
 		// For linking the right action's view.
 		return new ViewModel();
 	}
+
+	public function addAction()
+	{
+		return new ViewModel();
+	}
 }
