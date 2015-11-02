@@ -29,19 +29,27 @@ class UserController extends AbstractActionController
 		// For linking the right action's view.
 				// click on "Sign in"
 			// retrieve user and password fields
-		/*
+		
 		$username = "user";
 		$password = "pass";
 		if (isset($_POST["username"])) 
 		{
-			$username = $_POST["username"];
-			$password $_POST["password"];
+			$username = $_POST["username"];			
 		}
 		else 
 		{
 			$username = "none";
-			$password = "none";
+			
 		}	
+		if (isset($_POST["password"])) 
+		{
+			$password = $_POST["password"];
+		}
+		else
+		{
+			$password = "none";	
+		}	
+		
 			// send them to DB
 			// if creditentials are correct 
 				//go to projectsController.php
@@ -55,12 +63,9 @@ class UserController extends AbstractActionController
 
 		// click on about
 			//go to AboutController.php
-
 		return new ViewModel(array(
 		'username'	=> $username,
 		'password'	=> $password
 		));
-		*/
-			return new ViewModel();
 	}
 }
