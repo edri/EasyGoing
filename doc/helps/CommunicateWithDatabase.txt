@@ -1,0 +1,3 @@
+Pour communiquer avec la base de données, il faut tout d'abord configurer le projet (DB) pour s'y connecter (à ne faire qu'une seule fois) :
+	1. config/autoload/global.php : dans 'driver_options', configurer le nom de la DB, ainsi que l'host.
+	2. config/autoload/local.php : configurer le nom d'utilisateur ainsi que le mot de passe.
