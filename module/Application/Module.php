@@ -20,6 +20,8 @@ use Zend\Session\SessionManager;
 use Zend\Session\Container;
 use Application\Model\User;
 use Application\Model\UserTable;
+use Application\Model\Project;
+use Application\Model\ProjectTable;
 
 class Module
 {
@@ -97,6 +99,17 @@ class Module
                 'Application\Model\UserTable' =>  function($sm) { // Change the class' name.
                     $tableGateway = $sm->get('UserTableGateway'); // Change the gateway's name.
                     $table = new UserTable($tableGateway); // Change the instance's class name.
+                    return $table;
+                },
+                'ProjectTableGateway' => function ($sm) { // Change the gateway's name.
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Project()); // Change the instance's class name.
+                    return new TableGateway('projects', $dbAdapter, null, $resultSetPrototype); // Change the table's name (this IS the table's name in the database).
+                },
+                'Application\Model\ProjectTable' =>  function($sm) { // Change the class' name.
+                    $tableGateway = $sm->get('ProjectTableGateway'); // Change the gateway's name.
+                    $table = new ProjectTable($tableGateway); // Change the instance's class name.
                     return $table;
                 },
 				// Configure the session service.
