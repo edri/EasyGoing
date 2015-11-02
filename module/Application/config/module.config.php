@@ -70,7 +70,7 @@ return array(
             'user' => array(
 				'type'    => 'segment',
 				'options' => array(
-					'route'    => '/user[/][:action]',					// Creating the route, identified by the controller's name.
+					'route'    => '/[:action]',					// Creating the route, identified by the controller's name.
 					'constraints' => array(
 						'action' => '[a-zA-Z][a-zA-Z0-9_-]*',			// Regular expression for the action's name ; should not be modified.
 					),

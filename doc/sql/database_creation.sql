@@ -227,7 +227,3 @@ END $$
 DELIMITER ;
 
 
-
-
-
-
