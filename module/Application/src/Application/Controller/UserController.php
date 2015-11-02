@@ -51,8 +51,55 @@ class UserController extends AbstractActionController
 	}
 	public function registrationAction()
 	{
-		// For linking the right action's view.
-		return new ViewModel();
+		// For linking the right action's view
+
+			$request = $this->getRequest();
+			if ($request->isPost()) {
+				$result = "success";
+				// POST action's values.
+				$password1 = $_POST["password1"];
+				$password2 = $_POST["password2"];
+				$fname = $_POST["fname"];
+				$lname = $_POST["lname"];
+				$email = $_POST["email"];
+				$username = $_POST["username"];
+				$picture = $_POST["picture"];
+
+					// Checks the fields.
+					if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
+					{
+						// The two passwords must match.
+						if ($password1 == $password2)
+						{
+							// The mail address must be valid.
+							if (filter_var($email, FILTER_VALIDATE_EMAIL))
+							{
+								
+							}
+							else
+								$result	= 'errorMailAddress';
+						}
+						else
+							$result	= 'errorPasswordsDontMatch';
+					}
+					else
+						$result	= 'errorFieldEmpty';
+
+
+				if ($result == "success")
+					return new ViewModel(array(
+						'result'			=> $result,
+					));
+				else
+					return new ViewModel(array(
+						'result' 			=> $result,
+						'login' 			=> $login,
+						'email'				=> $email,
+						'fName'				=> $fname,
+						'lName'				=> $lname,
+					));
+
+	}
 	}
 	public function logoutAction()
 	{
