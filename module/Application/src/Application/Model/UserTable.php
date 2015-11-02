@@ -27,13 +27,13 @@ class UserTable
 
 		// Return true or false, depending on the given creditentials'
 		// correctness.
-		if (!$row)
+		if ($row)
 		{
-			return false;
+			return true;
 		}
 		else
 		{
-			return true;
+			return false;
 		}
 	}
 }
