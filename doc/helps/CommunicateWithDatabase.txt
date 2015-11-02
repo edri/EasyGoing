@@ -8,11 +8,12 @@ Pour ajouter une nouvelle table/vue/etc. au framework (nous prendrons pour cette
 	(Pour la suite, s'inspirer des fichiers déjà existants)
 	2. Créer une classe du nom du fichier dans [NomTable].php ; cette classe va servir à transformer les entités de la table en objets. Pour se faire, il suffit de déclarer un attribut dans la classe pour chaque champ de la table que nous souhaitons utiliser. Ici, nous aurons donc les attributs "$id", "$username" et "$password". Utiliser ensuite la méthode exchangeArray($data) pour transformer les données en objets : "$this->id  = (!empty($data['id'])) ? $data['id'] : null;", etc.
 	3. Le fichier [NomTable]Table.php va contenir toutes les différentes méthodes qui nous seront utiles pour travailler sur la table (par exemple : bool checkCreditentials($username, $password)). Il faut déclarer la classe du même nom que le fichier ; pour ajouter une méthode, s'inspirer des fichiers existants.
-
-FAIRE LES INCLUDES DANS MODULE.PHP
-	4. Rechercher la fonction getServiceConfig() située dans module/Application/Module.php.
-	5. En s'inspirant de ce qui existe déjà, déclarer une passerelle entre l'entité de la base de données (ici la table "users") et la classe de transformation [NomTable] (en prenant attention à changer les valeurs déjà existantes), puis l'utiliser pour passer la passerelle à la classe [NomTable]Table.
-	6. La modèle est à présent prêt à être utilisé.
+	4. Aller dans le fichier module/Application/Module.php, puis inclure dans la classe les deux fichiers créés auparavant. Par exemple :
+		use Application\Model\User;
+		use Application\Model\UserTable;
+	5. Rechercher la fonction getServiceConfig() située dans module/Application/Module.php.
+	6. En s'inspirant de ce qui existe déjà, déclarer une passerelle entre l'entité de la base de données (ici la table "users") et la classe de transformation [NomTable] (en prenant attention à changer les valeurs déjà existantes), puis l'utiliser pour passer la passerelle à la classe [NomTable]Table.
+	7. La modèle est à présent prêt à être utilisé.
 
 
 Pour utiliser le modèle créé auparavant (dans cet exemple, le modèle User ; se baser sur ce qui est fait dans le contrôleur UserController) :

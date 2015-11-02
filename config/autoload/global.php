@@ -14,7 +14,7 @@
  return array(
      'db' => array(
          'driver'         => 'Pdo',
-         'dsn'            => 'mysql:unix_socket=/opt/lampp/var/mysql/mysql.sock;mysql:dbname=easygoing;host=localhost',
+         'dsn'            => 'mysql:unix_socket=/var/run/mysqld/mysqld.sock;mysql:dbname=easygoing;host=localhost',
          'driver_options' => array(
              PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
          ),
