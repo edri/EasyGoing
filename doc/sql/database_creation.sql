@@ -6,8 +6,6 @@
 */
 
 /* Delete the schema if already exists and creation of a new schema */
-
-
 DROP SCHEMA IF EXISTS easygoing;
 CREATE SCHEMA easygoing;
 
@@ -148,6 +146,103 @@ CREATE TABLE usersTasksProductions
     FOREIGN KEY(task) REFERENCES tasks(id)
 );
 
+/* Stored procedures and functions */
+
+/* This function check if a user can be affected to a task */
+USE easygoing;
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS checkUserCanBeAffectedToTask $$
+
+CREATE FUNCTION checkUserCanBeAffectedToTask
+(
+	task INT,
+	user INT
+)
+RETURNS BOOLEAN
+BEGIN
+	RETURN NOT EXISTS
+	(
+		SELECT t.project 
+		FROM tasks AS t
+		WHERE t.id = task AND t.project IN
+		(
+			SELECT pum.project
+			FROM projectsUsersMembers AS pum
+			WHERE pum.user = user
+		)
+	);
+END $$
+DELIMITER;
+
+/* This function check if a user can login or not */
+USE easygoing;
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS checkLogin $$
+
+CREATE FUNCTION checkLogin
+(
+	username VARCHAR(30),
+	hashedPassword VARCHAR(64)
+)
+RETURNS BOOLEAN
+BEGIN
+	RETURN EXISTS(
+		SELECT * 
+		FROM users AS u 
+		WHERE u.username = username AND u.hashedPassword = hashedPassword
+	);
+END $$
+DELIMITER ;
+
+
+/* TRIGGERS */
+USE easygoing;
+DROP TRIGGER IF EXISTS usersTasksAffectationsBeforeInsert;
+
+DELIMITER $$
+USE easygoing $$
+
+CREATE TRIGGER usersTasksAffectationsBeforeInsert
+BEFORE INSERT ON usersTasksAffectations
+FOR EACH ROW
+BEGIN
+		
+	IF checkUserCanBeAffectedToTask(NEW.task, NEW.user) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Impossible to affect this task at this user. He is not a member of the project where the task is";
+	END IF;
+	
+END $$
+
+DELIMITER ;
+
+USE easygoing;
+DROP TRIGGER IF EXISTS usersTasksAffectationsBeforeUpdate
+
+DELIMITER $$
+USE easygoing $$
+
+CREATE TRIGGER usersTasksAffectationsBeforeUpdate
+BEFORE UPDATE ON usersTasksAffectations
+FOR EACH ROW
+BEGIN
+		
+	IF checkUserCanBeAffectedToTask(NEW.task, NEW.user) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Impossible to affect this task at this user. He is not a member of the project where the task is";
+	END IF;
+	
+END $$
+
+DELIMITER ;
+
+
+
+/*
+•	Réalisation de tâche : Un utilisateur ne peut pas réaliser une tâche s’il n’y est pas affecté.
+•	Sous tâche : Une tâche qui a déjà une tâche parente ne peut pas avoir de sous-tâche. Autrement dit, on s’arrête à un seul niveau de sous-tâche.*/
+
+
 /* Insert some data */
 INSERT INTO users
 VALUES(
@@ -208,28 +303,6 @@ VALUES(
 	"vanessa.jpg",
 	true, true
 );
-
-/* Stored procedures and functions */
-USE easygoing;
-
-DELIMITER $$
-DROP FUNCTION IF EXISTS checkLogin $$
-
-/* This function check if a user can login or not */
-CREATE FUNCTION checkLogin
-(
-	username VARCHAR(30),
-	hashedPassword VARCHAR(64)
-)
-RETURNS BOOLEAN
-BEGIN
-	RETURN EXISTS(
-		SELECT * 
-		FROM users AS u 
-		WHERE u.username = username AND u.hashedPassword = hashedPassword
-	);
-END $$
-DELIMITER ;
 
 SET GLOBAL log_bin_trust_function_creators = 0; 
 
