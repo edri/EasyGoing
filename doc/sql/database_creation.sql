@@ -175,6 +175,28 @@ BEGIN
 END $$
 DELIMITER;
 
+USE easygoing;
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS checkUserCanProduceInTask $$
+
+CREATE FUNCTION checkUserCanProduceInTask
+(
+	task INT,
+	user INT
+)
+RETURNS BOOLEAN
+BEGIN
+	RETURN EXISTS
+	(
+		SELECT * 
+		FROM usersTasksAffectations AS uta 
+		WHERE uta.task = task 
+			AND uta.user = user
+	);
+END $$
+DELIMITER;
+
 /* This function check if a user can login or not */
 USE easygoing;
 
@@ -236,7 +258,43 @@ END $$
 
 DELIMITER ;
 
+USE easygoing;
+DROP TRIGGER IF EXISTS usersTasksProductionsBeforeInsert
 
+DELIMITER $$
+USE easygoing $$
+
+CREATE TRIGGER usersTasksProductionsBeforeInsert
+BEFORE INSERT ON usersTasksProductions
+FOR EACH ROW
+BEGIN
+
+	IF NOT checkUserCanProduceInTask(NEW.task, NEW.user) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "User is not affected at this task";
+	END IF;
+	
+END $$
+
+DELIMITER ;
+
+USE easygoing;
+DROP TRIGGER IF EXISTS usersTasksProductionsBeforeUpdate
+
+DELIMITER $$
+USE easygoing $$
+
+CREATE TRIGGER usersTasksProductionsBeforeUpdate
+BEFORE UPDATE ON usersTasksProductions
+FOR EACH ROW
+BEGIN
+
+	IF NOT checkUserCanProduceInTask(NEW.task, NEW.user) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "User is not affected at this task";
+	END IF;
+	
+END $$
+
+DELIMITER ;
 
 /*
 •	Réalisation de tâche : Un utilisateur ne peut pas réaliser une tâche s’il n’y est pas affecté.
