@@ -53,57 +53,58 @@ class UserController extends AbstractActionController
 	public function registrationAction()
 	{
 		// For linking the right action's view
-			$request = $this->getRequest();
-			if ($request->isPost()) {
-				$result = "success";
-				// POST action's values.
-				$password1 = $_POST["password1"];
-				$password2 = $_POST["password2"];
-				$fname = $_POST["fname"];
-				$lname = $_POST["lname"];
-				$email = $_POST["email"];
-				$username = $_POST["username"];
-				$picture = $_POST["picture"];
-					// Checks the fields.
-					if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
+		$request = $this->getRequest();
+
+		if ($request->isPost()) {
+			$result = "success";
+			// POST action's values.
+			$password1 = $_POST["password1"];
+			$password2 = $_POST["password2"];
+			$fname = $_POST["fname"];
+			$lname = $_POST["lname"];
+			$email = $_POST["email"];
+			$username = $_POST["username"];
+			$picture = $_POST["picture"];
+				// Checks the fields.
+				if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
+				{
+					// The two passwords must match.
+					if ($password1 == $password2)
 					{
-						// The two passwords must match.
-						if ($password1 == $password2)
+						// The mail address must be valid.
+						if (filter_var($email, FILTER_VALIDATE_EMAIL))
 						{
-							// The mail address must be valid.
-							if (filter_var($email, FILTER_VALIDATE_EMAIL))
-							{
-								//the email must not already exist
-								if(!$this->getUserTable()->checkIfMailExists($email)){
-									//then we allow the registration
-											$userId = $this->getUserTable()->addUser($username, $this->hashPassword($password1),
-										  $fname, $lname, $email, $picture);
-								}
-								else
-									$result	= 'errorMailAlreadyExist';
+							//the email must not already exist
+							if(!$this->getUserTable()->checkIfMailExists($email)){
+								//then we allow the registration
+										$userId = $this->getUserTable()->addUser($username, $this->hashPassword($password1),
+									  $fname, $lname, $email, $picture);
 							}
-							else{
-										$result	= 'errorMailInvalid';
-								}
+							else
+								$result	= 'errorMailAlreadyExist';
 						}
-						else
-							$result	= 'errorPasswordsDontMatch';
+						else{
+									$result	= 'errorMailInvalid';
+							}
 					}
 					else
-						$result	= 'errorFieldEmpty';
-				if ($result == "success")
-					return new ViewModel(array(
-						'result'			=> $result,
-					));
-				else
-					return new ViewModel(array(
-						'result' 			=> $result,
-						'login' 			=> $login,
-						'email'				=> $email,
-						'fName'				=> $fname,
-						'lName'				=> $lname,
-					));
+						$result	= 'errorPasswordsDontMatch';
 				}
+				else
+					$result	= 'errorFieldEmpty';
+			if ($result == "success")
+				return new ViewModel(array(
+					'result'			=> $result,
+				));
+			else
+				return new ViewModel(array(
+					'result' 			=> $result,
+					'login' 			=> $login,
+					'email'				=> $email,
+					'fName'				=> $fname,
+					'lName'				=> $lname,
+				));
+		}
 	}
 
 	public function logoutAction()
@@ -120,14 +121,13 @@ class UserController extends AbstractActionController
 
 	public function validationAction()
 	{
-
-			$this->redirect()->toRoute('/');
+		$this->redirect()->toRoute('/');
 
 		return new ViewModel();
 	}
 
 	public function cancelAction()
 	{
-			$this->redirect()->toRoute('/registration');
+		$this->redirect()->toRoute('/registration');
 	}
 }
