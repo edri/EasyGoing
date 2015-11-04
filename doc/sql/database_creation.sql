@@ -329,7 +329,7 @@ BEFORE INSERT ON tasks
 FOR EACH ROW
 BEGIN
 
-	IF taskHasParent(NEW.parent_task) THEN
+	IF taskHasParent(NEW.parentTask) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "The parent_task has a parent.";
 	END IF;
 	
@@ -347,7 +347,7 @@ BEFORE UPDATE ON tasks
 FOR EACH ROW
 BEGIN
 
-	IF taskHasParent(NEW.parent_task) THEN
+	IF taskHasParent(NEW.parentTask) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "The parent_task has a parent.";
 	END IF;
 	

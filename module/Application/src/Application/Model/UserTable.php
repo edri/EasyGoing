@@ -27,13 +27,41 @@ class UserTable
 
 		// Return true or false, depending on the given creditentials'
 		// correctness.
-		if ($row)
-		{
-			return true;
-		}
-		else
+<<<<<<< HEAD
+		if (!$row)
 		{
 			return false;
 		}
+		else
+		{
+			return true;
+		}
+=======
+		return $row ? true : false;
+>>>>>>> 0bcaf62840f103aafbc8fd30de9ea99c0b24e604
 	}
+	// Checks if the given e-mail address doesn't already exist in the DB.
+		public function checkIfMailExists($email)
+		{
+			$rowset = $this->tableGateway->select(array('email' => $email));
+			$row = $rowset->current();
+			return $row;
+		}
+
+		// add a new user
+		public function addUser($username, $password, $firstName, $lastName, $email, $picture)
+{
+	$this->tableGateway->insert(array(
+		'username'				=> $username,
+		'password'			=> $password,
+		'firstName'			=> $firstName,
+		'lastName'			=> $lastName,
+		'email'				=> $email,
+		'picture'			=> $picture,
+	));
+
+	return $this->tableGateway->lastInsertValue;
+}
+
+
 }

@@ -1,7 +1,10 @@
+<?php
 
-<h1>Create an acount</h1>
-		echo 	${affiche};
-    <form method="POST" action="app?action=add" role="form" class="form-horizontal">
+if (!isset($this->result) || $this->result != "success")
+	{
+?>
+    <h1>Create an acount</h1>
+    <form method="POST" action="app?action=add" role="form" class="formInscription">
      <div class="form-group">
         <label class="control-label col-sm-2" for="username">Username *</label>
         <div class="col-sm-10">
@@ -70,6 +73,21 @@
      <label class="checkbox-inline"><input type="checkbox" value="">Tutorial</label>
    </div>
    <div id = "btnCreate">
-     <button class="btn btn-primary" type="submit">Create</button>
+     <input type="submit" name="submitInscription" class="submitInscription" value="Create">
    </div>
 </form>
+ <?php
+ }
+ else if (isset($this->result) && $this->result == "success")
+ {
+?>
+   <div class="formInscription">
+       <h1>Create Account</h1>
+       <div class="horBar"></div>
+
+       <div class="successAdding">
+         <p><?php echo "UserSuccessfullyCreated" ?></p>
+         <a class="purpleLink" href="/"</a>
+       </div>
+   </div>
+<?php } ?>
