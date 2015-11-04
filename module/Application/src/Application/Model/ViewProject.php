@@ -1,8 +1,8 @@
 <?php
 namespace Application\Model;
 
-// This class contains all data of a project's entity.
-class Project
+// This class contains all data of an view mapping projects and users.
+class ViewProject
 {
 	public $id;
 	public $name;
@@ -10,6 +10,8 @@ class Project
 	public $startDate;
 	public $deadLineDate;
 	public $fileLogo;
+	public $userId;
+	public $isAdmin;
 
 	public function exchangeArray($data)
 	{
@@ -19,5 +21,7 @@ class Project
 		$this->startDate  = (!empty($data['startDate'])) ? $data['startDate'] : null;
 		$this->deadLineDate  = (!empty($data['deadLineDate'])) ? $data['deadLineDate'] : null;
 		$this->fileLogo  = (!empty($data['fileLogo'])) ? $data['fileLogo'] : null;
+		$this->userId  = (!empty($data['userId'])) ? $data['userId'] : null;
+		$this->isAdmin  = (!empty($data['isAdmin'])) ? $data['isAdmin'] : null;
 	}
 }

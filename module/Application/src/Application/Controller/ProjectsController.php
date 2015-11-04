@@ -17,17 +17,34 @@ use Zend\View\Model\ViewModel;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
 
-// Default controller ; will be calling when the user access the "mySite.com/" page.
+// Projects controller ; will be calling when the user access the "easygoing/projects" page.
 // Be careful about the class' name, which must be the same as the file's name.
 class ProjectsController extends AbstractActionController
 {
+	// The model of the mapping view between projects and users ; used to communicate with the database.
+	private $viewProjectTable;
+	// Get the projects' view's entity, represented by the created model.
+	// Act as a singleton : we only can have one instance of the object.
+	private function getViewProjectTable()
+	{
+		// If the object is not currencly instanciated, we do it.
+		if (!$this->viewProjectTable) {
+			$sm = $this->getServiceLocator();
+			// Instanciate the object with the created model.
+			$this->viewProjectTable = $sm->get('Application\Model\viewProjectTable');
+		}
+		return $this->viewProjectTable;
+	}
+
 	// Default action of the controller.
-	// In normal case, it will be calling when the user access the "mySite.com/myController/" page,
-	// but here we are in the default controller so the page will be "mySite.com/".
 	public function indexAction()
 	{
+		$userProjects = $this->getViewProjectTable()->getUserProjects(4);
+
 		// For linking the right action's view.
-		return new ViewModel();
+		return new ViewModel(array(
+			'userProjects'	=> $userProjects
+		));
 	}
 
 	public function addAction()

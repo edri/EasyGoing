@@ -3,7 +3,7 @@ namespace Application\Model;
 
 use Zend\Db\TableGateway\TableGateway;
 
-// Contains the methods that allows to work with an user entity.
+// Contains the methods that allows to work with a project entity.
 class ProjectTable
 {
 	protected $tableGateway;

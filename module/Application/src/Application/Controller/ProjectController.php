@@ -7,8 +7,8 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-// The namespace is important. It avoids us from being forced to call the Zend's methods with 
-// "Application\Controller" before. 
+// The namespace is important. It avoids us from being forced to call the Zend's methods with
+// "Application\Controller" before.
 namespace Application\Controller;
 
 // Calling some useful Zend's libraries.
@@ -17,6 +17,8 @@ use Zend\View\Model\ViewModel;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
 
+// Project controller ; will be calling when the user access the "easygoing/project" page.
+// Be careful about the class' name, which must be the same as the file's name.
 class ProjectController extends AbstractActionController
 {
    public function indexAction()
@@ -56,7 +58,7 @@ class ProjectController extends AbstractActionController
 
    public function removeMemberAction()
    {
-      
+
    }
 
    public function loadEventAction()

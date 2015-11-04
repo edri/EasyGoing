@@ -22,6 +22,8 @@ use Application\Model\User;
 use Application\Model\UserTable;
 use Application\Model\Project;
 use Application\Model\ProjectTable;
+use Application\Model\ViewProject;
+use Application\Model\ViewProjectTable;
 
 class Module
 {
@@ -101,15 +103,26 @@ class Module
                     $table = new UserTable($tableGateway); // Change the instance's class name.
                     return $table;
                 },
-                'ProjectTableGateway' => function ($sm) { // Change the gateway's name.
+                'ProjectTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Project()); // Change the instance's class name.
-                    return new TableGateway('projects', $dbAdapter, null, $resultSetPrototype); // Change the table's name (this IS the table's name in the database).
+                    $resultSetPrototype->setArrayObjectPrototype(new Project());
+                    return new TableGateway('projects', $dbAdapter, null, $resultSetPrototype);
                 },
-                'Application\Model\ProjectTable' =>  function($sm) { // Change the class' name.
-                    $tableGateway = $sm->get('ProjectTableGateway'); // Change the gateway's name.
-                    $table = new ProjectTable($tableGateway); // Change the instance's class name.
+                'Application\Model\ProjectTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ProjectTableGateway');
+                    $table = new ProjectTable($tableGateway);
+                    return $table;
+                },
+                'ViewProjectTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ViewProject());
+                    return new TableGateway('view_projects', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ViewProjectTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ViewProjectTableGateway');
+                    $table = new ViewProjectTable($tableGateway);
                     return $table;
                 },
 				// Configure the session service.

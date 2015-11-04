@@ -14,7 +14,8 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
-// Default controller ; will be calling when the user access the "mySite.com/" page.
+
+// Default controller ; will be calling when the user access the "easygoing/" page.
 // Be careful about the class' name, which must be the same as the file's name.
 class UserController extends AbstractActionController
 {
@@ -32,12 +33,15 @@ class UserController extends AbstractActionController
 		}
 		return $this->userTable;
 	}
-	private function hashPassword(String $password){
-			return hash ( "sha256" , $password, false );
-		}
+
+	private function hashPassword(String $password)
+	{
+		return hash ("sha256" , $password, false);
+	}
+
 	// Default action of the controller.
-	// In normal case, it will be calling when the user access the "mySite.com/myController/" page,
-	// but here we are in the default controller so the page will be "mySite.com/".
+	// In normal case, it will be calling when the user access the "easygoing/myController/" page,
+	// but here we are in the default controller so the page will be "easygoing/".
 	public function indexAction()
 	{
 		$test = $this->getUserTable()->checkCreditentials("raphaelracine", "d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1") ? "OUIIII" : "NON !";
@@ -69,7 +73,7 @@ class UserController extends AbstractActionController
 							// The mail address must be valid.
 							if (filter_var($email, FILTER_VALIDATE_EMAIL))
 							{
-								
+
 							}
 							else
 								$result	= 'errorMailAddress';
@@ -91,13 +95,15 @@ class UserController extends AbstractActionController
 						'fName'				=> $fname,
 						'lName'				=> $lname,
 					));
+				}
 	}
-	}
+
 	public function logoutAction()
 	{
 		// For linking the right action's view.
 		return new ViewModel();
 	}
+
 	public function editAction()
 	{
 		// For linking the right action's view.
