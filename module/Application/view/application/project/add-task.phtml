@@ -1,6 +1,6 @@
 <h1>Create a task</h1>
 <br>
-<form method="POST" action="" role="form" class="form-horizontal">
+<form method="POST" action="<?php echo $this->serverUrl(true); ?>" role="form" class="form-horizontal">
    <div class="form-group">
       <label class="control-label col-sm-2" for="name">Name</label>
       <div class="col-sm-10">
@@ -9,30 +9,30 @@
    </div>
 
    <div class="form-group">
-      <label class="control-label col-sm-2" for="name">Deadline</label>
-      <label class="control-label col-sm-2" for="name">To</label>
+      <label class="control-label col-sm-2">Deadline</label>
+      <label class="control-label col-sm-2">To</label>
       <div class="col-sm-3">
-         <input type="text" name="name" class="form_datetime form-control" placeholder="yyyy-mm-dd hh:ii" required="required" />
+         <input type="text" name="startDate" class="form_datetime form-control" placeholder="yyyy-mm-dd hh:ii" required="required" />
       </div>
       <label class="control-label col-sm-2" for="name">From</label>
       <div class="col-sm-3">
-         <input type="text" name="name" class="form_datetime form-control" placeholder="yyyy-mm-dd hh:ii" required="required" />
+         <input type="text" name="deadlineDate" class="form_datetime form-control" placeholder="yyyy-mm-dd hh:ii" required="required" />
       </div>
    </div>
 
    <div class="form-group">
-      <label class="control-label col-sm-2" for="description">Priority</label>
+      <label class="control-label col-sm-2">Priority</label>
       <div class="col-sm-10">
-         <select class="form-control">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
+         <select class="form-control" name="priority">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
          </select>
       </div>
    </div>
 
    <div class="form-group">
-      <label class="control-label col-sm-2" for="description">Description</label>
+      <label class="control-label col-sm-2">Description</label>
       <div class="col-sm-10">
          <textarea name="description" class="form-control" placeholder="Enter description"></textarea>
       </div>

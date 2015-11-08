@@ -12,4 +12,23 @@ class TaskTable
    {
       $this->tableGateway = $tableGateway;
    }
+
+   public function test()
+   {
+      echo 'test';
+   }
+
+   public function addTask($name, $description, $deadlineDate, $durationsInHours, $priorityLevel, $projectId)
+   {
+      $this->tableGateway->insert(array(
+         'name'               => $name,
+         'description'        => $description,
+         'deadLineDate'       => $deadlineDate,
+         'durationsInHours'   => $durationsInHours,
+         'priorityLevel'      => $priorityLevel,
+         'project'            => $projectId
+      ));
+
+      return $this->tableGateway->lastInsertValue;
+   }
 }

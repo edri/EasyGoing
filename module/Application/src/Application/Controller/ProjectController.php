@@ -57,20 +57,31 @@ class ProjectController extends AbstractActionController
 
       return new ViewModel(array(
          'project' => $project
-         ));
+      ));
    }
 
    public function taskAction()
    {
       return new ViewModel(array(
          'id' => $this->params('id')
-         ));
+      ));
    }
 
    public function addTaskAction()
    {
       $request = $this->getRequest();
-      $projectId = $this->params('id');
+
+      if($request->isPost())
+      {
+         $projectId = $this->params('id');
+         $name = $_POST["name"];
+         $description = $_POST["description"];
+         $priority = $_POST["priority"];
+         $startDate = $_POST["startDate"];
+         $deadlineDate = $_POST["deadlineDate"];
+
+         $this->_getTaskTable()->addTask($name, $description, $deadlineDate, 10, $priority, $projectId);
+      }
    }
 
    public function editTaskAction()
