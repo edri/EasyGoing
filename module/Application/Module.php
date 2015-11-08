@@ -22,8 +22,8 @@ use Application\Model\User;
 use Application\Model\UserTable;
 use Application\Model\Project;
 use Application\Model\ProjectTable;
-use Application\Model\ViewProject;
-use Application\Model\ViewProjectTable;
+use Application\Model\ViewProjectMin;
+use Application\Model\ViewProjectMinTable;
 
 class Module
 {
@@ -114,15 +114,15 @@ class Module
                     $table = new ProjectTable($tableGateway);
                     return $table;
                 },
-                'ViewProjectTableGateway' => function ($sm) {
+                'ViewProjectMinTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new ViewProject());
-                    return new TableGateway('view_projects', $dbAdapter, null, $resultSetPrototype);
+                    $resultSetPrototype->setArrayObjectPrototype(new ViewProjectMin());
+                    return new TableGateway('view_projects_min', $dbAdapter, null, $resultSetPrototype);
                 },
-                'Application\Model\ViewProjectTable' =>  function($sm) {
-                    $tableGateway = $sm->get('ViewProjectTableGateway');
-                    $table = new ViewProjectTable($tableGateway);
+                'Application\Model\ViewProjectMinTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ViewProjectMinTableGateway');
+                    $table = new ViewProjectMinTable($tableGateway);
                     return $table;
                 },
 				// Configure the session service.

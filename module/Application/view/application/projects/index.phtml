@@ -2,6 +2,7 @@
 <!--
     var currentSelected;
     var isSelectionChanging = false;
+    var isAjaxRequestComplete = false;
 
     // Show the expand arrow image on an element identified by the given ID.
     function showExpandArrow(id)
@@ -32,34 +33,9 @@
     //       time that we are sliding down the new selected one.
     function expandProject(id)
     {
-        // If the function is currently executed, when just exit it.
-        if (!isSelectionChanging)
+        // If there was no AJAX request before the calling, when just exit.
+        if (isAjaxRequestComplete)
         {
-            // Indicate the system that this function is currently executed. In
-            // other words, we are indicating that we are in a critical section,
-            // because we cannot have to projects which are loadind simultaneously.
-            isSelectionChanging = true;
-
-            // Make an AJAX GET request to the ProjectsController to get back
-            // all selected project information.
-            // We expect to receive back JSON as a response.
-            /*$.ajax({
-                type: "GET",
-                url:  "projects/details",
-                data: 'id=' + id,
-                dataType: 'json',
-                // Occurs when the AJAX request was successfully executed.
-                success: function (data)
-                {
-                    // In case of success, we change the concerned button's rendering,
-                    // depending on the action of the user.
-                     if(data.success)
-                     (
-
-                     )
-                 }
-             });*/
-
             // Reset previous selected element.
             $("#project" + currentSelected).attr("class", "projectLine");
             $("#collapseArrow" + currentSelected).hide();
@@ -92,6 +68,7 @@
                         $("#oldProjectDetails").remove();
                         // Indicate the system that the function finished.
                         isSelectionChanging = false;
+                        isAjaxRequestComplete = false;
                     });
                 }
 
@@ -104,22 +81,71 @@
                 $("#divProjectDetails").slideDown("fast", function() {
                     // Indicate the system that the function finished.
                     isSelectionChanging = false;
-                });
-            }
-            // If the user clicked to the currently selected project, we
-            // just slide it up.
-            else
-            {
-                $("#expandArrow" + currentSelected).show();
-                currentSelected = undefined;
-
-                $("#divProjectDetails").slideUp("fast", function() {
-                    $("#projectDetails").hide();
-                    // Indicate the system that the function finished.
-                    isSelectionChanging = false;
+                    isAjaxRequestComplete = false;
                 });
             }
         }
+    }
+
+    // Load the given project's details with AJAX, and send them to the "expandProject"
+    // function.
+    function loadProjectDetails(id)
+    {
+        // If the function is currently executed, when just exit it.
+        if (!isSelectionChanging)
+        {
+            // If the user just want to collapse the expanded selected project,
+            // We don't want to make an AJAX request.
+            if (currentSelected != id)
+            {
+                // Indicate the system that this function is currently executed. In
+                // other words, we are indicating that we are in a critical section,
+                // because we cannot have to projects which are loadind simultaneously.
+                isSelectionChanging = true;
+
+                // Make an AJAX GET request to the ProjectsController to get back
+                // all selected project information.
+                // We expect to receive back JSON as a response.
+                $.ajax({
+                    type: "GET",
+                    url:  "project/" + id + "/details",
+                    dataType: 'json',
+                    // Occurs when the AJAX request was successfully executed.
+                    success: function (data)
+                    {
+                        // In case of success, we send back the data to the expandProject()
+                        // function.
+                        if(data.success)
+                        {
+                            isAjaxRequestComplete = true;
+                            expandProject(id);
+                        }
+                    },
+    				error: function (XMLHttpRequest, textStatus, errorThrown) {
+    					alert("An orror occurs, please retry.");
+    				}
+                 });
+             }
+             // If the user clicked to the currently selected project, we
+             // just slide it up.
+             else
+             {
+                 isSelectionChanging = true;
+
+                 // Reset previous selected element.
+                 $("#project" + currentSelected).attr("class", "projectLine");
+                 $("#collapseArrow" + currentSelected).hide();
+
+                 $("#expandArrow" + currentSelected).show();
+                 currentSelected = undefined;
+
+                 $("#divProjectDetails").slideUp("fast", function() {
+                     $("#projectDetails").hide();
+                     // Indicate the system that the function finished.
+                     isSelectionChanging = false;
+                 });
+             }
+         }
     }
 -->
 </script>
@@ -138,7 +164,7 @@
             <tr name="projectLine" id="project<?php echo $p->id; ?>" class="projectLine"
                 onMouseOver="showExpandArrow(<?php echo $p->id; ?>);"
                 onMouseOut="hideExpandArrow(<?php echo $p->id; ?>);"
-                onClick="expandProject(<?php echo $p->id; ?>);">
+                onClick="loadProjectDetails(<?php echo $p->id; ?>);">
                 <td class="projectTitle">
                     <img src="<?php echo $this->basePath('img/projects/' . $p->fileLogo); ?>"
                          alt="<?php echo $this->escapeHtml($p->name); ?>" height=50 width=50

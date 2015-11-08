@@ -22,24 +22,24 @@ use Zend\Session\Container;
 class ProjectsController extends AbstractActionController
 {
 	// The model of the mapping view between projects and users ; used to communicate with the database.
-	private $viewProjectTable;
+	private $viewProjectMinTable;
 	// Get the projects' view's entity, represented by the created model.
 	// Act as a singleton : we only can have one instance of the object.
-	private function getViewProjectTable()
+	private function getViewProjectMinTable()
 	{
 		// If the object is not currencly instanciated, we do it.
-		if (!$this->viewProjectTable) {
+		if (!$this->viewProjectMinTable) {
 			$sm = $this->getServiceLocator();
 			// Instanciate the object with the created model.
-			$this->viewProjectTable = $sm->get('Application\Model\viewProjectTable');
+			$this->viewProjectMinTable = $sm->get('Application\Model\viewProjectMinTable');
 		}
-		return $this->viewProjectTable;
+		return $this->viewProjectMinTable;
 	}
 
 	// Default action of the controller.
 	public function indexAction()
 	{
-		$userProjects = $this->getViewProjectTable()->getUserProjects(4);
+		$userProjects = $this->getViewProjectMinTable()->getUserProjects(4);
 
 		// For linking the right action's view.
 		return new ViewModel(array(

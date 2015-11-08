@@ -14,6 +14,7 @@ namespace Application\Controller;
 // Calling some useful Zend's libraries.
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
 
@@ -66,6 +67,19 @@ class ProjectController extends AbstractActionController
 
    }
 
+   public function detailsAction()
+   {
+       $id = (int)$this->params('id');
+       
+
+       // Send the success message back with JSON.
+       $result = new JsonModel(array(
+		    'success' => true,
+			'message' => $id
+       ));
+
+       return $result;
+   }
 }
 
 
