@@ -12,4 +12,10 @@ class ProjectTable
 	{
 		$this->tableGateway = $tableGateway;
 	}
+
+   public function getProject($id)
+   {
+      $rowset = $this->tableGateway->select(array('id' => $id));
+      return $rowset->current();
+   }
 }
