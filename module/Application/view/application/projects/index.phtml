@@ -108,7 +108,7 @@
                 // We expect to receive back JSON as a response.
                 $.ajax({
                     type: "GET",
-                    url:  "project/" + id + "/details",
+                    url:  "/project/" + id + "/details",
                     dataType: 'json',
                     // Occurs when the AJAX request was successfully executed.
                     success: function (data)

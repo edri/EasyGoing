@@ -55,6 +55,9 @@ class ProjectController extends AbstractActionController
    {
       $project = $this->_getProjectTable()->getProject($this->params('id'));
 
+      if(empty($project))
+         $this->redirect()->toRoute('projects');
+
       return new ViewModel(array(
          'project' => $project
       ));
