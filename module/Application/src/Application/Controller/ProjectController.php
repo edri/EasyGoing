@@ -22,29 +22,71 @@ use Zend\Session\Container;
 // Be careful about the class' name, which must be the same as the file's name.
 class ProjectController extends AbstractActionController
 {
+   private $_taskTable;
+   private $_projectTable;
+
+   // Get the task's table's entity, represented by the created model.
+   // Act as a singleton : we only can have one instance of the object.
+   private function _getTaskTable()
+   {
+      // If the object is not currencly instanciated, we do it.
+      if (!$this->_taskTable) {
+         $sm = $this->getServiceLocator();
+         // Instanciate the object with the created model.
+         $this->_taskTable = $sm->get('Application\Model\TaskTable');
+      }
+      return $this->_taskTable;
+   }
+
+   // Get the project's table's entity, represented by the created model.
+   // Act as a singleton : we only can have one instance of the object.
+   private function _getProjectTable()
+   {
+      // If the object is not currencly instanciated, we do it.
+      if (!$this->_projectTable) {
+         $sm = $this->getServiceLocator();
+         // Instanciate the object with the created model.
+         $this->_projectTable = $sm->get('Application\Model\ProjectTable');
+      }
+      return $this->_projectTable;
+   }
+
    public function indexAction()
    {
+      $project = $this->_getProjectTable()->getProject($this->params('id'));
+
       return new ViewModel(array(
-            'id'       => $this->params('id'),
-            'description' => 'Description projet'
-         ));
+         'project' => $project
+      ));
    }
 
    public function taskAction()
    {
       return new ViewModel(array(
-            'id' => $this->params('id')
-         ));
+         'id' => $this->params('id')
+      ));
    }
 
    public function addTaskAction()
    {
-      return new ViewModel();
+      $request = $this->getRequest();
+
+      if($request->isPost())
+      {
+         $projectId = $this->params('id');
+         $name = $_POST["name"];
+         $description = $_POST["description"];
+         $priority = $_POST["priority"];
+         $startDate = $_POST["startDate"];
+         $deadlineDate = $_POST["deadlineDate"];
+
+         $this->_getTaskTable()->addTask($name, $description, $deadlineDate, 10, $priority, $projectId);
+      }
    }
 
    public function editTaskAction()
    {
-      return new ViewModel();
+
    }
 
    public function deleteTaskAction()
@@ -69,17 +111,17 @@ class ProjectController extends AbstractActionController
 
    public function detailsAction()
    {
-       $id = (int)$this->params('id');
-       
+     $id = (int)$this->params('id');
+
 
        // Send the success message back with JSON.
-       $result = new JsonModel(array(
-		    'success' => true,
-			'message' => $id
-       ));
+     $result = new JsonModel(array(
+      'success' => true,
+      'message' => $id
+      ));
 
-       return $result;
-   }
+     return $result;
+  }
 }
 
 

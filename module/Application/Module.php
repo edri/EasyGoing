@@ -26,6 +26,8 @@ use Application\Model\ViewProjectMin;
 use Application\Model\ViewProjectMinTable;
 use Application\Model\ProjectsUsersMembers;
 use Application\Model\ProjectsUsersMembersTable;
+use Application\Model\Task;
+use Application\Model\TaskTable;
 
 class Module
 {
@@ -103,6 +105,17 @@ class Module
                 'Application\Model\UserTable' =>  function($sm) { // Change the class' name.
                     $tableGateway = $sm->get('UserTableGateway'); // Change the gateway's name.
                     $table = new UserTable($tableGateway); // Change the instance's class name.
+                    return $table;
+                },
+                'TaskTableGateway' => function($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new User()); // Change the instance's class name.
+                    return new TableGateway('tasks', $dbAdapter, null, $resultSetPrototype); // Change the table's name (this IS the table's name in the database).
+                },
+                'Application\Model\TaskTable' =>  function($sm) { // Change the class' name.
+                    $tableGateway = $sm->get('TaskTableGateway'); // Change the gateway's name.
+                    $table = new TaskTable($tableGateway); // Change the instance's class name.
                     return $table;
                 },
                 'ProjectTableGateway' => function ($sm) {
