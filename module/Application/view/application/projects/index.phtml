@@ -46,6 +46,7 @@
             {
                 // Set new selected element properties.
                 $("#project" + id).attr("class", "projectLineSelected");
+                $("#projectLink").attr("href", "/project/" + id);
                 $("#expandArrow" + id).hide();
                 $("#collapseArrow" + id).show();
 
@@ -108,7 +109,7 @@
                 // We expect to receive back JSON as a response.
                 $.ajax({
                     type: "GET",
-                    url:  "project/" + id + "/details",
+                    url:  "/project/" + id + "/details",
                     dataType: 'json',
                     // Occurs when the AJAX request was successfully executed.
                     success: function (data)
@@ -122,7 +123,8 @@
                         }
                     },
     				error: function (XMLHttpRequest, textStatus, errorThrown) {
-    					alert("An orror occurs, please retry.");
+    					alert("An error occurs, please retry.");
+                        isSelectionChanging = false;
     				}
                  });
              }
@@ -152,12 +154,13 @@
 
 <h1 class="pageTitle">Your projects</h1>
 
+<a class="newProject" href="/projects/add">Create a new project</a>
+
 <?php
 	if (sizeof($userProjects) > 0)
 	{
 ?>
         Click on a project to see details.
-        <a class="newProject" href="/projects/add">Create a new project</a>
         <table id="tableListProjects" class="tableListProjects">
     <?php
         foreach ($userProjects as $p) :
@@ -244,7 +247,7 @@
                                         To<br/>
                                         <input type="date" name="txtBeginDate" disabled="disabled" value="2015-12-20" />
                                     </p>
-                                    <div class="linkToProject"><a href="/project/12">Click here to see your project's progression.</a></div>
+                                    <div class="linkToProject"><a id="projectLink" href="/project/">Click here to see your project's progression.</a></div>
                                 </div>
                             </div>
                         </form>
