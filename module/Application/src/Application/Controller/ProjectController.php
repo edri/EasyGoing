@@ -111,16 +111,15 @@ class ProjectController extends AbstractActionController
 
    public function detailsAction()
    {
-     $id = (int)$this->params('id');
+        $id = (int)$this->params('id');
 
+        // Send the success message back with JSON.
+        $result = new JsonModel(array(
+            'success' => true,
+            'message' => $id
+        ));
 
-       // Send the success message back with JSON.
-     $result = new JsonModel(array(
-      'success' => true,
-      'message' => $id
-      ));
-
-     return $result;
+        return $result;
   }
 }
 
