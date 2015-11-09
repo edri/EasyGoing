@@ -12,4 +12,11 @@ class ProjectTable
 	{
 		$this->tableGateway = $tableGateway;
 	}
+
+	// Add a project in the database.
+	public function saveProject($data)
+	{
+		$this->tableGateway->insert($data);
+        return $this->tableGateway->lastInsertValue;
+	}
 }

@@ -57,7 +57,7 @@ title:focus, .title:hover {
 .content {
    border-left: 1px solid black;
    border-right: 1px solid black;
-   padding: 5px 20px 50px 20px;
+   padding: 5px 30px 50px 30px;
 }
 
 .pageTitle {
@@ -84,6 +84,10 @@ title:focus, .title:hover {
 
 
 /* PROJECTS LIST */
+.newProject {
+    float: right;
+}
+
 .tableListProjects {
     margin-top: 15px;
     width: 100%;
@@ -152,11 +156,11 @@ title:focus, .title:hover {
     margin-top: 40px;
 }
 
-.projectName, .projectDescription {
+.projectName, .projectDescriptionInList {
     width: 70%;
 }
 
-.projectDescription {
+.projectDescriptionInList, .projectDescription {
     resize: none;
 }
 
@@ -176,4 +180,31 @@ title:focus, .title:hover {
 .linkToProject {
     font-weight: bold;
     margin-top: 50px;
+}
+
+/* ADD A PROJECT */
+.error {
+    margin-bottom: 50px;
+}
+
+.logoInformation {
+    font-size: 90%;
+    font-style: italic;
+    margin-left: 3px;
+}
+
+.formSending {
+    margin-top: 50px;
+}
+
+.mandatoryFields {
+    font-weight: bold;
+}
+
+.btnCreate, .btnCancel {
+    float: right;
+}
+
+.btnCancel {
+    margin-right: 10px;
 }
