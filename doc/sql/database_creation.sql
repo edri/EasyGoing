@@ -172,8 +172,6 @@ CREATE VIEW view_projects_members_specializations AS
 			ON u.id = pus.user AND pus.project = pum.project
 );
 
-
-
 /* Stored procedures and functions */
 
 
@@ -266,8 +264,6 @@ BEGIN
 		FROM tasks 
 		WHERE id = task AND parentTask <> NULL
 	);
-END $$
-DELIMITER ;
 END $$
 DELIMITER ;
 
