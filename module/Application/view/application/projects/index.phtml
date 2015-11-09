@@ -152,12 +152,13 @@
 
 <h1 class="pageTitle">Your projects</h1>
 
+<a class="newProject" href="/projects/add">Create a new project</a>
+
 <?php
 	if (sizeof($userProjects) > 0)
 	{
 ?>
         Click on a project to see details.
-        <a class="newProject" href="/projects/add">Create a new project</a>
         <table id="tableListProjects" class="tableListProjects">
     <?php
         foreach ($userProjects as $p) :
