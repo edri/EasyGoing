@@ -27,18 +27,7 @@ class UserTable
 
 		// Return true or false, depending on the given creditentials'
 		// correctness.
-<<<<<<< HEAD
-		if (!$row)
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-=======
 		return $row ? true : false;
->>>>>>> 0bcaf62840f103aafbc8fd30de9ea99c0b24e604
 	}
 	// Checks if the given e-mail address doesn't already exist in the DB.
 		public function checkIfMailExists($email)

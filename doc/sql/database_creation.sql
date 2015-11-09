@@ -146,7 +146,20 @@ CREATE TABLE usersTasksProductions
     FOREIGN KEY(task) REFERENCES tasks(id)
 );
 
+/* Views */
+
+/* This view show all the projects with all members id which are in the project */
+CREATE VIEW view_projects_min AS
+(
+	SELECT p.id, p.name, p.fileLogo, pu.user AS userId, pu.isAdmin
+	FROM projectsUsersMembers as pu
+		INNER JOIN projects AS p ON p.id = pu.project
+	ORDER BY p.name	 
+);
+
 /* Stored procedures and functions */
+
+
 
 /* This function check if a user can be affected to a task */
 USE easygoing;

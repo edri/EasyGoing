@@ -1,0 +1,76 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#projectStartDate").datetimepicker({format: 'yyyy-mm-dd'});
+        $("#projectDeadline").datetimepicker({format: 'yyyy-mm-dd'});
+    })
+</script>
+
+<h1 class="pageTitle">Create a new project</h1>
+
+<?php
+    if (isset($error))
+    {
+?>
+        <div class="panel panel-danger error">
+            <div class="panel-heading">
+                <?php echo $error; ?>
+            </div>
+        </div>
+<?php
+    }
+?>
+
+<form action="/projects/add" class="form-horizontal" method="POST" role="form">
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="name">Name *</label>
+        <div class="col-sm-10">
+            <input class="form-control" id="projectName" placeholder="Enter name"
+                   name="name" required="required" type="text"
+                   value="<?php if (isset($name)) echo $this->escapeHtml($name); ?>" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="description">Description</label>
+        <div class="col-sm-10">
+            <textarea class="form-control projectDescription" id="projectDescription" placeholder="Enter description"
+                      name="description" rows=6><?php if (isset($description)) echo $this->escapeHtml($description); ?></textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="startDate">Duration *</label>
+        <div class="col-sm-10">
+            <p>
+                From
+                <input class="form-control" id="projectStartDate" placeholder="YYYY-MM-DD"
+                       name="startDate" required="required" type="date"
+                       value="<?php if (isset($startDate)) echo $this->escapeHtml($startDate); ?>" />
+            </p>
+            <p>
+                To
+                <input class="form-control" id="projectDeadline" placeholder="YYYY-MM-DD"
+                       name="deadline" required="required" type="date"
+                       value="<?php if (isset($deadline)) echo $this->escapeHtml($deadline); ?>" />
+            </p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="logo">Logo</label>
+        <div class="col-sm-10">
+            <p class="logoInformation">Priorize a <b>squared</b> logo - Maximum size of <b>5 MB</b> - Allowed extensions: <b>"jpeg", "jpg" or "png"</b>.</p>
+            <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
+            <input id="projectLogo" name="logo" type="file" />
+        </div>
+    </div>
+
+    <div class="form-group formSending">
+        <label class="control-label col-sm-2" for="logo"></label>
+        <div class="col-sm-10">
+            <span class="mandatoryFields">* Mandatory fields</span>
+            <input class="btnCreate btn btnEasygoing" id="addProject" name="submit" type="submit" value="Create!" />
+            <button class="btnCancel btn btnEasygoing" id="cancel" name="cancelButton" onClick="location.href='/projects';">Cancel</button>
+        </div>
+    </div>
+</form>

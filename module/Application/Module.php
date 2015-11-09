@@ -22,6 +22,12 @@ use Application\Model\User;
 use Application\Model\UserTable;
 use Application\Model\Project;
 use Application\Model\ProjectTable;
+use Application\Model\ViewProjectMin;
+use Application\Model\ViewProjectMinTable;
+use Application\Model\ProjectsUsersMembers;
+use Application\Model\ProjectsUsersMembersTable;
+use Application\Model\Task;
+use Application\Model\TaskTable;
 
 class Module
 {
@@ -101,15 +107,48 @@ class Module
                     $table = new UserTable($tableGateway); // Change the instance's class name.
                     return $table;
                 },
-                'ProjectTableGateway' => function ($sm) { // Change the gateway's name.
+                'TaskTableGateway' => function($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Project()); // Change the instance's class name.
-                    return new TableGateway('projects', $dbAdapter, null, $resultSetPrototype); // Change the table's name (this IS the table's name in the database).
+                    $resultSetPrototype->setArrayObjectPrototype(new User()); // Change the instance's class name.
+                    return new TableGateway('tasks', $dbAdapter, null, $resultSetPrototype); // Change the table's name (this IS the table's name in the database).
                 },
-                'Application\Model\ProjectTable' =>  function($sm) { // Change the class' name.
-                    $tableGateway = $sm->get('ProjectTableGateway'); // Change the gateway's name.
-                    $table = new ProjectTable($tableGateway); // Change the instance's class name.
+                'Application\Model\TaskTable' =>  function($sm) { // Change the class' name.
+                    $tableGateway = $sm->get('TaskTableGateway'); // Change the gateway's name.
+                    $table = new TaskTable($tableGateway); // Change the instance's class name.
+                    return $table;
+                },
+                'ProjectTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Project());
+                    return new TableGateway('projects', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ProjectTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ProjectTableGateway');
+                    $table = new ProjectTable($tableGateway);
+                    return $table;
+                },
+                'ViewProjectMinTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ViewProjectMin());
+                    return new TableGateway('view_projects_min', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ViewProjectMinTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ViewProjectMinTableGateway');
+                    $table = new ViewProjectMinTable($tableGateway);
+                    return $table;
+                },
+                'ProjectsUsersMembersTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ProjectsUsersMembers());
+                    return new TableGateway('projectsUsersMembers', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ProjectsUsersMembersTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ProjectsUsersMembersTableGateway');
+                    $table = new ProjectsUsersMembersTable($tableGateway);
                     return $table;
                 },
 				// Configure the session service.
