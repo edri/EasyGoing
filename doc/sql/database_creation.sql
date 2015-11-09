@@ -149,6 +149,8 @@ CREATE TABLE usersTasksProductions
 /* Views */
 
 /* This view show all the projects with all members id which are in the project */
+DROP VIEW IF EXISTS view_projects_min;
+
 CREATE VIEW view_projects_min AS
 (
 	SELECT p.id, p.name, p.fileLogo, pu.user AS userId, pu.isAdmin
@@ -156,6 +158,21 @@ CREATE VIEW view_projects_min AS
 		INNER JOIN projects AS p ON p.id = pu.project
 	ORDER BY p.name	 
 );
+
+/* This view show all the members of a project and theirs specializations in the same project */
+DROP VIEW IF EXISTS view_projects_members_specializations;
+
+CREATE VIEW view_projects_members_specializations AS
+(
+	SELECT pum.project, u.username, pus.specialization, pum.isAdmin
+	FROM projectsusersmembers AS pum 
+		INNER JOIN users AS u 
+			ON u.id = pum.user
+		LEFT JOIN projectsusersspecializations AS pus 
+			ON u.id = pus.user AND pus.project = pum.project
+);
+
+
 
 /* Stored procedures and functions */
 
