@@ -17,11 +17,10 @@ use Zend\View\Model\ViewModel;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
 
-<<<<<<< HEAD
-// Default controller ; will be calling when the user access the "mySite.com/" page.
-=======
+
+
 // Default controller ; will be calling when the user access the "easygoing/" page.
->>>>>>> 49ff2a95b019b4d3a3f67d9c263755eaa2b40fa5
+
 // Be careful about the class' name, which must be the same as the file's name.
 class UserController extends AbstractActionController
 {
@@ -40,17 +39,9 @@ class UserController extends AbstractActionController
 		}
 		return $this->userTable;
 	}
-<<<<<<< HEAD
 	private function hashPassword(String $password){
 			return hash ( "sha256" , $password, false );
 		}
-=======
-
-	private function hashPassword(String $password)
-	{
-		return hash ("sha256" , $password, false);
-	}
->>>>>>> 49ff2a95b019b4d3a3f67d9c263755eaa2b40fa5
 
 	// Default action of the controller.
 	// In normal case, it will be calling when the user access the "easygoing/myController/" page,
@@ -67,7 +58,7 @@ class UserController extends AbstractActionController
 	public function registrationAction()
 	{
 		// For linking the right action's view
-<<<<<<< HEAD
+
 
 			$request = $this->getRequest();
 			if ($request->isPost()) {
@@ -83,7 +74,7 @@ class UserController extends AbstractActionController
 
 					// Checks the fields.
 					if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
-=======
+
 		$request = $this->getRequest();
 
 		if ($request->isPost()) {
@@ -101,7 +92,7 @@ class UserController extends AbstractActionController
 				{
 					// The two passwords must match.
 					if ($password1 == $password2)
->>>>>>> 49ff2a95b019b4d3a3f67d9c263755eaa2b40fa5
+
 					{
 						// The mail address must be valid.
 						if (filter_var($email, FILTER_VALIDATE_EMAIL))
@@ -120,7 +111,7 @@ class UserController extends AbstractActionController
 							}
 					}
 					else
-<<<<<<< HEAD
+
 						$result	= 'errorFieldEmpty';
 
 
@@ -138,7 +129,7 @@ class UserController extends AbstractActionController
 					));
 
 	}
-=======
+
 						$result	= 'errorPasswordsDontMatch';
 				}
 				else
@@ -156,7 +147,7 @@ class UserController extends AbstractActionController
 					'lName'				=> $lname,
 				));
 		}
->>>>>>> 49ff2a95b019b4d3a3f67d9c263755eaa2b40fa5
+
 	}
 
 	public function logoutAction()
@@ -178,18 +169,11 @@ class UserController extends AbstractActionController
 		return new ViewModel();
 	}
 
-<<<<<<< HEAD
-public function cancelAction()
-{
-		$this->redirect()->toRoute('/');
-}
 
-
-}
-=======
 	public function cancelAction()
 	{
-		$this->redirect()->toRoute('/registration');
+			$this->redirect()->toRoute('/');
 	}
+
+
 }
->>>>>>> 49ff2a95b019b4d3a3f67d9c263755eaa2b40fa5
