@@ -29,7 +29,7 @@ class UserController extends AbstractActionController
 
 	// Get the user's table's entity, represented by the created model.
 	// Act as a singleton : we only can have one instance of the object.
-	private function getUserTable()
+	private function _getUserTable()
 	{
 		// If the object is not currencly instanciated, we do it.
 		if (!$this->userTable) {
@@ -39,21 +39,37 @@ class UserController extends AbstractActionController
 		}
 		return $this->userTable;
 	}
-	private function hashPassword(String $password){
+	private function _hashPassword($password){
 			return hash ( "sha256" , $password, false );
-		}
+	}
 
 	// Default action of the controller.
 	// In normal case, it will be calling when the user access the "easygoing/myController/" page,
 	// but here we are in the default controller so the page will be "easygoing/".
 	public function indexAction()
 	{
-		$test = $this->getUserTable()->checkCreditentials("raphaelracine", "d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1") ? "OUIIII" : "NON !";
-
+		$request = $this->getRequest();
+		if ($request->isPost()) 
+		{
+			$username = $_POST["username"];
+			$password = $_POST["password"];			
+			$hashPassword = $this->_hashPassword($password);			
+			//carefull, 2nd parameter has to be hashpassword. It's password for test purpose
+			$isAuthenticated = $this->_getUserTable()->checkCreditentials($username,$password);			
+			if($isAuthenticated)
+			{
+				//go To projects
+				echo "isAuthenticated";
+				//$this->redirect()->toRoute('/projects');
+			}
+			else
+			{
+				//stay here and display message
+				echo "isNotAuthenticated";
+			}	
+		}	
 		// For linking the right action's view.
-		return new ViewModel(array(
-			'test'	=>	$test
-		));
+		return new ViewModel();
 	}
 	public function registrationAction()
 	{
@@ -98,9 +114,9 @@ class UserController extends AbstractActionController
 						if (filter_var($email, FILTER_VALIDATE_EMAIL))
 						{
 							//the email must not already exist
-							if(!$this->getUserTable()->checkIfMailExists($email)){
+							if(!$this->_getUserTable()->checkIfMailExists($email)){
 								//then we allow the registration
-										$userId = $this->getUserTable()->addUser($username, $this->hashPassword($password1),
+										$userId = $this->_getUserTable()->addUser($username, $this->_hashPassword($password1),
 									  $fname, $lname, $email, $picture);
 							}
 							else
