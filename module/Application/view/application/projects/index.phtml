@@ -108,7 +108,7 @@
                 // We expect to receive back JSON as a response.
                 $.ajax({
                     type: "GET",
-                    url:  "project/" + id + "/details",
+                    url:  "/project/" + id + "/details",
                     dataType: 'json',
                     // Occurs when the AJAX request was successfully executed.
                     success: function (data)
@@ -122,7 +122,8 @@
                         }
                     },
     				error: function (XMLHttpRequest, textStatus, errorThrown) {
-    					alert("An orror occurs, please retry.");
+    					alert("An error occurs, please retry.");
+                        isSelectionChanging = false;
     				}
                  });
              }
