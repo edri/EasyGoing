@@ -27,6 +27,7 @@ CREATE TABLE users
     wantTutorial BOOLEAN NOT NULL DEFAULT TRUE,
     wantNotifications BOOLEAN NOT NULL DEFAULT TRUE,
     UNIQUE(email),
+	UNIQUE(username),
     PRIMARY KEY(id)
 );
 
@@ -441,6 +442,54 @@ VALUES(
 	"vanessa.jpg",
 	true, true
 );
+
+SELECT id INTO @user1
+FROM users
+WHERE username = 'raphaelracine';
+
+SELECT id INTO @user2
+FROM users
+WHERE username = 'karimghozlani';
+
+SELECT id INTO @user3
+FROM users
+WHERE username = 'miguelsantamaria';
+
+SELECT id INTO @user4
+FROM users
+WHERE username = 'thibaudduchoud';
+
+SELECT id INTO @user5
+FROM users
+WHERE username = 'vanessameguep';
+
+/* Create some projects */
+INSERT INTO projects VALUES(
+	null,
+	'Travail de Bachelor',
+	'Un projet difficile... Mais intéressant !',
+	'2015-01-26',
+	'2016-10-04',
+	null
+);
+
+SELECT id INTO @project1
+FROM projects
+WHERE name = 'Travail de Bachelor';
+
+INSERT INTO projects VALUES(
+	null,
+	'TWEB Liechti Moustache Project',
+	'Description is too long and unuseful...',
+	'2015-03-06',
+	null,
+	null
+);
+
+SELECT id INTO @project2
+FROM projects
+WHERE name = 'TWEB Liechti Moustache Project';
+
 
 SET GLOBAL log_bin_trust_function_creators = 0; 
 
