@@ -1,0 +1,260 @@
+<script type="text/javascript">
+<!--
+    var currentSelected;
+    var isSelectionChanging = false;
+    var isAjaxRequestComplete = false;
+
+    // Show the expand arrow image on an element identified by the given ID.
+    function showExpandArrow(id)
+    {
+        if (currentSelected != id)
+        {
+            $("#expandArrow" + id).show();
+        }
+    }
+
+    // Hide the expand arrow image on an element identified by the given ID.
+    function hideExpandArrow(id)
+    {
+        if (currentSelected != id)
+        {
+            $("#expandArrow" + id).hide();
+        }
+    }
+
+    // Expend or collapse the project identified by the given ID.
+    // We can expect a few cases :
+    //    1. If the function is currently executed, when just exit it.
+    //    2. If the given ID corresponds to the currently selected project, we
+    //       collapse it and then exit.
+    //    2. If no other project is currently selected, we just slide down the
+    //       project's properties.
+    //    3. If another project is currently selected, we slide it up as the
+    //       time that we are sliding down the new selected one.
+    function expandProject(id)
+    {
+        // If there was no AJAX request before the calling, when just exit.
+        if (isAjaxRequestComplete)
+        {
+            // Reset previous selected element.
+            $("#project" + currentSelected).attr("class", "projectLine");
+            $("#collapseArrow" + currentSelected).hide();
+
+            // Check if the given ID is not corresponding to the current selected
+            // project.
+            if (currentSelected != id)
+            {
+                // Set new selected element properties.
+                $("#project" + id).attr("class", "projectLineSelected");
+                $("#expandArrow" + id).hide();
+                $("#collapseArrow" + id).show();
+
+                // If another project is currently selected, we slide it up.
+                // We use a "trick" to slide it up the old selected project as
+                // the same time as we're sliding down the new selected one : we
+                // clone the old object to allowing the two elements to be
+                // displayed at the same time.
+                if (currentSelected)
+                {
+                    // First rename the old selected element.
+                    $("#projectDetails").attr("id", "oldProjectDetails");
+                    // Then clone it and move the new clone right after the
+                    // selected projects' table's row.
+                    $("#project" + id).after($("#oldProjectDetails").clone().attr("id", "projectDetails").hide());
+
+                    // Slide up the old element and remove it definitly when the
+                    // action finish.
+                    $("#oldProjectDetails #divProjectDetails").slideUp("fast", function() {
+                        $("#oldProjectDetails").remove();
+                        // Indicate the system that the function finished.
+                        isSelectionChanging = false;
+                        isAjaxRequestComplete = false;
+                    });
+                }
+
+                currentSelected = id;
+
+                // Move the details row right after the selected projects'
+                // table's row and then slide it down.
+                $("#project" + id).after($("#projectDetails"));
+                $("#projectDetails").show();
+                $("#divProjectDetails").slideDown("fast", function() {
+                    // Indicate the system that the function finished.
+                    isSelectionChanging = false;
+                    isAjaxRequestComplete = false;
+                });
+            }
+        }
+    }
+
+    // Load the given project's details with AJAX, and send them to the "expandProject"
+    // function.
+    function loadProjectDetails(id)
+    {
+        // If the function is currently executed, when just exit it.
+        if (!isSelectionChanging)
+        {
+            // If the user just want to collapse the expanded selected project,
+            // We don't want to make an AJAX request.
+            if (currentSelected != id)
+            {
+                // Indicate the system that this function is currently executed. In
+                // other words, we are indicating that we are in a critical section,
+                // because we cannot have to projects which are loadind simultaneously.
+                isSelectionChanging = true;
+
+                // Make an AJAX GET request to the ProjectsController to get back
+                // all selected project information.
+                // We expect to receive back JSON as a response.
+                $.ajax({
+                    type: "GET",
+                    url:  "project/" + id + "/details",
+                    dataType: 'json',
+                    // Occurs when the AJAX request was successfully executed.
+                    success: function (data)
+                    {
+                        // In case of success, we send back the data to the expandProject()
+                        // function.
+                        if(data.success)
+                        {
+                            isAjaxRequestComplete = true;
+                            expandProject(id);
+                        }
+                    },
+    				error: function (XMLHttpRequest, textStatus, errorThrown) {
+    					alert("An orror occurs, please retry.");
+    				}
+                 });
+             }
+             // If the user clicked to the currently selected project, we
+             // just slide it up.
+             else
+             {
+                 isSelectionChanging = true;
+
+                 // Reset previous selected element.
+                 $("#project" + currentSelected).attr("class", "projectLine");
+                 $("#collapseArrow" + currentSelected).hide();
+
+                 $("#expandArrow" + currentSelected).show();
+                 currentSelected = undefined;
+
+                 $("#divProjectDetails").slideUp("fast", function() {
+                     $("#projectDetails").hide();
+                     // Indicate the system that the function finished.
+                     isSelectionChanging = false;
+                 });
+             }
+         }
+    }
+-->
+</script>
+
+<h1 class="pageTitle">Your projects</h1>
+
+<?php
+	if (sizeof($userProjects) > 0)
+	{
+?>
+        Click on a project to see details.
+        <table id="tableListProjects" class="tableListProjects">
+    <?php
+        foreach ($userProjects as $p) :
+    ?>
+            <tr name="projectLine" id="project<?php echo $p->id; ?>" class="projectLine"
+                onMouseOver="showExpandArrow(<?php echo $p->id; ?>);"
+                onMouseOut="hideExpandArrow(<?php echo $p->id; ?>);"
+                onClick="loadProjectDetails(<?php echo $p->id; ?>);">
+                <td class="projectTitle">
+                    <img src="<?php echo $this->basePath('img/projects/' . $p->fileLogo); ?>"
+                         alt="<?php echo $this->escapeHtml($p->name); ?>" height=50 width=50
+                         class="imgProject" />
+                    <?php echo $this->escapeHtml($p->name); ?>
+                </td>
+                <td class="expandArrow">
+                    <img id="expandArrow<?php echo $p->id; ?>"
+                         src="<?php echo $this->basePath('img/expand.png'); ?>"
+                         alt="Expand project <?php echo $this->escapeHtml($p->name); ?>"
+                         height=50 />
+                    <img id="collapseArrow<?php echo $p->id; ?>"
+                         src="<?php echo $this->basePath('img/collapse.png'); ?>"
+                         alt="Collapse project <?php echo $this->escapeHtml($p->name); ?>"
+                            height=50 />
+                </td>
+                <td class="managerTd"><?php if ($p->isAdmin) echo "Manager"; ?></td>
+            </tr>
+    <?php
+        endforeach;
+    ?>
+            <tr id="projectDetails" class="projectDetails">
+                <td colspan=3>
+                    <div id="divProjectDetails" class="divProjectDetails">
+                        <form role="form" class="form-horizontal">
+                            <div class="form-group formProjectDetails">
+                                <label class="control-label col-sm-2" for="name">Full name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="projectName" name="name" value="Gary Gary Gary Gary Gary Gary Gary Gary Gary Gary Gary !" disabled="disabled" />
+                                </div>
+                            </div>
+
+                            <div class="form-group formProjectDetails">
+                                <label class="control-label col-sm-2" for="description">Description</label>
+                                <div class="col-sm-10">
+                                    <textarea id="txtDescription" name="description" class="form-control projectDescription" disabled="disabled" rows=6>Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ...
+                                    </textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group formProjectDetails">
+                                <label class="control-label col-sm-2" for="members">Members</label>
+                                <div class="col-sm-10">
+                                    <table name="members" class="membersTable">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Specialization</th>
+                                            <th>Manager</th>
+                                        </tr>
+                                        <tr>
+                                            <td>miguelsantamaria</td>
+                                            <td>Design</td>
+                                            <td class="checkboxManager">
+                                                <input type="checkbox" name="chkManager" value="Manager" disabled="disabled">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>raphaelracine</td>
+                                            <td>Database</td>
+                                            <td class="checkboxManager">
+                                                <input type="checkbox" name="chkManager" value="Manager" disabled="disabled" checked="checked">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="form-group formProjectDetails">
+                                <label class="control-label col-sm-2" for="duration">Duration</label>
+                                <div class="col-sm-10">
+                                    <p>
+                                        From<br/>
+                                        <input type="date" name="txtBeginDate" disabled="disabled" value="2015-10-10" />
+                                    </p>
+                                    <p>
+                                        To<br/>
+                                        <input type="date" name="txtBeginDate" disabled="disabled" value="2015-12-20" />
+                                    </p>
+                                    <div class="linkToProject"><a href="/project/12">Click here to see your project's progression.</a></div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </table>
+<?php
+    }
+    else
+    {
+        echo "You are not member of a project yet.";
+    }
+ ?>

@@ -1,7 +1,7 @@
 <?php
 namespace Application\Model;
 
-// This class contains all data of an user's entity.
+// This class contains all data of a project's entity.
 class Project
 {
 	public $id;

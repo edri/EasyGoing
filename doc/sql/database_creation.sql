@@ -12,6 +12,9 @@ CREATE SCHEMA easygoing;
 /* Creation of tables */
 USE easygoing;
 
+/* To avoid error 1418 while creating functions and procedures */
+SET GLOBAL log_bin_trust_function_creators = 1; 
+
 CREATE TABLE users
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -115,7 +118,7 @@ CREATE TABLE projectsUsersMembers
     FOREIGN KEY(project) REFERENCES projects(id)
 );
 
-CREATE TABLE projectsUsersSpecifications
+CREATE TABLE projectsUsersSpecializations
 (
     user INT NOT NULL,
     project INT NOT NULL,
@@ -142,6 +145,229 @@ CREATE TABLE usersTasksProductions
     FOREIGN KEY(user) REFERENCES users(id),
     FOREIGN KEY(task) REFERENCES tasks(id)
 );
+
+/* Views */
+
+/* This view show all the projects with all members id which are in the project */
+CREATE VIEW view_projects_min AS
+(
+	  SELECT p.id, p.name, p.fileLogo, pu.user AS userId, pu.isAdmin
+	  FROM projectsUsersMembers as pu
+		INNER JOIN projects AS p ON p.id = pu.project
+);
+
+/* Stored procedures and functions */
+
+/* This function check if a user can be affected to a task */
+USE easygoing;
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS checkUserCanBeAffectedToTask $$
+
+CREATE FUNCTION checkUserCanBeAffectedToTask
+(
+	task INT,
+	user INT
+)
+RETURNS BOOLEAN
+BEGIN
+	RETURN NOT EXISTS
+	(
+		SELECT t.project 
+		FROM tasks AS t
+		WHERE t.id = task AND t.project IN
+		(
+			SELECT pum.project
+			FROM projectsUsersMembers AS pum
+			WHERE pum.user = user
+		)
+	);
+END $$
+DELIMITER;
+
+/* This function check if a user can produce in a task */
+USE easygoing;
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS checkUserCanProduceInTask $$
+
+CREATE FUNCTION checkUserCanProduceInTask
+(
+	task INT,
+	user INT
+)
+RETURNS BOOLEAN
+BEGIN
+	RETURN EXISTS
+	(
+		SELECT * 
+		FROM usersTasksAffectations AS uta 
+		WHERE uta.task = task 
+			AND uta.user = user
+	);
+END $$
+DELIMITER;
+
+/* This function check if a user can login or not */
+USE easygoing;
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS checkLogin $$
+
+CREATE FUNCTION checkLogin
+(
+	username VARCHAR(30),
+	hashedPassword VARCHAR(64)
+)
+RETURNS BOOLEAN
+BEGIN
+	RETURN EXISTS(
+		SELECT * 
+		FROM users AS u 
+		WHERE u.username = username AND u.hashedPassword = hashedPassword
+	);
+END $$
+DELIMITER ;
+
+/* This function check if a task have a parent task */
+USE easygoing;
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS taskHasParent $$
+
+CREATE FUNCTION taskHasParent
+(
+	task INT
+)
+RETURNS BOOLEAN
+BEGIN
+	RETURN EXISTS(
+		SELECT parentTask 
+		FROM tasks 
+		WHERE id = task AND parentTask <> NULL
+	);
+END $$
+DELIMITER ;
+END $$
+DELIMITER ;
+
+/* TRIGGERS */
+USE easygoing;
+DROP TRIGGER IF EXISTS usersTasksAffectationsBeforeInsert;
+
+DELIMITER $$
+USE easygoing $$
+
+CREATE TRIGGER usersTasksAffectationsBeforeInsert
+BEFORE INSERT ON usersTasksAffectations
+FOR EACH ROW
+BEGIN
+		
+	IF checkUserCanBeAffectedToTask(NEW.task, NEW.user) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Impossible to affect this task at this user. He is not a member of the project where the task is";
+	END IF;
+	
+END $$
+
+DELIMITER ;
+
+USE easygoing;
+DROP TRIGGER IF EXISTS usersTasksAffectationsBeforeUpdate
+
+DELIMITER $$
+USE easygoing $$
+
+CREATE TRIGGER usersTasksAffectationsBeforeUpdate
+BEFORE UPDATE ON usersTasksAffectations
+FOR EACH ROW
+BEGIN
+		
+	IF checkUserCanBeAffectedToTask(NEW.task, NEW.user) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Impossible to affect this task at this user. He is not a member of the project where the task is";
+	END IF;
+	
+END $$
+
+DELIMITER ;
+
+USE easygoing;
+DROP TRIGGER IF EXISTS usersTasksProductionsBeforeInsert
+
+DELIMITER $$
+USE easygoing $$
+
+CREATE TRIGGER usersTasksProductionsBeforeInsert
+BEFORE INSERT ON usersTasksProductions
+FOR EACH ROW
+BEGIN
+
+	IF NOT checkUserCanProduceInTask(NEW.task, NEW.user) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "User is not affected at this task";
+	END IF;
+	
+END $$
+
+DELIMITER ;
+
+USE easygoing;
+DROP TRIGGER IF EXISTS usersTasksProductionsBeforeUpdate
+
+DELIMITER $$
+USE easygoing $$
+
+CREATE TRIGGER usersTasksProductionsBeforeUpdate
+BEFORE UPDATE ON usersTasksProductions
+FOR EACH ROW
+BEGIN
+
+	IF NOT checkUserCanProduceInTask(NEW.task, NEW.user) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "User is not affected at this task";
+	END IF;
+	
+END $$
+
+DELIMITER ;
+
+USE easygoing;
+DROP TRIGGER IF EXISTS tasksBeforeInsert
+
+DELIMITER $$
+USE easygoing $$
+
+CREATE TRIGGER tasksBeforeInsert
+BEFORE INSERT ON tasks
+FOR EACH ROW
+BEGIN
+
+	IF taskHasParent(NEW.parentTask) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "The parent_task has a parent.";
+	END IF;
+	
+END $$
+
+DELIMITER ;
+USE easygoing;
+DROP TRIGGER IF EXISTS tasksBeforeUpdate
+
+DELIMITER $$
+USE easygoing $$
+
+CREATE TRIGGER tasksBeforeUpdate
+BEFORE UPDATE ON tasks
+FOR EACH ROW
+BEGIN
+
+	IF taskHasParent(NEW.parentTask) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "The parent_task has a parent.";
+	END IF;
+	
+END $$
+
+DELIMITER ;
+
+
+
+
 
 /* Insert some data */
 INSERT INTO users
@@ -204,26 +430,11 @@ VALUES(
 	true, true
 );
 
-/* Stored procedures and functions */
-USE easygoing;
+SET GLOBAL log_bin_trust_function_creators = 0; 
 
-DELIMITER $$
-DROP FUNCTION IF EXISTS checkLogin $$
 
-/* This function check if a user can login or not */
-CREATE FUNCTION checkLogin
-(
-	username VARCHAR(30),
-	hashedPassword VARCHAR(64)
-)
-RETURNS BOOLEAN
-BEGIN
-	RETURN EXISTS(
-		SELECT * 
-		FROM users AS u 
-		WHERE u.username = username AND u.hashedPassword = hashedPassword
-	);
-END $$
-DELIMITER ;
+
+
+
 
 
