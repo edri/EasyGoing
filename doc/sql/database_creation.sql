@@ -368,10 +368,6 @@ END $$
 
 DELIMITER ;
 
-
-
-
-
 /* Insert some data */
 INSERT INTO users
 VALUES(
