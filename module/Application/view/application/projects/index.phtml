@@ -46,6 +46,7 @@
             {
                 // Set new selected element properties.
                 $("#project" + id).attr("class", "projectLineSelected");
+                $("#projectLink").attr("href", "/project/" + id);
                 $("#expandArrow" + id).hide();
                 $("#collapseArrow" + id).show();
 
@@ -246,7 +247,7 @@
                                         To<br/>
                                         <input type="date" name="txtBeginDate" disabled="disabled" value="2015-12-20" />
                                     </p>
-                                    <div class="linkToProject"><a href="/project/12">Click here to see your project's progression.</a></div>
+                                    <div class="linkToProject"><a id="projectLink" href="/project/">Click here to see your project's progression.</a></div>
                                 </div>
                             </div>
                         </form>
