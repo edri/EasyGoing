@@ -1,65 +1,9 @@
 <h1>Dashboard - <?php echo $project->name; ?></h1>
 <p>Description : <?php echo $project->description; ?></p>
 <p>Durée : du <?php echo $project->startDate . ' au ' . $project->deadLineDate; ?></p>
-<a href="addTask">Ajouter une tâche</a> -
-<a href="addMember">Ajouter un membre</a>
-<br><hr><br>
-<style>
-  .board {
-      display: table;
-      margin: 0;
-      padding: 0;
-      border-spacing: 5px;
-  }
-  .section {
-      display: table-cell;
-      margin: 0;
-      border: 1px solid #666;
-      padding: 5px;
-      width: 300px;
-  }
-  .section.droppable {
-      border: 1px dashed #666;
-  }
-  .section > h1 {
-      margin: 0;
-      border-bottom: 1px solid #999;
-      padding: 0;
-      font-size: 12pt;
-      text-align: center;
-  }
-  .users {
-      width: 180px;
-  }
-  .card {
-      display: inline-block;
-      vertical-align: top;
-      margin: 10px 5px;
-      padding: 10px;
-      width: 100px;
-      height: 100px;
-      color: black;
-      background: #ff8;
-      cursor: move;
-      text-align: center;
-      font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-      box-shadow: 2px 2px 2px #eee;
-  }
-
-  .user {
-      display: inline-block;
-      vertical-align: top;
-      margin: 10px 5px;
-      padding: 10px;
-      width: 100px;
-      height: 40px;
-      color: black;
-      background: #aaa;
-      text-align: center;
-      font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-      box-shadow: 2px 2px 2px #eee;
-  }
-</style>
+<a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a> -
+<a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
+<br><br><hr><br>
 
 <div class="board">
    <div class="users section">
@@ -68,11 +12,17 @@
   </div>
   <div class="todo section">
       <h1>To Do</h1>
-      <div id="c2" class="card">Make Killer App</div>
+      <?php
+         $i = 1;
+         foreach ($tasks as $task) 
+         {
+            echo '<div id="c'.$i.'" class="card">'.$task->name.'</div>';
+            $i++;
+         }
+      ?>
   </div>
   <div class="doing section">
       <h1>Doing</h1>
-      <div id="c1" class="card">Learn HTML5</div>
   </div>
   <div class="done section">
       <h1>Done</h1>
@@ -81,19 +31,39 @@
 
 <div class="board">
    <div class="users section">
-   <div class="user" draggable="false">Miguel</div>
+      <div class="user" draggable="false">Miguel</div>
   </div>
   <div class="todo section">
-  <div id="c3" class="card"><em>Retire!</em></div>
   </div>
   <div class="doing section">
-  </div>
+      </div>
   <div class="done section">
-  <div id="c3" class="card"><b>Design</b></div>
   </div>
 </div>
+<br>
 
-
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-md-6">
+         <div class="panel panel-default">
+            <div class="panel-heading">Tasks</div>
+            <div class="panel-body">
+            <?php foreach ($tasks as $task) : ?>
+               <p><?php echo $task->name; ?></p>
+            <?php endforeach; ?>
+            </div>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="panel panel-default">
+            <div class="panel-heading">Members</div>
+            <div class="panel-body">
+            
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
 
 <script>
   var cards = document.querySelectorAll('.card');
@@ -169,7 +139,7 @@
         }
         section.classList.remove('droppable');
         e.preventDefault();
-     };
+      };
   }
 
   function closestWithClass(target, className) {
@@ -182,5 +152,6 @@
      }
      return null;
   }
+
+  $('.users').removeClass('droppable');
 </script>
-<br><br>

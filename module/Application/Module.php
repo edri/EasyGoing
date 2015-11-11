@@ -124,7 +124,7 @@ class Module
                 'TaskTableGateway' => function($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new User()); // Change the instance's class name.
+                    $resultSetPrototype->setArrayObjectPrototype(new Task()); // Change the instance's class name.
                     return new TableGateway('tasks', $dbAdapter, null, $resultSetPrototype); // Change the table's name (this IS the table's name in the database).
                 },
                 'Application\Model\TaskTable' =>  function($sm) { // Change the class' name.

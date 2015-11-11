@@ -68,12 +68,15 @@ class ProjectController extends AbstractActionController
    public function indexAction()
    {
       $project = $this->_getProjectTable()->getProject($this->params('id'));
+      $tasks = $this->_getTaskTable()->getAllTasksInProject($this->params('id'));
+
 
       if(empty($project))
          $this->redirect()->toRoute('projects');
 
       return new ViewModel(array(
-         'project' => $project
+         'project' => $project,
+         'tasks'   => $tasks
       ));
    }
 

@@ -1,11 +1,24 @@
 <h1>Add member to your project</h1>
+<br>
 <div class="input-group">
    <input type="text" class="form-control" placeholder="Search for ..." aria-describedby="basic-addon1">
-   <div class="panel panel-default">
-      <ul>
-      <?php foreach ($users as $user) : ?>
-         <p><?php echo $user->username; ?></p>
-      <?php endforeach; ?>
-      </ul>
-   </div>
 </div>
+
+<br>
+<hr>
+<div class="container-fluid">
+ <div class="row">
+    <?php foreach ($users as $user) : ?>
+
+       <div class="col-md-5 panel panel-default" style="margin: 10px; padding: 10px">
+          <img src="<?php echo $this->basePath('img/users/' . $user->filePhoto); ?>"
+                             alt="<?php echo $this->escapeHtml($user->username); ?>" height=50 width=50
+                             class="imgProject" />
+          <?php echo $user->firstName . ' ' . $user->lastName . ' (' . $user->username . ')'; ?>
+          <input type="checkbox" style="float: right;">
+       </div>
+
+    <?php endforeach; ?>
+ </div>
+</div>
+
