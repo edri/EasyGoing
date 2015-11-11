@@ -11,6 +11,11 @@ a:hover {
     color: #4E2E18;
 }
 
+.form-control:focus {
+    border-color: #995527;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(153, 85, 39, 0.6);
+}
+
 /* HEADER BAR */
 .header {
    background-color: #232323;
@@ -70,6 +75,11 @@ title:focus, .title:hover {
     background-color: #e5ac86;
     border: 1px solid #5a2706;
     color: #5a2706;
+}
+
+.btnEasygoing:hover {
+    background-color: #995527;
+    color: #fcd1b5;
 }
 
 .btnLogout {
