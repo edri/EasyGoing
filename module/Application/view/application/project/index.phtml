@@ -1,0 +1,165 @@
+<h1>Dashboard - <?php echo $project->name; ?></h1>
+<p>Description : <?php echo $project->description; ?></p>
+<p>Durée : du <?php echo $project->startDate . ' au ' . $project->deadLineDate; ?></p>
+<a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a> -
+<a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
+<br><br><hr><br>
+
+<div class="board">
+   <div class="users section">
+      <h1>Users</h1>
+      <div class="user" draggable="false">Thibaud</div>
+  </div>
+  <div class="todo section">
+      <h1>To Do</h1>
+      <?php
+         $i = 1;
+         foreach ($tasks as $task) 
+         {
+            echo '<div id="c'.$i.'" class="card">'.$task->name.'</div>';
+            $i++;
+         }
+      ?>
+  </div>
+  <div class="doing section">
+      <h1>Doing</h1>
+  </div>
+  <div class="done section">
+      <h1>Done</h1>
+  </div>
+</div>
+
+<div class="board">
+   <div class="users section">
+      <div class="user" draggable="false">Miguel</div>
+  </div>
+  <div class="todo section">
+  </div>
+  <div class="doing section">
+      </div>
+  <div class="done section">
+<<<<<<< HEAD
+=======
+  <div id="c4" class="card"><b>Design</b></div>
+>>>>>>> f3ea10168350f6fbebd9c87c9a346515a78a11a0
+  </div>
+</div>
+<br>
+
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-md-6">
+         <div class="panel panel-default">
+            <div class="panel-heading">Tasks</div>
+            <div class="panel-body">
+            <?php foreach ($tasks as $task) : ?>
+               <p><?php echo $task->name; ?></p>
+            <?php endforeach; ?>
+            </div>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="panel panel-default">
+            <div class="panel-heading">Members</div>
+            <div class="panel-body">
+            
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+<script>
+  var cards = document.querySelectorAll('.card');
+  for (var i = 0, n = cards.length; i < n; i++) {
+     var card = cards[i];
+     card.draggable = true;
+  };
+  var board = document.getElementsByClassName('board');
+  var hideMe;
+  for (var i in board) {
+     board[i].onselectstart = function(e) {
+        e.preventDefault();
+     }
+     board[i].ondragstart = function(e) {
+        console.log('dragstart');
+        hideMe = e.target;
+        e.dataTransfer.setData('card', e.target.id);
+        e.dataTransfer.effectAllowed = 'move';
+     };
+     board[i].ondragend = function(e) {
+        e.target.style.visibility = 'visible';
+     };
+     var lastEneterd;
+     board[i].ondragenter = function(e) {
+        console.log('dragenter');
+        if (hideMe) {
+           hideMe.style.visibility = 'hidden';
+           hideMe = null;
+        }
+        // Save this to check in dragleave.
+        lastEntered = e.target;
+        var section = closestWithClass(e.target, 'section');
+        // TODO: Check that it's not the original section.
+        if (section) {
+           section.classList.add('droppable');
+           e.preventDefault(); // Not sure if these needs to be here. Maybe for IE?
+           return false;
+        }
+     };
+     board[i].ondragover = function(e) {
+        // TODO: Check data type.
+        // TODO: Check that it's not the original section.
+        if (closestWithClass(e.target, 'section')) {
+           e.preventDefault();
+        }
+     };
+     board[i].ondragleave = function(e) {
+        // FF is raising this event on text nodes so only check elements.
+        if (e.target.nodeType === 1) {
+           // dragleave for outer elements can trigger after dragenter for inner elements
+           // so make sure we're really leaving by checking what we just entered.
+           // relatedTarget is missing in WebKit: https://bugs.webkit.org/show_bug.cgi?id=66547
+           var section = closestWithClass(e.target, 'section');
+           if (section && !section.contains(lastEntered)) {
+              section.classList.remove('droppable');
+           }
+        }
+        lastEntered = null; // No need to keep this around.
+     };
+     board[i].ondrop = function(e) {
+        var section = closestWithClass(e.target, 'section');
+        var id = e.dataTransfer.getData('card');
+        if (id) {
+           var card = document.getElementById(id);
+           // Might be a card from another window.
+           if (card) {
+              if (section !== card.parentNode) {
+                 section.appendChild(card);
+              }
+           } else {
+              alert('couldn\'t find card #' + id);
+           }
+        }
+        section.classList.remove('droppable');
+        e.preventDefault();
+      };
+  }
+
+  function closestWithClass(target, className) {
+     while (target) {
+        if (target.nodeType === 1 &&
+           target.classList.contains(className)) {
+           return target;
+        }
+        target = target.parentNode;
+     }
+     return null;
+  }
+
+  $('.users').removeClass('droppable');
+</script>
+<<<<<<< HEAD
+=======
+<br><br>
+>>>>>>> f3ea10168350f6fbebd9c87c9a346515a78a11a0
