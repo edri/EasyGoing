@@ -22,7 +22,7 @@ class UserTable
 		$rowset = $this->tableGateway->select(array(
 			'username' => $username,
 			'hashedPassword' => $hashedPassword
-		));
+			));
 		$row = $rowset->current();
 
 		// Return true or false, depending on the given creditentials'
@@ -30,27 +30,32 @@ class UserTable
 		return $row ? true : false;
 	}
 	// Checks if the given e-mail address doesn't already exist in the DB.
-		public function checkIfMailExists($email)
-		{
-			$rowset = $this->tableGateway->select(array('email' => $email));
-			$row = $rowset->current();
-			return $row;
-		}
+	public function checkIfMailExists($email)
+	{
+		$rowset = $this->tableGateway->select(array('email' => $email));
+		$row = $rowset->current();
+		return $row;
+	}
 
-		// add a new user
-		public function addUser($username, $password, $firstName, $lastName, $email, $picture)
-{
-	$this->tableGateway->insert(array(
-		'username'				=> $username,
-		'password'			=> $password,
-		'firstName'			=> $firstName,
-		'lastName'			=> $lastName,
-		'email'				=> $email,
-		'picture'			=> $picture,
-	));
+	// add a new user
+	public function addUser($username, $password, $firstName, $lastName, $email, $picture)
+	{
+		$this->tableGateway->insert(array(
+			'username'				=> $username,
+			'password'			=> $password,
+			'firstName'			=> $firstName,
+			'lastName'			=> $lastName,
+			'email'				=> $email,
+			'picture'			=> $picture,
+			));
 
-	return $this->tableGateway->lastInsertValue;
-}
+		return $this->tableGateway->lastInsertValue;
+	}
+
+	public function getAllUsers()
+	{
+		return $this->tableGateway->select();
+	}
 
 
 }
