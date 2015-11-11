@@ -20,7 +20,8 @@
     }
 ?>
 
-<form action="/projects/add" class="form-horizontal" method="POST" role="form">
+<!-- 'enctype' attribut is used for posting pictures. -->
+<form action="/projects/add" class="form-horizontal" enctype="multipart/form-data" method="POST" role="form">
     <div class="form-group">
         <label class="control-label col-sm-2" for="name">Name *</label>
         <div class="col-sm-10">
@@ -60,7 +61,7 @@
         <label class="control-label col-sm-2" for="logo">Logo</label>
         <div class="col-sm-10">
             <p class="logoInformation">Priorize a <b>squared</b> logo - Maximum size of <b>5 MB</b> - Allowed extensions: <b>"jpeg", "jpg" or "png"</b>.</p>
-            <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
+            <input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
             <input id="projectLogo" name="logo" type="file" />
         </div>
     </div>

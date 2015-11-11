@@ -16,19 +16,19 @@
 	<?php
 		if ($_SERVER['APPLICATION_ENV'] == 'development')
 		{
-			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
                   ->prependStylesheet($this->basePath() . '/css/style.css')
                   ->prependStylesheet($this->basePath() . '/css/bootstrap-datetimepicker.min.css')
 						->prependStylesheet($this->basePath() . '/css/bootstrap.min.css');
-                  
+
 		}
 		else
 		{
-			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
                 	->prependStylesheet($this->basePath() . '/css/style.css')
                   ->prependStylesheet($this->basePath() . '/css/bootstrap-datetimepicker.min.css')
 						->prependStylesheet($this->basePath() . '/css/bootstrap.min.css');
-                  
+
 		}
 	?>
 
@@ -41,9 +41,11 @@
     <body>
 	<div class="header">
 	   <div class="container">
-	      <a href="/" class="title">EasyGoing!</a>
-	      <a href="" class="btn btnHeaderSelected btn-link" type="button">Projects</a>
-	      <a href="" class="btn btnHeader btn-link" type="button">Account</a>
+	      <a href="/" class="title"><img class="logo" src="<?php echo $this->basePath('img/title.png'); ?>" height=70 /></a>
+		  <div class="headerLinks">
+		      <a href="" class="btn btnHeaderSelected btn-link" type="button">Projects</a>
+		      <a href="" class="btn btnHeader btn-link" type="button">Account</a>
+		  </div>
 	      <div class="headerRight">
 	         <span class="loginInformation">Logged in as <b>edri</b></span>
 	         <button id="btnLogout" class="btn btnLogout btnEasygoing" type="button">Logout</button>
@@ -51,7 +53,7 @@
 	   </div>
 	</div>
 	<div class="container">
-		<div class="content">
+		<div class="content mainContent">
 			<?php echo $this->content; ?>
 		</div>
 		<div class="footer">

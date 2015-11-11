@@ -1,8 +1,25 @@
+body {
+    background-image: url('/img/background.png');
+    background-size: calc(100%) auto;
+}
+
+a {
+    color: #995527;
+}
+
+a:hover {
+    color: #4E2E18;
+}
+
 /* HEADER BAR */
 .header {
-   background-color: #212121;
-   padding: 10px;
+   background-color: #232323;
+   padding: 5px 0 11px;
    width: 100%;
+}
+
+.logo {
+    margin-right: 10px;
 }
 
 .title {
@@ -19,33 +36,40 @@ title:focus, .title:hover {
    text-decoration: none;
 }
 
+.btnHeader, .btnHeaderSelected, .btnHeader:hover, .btnHeaderSelected:hover, .btnHeader:focus, .btnHeaderSelected:focus {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 10px;
+}
 
 .btnHeader {
-   color: #DEDEDE;
-   font-size: 15px;
-   font-weight: bold;
+   color: #FCD1B5;
 }
 
 .btnHeaderSelected, .btnHeader:hover, .btnHeaderSelected:hover, .btnHeader:focus, .btnHeaderSelected:focus {
-   color: #7AC7A8;
-   font-size: 15px;
-   font-weight: bold;
-   text-decoration: none;
+   color: #995527;
+}
+
+.headerLinks {
+    float: left;
+    margin-top: 16px;
 }
 
 .headerRight {
    color: #DEDEDE;
    float: right;
+   margin-top: 21px;
 }
 
 .loginInformation {
-   font-size: 12px;
+    color: #FCD1B5;
+    font-size: 12px;
 }
 
 .btnEasygoing {
-   background-color: #7AC7A8;
-   border-color: #75B393;
-   color: #000;
+    background-color: #e5ac86;
+    border: 1px solid #5a2706;
+    color: #5a2706;
 }
 
 .btnLogout {
@@ -54,32 +78,33 @@ title:focus, .title:hover {
 
 
 /* CONTENU */
-.content {
-   border-left: 1px solid black;
-   border-right: 1px solid black;
-   padding: 5px 30px 50px 30px;
+.mainContent {
+    background-color: #F0F0F0;
+    border-left: 1px solid #5A2706;
+    border-right: 1px solid #5A2706;
+    padding: 30px 30px 80px;
 }
 
 .pageTitle {
-    margin-bottom: 50px;
+    margin-bottom: 70px;
 }
 
 
 /* FOOTER */
 .footer {
    background-color: #212121;
-   color: white;
+   color: #fcd1b5;
    padding: 15px;
 }
 
 .about {
-   color: white;
+   color: #fcd1b5;
    float: right;
    text-decoration: underline;
 }
 
 .about:hover {
-    color: #7AC7A8;
+    color: #995527;
 }
 
 
@@ -98,7 +123,11 @@ title:focus, .title:hover {
 }
 
 .tableListProjects tr {
-    border: 1px solid black;
+    border: 1px solid #5A2706;
+}
+
+.projectLine {
+    background-color: white;
 }
 
 .projectLine, .projectLineSelected {
@@ -108,15 +137,17 @@ title:focus, .title:hover {
 }
 
 .projectLine:hover {
-    background-color: #95BCF2;
+    background-color: #e5ac86;
 }
 
 .projectLineSelected {
     color: white;
-    background-color: #3975C7;
+    background-color: #995527;
 }
 
 .imgProject {
+    border: 1px solid #e5b494;
+    border-radius: 25px;
     margin-right: 15px;
 }
 
