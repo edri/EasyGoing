@@ -1,4 +1,11 @@
 <h1>Add member to your project</h1>
 <div class="input-group">
-  <input type="text" class="form-control" placeholder="Search for ..." aria-describedby="basic-addon1">
+   <input type="text" class="form-control" placeholder="Search for ..." aria-describedby="basic-addon1">
+   <div class="panel panel-default">
+      <ul>
+      <?php foreach ($users as $user) : ?>
+         <p><?php echo $user->username; ?></p>
+      <?php endforeach; ?>
+      </ul>
+   </div>
 </div>

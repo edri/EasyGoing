@@ -24,6 +24,7 @@ class ProjectController extends AbstractActionController
 {
    private $_taskTable;
    private $_projectTable;
+   private $_userTable;
 
    // Get the task's table's entity, represented by the created model.
    // Act as a singleton : we only can have one instance of the object.
@@ -49,6 +50,19 @@ class ProjectController extends AbstractActionController
          $this->_projectTable = $sm->get('Application\Model\ProjectTable');
       }
       return $this->_projectTable;
+   }
+
+   // Get the user's table's entity, represented by the created model.
+   // Act as a singleton : we only can have one instance of the object.
+   private function _getUserTable()
+   {
+      // If the object is not currencly instanciated, we do it.
+      if (!$this->_userTable) {
+         $sm = $this->getServiceLocator();
+         // Instanciate the object with the created model.
+         $this->_userTable = $sm->get('Application\Model\UserTable');
+      }
+      return $this->_userTable;
    }
 
    public function indexAction()
@@ -99,7 +113,11 @@ class ProjectController extends AbstractActionController
 
    public function addMemberAction()
    {
-      return new ViewModel();
+      $users = $this->_getUserTable()->getAllUsers();
+
+      return new ViewModel(array(
+         'users' => $users
+      ));
    }
 
    public function removeMemberAction()
