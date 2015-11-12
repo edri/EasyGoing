@@ -1,21 +1,18 @@
-<?php
-
-if (!isset($this->result) || $this->result != "success")
-	{
-?>
-    <h1>Create an acount</h1>
-    <form method="POST" action="app?action=add" role="form" class="formInscription">
-     <div class="form-group">
+<form action="/registration" class="form-horizontal" method="POST" role="form">
+	<div class="form-group">
         <label class="control-label col-sm-2" for="username">Username *</label>
         <div class="col-sm-10">
-           <input type="text" name="name" class="form-control"  required="required" />
+           <input type="text" name="username" class="form-control"  required="required"
+					 placeholder="Enter username" value="<?php if (isset($username)) echo $this->escapeHtml($username); ?>
+					 "/>
         </div>
      </div>
 
      <div class="form-group">
         <label class="control-label col-sm-2" for="lastname">Last name </label>
         <div class="col-sm-10">
-           <input type="text" name="lname" class="form-control" required="required" />
+           <input type="text" name="lname" class="form-control"
+					 placeholder="last name"  value="<?php if (isset($lname)) echo $this->escapeHtml($lname); ?>" />
 
         </div>
      </div>
@@ -23,34 +20,36 @@ if (!isset($this->result) || $this->result != "success")
      <div class="form-group">
         <label class="control-label col-sm-2" for="firstname">First name </label>
         <div class="col-sm-10">
-           <input type="text" name="fname" class="form-control" required="required" />
+           <input type="text" name="fname" class="form-control"
+					 placeholder="firstname"  value="<?php if (isset($fname)) echo $this->escapeHtml($fname); ?>" />
         </div>
      </div>
 
      <div class="form-group">
         <label class="control-label col-sm-2" for="password1">Password *</label>
         <div class="col-sm-10">
-           <input type="password" name="password" class="form-control" required="required" />
+           <input type="password" name="password1" class="form-control" required="required" value="<?php if (isset($password1)) echo $this->escapeHtml($password1); ?>"/>
         </div>
      </div>
 
      <div class="form-group">
         <label class="control-label col-sm-2" for="password2">Repeat Password *</label>
         <div class="col-sm-10">
-           <input type="password" name="password2" class="form-control" required="required" />
+           <input type="password" name="password2" class="form-control" required="required" value="<?php if (isset($password2)) echo $this->escapeHtml($password2); ?>"/>
         </div>
      </div>
 
      <div class="form-group">
-        <label class="control-label col-sm-2" for="email">Email </label>
+        <label class="control-label col-sm-2" for="email">Email* </label>
         <div class="col-sm-10">
-           <input type="email" name="mail" class="form-control" required="required" />
+           <input type="email" name="email" class="form-control" required="required"
+					 placeholder="Enter valid email"   value="<?php if (isset($email)) echo $this->escapeHtml($email); ?>"/>
         </div>
      </div>
      <div>
        <label class="control-label col-sm-2" for="picture">Picture </label>
        <div>
-        <input id="input-21" type="file" accept="image/*" class="file-loading">
+        <input id="input-21" type="file" accept="image/*" class="file-loading" name="picture" value="10485760" >
           <script>
           $(document).on('ready', function() {
               $("#input-21").fileinput({
@@ -72,22 +71,12 @@ if (!isset($this->result) || $this->result != "success")
    <div>
      <label class="checkbox-inline"><input type="checkbox" value="">Tutorial</label>
    </div>
-   <div id = "btnCreate">
-     <input type="submit" name="submitInscription" class="submitInscription" value="Create">
-   </div>
-</form>
- <?php
- }
- else if (isset($this->result) && $this->result == "success")
- {
-?>
-   <div class="formInscription">
-       <h1>Create Account</h1>
-       <div class="horBar"></div>
 
-       <div class="successAdding">
-         <p><?php echo "UserSuccessfullyCreated" ?></p>
-         <a class="purpleLink" href="/"</a>
-       </div>
-   </div>
-<?php } ?>
+	 <div class="form-group formSending" >
+		<label class="control-label col-sm-2" for="create"></label>
+		<div class="col-sm-10">
+				<span class="mandatoryFields">* Mandatory fields</span>
+				<button class="btnCreate btn btnEasygoing" id="create" name="create" onClick="location.href='/projects/add';">create</button>
+		</div>
+</div>
+</form>
