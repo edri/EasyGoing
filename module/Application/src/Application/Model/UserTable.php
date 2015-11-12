@@ -38,15 +38,15 @@ class UserTable
 		}
 
 		// add a new user
-		public function addUser($username, $password, $firstName, $lastName, $email, $picture)
+		public function addUser($username, $password, $fname, $lname, $email, $picture)
 {
 	$this->tableGateway->insert(array(
 		'username'				=> $username,
-		'password'			=> $password,
-		'firstName'			=> $firstName,
-		'lastName'			=> $lastName,
+		'hashedPassword'			=> $password,
+		'firstName'			=> isset($fname) ? $fname : "-",
+		'lastName'			=> isset($lname) ? $lname : "-",
 		'email'				=> $email,
-		'picture'			=> $picture,
+		'filePhoto'			=> isset($picture) ? $picture : "-"
 	));
 
 	return $this->tableGateway->lastInsertValue;

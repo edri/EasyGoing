@@ -203,6 +203,7 @@ title:focus, .title:hover {
 
 .btnCreate, .btnCancel {
     float: right;
+    align-items: flex-end;
 }
 
 .btnCancel {

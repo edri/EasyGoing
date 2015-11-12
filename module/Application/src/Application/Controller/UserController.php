@@ -39,7 +39,7 @@ class UserController extends AbstractActionController
 		}
 		return $this->userTable;
 	}
-	private function hashPassword(String $password){
+	private function hashPassword($password){
 			return hash ( "sha256" , $password, false );
 		}
 
@@ -58,38 +58,27 @@ class UserController extends AbstractActionController
 	public function registrationAction()
 	{
 		// For linking the right action's view
-
-
-			$request = $this->getRequest();
-			if ($request->isPost()) {
-				$result = "success";
-				// POST action's values.
-				$password1 = $_POST["password1"];
-				$password2 = $_POST["password2"];
-				$fname = $_POST["fname"];
-				$lname = $_POST["lname"];
-				$email = $_POST["email"];
-				$username = $_POST["username"];
-				$picture = $_POST["picture"];
-
-					// Checks the fields.
-					if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
-
 		$request = $this->getRequest();
 
 		if ($request->isPost()) {
+
+
 			$result = "success";
 			// POST action's values.
-			$password1 = $_POST["password1"];
-			$password2 = $_POST["password2"];
-			$fname = $_POST["fname"];
-			$lname = $_POST["lname"];
-			$email = $_POST["email"];
-			$username = $_POST["username"];
-			$picture = $_POST["picture"];
+			$password1 = (empty($_POST["password1"]) ? "******" : $_POST["password1"]);
+			//$password1 = $_POST["password1"];
+			$password2 = (empty($_POST["password2"]) ? "******" : $_POST["password2"]);
+
+		$fname = (empty($_POST["fname"]) ? "*****" : $_POST["fname"]);
+		$lname= (empty($_POST["lname"]) ? "******" : $_POST["lname"]);
+  	$email =  (empty($_POST["email"]) ? "******" : $_POST["email"]);
+		$username= (empty($_POST["username"]) ? "******" : $_POST["username"]);
+	  $picture = (empty($_POST["picture"]) ? "*****" : $_POST["picture"]);
+
 				// Checks the fields.
 				if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
 				{
+
 					// The two passwords must match.
 					if ($password1 == $password2)
 
@@ -98,10 +87,20 @@ class UserController extends AbstractActionController
 						if (filter_var($email, FILTER_VALIDATE_EMAIL))
 						{
 							//the email must not already exist
-							if(!$this->getUserTable()->checkIfMailExists($email)){
+							if(!$this->getUserTable()->checkIfMailExists($email))
+							{
 								//then we allow the registration
-										$userId = $this->getUserTable()->addUser($username, $this->hashPassword($password1),
+								try
+								{
+
+										$hashPassword = $this->hashPassword($password1);
+										$userId = $this->getUserTable()->addUser($username,$hashPassword ,
 									  $fname, $lname, $email, $picture);
+									}
+									catch (\Exception $e)
+								{
+									$result = 'errorDatabaseAdding';
+								}
 							}
 							else
 								$result	= 'errorMailAlreadyExist';
@@ -112,42 +111,30 @@ class UserController extends AbstractActionController
 					}
 					else
 
-						$result	= 'errorFieldEmpty';
+						$result	= 'errorPasswordsDontMatch';
 
 
 				if ($result == "success")
-					return new ViewModel(array(
-						'result'			=> $result,
-					));
+				{
+					$this->redirect()->toRoute('projects');
+				}
 				else
 					return new ViewModel(array(
 						'result' 			=> $result,
-						'login' 			=> $login,
+						'username' 			=> $username,
 						'email'				=> $email,
+						'password1' 	=>$password1,
+					//	'password2' 	=>$password2,
 						'fName'				=> $fname,
 						'lName'				=> $lname,
 					));
 
 	}
-
-						$result	= 'errorPasswordsDontMatch';
-				}
-				else
-					$result	= 'errorFieldEmpty';
-			if ($result == "success")
-				return new ViewModel(array(
-					'result'			=> $result,
-				));
-			else
-				return new ViewModel(array(
-					'result' 			=> $result,
-					'login' 			=> $login,
-					'email'				=> $email,
-					'fName'				=> $fname,
-					'lName'				=> $lname,
-				));
-		}
-
+	else{
+		$result = "errorFieldEmpty";
+	}
+}
+		return new ViewModel();
 	}
 
 	public function logoutAction()
