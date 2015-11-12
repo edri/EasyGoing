@@ -27,6 +27,7 @@ CREATE TABLE users
     wantTutorial BOOLEAN NOT NULL DEFAULT TRUE,
     wantNotifications BOOLEAN NOT NULL DEFAULT TRUE,
     UNIQUE(email),
+	UNIQUE(username),
     PRIMARY KEY(id)
 );
 
@@ -149,12 +150,27 @@ CREATE TABLE usersTasksProductions
 /* Views */
 
 /* This view show all the projects with all members id which are in the project */
+DROP VIEW IF EXISTS view_projects_min;
+
 CREATE VIEW view_projects_min AS
 (
 	SELECT p.id, p.name, p.fileLogo, pu.user AS userId, pu.isAdmin
 	FROM projectsUsersMembers as pu
 		INNER JOIN projects AS p ON p.id = pu.project
 	ORDER BY p.name	 
+);
+
+/* This view show all the members of a project and theirs specializations in the same project */
+DROP VIEW IF EXISTS view_projects_members_specializations;
+
+CREATE VIEW view_projects_members_specializations AS
+(
+	SELECT pum.project, u.username, pus.specialization, pum.isAdmin
+	FROM projectsusersmembers AS pum 
+		INNER JOIN users AS u 
+			ON u.id = pum.user
+		LEFT JOIN projectsusersspecializations AS pus 
+			ON u.id = pus.user AND pus.project = pum.project
 );
 
 /* Stored procedures and functions */
@@ -249,8 +265,6 @@ BEGIN
 		FROM tasks 
 		WHERE id = task AND parentTask <> NULL
 	);
-END $$
-DELIMITER ;
 END $$
 DELIMITER ;
 
@@ -368,10 +382,6 @@ END $$
 
 DELIMITER ;
 
-
-
-
-
 /* Insert some data */
 INSERT INTO users
 VALUES(
@@ -432,6 +442,54 @@ VALUES(
 	"vanessa.jpg",
 	true, true
 );
+
+SELECT id INTO @user1
+FROM users
+WHERE username = 'raphaelracine';
+
+SELECT id INTO @user2
+FROM users
+WHERE username = 'karimghozlani';
+
+SELECT id INTO @user3
+FROM users
+WHERE username = 'miguelsantamaria';
+
+SELECT id INTO @user4
+FROM users
+WHERE username = 'thibaudduchoud';
+
+SELECT id INTO @user5
+FROM users
+WHERE username = 'vanessameguep';
+
+/* Create some projects */
+INSERT INTO projects VALUES(
+	null,
+	'Travail de Bachelor',
+	'Un projet difficile... Mais intéressant !',
+	'2015-01-26',
+	'2016-10-04',
+	null
+);
+
+SELECT id INTO @project1
+FROM projects
+WHERE name = 'Travail de Bachelor';
+
+INSERT INTO projects VALUES(
+	null,
+	'TWEB Liechti Moustache Project',
+	'Description is too long and unuseful...',
+	'2015-03-06',
+	null,
+	null
+);
+
+SELECT id INTO @project2
+FROM projects
+WHERE name = 'TWEB Liechti Moustache Project';
+
 
 SET GLOBAL log_bin_trust_function_creators = 0; 
 

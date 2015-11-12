@@ -1,1 +1,30 @@
-OK ? <?php echo $this->escapeHtml($test); ?>
+<h1>Welcome to EasyGoing !</h1>
+
+</br>
+
+<form class="form-inline" method="POST">
+  <div class="form-group">
+    <label class="sr-only" for="exampleInputEmail3">Username</label>
+    <input name = "username" type="name" class="form-control" id="exampleInputEmail3" placeholder="Username">
+  </div>
+  <div class="form-group">
+    <label class="sr-only" for="exampleInputPassword3">Password</label>
+    <input name= "password" type="password" class="form-control" id="exampleInputPassword3" placeholder="Password">
+  </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" name = "checkbox"> Remember me
+    </label>
+  </div>
+  <button type="submit" class="btn btn-default">Sign in</button>
+</form>
+
+</br>
+<div>
+	Your username: 
+	<!-- <?php echo $this->escapeHtml($username); ?>	-->
+</div>
+
+<p>
+  <button type="button" class="btn btn-primary btn-lg" href="" >Subscribe</button>  
+</p>
