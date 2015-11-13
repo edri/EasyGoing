@@ -56,6 +56,4 @@ class UserTable
 	{
 		return $this->tableGateway->select();
 	}
-
-
 }
