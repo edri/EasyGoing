@@ -53,28 +53,6 @@ class UserTable
 	return $this->tableGateway->lastInsertValue;
 }
 
-	public function checkIfMailExists($email)
-	{
-		$rowset = $this->tableGateway->select(array('email' => $email));
-		$row = $rowset->current();
-		return $row;
-	}
-
-	// add a new user
-	public function addUser($username, $password, $firstName, $lastName, $email, $picture)
-	{
-		$this->tableGateway->insert(array(
-			'username'				=> $username,
-			'password'			=> $password,
-			'firstName'			=> $firstName,
-			'lastName'			=> $lastName,
-			'email'				=> $email,
-			'picture'			=> $picture,
-			));
-
-		return $this->tableGateway->lastInsertValue;
-	}
-
 	public function getAllUsers()
 	{
 		return $this->tableGateway->select();
