@@ -1,0 +1,320 @@
+body {
+    background-image: url('/img/background.png');
+    background-size: calc(100%) auto;
+}
+
+a {
+    color: #995527;
+}
+
+a:hover {
+    color: #4E2E18;
+}
+
+/* HEADER BAR */
+.header {
+   background-color: #232323;
+   padding: 5px 0 11px;
+   width: 100%;
+}
+
+.logo {
+    margin-right: 10px;
+}
+
+.title {
+   color: white;
+   float: left;
+   font-size: 22px;
+   font-weight: bold;
+   margin-right: 75px;
+
+}
+
+title:focus, .title:hover {
+   color: white;
+   text-decoration: none;
+}
+
+.btnHeader, .btnHeaderSelected, .btnHeader:hover, .btnHeaderSelected:hover, .btnHeader:focus, .btnHeaderSelected:focus {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.btnHeader {
+   color: #FCD1B5;
+}
+
+.btnHeaderSelected, .btnHeader:hover, .btnHeaderSelected:hover, .btnHeader:focus, .btnHeaderSelected:focus {
+   color: #995527;
+}
+
+.headerLinks {
+    float: left;
+    margin-top: 16px;
+}
+
+.headerRight {
+   color: #DEDEDE;
+   float: right;
+   margin-top: 21px;
+}
+
+.loginInformation {
+    color: #FCD1B5;
+    font-size: 12px;
+}
+
+.btnEasygoing {
+    background-color: #e5ac86;
+    border: 1px solid #5a2706;
+    color: #5a2706;
+}
+
+.btnLogout {
+   margin-left: 10px;
+}
+
+
+/* CONTENU */
+.mainContent {
+    background-color: #F0F0F0;
+    border-left: 1px solid #5A2706;
+    border-right: 1px solid #5A2706;
+    padding: 30px 30px 80px;
+}
+
+.pageTitle {
+    margin-bottom: 70px;
+}
+
+
+/* FOOTER */
+.footer {
+   background-color: #212121;
+   color: #fcd1b5;
+   padding: 15px;
+}
+
+.about {
+   color: #fcd1b5;
+   float: right;
+   text-decoration: underline;
+}
+
+.about:hover {
+    color: #995527;
+}
+
+
+/* PROJECTS LIST */
+.newProject {
+    float: right;
+}
+
+.tableListProjects {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.tableListProjects td {
+    padding: 10px;
+}
+
+.tableListProjects tr {
+    border: 1px solid #5A2706;
+}
+
+.projectLine {
+    background-color: white;
+}
+
+.projectLine, .projectLineSelected {
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.projectLine:hover {
+    background-color: #e5ac86;
+}
+
+.projectLineSelected {
+    color: white;
+    background-color: #995527;
+}
+
+.imgProject {
+    border: 1px solid #e5b494;
+    border-radius: 25px;
+    margin-right: 15px;
+}
+
+.projectLine td, .projectLineSelected td {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.projectTitle {
+    max-width: 40%;
+    min-width: 20%;
+    width: 40%;
+}
+
+.expandArrow {
+    text-align: center;
+    max-width: 20%;
+    min-width: 20%;
+    width: 20%;
+}
+
+.expandArrow img {
+    display: none;
+}
+
+.managerTd {
+    text-align: right;
+}
+
+.projectDetails, .divProjectDetails {
+    display: none;
+}
+
+.formProjectDetails {
+    margin-top: 40px;
+}
+
+.projectName, .projectDescriptionInList {
+    width: 70%;
+}
+
+.projectDescriptionInList, .projectDescription {
+    resize: none;
+}
+
+.membersTable td, th {
+    border: 1px solid black;
+    padding: 8px;
+}
+
+.membersTable th {
+    background-color: #E2E2E2;
+}
+
+.checkboxManager {
+    text-align: center;
+}
+
+.linkToProject {
+    font-weight: bold;
+    margin-top: 50px;
+}
+
+/* ADD A PROJECT */
+.error {
+    margin-bottom: 50px;
+}
+
+.logoInformation {
+    font-size: 90%;
+    font-style: italic;
+    margin-left: 3px;
+}
+
+.formSending {
+    margin-top: 50px;
+}
+
+.mandatoryFields {
+    font-weight: bold;
+}
+
+.btnCreate, .btnCancel {
+    float: right;
+}
+
+.btnCancel {
+    margin-right: 10px;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0; 
+}
+
+
+/** ====== BOARD ====== **/
+.board {
+    display: table;
+    margin: 0;
+    padding: 0;
+    border-spacing: 5px;
+}
+.section {
+    display: table-cell;
+    margin: 0;
+    border: 1px solid #666;
+    padding: 5px;
+    width: 300px;
+}
+.section.droppable {
+    border: 1px dashed #666;
+}
+.section > h1 {
+    margin: 0;
+    border-bottom: 1px solid #999;
+    padding: 0;
+    font-size: 12pt;
+    text-align: center;
+}
+.users {
+    width: 180px;
+}
+.card, .user {
+    display: inline-block;
+    vertical-align: top;
+    margin: 10px 5px;
+    padding: 10px;
+    width: 120px;
+    height: 100px;
+    color: black;
+    background: #ff8;
+    cursor: move;
+    text-align: center;
+    font-size: 12px;
+    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    box-shadow: 2px 2px 2px #eee;
+    color: #333;
+    border:1px #E8Ds47 solid;
+    -moz-box-shadow:0px 0px 3px 1px #333333;
+    -webkit-box-shadow:0px 0px 3px 1px #333333;
+    box-shadow:0px 0px 3px 1px #333333;
+    background: #fefdca; /* Old browsers */
+    background: -moz-linear-gradient(top, #fefdca 0%, #f7f381 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefdca), color-stop(100%,#f7f381)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #fefdca 0%,#f7f381 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #fefdca 0%,#f7f381 100%); /* Opera11.10+ */
+    background: -ms-linear-gradient(top, #fefdca 0%,#f7f381 100%); /* IE10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefdca', endColorstr='#f7f381',GradientType=0 ); /* IE6-9 */
+    background: linear-gradient(top, #fefdca 0%,#f7f381 100%); /* W3C; A catch-all for everything else */
+}
+
+.user {
+    height: 40px;
+    background: #EEE; /* Old browsers */
+    background: -moz-linear-gradient(top, #EEE 0%, #999 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#EEE), color-stop(100%,#999)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #EEE 0%,#999 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #EEE 0%,#999 100%); /* Opera11.10+ */
+    background: -ms-linear-gradient(top, #EEE 0%,#999 100%); /* IE10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#EEE', endColorstr='#999',GradientType=0 ); /* IE6-9 */
+    background: linear-gradient(top, #EEE 0%,#999 100%); /* W3C; A catch-all for everything else */
+}
+/** ===== FIN BOARD ===== **/

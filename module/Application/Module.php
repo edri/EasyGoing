@@ -28,6 +28,8 @@ use Application\Model\ProjectsUsersMembers;
 use Application\Model\ProjectsUsersMembersTable;
 use Application\Model\Task;
 use Application\Model\TaskTable;
+use Application\Model\ViewUsersProjects;
+use Application\Model\ViewUsersProjectsTable;
 
 @ini_set('zend_monitor.enable', 0);
 if(@function_exists('output_cache_disable')) {
@@ -163,6 +165,17 @@ class Module
                 'Application\Model\ProjectsUsersMembersTable' =>  function($sm) {
                     $tableGateway = $sm->get('ProjectsUsersMembersTableGateway');
                     $table = new ProjectsUsersMembersTable($tableGateway);
+                    return $table;
+                },
+                'ViewUsersProjectsTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ViewUsersProjects());
+                    return new TableGateway('view_users_projects', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ViewUsersProjectsTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ViewUsersProjectsTableGateway');
+                    $table = new ViewUsersProjectsTable($tableGateway);
                     return $table;
                 },
 				// Configure the session service.
