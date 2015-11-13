@@ -29,7 +29,7 @@ class UserTable
 		// correctness.
 		return $row ? true : false;
 	}
-	
+
 	// Checks if the given e-mail address doesn't already exist in the DB.
 	public function checkIfMailExists($email)
 	{
