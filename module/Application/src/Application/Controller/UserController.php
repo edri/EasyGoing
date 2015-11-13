@@ -39,11 +39,9 @@ class UserController extends AbstractActionController
 		}
 		return $this->userTable;
 	}
-<<<<<<< HEAD
-	private function hashPassword($password){
-=======
-	private function _hashPassword($password){
->>>>>>> 0c6126d017f1b15102a7c3554e4a7444393ea1f1
+
+	private function _hashPassword($password)
+	{
 			return hash ( "sha256" , $password, false );
 	}
 
@@ -53,13 +51,13 @@ class UserController extends AbstractActionController
 	public function indexAction()
 	{
 		$request = $this->getRequest();
-		if ($request->isPost()) 
+		if ($request->isPost())
 		{
 			$username = $_POST["username"];
-			$password = $_POST["password"];			
-			$hashPassword = $this->_hashPassword($password);			
+			$password = $_POST["password"];
+			$hashPassword = $this->_hashPassword($password);
 			//carefull, 2nd parameter has to be hashpassword. It's password for test purpose
-			$isAuthenticated = $this->_getUserTable()->checkCreditentials($username,$password);			
+			$isAuthenticated = $this->_getUserTable()->checkCreditentials($username,$password);
 			if($isAuthenticated)
 			{
 				//go To projects
@@ -70,34 +68,13 @@ class UserController extends AbstractActionController
 			{
 				//stay here and display message
 				echo "isNotAuthenticated";
-			}	
-		}	
+			}
+		}
 		// For linking the right action's view.
 		return new ViewModel();
 	}
 	public function registrationAction()
 	{
-		// For linking the right action's view
-<<<<<<< HEAD
-=======
-
-
-			$request = $this->getRequest();
-			if ($request->isPost()) {
-				$result = "success";
-				// POST action's values.
-				$password1 = $_POST["password1"];
-				$password2 = $_POST["password2"];
-				$fname = $_POST["fname"];
-				$lname = $_POST["lname"];
-				$email = $_POST["email"];
-				$username = $_POST["username"];
-				$picture = $_POST["picture"];
-
-					// Checks the fields.
-					if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
-
->>>>>>> 0c6126d017f1b15102a7c3554e4a7444393ea1f1
 		$request = $this->getRequest();
 
 		if ($request->isPost()) {
@@ -109,11 +86,11 @@ class UserController extends AbstractActionController
 			//$password1 = $_POST["password1"];
 			$password2 = (empty($_POST["password2"]) ? "******" : $_POST["password2"]);
 
-		$fname = (empty($_POST["fname"]) ? "*****" : $_POST["fname"]);
-		$lname= (empty($_POST["lname"]) ? "******" : $_POST["lname"]);
-  	$email =  (empty($_POST["email"]) ? "******" : $_POST["email"]);
-		$username= (empty($_POST["username"]) ? "******" : $_POST["username"]);
-	  $picture = (empty($_POST["picture"]) ? "*****" : $_POST["picture"]);
+			$fname = (empty($_POST["fname"]) ? "*****" : $_POST["fname"]);
+			$lname= (empty($_POST["lname"]) ? "******" : $_POST["lname"]);
+	  		$email =  (empty($_POST["email"]) ? "******" : $_POST["email"]);
+			$username= (empty($_POST["username"]) ? "******" : $_POST["username"]);
+		  	$picture = (empty($_POST["picture"]) ? "*****" : $_POST["picture"]);
 
 				// Checks the fields.
 				if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
@@ -127,23 +104,16 @@ class UserController extends AbstractActionController
 						if (filter_var($email, FILTER_VALIDATE_EMAIL))
 						{
 							//the email must not already exist
-<<<<<<< HEAD
-							if(!$this->getUserTable()->checkIfMailExists($email))
+							if(!$this->_getUserTable()->checkIfMailExists($email))
 							{
 								//then we allow the registration
 								try
 								{
-
-										$hashPassword = $this->hashPassword($password1);
-										$userId = $this->getUserTable()->addUser($username,$hashPassword ,
-=======
-							if(!$this->_getUserTable()->checkIfMailExists($email)){
-								//then we allow the registration
+									//then we allow the registration
 										$userId = $this->_getUserTable()->addUser($username, $this->_hashPassword($password1),
->>>>>>> 0c6126d017f1b15102a7c3554e4a7444393ea1f1
-									  $fname, $lname, $email, $picture);
-									}
-									catch (\Exception $e)
+									  											  $fname, $lname, $email, $picture);
+								}
+								catch (\Exception $e)
 								{
 									$result = 'errorDatabaseAdding';
 								}
@@ -156,13 +126,8 @@ class UserController extends AbstractActionController
 							}
 					}
 					else
-<<<<<<< HEAD
 
 						$result	= 'errorPasswordsDontMatch';
-=======
-
-						$result	= 'errorFieldEmpty';
->>>>>>> 0c6126d017f1b15102a7c3554e4a7444393ea1f1
 
 
 				if ($result == "success")
@@ -180,34 +145,13 @@ class UserController extends AbstractActionController
 						'lName'				=> $lname,
 					));
 
-	}
-<<<<<<< HEAD
-	else{
-		$result = "errorFieldEmpty";
-	}
-}
-		return new ViewModel();
-=======
-
-						$result	= 'errorPasswordsDontMatch';
-				}
-				else
-					$result	= 'errorFieldEmpty';
-			if ($result == "success")
-				return new ViewModel(array(
-					'result'			=> $result,
-				));
-			else
-				return new ViewModel(array(
-					'result' 			=> $result,
-					'login' 			=> $login,
-					'email'				=> $email,
-					'fName'				=> $fname,
-					'lName'				=> $lname,
-				));
+			}
+			else{
+				$result = "errorFieldEmpty";
+			}
 		}
 
->>>>>>> 0c6126d017f1b15102a7c3554e4a7444393ea1f1
+		return new ViewModel();
 	}
 
 	public function logoutAction()
