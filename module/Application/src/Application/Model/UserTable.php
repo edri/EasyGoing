@@ -29,7 +29,6 @@ class UserTable
 		// correctness.
 		return $row ? true : false;
 	}
-
 	// Checks if the given e-mail address doesn't already exist in the DB.
 	public function checkIfMailExists($email)
 	{
@@ -42,8 +41,8 @@ class UserTable
 	public function addUser($username, $password, $fname, $lname, $email, $picture)
 	{
 		$this->tableGateway->insert(array(
-			'username'				=> $username,
-			'hashedPassword'			=> $password,
+			'username'			=> $username,
+			'hashedPassword'	=> $password,
 			'firstName'			=> isset($fname) ? $fname : "-",
 			'lastName'			=> isset($lname) ? $lname : "-",
 			'email'				=> $email,
