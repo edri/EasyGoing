@@ -388,7 +388,7 @@ VALUES(
 	null, 
 	"raphael.racine@heig-vd.ch",
 	"raphaelracine",
-	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
+	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Raphaël",
 	"Racine",
 	"raphael.jpg",
@@ -400,7 +400,7 @@ VALUES(
 	null, 
 	"karim.ghozlani@heig-vd.ch",
 	"karimghozlani",
-	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
+	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Karim",
 	"Ghozlani",
 	"karim.jpg",
@@ -412,7 +412,7 @@ VALUES(
 	null, 
 	"thibault.duchoud@heig-vd.ch",
 	"thibaudduchoud",
-	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
+	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Thibault",
 	"Duchoud",
 	"thibault.jpg",
@@ -424,7 +424,7 @@ VALUES(
 	null, 
 	"miguel.santamaria@heig-vd.ch",
 	"miguelsantamaria",
-	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
+	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Miguel",
 	"Santamaria",
 	"miguel.jpg",
@@ -436,7 +436,7 @@ VALUES(
 	null, 
 	"vanessa.meguep@heig-vd.ch",
 	"vanessameguep",
-	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
+	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Vanessa",
 	"Meguep",
 	"vanessa.jpg",
@@ -464,32 +464,45 @@ FROM users
 WHERE username = 'vanessameguep';
 
 /* Create some projects */
-INSERT INTO projects VALUES(
-	null,
-	'Travail de Bachelor',
-	'Un projet difficile... Mais intéressant !',
-	'2015-01-26',
-	'2016-10-04',
-	null
+INSERT INTO projects(name, description, startDate, deadLineDate) VALUES
+(
+	"Travail de Bachelor",	
+	"Un projet difficile... Mais intéressant !", 
+	"2015-01-26", 
+	"2016-10-04"
+);
+
+INSERT INTO projects(name, description, startDate) VALUES
+(
+	"TWEB Liechti Moustache Project",
+	"Description is too long and unuseful...",
+	"2015-03-06"
 );
 
 SELECT id INTO @project1
 FROM projects
 WHERE name = 'Travail de Bachelor';
 
-INSERT INTO projects VALUES(
-	null,
-	'TWEB Liechti Moustache Project',
-	'Description is too long and unuseful...',
-	'2015-03-06',
-	null,
-	null
-);
-
 SELECT id INTO @project2
 FROM projects
 WHERE name = 'TWEB Liechti Moustache Project';
 
+INSERT INTO projectsUsersMembers VALUES(@user1, @project1, true);
+INSERT INTO projectsUsersMembers VALUES(@user2, @project1, false);
+INSERT INTO projectsUsersMembers VALUES(@user3, @project1, true);
+INSERT INTO projectsUsersMembers VALUES(@user4, @project1, false);
+INSERT INTO projectsUsersMembers VALUES(@user3, @project2, false);
+INSERT INTO projectsUsersMembers VALUES(@user4, @project2, true);
+INSERT INTO projectsUsersMembers VALUES(@user5, @project2, false);
+
+INSERT INTO projectsUsersSpecializations VALUES(@user1, @project1, "Base de données");
+INSERT INTO projectsUsersSpecializations VALUES(@user1, @project1, "Programmation répartie");
+INSERT INTO projectsUsersSpecializations VALUES(@user2, @project1, "Java 8");
+INSERT INTO projectsUsersSpecializations VALUES(@user3, @project1, "Programmation C++");
+INSERT INTO projectsUsersSpecializations VALUES(@user3, @project2, "Base de données");
+INSERT INTO projectsUsersSpecializations VALUES(@user3, @project2, "Styles CSS");
+INSERT INTO projectsUsersSpecializations VALUES(@user4, @project2, "Node JS");
+INSERT INTO projectsUsersSpecializations VALUES(@user5, @project2, "Internet Explorer");
 
 SET GLOBAL log_bin_trust_function_creators = 0; 
 
