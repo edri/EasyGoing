@@ -173,9 +173,14 @@ CREATE VIEW view_projects_members_specializations AS
 			ON u.id = pus.user AND pus.project = pum.project
 );
 
-/* Stored procedures and functions */
+DROP VIEW IF EXISTS view_users_projects;
 
-
+CREATE VIEW view_users_projects AS
+(
+	SELECT * 
+	FROM users
+	INNER JOIN projectsUsersMembers ON users.id = projectsUsersMembers.user
+);
 
 /* This function check if a user can be affected to a task */
 USE easygoing;
