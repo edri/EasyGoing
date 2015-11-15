@@ -56,21 +56,23 @@ class UserController extends AbstractActionController
 			$username = $_POST["username"];
 			$password = $_POST["password"];
 			$hashPassword = $this->_hashPassword($password);
-			//carefull, 2nd parameter has to be hashpassword. It's password for test purpose
-			$isAuthenticated = $this->_getUserTable()->checkCreditentials($username,$password);
+
+			$isAuthenticated = $this->_getUserTable()->checkCreditentials($username,$hashPassword);
 			if($isAuthenticated)
 			{
 				//go To projects
-				echo "isAuthenticated";
-				//$this->redirect()->toRoute('/projects');
+				$this->redirect()->toRoute('projects');
 			}
 			else
 			{
-				//stay here and display message
-				echo "isNotAuthenticated";
+				// stay here and display log in error
+				$error = "loginFailed";
+				return new ViewModel(array(
+					'error' => $error
+				));
 			}
 		}
-		// For linking the right action's view.
+
 		return new ViewModel();
 	}
 	public function registrationAction()
@@ -95,7 +97,7 @@ class UserController extends AbstractActionController
 				// Checks the fields.
 				if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
 				{
-					
+
 					// The two passwords must match.
 					if ($password1 == $password2)
 
