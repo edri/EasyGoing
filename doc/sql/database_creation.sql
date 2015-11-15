@@ -505,10 +505,3 @@ INSERT INTO projectsUsersSpecializations VALUES(@user4, @project2, "Node JS");
 INSERT INTO projectsUsersSpecializations VALUES(@user5, @project2, "Internet Explorer");
 
 SET GLOBAL log_bin_trust_function_creators = 0; 
-
-
-
-
-
-
-

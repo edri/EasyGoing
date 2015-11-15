@@ -26,4 +26,9 @@ class User
 		$this->wantTutorial  = (!empty($data['wantTutorial'])) ? $data['wantTutorial'] : null;
 		$this->wantNotifications  = (!empty($data['wantNotifications'])) ? $data['wantNotifications'] : null;
 	}
+
+	public function __toString() 
+	{
+		return $this->id;
+	}
 }

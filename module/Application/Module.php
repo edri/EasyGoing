@@ -28,6 +28,22 @@ use Application\Model\ProjectsUsersMembers;
 use Application\Model\ProjectsUsersMembersTable;
 use Application\Model\Task;
 use Application\Model\TaskTable;
+use Application\Model\ViewUsersProjects;
+use Application\Model\ViewUsersProjectsTable;
+
+@ini_set('zend_monitor.enable', 0);
+if(@function_exists('output_cache_disable')) {
+    @output_cache_disable();
+}
+if(isset($_GET['debugger_connect']) && $_GET['debugger_connect'] == 1) {
+    if(function_exists('debugger_connect'))  {
+        debugger_connect();
+        exit();
+    } else {
+        echo "No connector is installed.";
+    }
+}
+
 
 class Module
 {
@@ -110,7 +126,7 @@ class Module
                 'TaskTableGateway' => function($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new User()); // Change the instance's class name.
+                    $resultSetPrototype->setArrayObjectPrototype(new Task()); // Change the instance's class name.
                     return new TableGateway('tasks', $dbAdapter, null, $resultSetPrototype); // Change the table's name (this IS the table's name in the database).
                 },
                 'Application\Model\TaskTable' =>  function($sm) { // Change the class' name.
@@ -149,6 +165,17 @@ class Module
                 'Application\Model\ProjectsUsersMembersTable' =>  function($sm) {
                     $tableGateway = $sm->get('ProjectsUsersMembersTableGateway');
                     $table = new ProjectsUsersMembersTable($tableGateway);
+                    return $table;
+                },
+                'ViewUsersProjectsTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ViewUsersProjects());
+                    return new TableGateway('view_users_projects', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ViewUsersProjectsTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ViewUsersProjectsTableGateway');
+                    $table = new ViewUsersProjectsTable($tableGateway);
                     return $table;
                 },
 				// Configure the session service.

@@ -24,6 +24,8 @@ class ProjectController extends AbstractActionController
 {
    private $_taskTable;
    private $_projectTable;
+   private $_userTable;
+   private $_viewUsersProjectsTable;
 
    // Get the task's table's entity, represented by the created model.
    // Act as a singleton : we only can have one instance of the object.
@@ -51,15 +53,45 @@ class ProjectController extends AbstractActionController
       return $this->_projectTable;
    }
 
+   // Get the user's table's entity, represented by the created model.
+   // Act as a singleton : we only can have one instance of the object.
+   private function _getUserTable()
+   {
+      // If the object is not currencly instanciated, we do it.
+      if (!$this->_userTable) {
+         $sm = $this->getServiceLocator();
+         // Instanciate the object with the created model.
+         $this->_userTable = $sm->get('Application\Model\UserTable');
+      }
+      return $this->_userTable;
+   }
+
+   // Get the viewUsersProjects's table's entity, represented by the created model.
+   // Act as a singleton : we only can have one instance of the object.
+   private function _getViewUsersProjectsTable()
+   {
+      // If the object is not currencly instanciated, we do it.
+      if (!$this->_viewUsersProjectsTable) {
+         $sm = $this->getServiceLocator();
+         // Instanciate the object with the created model.
+         $this->_viewUsersProjectsTable = $sm->get('Application\Model\ViewUsersProjectsTable');
+      }
+      return $this->_viewUsersProjectsTable;
+   }
+
    public function indexAction()
    {
       $project = $this->_getProjectTable()->getProject($this->params('id'));
+      $tasks = $this->_getTaskTable()->getAllTasksInProject($this->params('id'));
+      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
 
       if(empty($project))
          $this->redirect()->toRoute('projects');
 
       return new ViewModel(array(
-         'project' => $project
+         'project' => $project,
+         'tasks'   => $tasks,
+         'members' => $members
       ));
    }
 
@@ -99,7 +131,32 @@ class ProjectController extends AbstractActionController
 
    public function addMemberAction()
    {
-      return new ViewModel();
+      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
+      $users = $this->_getUserTable()->getAllUsers();
+
+      /*
+      SELECT * FROM users
+      WHERE id NOT IN (
+         SELECT id FROM users
+          INNER JOIN projectsUsersMembers ON projectsUsersMembers.user = users.id
+          WHERE projectsUsersMembers.project = 2
+      )
+      */
+
+      $membersArray = array();
+      foreach($members as $member) 
+      {
+         foreach($users as $user)
+         {
+            if($user->id != $member->id)
+               array_push($membersArray, $user);
+         }
+      }
+      $membersArray = array_unique($membersArray);
+
+      return new ViewModel(array(
+         'users' => $membersArray
+      ));
    }
 
    public function removeMemberAction()
