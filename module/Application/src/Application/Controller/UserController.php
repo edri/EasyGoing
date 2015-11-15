@@ -95,7 +95,7 @@ class UserController extends AbstractActionController
 				// Checks the fields.
 				if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
 				{
-
+					
 					// The two passwords must match.
 					if ($password1 == $password2)
 
@@ -126,9 +126,9 @@ class UserController extends AbstractActionController
 							}
 					}
 					else
-
+					{
 						$result	= 'errorPasswordsDontMatch';
-
+					}
 
 				if ($result == "success")
 				{
