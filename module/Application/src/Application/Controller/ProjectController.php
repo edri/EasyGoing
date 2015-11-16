@@ -26,6 +26,7 @@ class ProjectController extends AbstractActionController
    private $_projectTable;
    private $_userTable;
    private $_viewUsersProjectsTable;
+   private $_projectsUsersMembersTable;
 
    // Get the task's table's entity, represented by the created model.
    // Act as a singleton : we only can have one instance of the object.
@@ -77,6 +78,16 @@ class ProjectController extends AbstractActionController
          $this->_viewUsersProjectsTable = $sm->get('Application\Model\ViewUsersProjectsTable');
       }
       return $this->_viewUsersProjectsTable;
+   }
+
+      // Get the projects-members' mapping entity, represented by the created model.
+   private function _getProjectsUsersMembersTable()
+   {
+      if (!$this->_projectsUsersMembersTable) {
+         $sm = $this->getServiceLocator();
+         $this->_projectsUsersMembersTable = $sm->get('Application\Model\ProjectsUsersMembersTable');
+      }
+      return $this->_projectsUsersMembersTable;
    }
 
    public function indexAction()
@@ -131,31 +142,20 @@ class ProjectController extends AbstractActionController
 
    public function addMemberAction()
    {
-      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
-      $users = $this->_getUserTable()->getAllUsers();
+      $request = $this->getRequest();
 
-      /*
-      SELECT * FROM users
-      WHERE id NOT IN (
-         SELECT id FROM users
-          INNER JOIN projectsUsersMembers ON projectsUsersMembers.user = users.id
-          WHERE projectsUsersMembers.project = 2
-      )
-      */
-
-      $membersArray = array();
-      foreach($members as $member) 
+      if($request->isPost())
       {
-         foreach($users as $user)
+         foreach ($_POST as $value)
          {
-            if($user->id != $member->id)
-               array_push($membersArray, $user);
+            $this->_getProjectsUsersMembersTable()->addMemberToProject($value, $this->params('id'));
          }
       }
-      $membersArray = array_unique($membersArray);
+
+      $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
 
       return new ViewModel(array(
-         'users' => $membersArray
+         'users' => $usersNotMemberOfProject
       ));
    }
 
@@ -180,6 +180,39 @@ class ProjectController extends AbstractActionController
         ));
 
         return $result;
+  }
+
+  private function _getUsersNotMemberOfProject($projectId)
+  {
+      /*
+      SELECT * FROM users
+      WHERE id NOT IN (
+         SELECT id FROM users
+          INNER JOIN projectsUsersMembers ON projectsUsersMembers.user = users.id
+          WHERE projectsUsersMembers.project = 2
+      )
+      */
+      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($projectId)->buffer();
+      $users = $this->_getUserTable()->getAllUsers()->buffer();
+
+      $notMembersArray = array();
+      foreach($users as $user)
+      {
+         $mustAdd = true;
+         foreach($members as $member) 
+         {
+            if($user->id == $member->id)
+            {
+               $mustAdd = false;
+            }
+         }
+         if($mustAdd)
+         {
+            array_push($notMembersArray, $user);
+         }
+      }
+
+      return $notMembersArray;
   }
 }
 

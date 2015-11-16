@@ -23,9 +23,4 @@ class ViewUsersProjects
       $this->lastName  = (!empty($data['lastName'])) ? $data['lastName'] : null;
       $this->projectId  = (!empty($data['projectId'])) ? $data['projectId'] : null;
    }
-
-   public function __toString()
-   {
-      return $this->id;
-   }
 }

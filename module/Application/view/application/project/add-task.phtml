@@ -9,13 +9,12 @@
    </div>
    <div class="form-group">
       <label class="control-label col-sm-2">Deadline</label>
-      <label class="control-label col-sm-2">To</label>
       <div class="col-sm-3">
-         <input type="text" name="startDate" class="form_datetime form-control" placeholder="yyyy-mm-dd hh:ii" required="required" />
-      </div>
-      <label class="control-label col-sm-2" for="name">From</label>
-      <div class="col-sm-3">
-         <input type="text" name="deadlineDate" class="form_datetime form-control" placeholder="yyyy-mm-dd hh:ii" required="required" />
+         <div class="input-group input-daterange">
+            <input type="text" class="form-control" value="2012-04-05">
+            <span class="input-group-addon">to</span>
+            <input type="text" class="form-control" value="2012-04-19">
+         </div>
       </div>
    </div>
    <div class="form-group">
@@ -39,9 +38,14 @@
    </div>
 </form>
 
+
 <script type="text/javascript">
    $(function() {
-      $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd'});
+      // DATATIME EXEMPLE
+      // $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd'});
+
+      $('.input-daterange input').each(function() {
+          $(this).datepicker({format: 'yyyy-mm-dd', autoclose:true});
+      });
    });
-   
 </script>  

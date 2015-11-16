@@ -4,10 +4,11 @@
 <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a> -
 <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
 <br><br><hr><br>
+<?php foreach ($members as $member): ?>
 <div class="board">
    <div class="users section">
       <h1>Users</h1>
-      <div class="user" draggable="false">Thibaud</div>
+     <div class="user" draggable="false"><?php echo $member->firstName . ' ' . $member->lastName; ?></div>
    </div>
    <div class="todo section">
       <h1>To Do</h1>
@@ -15,7 +16,7 @@
       $i = 1;
       foreach ($tasks as $task)
       {
-         echo '<div id="c'.$i.'" class="card">'.$task->name.'</div>';
+         echo '<div id="'.$member->email.$i.'" class="card">'.$task->name.'</div>';
          $i++;
       }
       ?>
@@ -27,17 +28,7 @@
       <h1>Done</h1>
    </div>
 </div>
-<div class="board">
-   <div class="users section">
-      <div class="user" draggable="false">Miguel</div>
-   </div>
-   <div class="todo section">
-   </div>
-   <div class="doing section">
-   </div>
-   <div class="done section">
-   </div>
-</div>
+<?php endforeach; ?>
 <br>
 <div class="container-fluid">
    <div class="row">
