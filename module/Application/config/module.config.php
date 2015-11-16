@@ -107,6 +107,19 @@ return array(
 					),
 				),
 			),
+            'tutorial' => array(
+				'type'    => 'segment',
+				'options' => array(
+					'route'    => '/tutorial[/][:action]',					// Creating the route, identified by the controller's name.
+					'constraints' => array(
+						'action' => '[a-zA-Z][a-zA-Z0-9_-]*',			// Regular expression for the action's name ; should not be modified.
+					),
+					'defaults' => array(
+						'controller' => 'Application\Controller\Tutorial',	// Controller's name.
+						'action'     => 'index',						// Default action ; should not be modified.
+					),
+				),
+			),
 		),
     ),
     'service_manager' => array(
@@ -124,7 +137,8 @@ return array(
             'Application\Controller\User' => 'Application\Controller\UserController',
             'Application\Controller\Project' => 'Application\Controller\ProjectController',
             'Application\Controller\Projects' => 'Application\Controller\ProjectsController',
-            'Application\Controller\About'   => 'Application\Controller\AboutController'
+            'Application\Controller\About'   => 'Application\Controller\AboutController',
+            'Application\Controller\Tutorial' => 'Application\Controller\TutorialController'
         ),
     ),
     'view_manager' => array(
