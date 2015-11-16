@@ -50,31 +50,46 @@ class UserController extends AbstractActionController
 	// but here we are in the default controller so the page will be "easygoing/".
 	public function indexAction()
 	{
-		$request = $this->getRequest();
-		if ($request->isPost())
+		$sessionUser = new container('user');
+		// Checks if the user isn't already connected.
+		if ($sessionUser && $sessionUser->connected)
+		{	
+			// Redirect the user if it is already connected.
+			$this->redirect()->toRoute('projects');
+		}	
+		else
 		{
-			$username = $_POST["username"];
-			$password = $_POST["password"];
-			$hashPassword = $this->_hashPassword($password);
+			$request = $this->getRequest();
+			if ($request->isPost())
+			{
+				$username = $_POST["username"];
+				$password = $_POST["password"];
+				$hashPassword = $this->_hashPassword($password);
+				
+				$user = $this->_getUserTable()->checkCreditentials($username,$hashPassword);
+				if(!$user == null)
+				{
+					//add session attributes
+					$sessionUser->connected = true;
+					$sessionUser->id = $user->id;
+					$sessionUser->username = $user->username;
+					//go To projects
+					$this->redirect()->toRoute('projects');
+				}
+				else
+				{
+					// stay here and display log in error
+					$error = "loginFailed";
+					return new ViewModel(array(
+						'error' => $error					
+					));
+				}
+			}
 
-			$isAuthenticated = $this->_getUserTable()->checkCreditentials($username,$hashPassword);
-			if($isAuthenticated)
-			{
-				//go To projects
-				$this->redirect()->toRoute('projects');
-			}
-			else
-			{
-				// stay here and display log in error
-				$error = "loginFailed";
-				return new ViewModel(array(
-					'error' => $error
-				));
-			}
 		}
-
-		return new ViewModel();
+		return new ViewModel();				
 	}
+
 	public function registrationAction()
 	{
 		$request = $this->getRequest();
@@ -158,7 +173,12 @@ class UserController extends AbstractActionController
 
 	public function logoutAction()
 	{
-		// For linking the right action's view.
+		$sessionUser = new container('user');
+
+		$sessionUser->offsetUnset("connected");
+		$sessionUser->offsetUnset("id");
+		$sessionUser->offsetUnset("username");
+		$this->redirect()->toRoute('user');		
 		return new ViewModel();
 	}
 
@@ -180,6 +200,5 @@ class UserController extends AbstractActionController
 	{
 			$this->redirect()->toRoute('/');
 	}
-
 
 }

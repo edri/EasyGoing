@@ -18,6 +18,7 @@ use Zend\Session\Validator\HttpUserAgent;
 use Zend\Session\Validator\RemoteAddr;
 use Zend\Session\SessionManager;
 use Zend\Session\Container;
+use Application\Utility\Utilities;
 use Application\Model\User;
 use Application\Model\UserTable;
 use Application\Model\Project;
@@ -108,6 +109,8 @@ class Module
 	{
 		return array(
 			'factories' => array(
+                // Return an instance of the Utility/Utilities class when a controler invoks the 'Application\Utility\Utilities' object.
+                'Application\Utility\Utilities' => function($sm) { return new Utilities(); },
                 // Declare the gateway between the database's entity (table,
                 //  view, ...) and the exchange's class.
                 'UserTableGateway' => function ($sm) { // Change the gateway's name.
