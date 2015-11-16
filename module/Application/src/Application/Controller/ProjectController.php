@@ -26,6 +26,7 @@ class ProjectController extends AbstractActionController
    private $_projectTable;
    private $_userTable;
    private $_viewUsersProjectsTable;
+   private $_projectsUsersMembersTable;
 
    // Get the task's table's entity, represented by the created model.
    // Act as a singleton : we only can have one instance of the object.
@@ -77,6 +78,16 @@ class ProjectController extends AbstractActionController
          $this->_viewUsersProjectsTable = $sm->get('Application\Model\ViewUsersProjectsTable');
       }
       return $this->_viewUsersProjectsTable;
+   }
+
+      // Get the projects-members' mapping entity, represented by the created model.
+   private function _getProjectsUsersMembersTable()
+   {
+      if (!$this->_projectsUsersMembersTable) {
+         $sm = $this->getServiceLocator();
+         $this->_projectsUsersMembersTable = $sm->get('Application\Model\ProjectsUsersMembersTable');
+      }
+      return $this->_projectsUsersMembersTable;
    }
 
    public function indexAction()
@@ -131,6 +142,16 @@ class ProjectController extends AbstractActionController
 
    public function addMemberAction()
    {
+      $request = $this->getRequest();
+
+      if($request->isPost())
+      {
+         foreach ($_POST as $value)
+         {
+            $this->_getProjectsUsersMembersTable()->addMemberToProject($value, $this->params('id'));
+         }
+      }
+
       $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
 
       return new ViewModel(array(
@@ -175,23 +196,20 @@ class ProjectController extends AbstractActionController
       $users = $this->_getUserTable()->getAllUsers()->buffer();
 
       $notMembersArray = array();
-      $mustAdd = false;
       foreach($users as $user)
       {
+         $mustAdd = true;
          foreach($members as $member) 
          {
             if($user->id == $member->id)
             {
                $mustAdd = false;
-               break;
-            }
-            else
-            {
-               $mustAdd = true;
             }
          }
          if($mustAdd)
+         {
             array_push($notMembersArray, $user);
+         }
       }
 
       return $notMembersArray;
