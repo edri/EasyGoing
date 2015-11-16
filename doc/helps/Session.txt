@@ -1,0 +1,23 @@
+Information : dans module/Application/config/module.config.php, un session manager a été créé.
+Une session contient différents container, pour organiser les différents éléments qui la contiennent. Dans cet exemple, nous prendrons un container nommé "user" et possédant l'ID de l'utilisateur connecté.
+
+Pour pouvoir utiliser la session depuis l'action d'un contrôleur :
+	1. Inclure les librairies "Zend\Session\Config\SessionConfig" et "Zend\Session\Container" à l'aide des mots-clés "use", si ça n'est pas déjà fait.
+	2. Déclarer un container du nom de celui que nous souhaitons créer ou récupérer ; ici, $sessionUser = new container("user");
+	3. A partir de là, il est possible :
+		a. D'ajouter des attributs : $sessionUser->userId = 5;
+		b. De récupérer des attributs : $maValeur = $sessionUser->userId;
+		c. De supprimer un attribut : $sessionUser->offsetUnset("userId");
+
+Pour pouvoir utiliser la session depuis une vue :
+	1. Ouvrir une balise PHP tout en haut du code de la vue, puis inclure les librairies "Zend\Session\Config\SessionConfig" et "Zend\Session\Container" à l'aide des mots-clés "use".
+	2. Déclarer un container du nom de celui que nous souhaitons créer ou récupérer ; ici, $sessionUser = new container("user");
+		Exemple :
+			<?php
+				use Zend\Session\Config\SessionConfig;
+				use Zend\Session\Container;
+		
+				$sessionUser = new container('user');
+			?>
+	3. Il est ensuite possible d'accéder à un attirbut, en ouvrant une balise PHP et en appelant l'attribut du container désiré ; par exemple : 
+		<?php echo $sessionUser->userId; ?>
