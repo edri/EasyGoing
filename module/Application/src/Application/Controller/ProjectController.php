@@ -148,11 +148,10 @@ class ProjectController extends AbstractActionController
       {
          foreach($users as $user)
          {
-            if($user->id != $member->id)
+            if($user->id != $member->id && !in_array($user, $membersArray))
                array_push($membersArray, $user);
          }
       }
-      $membersArray = array_unique($membersArray);
 
       return new ViewModel(array(
          'users' => $membersArray
