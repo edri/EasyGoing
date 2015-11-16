@@ -14,6 +14,7 @@ namespace Application\Controller;
 // Calling some useful Zend's libraries.
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
+use Zend\View\Model\ViewModel;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
 use Application\Model\Tutorial;
@@ -28,5 +29,10 @@ class TutorialController extends AbstractActionController
         return new JsonModel(
             (new Tutorial())->projectsTutorial()
         );
+    }
+    
+    public function testTutorialAction() 
+    {
+        return new ViewModel();
     }
 }
