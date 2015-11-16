@@ -131,30 +131,10 @@ class ProjectController extends AbstractActionController
 
    public function addMemberAction()
    {
-      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
-      $users = $this->_getUserTable()->getAllUsers();
-
-      /*
-      SELECT * FROM users
-      WHERE id NOT IN (
-         SELECT id FROM users
-          INNER JOIN projectsUsersMembers ON projectsUsersMembers.user = users.id
-          WHERE projectsUsersMembers.project = 2
-      )
-      */
-
-      $membersArray = array();
-      foreach($members as $member) 
-      {
-         foreach($users as $user)
-         {
-            if($user->id != $member->id && !in_array($user, $membersArray))
-               array_push($membersArray, $user);
-         }
-      }
+      $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
 
       return new ViewModel(array(
-         'users' => $membersArray
+         'users' => $usersNotMemberOfProject
       ));
    }
 
@@ -179,6 +159,42 @@ class ProjectController extends AbstractActionController
         ));
 
         return $result;
+  }
+
+  private function _getUsersNotMemberOfProject($projectId)
+  {
+      /*
+      SELECT * FROM users
+      WHERE id NOT IN (
+         SELECT id FROM users
+          INNER JOIN projectsUsersMembers ON projectsUsersMembers.user = users.id
+          WHERE projectsUsersMembers.project = 2
+      )
+      */
+      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($projectId)->buffer();
+      $users = $this->_getUserTable()->getAllUsers()->buffer();
+
+      $notMembersArray = array();
+      $mustAdd = false;
+      foreach($users as $user)
+      {
+         foreach($members as $member) 
+         {
+            if($user->id == $member->id)
+            {
+               $mustAdd = false;
+               break;
+            }
+            else
+            {
+               $mustAdd = true;
+            }
+         }
+         if($mustAdd)
+            array_push($notMembersArray, $user);
+      }
+
+      return $notMembersArray;
   }
 }
 

@@ -92,7 +92,7 @@ class UserController extends AbstractActionController
 			$lname= (empty($_POST["lname"]) ? "******" : $_POST["lname"]);
 	  		$email =  (empty($_POST["email"]) ? "******" : $_POST["email"]);
 			$username= (empty($_POST["username"]) ? "******" : $_POST["username"]);
-		  	$picture = (empty($_POST["picture"]) ? "*****" : $_POST["picture"]);
+		  	$picture = (empty($_POST["picture"]) ? "default.png" : $_POST["picture"]);
 
 				// Checks the fields.
 				if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
