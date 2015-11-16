@@ -49,7 +49,8 @@ CREATE TABLE tasks
     description TINYTEXT, /* Maximum of 255 characters */ 
     deadLineDate DATE,
     durationsInHours FLOAT NOT NULL,
-    priorityLevel TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    priorityLevel TINYINT UNSIGNED NOT NULL DEFAULT 0,		
+	state ENUM('TODO', 'DOING', 'DONE') NOT NULL DEFAULT 'TODO',
     
     /* default color for task : yellow */
     estheticColorRGBRed TINYINT UNSIGNED DEFAULT 255, /* 0 - 255 */
@@ -396,7 +397,7 @@ VALUES(
 	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Raphaël",
 	"Racine",
-	"raphael.jpg",
+	"default.png",
 	true, true
 );
 
@@ -408,7 +409,7 @@ VALUES(
 	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Karim",
 	"Ghozlani",
-	"karim.jpg",
+	"default.png",
 	false, true
 );
 
@@ -420,7 +421,7 @@ VALUES(
 	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Thibault",
 	"Duchoud",
-	"thibault.jpg",
+	"default.png",
 	true, false
 );
 
@@ -432,7 +433,7 @@ VALUES(
 	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Miguel",
 	"Santamaria",
-	"miguel.jpg",
+	"default.png",
 	false, false
 );
 
@@ -444,7 +445,7 @@ VALUES(
 	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Vanessa",
 	"Meguep",
-	"vanessa.jpg",
+	"default.png",
 	true, true
 );
 
