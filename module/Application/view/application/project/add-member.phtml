@@ -1,20 +1,52 @@
 <h1>Add member to your project</h1>
 <br>
-<div class="input-group">
-   <input type="text" class="form-control" placeholder="Search for ..." aria-describedby="basic-addon1">
+<div class="input-group" style="float:left;">
+   <input onkeyup="filterSearch();" type="text" id="search" class="form-control" placeholder="Search for ..." aria-describedby="basic-addon1">
 </div>
-<br>
+<br><br>
 <hr>
-<div class="container-fluid">
-   <div class="row">
-      <?php foreach ($users as $user) : ?>
-         <div class="col-md-5 panel panel-default" style="margin: 10px; padding: 10px">
-            <img src="<?php echo $this->basePath('img/users/' . $user->filePhoto); ?>"
-            alt="<?php echo $this->escapeHtml($user->username); ?>" height=50 width=50
-            class="imgProject" />
-            <?php echo $user->firstName . ' ' . $user->lastName . ' (' . $user->username . ')'; ?>
-            <input type="checkbox" style="float: right;">
+<?php if(empty($users)): ?>
+   <h2>No available user.<h2>
+<?php else: ?>
+   <form method="POST" action="<?php echo $this->serverUrl(true); ?>">
+      <div class="container-fluid">
+         <div class="row">
+            <?php foreach ($users as $user) : ?>
+               <div class="col-md-5 panel panel-default add-user" style="margin: 10px; padding: 10px" firstname="<?php echo $user->firstName . ' ' . $user->lastName . ' ' . $user->username?>">
+                  <img src="<?php echo $this->basePath('img/users/' . $user->filePhoto); ?>"
+                  alt="<?php echo $this->escapeHtml($user->username); ?>" height=50 width=50
+                  class="imgProject" />
+                  <?php echo $user->firstName . ' ' . $user->lastName . ' (' . $user->username . ')'; ?>
+                  <input name="input-<?php echo $user->username; ?>" value="<?php echo $user->id; ?>" id="<?php echo $user->id; ?>" type="checkbox" style="float: right;">
+               </div>
+            <?php endforeach; ?>
          </div>
-      <?php endforeach; ?>
-   </div>
-</div>
+      </div>
+      <br>
+      <div style="float:left;"><button type="submit" class="btn btnEasygoing">Add member(s)</a></div> 
+   </form>
+<?php endif; ?>
+
+<script>
+// Users filters
+function filterSearch() 
+{
+   var text = $('#search').val();
+
+   // For each divs in row
+   $.each($('.row'), function(i, left) {
+      $('div', left).each(function(i, div) {
+         if($(div).attr('firstname').indexOf(text) > -1)
+            $(div).show("fast");
+         else
+            $(div).hide("fast");
+            
+      });
+   })
+}
+
+$('.add-user').click(function ()
+{
+   $(this).find('input[type=checkbox]').prop("checked", !$(this).find('input[type=checkbox]').prop("checked"));
+});
+</script>
