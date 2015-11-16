@@ -20,10 +20,18 @@
 </form>
 
 </br>
-<div>
-	Your username: 
-	<!-- <?php echo $this->escapeHtml($username); ?>	-->
-</div>
+<?php
+    if (isset($error))
+    {
+?>
+        <div class="panel panel-danger error">
+            <div class="panel-heading">
+                <p> Login failed </p>
+            </div>
+        </div>
+<?php
+    }
+?>
 
 <p>
   <button type="button" class="btn btn-primary btn-lg" href="" >Subscribe</button>  
