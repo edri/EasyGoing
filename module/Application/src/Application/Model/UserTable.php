@@ -15,7 +15,6 @@ class UserTable
 	}
 
 	// Check an user's creditentials, to ensure it logged in correctly.
-	// Return 'true' if creditentials are right, and 'false' if wrong.
 	public function checkCreditentials($username, $hashedPassword)
 	{
 		// Try to get the row that matchs with the given username and hashed
@@ -25,14 +24,19 @@ class UserTable
 			'hashedPassword' => $hashedPassword
 			));
 		$row = $rowset->current();
-
 		// Return true or false, depending on the given creditentials'
 		// correctness.
-		return $row ? true : false;
+		if(isset($row->id))
+		{
+			return $row;	
+		}
+		else
+		{
+			return null;
+		}			
 	}
+
 	// Checks if the given e-mail address doesn't already exist in the DB.
-
-
 	public function checkIfMailExists($email)
 	{
 		$rowset = $this->tableGateway->select(array('email' => $email));
@@ -54,6 +58,7 @@ class UserTable
 
 		return $this->tableGateway->lastInsertValue;
 	}
+
 
 	public function getAllUsers()
 	{
@@ -94,5 +99,15 @@ class UserTable
 	    }
 
 	    return $results;
+	 }
+
+	public function getUser($id)
+	{
+		
+		$rowset = $this->tableGateway->select(array(
+			'id' 		=> $id
+		));
+		$row = $rowset->current();
+		return $row;
 	}
 }
