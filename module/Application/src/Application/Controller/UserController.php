@@ -59,21 +59,33 @@ class UserController extends AbstractActionController
 		}	
 		else
 		{
-			$request = $this->getRequest();
+			$request = $this->getRequest();			
 			if ($request->isPost())
 			{
 				$username = $_POST["username"];
 				$password = $_POST["password"];
 				$hashPassword = $this->_hashPassword($password);
-				
+				//Check if creditentials are correct
 				$user = $this->_getUserTable()->checkCreditentials($username,$hashPassword);
+				//If so, user is not null
 				if(!$user == null)
 				{
 					//add session attributes
 					$sessionUser->connected = true;
 					$sessionUser->id = $user->id;
 					$sessionUser->username = $user->username;
-					//go To projects
+					//Check if the user has ticked "Remember Me" button
+					//If so, create a cookie
+					if (isset($_POST['checkbox'])) {					
+						//Set a secured cookieValue with username, password and random salt						
+						$salt = rand();			
+						$cookieValue = $this->_hashPassword($username . $password . $salt);
+						// Set expiration time to 30 days												
+						$expirationTime = 60*60*24*30 ;
+						setcookie('loginCookie', $cookieValue, time() + $expirationTime);
+						// We can now retrieve this cookie using : $this->getRequest()->getCookie('loginCookie');												
+					}					
+					//go To projects					
 					$this->redirect()->toRoute('projects');
 				}
 				else
