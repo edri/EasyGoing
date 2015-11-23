@@ -13,6 +13,7 @@ class User
 	public $filePhoto;
 	public $wantTutorial;
 	public $wantNotifications;
+	public $cookieValue;
 
 	public function exchangeArray($data)
 	{
@@ -25,5 +26,6 @@ class User
 		$this->filePhoto  = (!empty($data['filePhoto'])) ? $data['filePhoto'] : null;
 		$this->wantTutorial  = (!empty($data['wantTutorial'])) ? $data['wantTutorial'] : null;
 		$this->wantNotifications  = (!empty($data['wantNotifications'])) ? $data['wantNotifications'] : null;
+		$this->cookieValue  = (!empty($data['cookieValue'])) ? $data['cookieValue'] : null;
 	}
 }

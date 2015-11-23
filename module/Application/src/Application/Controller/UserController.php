@@ -82,6 +82,8 @@ class UserController extends AbstractActionController
 						//Set a secured cookieValue with username, password and random salt						
 						$salt = rand();			
 						$cookieValue = $this->_hashPassword($username . $password . $salt);
+						//store it in the db
+						$this->_getUserTable->addCookie($cookieValue,$user->id);
 						// Set expiration time to 30 days												
 						$expirationTime = 60*60*24*30 ;
 						setcookie('loginCookie', $cookieValue, time() + $expirationTime);

@@ -44,6 +44,11 @@ class UserTable
 		return $row;
 	}
 
+	public function addCookie($cookie, $userId)
+	{
+		$this->tableGateway->update(array('cookieValue' => $cookie), array('id' => $userId));	
+	}
+
 		// add a new user
 	public function addUser($username, $password, $fname, $lname, $email, $picture)
 	{
@@ -102,8 +107,7 @@ class UserTable
 	 }
 
 	public function getUser($id)
-	{
-		
+	{		
 		$rowset = $this->tableGateway->select(array(
 			'id' 		=> $id
 		));
