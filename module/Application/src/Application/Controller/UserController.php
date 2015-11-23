@@ -53,10 +53,10 @@ class UserController extends AbstractActionController
 		$sessionUser = new container('user');
 		// Checks if the user isn't already connected.
 		if ($sessionUser && $sessionUser->connected)
-		{	
+		{
 			// Redirect the user if it is already connected.
 			$this->redirect()->toRoute('projects');
-		}	
+		}
 		else
 		{
 			$request = $this->getRequest();			
@@ -65,7 +65,9 @@ class UserController extends AbstractActionController
 				$username = $_POST["username"];
 				$password = $_POST["password"];
 				$hashPassword = $this->_hashPassword($password);
+
 				//Check if creditentials are correct
+
 				$user = $this->_getUserTable()->checkCreditentials($username,$hashPassword);
 				//If so, user is not null
 				if(!$user == null)
@@ -93,13 +95,13 @@ class UserController extends AbstractActionController
 					// stay here and display log in error
 					$error = "loginFailed";
 					return new ViewModel(array(
-						'error' => $error					
+						'error' => $error
 					));
 				}
 			}
 
 		}
-		return new ViewModel();				
+		return new ViewModel();
 	}
 
 	public function registrationAction()
@@ -135,6 +137,67 @@ class UserController extends AbstractActionController
 							//the email must not already exist
 							if(!$this->_getUserTable()->checkIfMailExists($email))
 							{
+								// Indicate if the prospective project's logo is valid or not.
+								$fileValidated = true;
+								// the picture must match some size and have particular extensions
+								if (!empty($_FILES["picture"]["name"])){
+									// Allowed file's extensions.
+									$allowedExts = array("jpeg", "JPEG", "jpg", "JPG", "png", "PNG");
+									// Get the file's extension.
+									$temp = explode(".", $picture);
+									$extension = end($temp);
+									// Validates the file's size.
+									if ($_FILES["picture"]["size"] > 5 * 1024 * 1024 || !$_FILES["picture"]["size"])
+									{
+										$result = "errorPictureSize";
+										$fileValidated = false;
+									}
+									else if (($_FILES["picture"]["type"] != "image/jpeg") &&
+											 ($_FILES["picture"]["type"] != "image/jpg") &&
+											 ($_FILES["picture"]["type"] != "image/pjpeg") &&
+											 ($_FILES["picture"]["type"] != "image/x-png") &&
+											 ($_FILES["picture"]["type"] != "image/png"))
+									{
+										$result = "errorPictureType";
+										$fileValidated = false;
+									}
+									// Validates the file's extension.
+									else if (!in_array($extension, $allowedExts))
+									{
+										$result = "errorPictureExtension";
+										$fileValidated = false;
+									}
+									// Check that there is no error in the file.
+									else if ($_FILES["picture"]["error"] > 0)
+									{
+										$result = "errorPicture";
+										$fileValidated = false;
+									}
+									else
+									{
+										try
+										{
+											// Generate a time-based unique ID, and check that this file's name doesn't exist yet.
+											do
+											{
+												$fileName = uniqid() . ".png";
+											}
+											while (file_exists(getcwd() . "/public/img/projects/" . $fileName));
+
+											//move_uploaded_file($_FILES['logo']['tmp_name'], getcwd() . "/public/img/projects/" . $fileName . "tmp");
+
+											// Reduction of the image's weight and save it.
+											//$this->resizeImageWeight($_FILES["logo"]["tmp_name"], getcwd() . "/public/img/projects/" . $fileName, $extension);
+
+											// Create a thumbnail (50px) of the image and save it in the hard drive of the server.
+											$this->getUtilities()->createSquareImage($_FILES["picture"]["tmp_name"], $extension, getcwd() . "/public/img/projects/" . $fileName, 50);
+										}
+										catch (Exception $e)
+										{
+											$result = "errorFilesUpload";
+										}
+									}
+								}
 								//then we allow the registration
 								try
 								{
@@ -146,6 +209,9 @@ class UserController extends AbstractActionController
 								{
 									$result = 'errorDatabaseAdding';
 								}
+
+
+
 							}
 							else
 								$result	= 'errorMailAlreadyExist';
@@ -158,7 +224,7 @@ class UserController extends AbstractActionController
 					{
 						$result	= 'errorPasswordsDontMatch';
 					}
-
+					
 				if ($result == "success")
 				{
 					$this->redirect()->toRoute('projects');
@@ -190,7 +256,7 @@ class UserController extends AbstractActionController
 		$sessionUser->offsetUnset("connected");
 		$sessionUser->offsetUnset("id");
 		$sessionUser->offsetUnset("username");
-		$this->redirect()->toRoute('user');		
+		$this->redirect()->toRoute('user');
 		return new ViewModel();
 	}
 
