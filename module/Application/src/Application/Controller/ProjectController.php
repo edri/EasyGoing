@@ -27,6 +27,7 @@ class ProjectController extends AbstractActionController
    private $_userTable;
    private $_viewUsersProjectsTable;
    private $_projectsUsersMembersTable;
+   private $_viewUsersTasksTable;
    private $_viewProjectDetailsTable;
 
    // Get the task's table's entity, represented by the created model.
@@ -91,6 +92,16 @@ class ProjectController extends AbstractActionController
       return $this->_projectsUsersMembersTable;
    }
 
+   // Get the users-tasks' mapping entity, represented by the created model.
+   private function _getViewUsersTasksTable()
+   {
+      if (!$this->_viewUsersTasksTable) {
+         $sm = $this->getServiceLocator();
+         $this->_viewUsersTasksTable = $sm->get('Application\Model\ViewUsersTasksTable');
+      }
+      return $this->_viewUsersTasksTable;
+   }
+   
    // Get projects' details and users' mapping entity, which contains all important project's data.
    private function _getViewProjectDetailsTable()
    {
@@ -104,16 +115,27 @@ class ProjectController extends AbstractActionController
    public function indexAction()
    {
       $project = $this->_getProjectTable()->getProject($this->params('id'));
-      $tasks = $this->_getTaskTable()->getAllTasksInProject($this->params('id'));
-      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
 
       if(empty($project))
          $this->redirect()->toRoute('projects');
 
+      $tasks = $this->_getTaskTable()->getAllTasksInProject($this->params('id'));
+      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
+      $arrayTasksForMember = array();
+
+      foreach($members as $member) {
+         $arrayTasksForMember[$member->id] = array();
+         $tasksForMember = $this->_getViewUsersTasksTable()->getTasksForMemberInProject($this->params('id'), $member->id);
+         foreach($tasksForMember as $task) {
+            array_push($arrayTasksForMember[$member->id], $task);
+         }
+      }
+
       return new ViewModel(array(
-         'project' => $project,
-         'tasks'   => $tasks,
-         'members' => $members
+         'project'           => $project,
+         'tasks'             => $tasks,
+         'members'           => $members,
+         'tasksForMember'    => $arrayTasksForMember
       ));
    }
 
@@ -144,6 +166,16 @@ class ProjectController extends AbstractActionController
    public function editTaskAction()
    {
 
+   }
+
+   public function moveTaskAction() {
+      $data = $this->getRequest()->getPost();
+      //echo json_encode(array('id' => $data['id'], 'details' => $data['details']));
+      return $this->getResponse()->setContent(json_encode(array(
+         'taskId' => $data['taskId'], 
+         'targetMemberId' => $data['targetMemberId'], 
+         'targetSection' => $data['targetSection']
+      )));
    }
 
    public function deleteTaskAction()

@@ -276,12 +276,13 @@ hr {
 
 
 /** ====== BOARD ====== **/
-.board {
+.board, .board-header {
     display: table;
     margin: 0;
     padding: 0;
     border-spacing: 5px;
 }
+
 .section {
     display: table-cell;
     margin: 0;
