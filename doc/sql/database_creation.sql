@@ -26,6 +26,7 @@ CREATE TABLE users
     filePhoto VARCHAR(30),
     wantTutorial BOOLEAN NOT NULL DEFAULT TRUE,
     wantNotifications BOOLEAN NOT NULL DEFAULT TRUE,
+	cookie VARCHAR(64),
     UNIQUE(email),
 	UNIQUE(username),
     PRIMARY KEY(id)
