@@ -14,7 +14,8 @@ class Tutorial
     {
         return array(
             $this->_generateData('salut', 'Salut les amis'),
-            $this->_generateData('bonjour', 'Bonjour les gens')
+            $this->_generateData('bonjour', 'Bonjour les gens'),
+            $this->_generateData('coucou', 'Bonjour Président !')
         );
     }
     
