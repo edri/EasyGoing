@@ -399,7 +399,7 @@ VALUES(
 	"Raphaël",
 	"Racine",
 	"default.png",
-	true, true
+	true, true, null
 );
 
 INSERT INTO users
@@ -411,7 +411,7 @@ VALUES(
 	"Karim",
 	"Ghozlani",
 	"default.png",
-	false, true
+	false, true, null
 );
 
 INSERT INTO users
@@ -423,7 +423,7 @@ VALUES(
 	"Thibault",
 	"Duchoud",
 	"default.png",
-	true, false
+	true, false, null
 );
 
 INSERT INTO users
@@ -435,7 +435,7 @@ VALUES(
 	"Miguel",
 	"Santamaria",
 	"default.png",
-	false, false
+	false, false, null
 );
 
 INSERT INTO users
@@ -447,7 +447,7 @@ VALUES(
 	"Vanessa",
 	"Meguep",
 	"default.png",
-	true, true
+	true, true, null
 );
 
 SELECT id INTO @user1
