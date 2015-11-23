@@ -22,62 +22,62 @@ use Zend\Session\Container;
 class ProjectsController extends AbstractActionController
 {
 	// Will contain the Utility class.
-	private $utilities;
+	private $_utilities;
 	// The model of the mapping view between projects and users ; used to communicate with the database.
-	private $viewProjectMinTable;
+	private $_viewProjectMinTable;
 	// The model representing a project.
-	private $projectTable;
+	private $_projectTable;
 	// The model representing the projects-members' mapping entity.
-	private $projectsUsersMembersTable;
+	private $_projectsUsersMembersTable;
 
 	// Get utilities functions.
 	// Act as a singleton : we only can have one instance of the object.
-	private function getUtilities()
+	private function _getUtilities()
 	{
-		if (!$this->utilities) {
+		if (!$this->_utilities) {
 			$sm = $this->getServiceLocator();
-			$this->utilities = $sm->get('Application\Utility\Utilities');
+			$this->_utilities = $sm->get('Application\Utility\Utilities');
 		}
-		return $this->utilities;
+		return $this->_utilities;
 	}
 
 	// Get the projects' view's entity, represented by the created model.
 	// Act as a singleton : we only can have one instance of the object.
-	private function getViewProjectMinTable()
+	private function _getViewProjectMinTable()
 	{
 		// If the object is not currencly instanciated, we do it.
-		if (!$this->viewProjectMinTable) {
+		if (!$this->_viewProjectMinTable) {
 			$sm = $this->getServiceLocator();
 			// Instanciate the object with the created model.
-			$this->viewProjectMinTable = $sm->get('Application\Model\viewProjectMinTable');
+			$this->_viewProjectMinTable = $sm->get('Application\Model\viewProjectMinTable');
 		}
-		return $this->viewProjectMinTable;
+		return $this->_viewProjectMinTable;
 	}
 
 	// Get the projects' entity, represented by the created model.
-	private function getProjectTable()
+	private function _getProjectTable()
 	{
-		if (!$this->projectTable) {
+		if (!$this->_projectTable) {
 			$sm = $this->getServiceLocator();
-			$this->projectTable = $sm->get('Application\Model\ProjectTable');
+			$this->_projectTable = $sm->get('Application\Model\ProjectTable');
 		}
-		return $this->projectTable;
+		return $this->_projectTable;
 	}
 
 	// Get the projects-members' mapping entity, represented by the created model.
-	private function getProjectsUsersMembersTable()
+		private function _getProjectsUsersMembersTable()
 	{
-		if (!$this->projectsUsersMembersTable) {
+		if (!$this->_projectsUsersMembersTable) {
 			$sm = $this->getServiceLocator();
-			$this->projectsUsersMembersTable = $sm->get('Application\Model\ProjectsUsersMembersTable');
+			$this->_projectsUsersMembersTable = $sm->get('Application\Model\ProjectsUsersMembersTable');
 		}
-		return $this->projectsUsersMembersTable;
+		return $this->_projectsUsersMembersTable;
 	}
 
 	// Default action of the controller.
 	public function indexAction()
 	{
-		$userProjects = $this->getViewProjectMinTable()->getUserProjects(4);
+		$userProjects = $this->_getViewProjectMinTable()->getUserProjects(4);
 
 		// For linking the right action's view.
 		return new ViewModel(array(
@@ -169,7 +169,7 @@ class ProjectsController extends AbstractActionController
 								//$this->resizeImageWeight($_FILES["logo"]["tmp_name"], getcwd() . "/public/img/projects/" . $fileName, $extension);
 
 								// Create a thumbnail (50px) of the image and save it in the hard drive of the server.
-								$this->getUtilities()->createSquareImage($_FILES["logo"]["tmp_name"], $extension, getcwd() . "/public/img/projects/" . $fileName, 50);
+								$this->_getUtilities()->createSquareImage($_FILES["logo"]["tmp_name"], $extension, getcwd() . "/public/img/projects/" . $fileName, 50);
 							}
 							catch (Exception $e)
 							{
@@ -189,13 +189,13 @@ class ProjectsController extends AbstractActionController
 								$newProject = array(
 									'name'			=> $name,
 									'description'	=> $description,
-									'startDate'		=> $startDate,
-									'deadLineDate'	=> $deadline,
+									'startDate'		=> $_POST["startDate"],
+									'deadLineDate'	=> $_POST["deadline"],
 									'fileLogo'		=> isset($fileName) ? $fileName : "default.png"
 								);
 
-								$project = $this->getProjectTable()->saveProject($newProject);
-								$this->getProjectsUsersMembersTable()->addMemberToProject(4, $project, true);
+								$project = $this->_getProjectTable()->saveProject($newProject);
+								$this->_getProjectsUsersMembersTable()->addMemberToProject(4, $project, true);
 							}
 							catch (\Exception $e)
 							{
