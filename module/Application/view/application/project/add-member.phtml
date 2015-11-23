@@ -1,7 +1,7 @@
 <h1>Add member to your project</h1>
 <br>
 <div class="input-group" style="float:left;">
-   <input onkeyup="filterSearch();" type="text" id="search" class="form-control" placeholder="Search for ..." aria-describedby="basic-addon1">
+   <input onkeyup="filterSearch();" type="text" id="search" class="form-control" placeholder="Search for..." aria-describedby="basic-addon1">
 </div>
 <br><br>
 <hr>
@@ -23,13 +23,13 @@
          </div>
       </div>
       <br>
-      <div style="float:left;"><button type="submit" class="btn btnEasygoing">Add member(s)</a></div> 
+      <div style="float:left;"><button type="submit" class="btn btnEasygoing">Add member(s)</a></div>
    </form>
 <?php endif; ?>
 
 <script>
 // Users filters
-function filterSearch() 
+function filterSearch()
 {
    var text = $('#search').val();
 
@@ -40,7 +40,7 @@ function filterSearch()
             $(div).show("fast");
          else
             $(div).hide("fast");
-            
+
       });
    })
 }
