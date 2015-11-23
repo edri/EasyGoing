@@ -185,13 +185,20 @@ CREATE VIEW view_users_projects AS
 );
 
 DROP VIEW IF EXISTS view_users_tasks;
-
 CREATE VIEW view_users_tasks AS
 (
 	SELECT * 
 	FROM tasks as t INNER JOIN usersTasksAffectations as ut
-		ON ut.task = t.id;
+		ON ut.task = t.id
 );
+
+DROP VIEW IF EXISTS view_projects_details;
+CREATE VIEW view_projects_details AS
+(
+	SELECT p.id AS projectId, p.name, p.description, p.startDate, p.deadLineDate, pu.user AS userId
+	FROM projects AS p INNER JOIN projectsUsersMembers AS pu
+		ON p.id = pu.project
+ );
 
 /* This function check if a user can be affected to a task */
 USE easygoing;
