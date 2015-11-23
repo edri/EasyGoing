@@ -26,6 +26,7 @@ CREATE TABLE users
     filePhoto VARCHAR(30),
     wantTutorial BOOLEAN NOT NULL DEFAULT TRUE,
     wantNotifications BOOLEAN NOT NULL DEFAULT TRUE,
+	cookie VARCHAR(64),
     UNIQUE(email),
 	UNIQUE(username),
     PRIMARY KEY(id)
@@ -49,7 +50,8 @@ CREATE TABLE tasks
     description TINYTEXT, /* Maximum of 255 characters */ 
     deadLineDate DATE,
     durationsInHours FLOAT NOT NULL,
-    priorityLevel TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    priorityLevel TINYINT UNSIGNED NOT NULL DEFAULT 0,		
+	state ENUM('TODO', 'DOING', 'DONE') NOT NULL DEFAULT 'TODO',
     
     /* default color for task : yellow */
     estheticColorRGBRed TINYINT UNSIGNED DEFAULT 255, /* 0 - 255 */
@@ -181,6 +183,22 @@ CREATE VIEW view_users_projects AS
 	FROM users
 	INNER JOIN projectsUsersMembers ON users.id = projectsUsersMembers.user
 );
+
+DROP VIEW IF EXISTS view_users_tasks;
+CREATE VIEW view_users_tasks AS
+(
+	SELECT * 
+	FROM tasks as t INNER JOIN usersTasksAffectations as ut
+		ON ut.task = t.id
+);
+
+DROP VIEW IF EXISTS view_projects_details;
+CREATE VIEW view_projects_details AS
+(
+	SELECT p.id AS projectId, p.name, p.description, p.startDate, p.deadLineDate, pu.user AS userId
+	FROM projects AS p INNER JOIN projectsUsersMembers AS pu
+		ON p.id = pu.project
+ );
 
 /* This function check if a user can be affected to a task */
 USE easygoing;
@@ -396,8 +414,8 @@ VALUES(
 	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Raphaël",
 	"Racine",
-	"raphael.jpg",
-	true, true
+	"default.png",
+	true, true, null
 );
 
 INSERT INTO users
@@ -408,8 +426,8 @@ VALUES(
 	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Karim",
 	"Ghozlani",
-	"karim.jpg",
-	false, true
+	"default.png",
+	false, true, null
 );
 
 INSERT INTO users
@@ -420,8 +438,8 @@ VALUES(
 	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Thibault",
 	"Duchoud",
-	"thibault.jpg",
-	true, false
+	"default.png",
+	true, false, null
 );
 
 INSERT INTO users
@@ -432,8 +450,8 @@ VALUES(
 	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Miguel",
 	"Santamaria",
-	"miguel.jpg",
-	false, false
+	"default.png",
+	false, false, null
 );
 
 INSERT INTO users
@@ -444,8 +462,8 @@ VALUES(
 	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
 	"Vanessa",
 	"Meguep",
-	"vanessa.jpg",
-	true, true
+	"default.png",
+	true, true, null
 );
 
 SELECT id INTO @user1

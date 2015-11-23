@@ -162,8 +162,9 @@ class ProjectController extends AbstractActionController
             $this->_getProjectsUsersMembersTable()->addMemberToProject($value, $this->params('id'));
          }
       }
-
       $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
+
+      //$usersNotMemberOfProject = $this->_getUserTable()->getUsersNotMembersOfProject($this->params('id'));
 
       return new ViewModel(array(
          'users' => $usersNotMemberOfProject
@@ -196,14 +197,14 @@ class ProjectController extends AbstractActionController
 
   private function _getUsersNotMemberOfProject($projectId)
   {
-      /*
+   /*
       SELECT * FROM users
       WHERE id NOT IN (
          SELECT id FROM users
           INNER JOIN projectsUsersMembers ON projectsUsersMembers.user = users.id
           WHERE projectsUsersMembers.project = 2
       )
-      */
+   */
       $members = $this->_getViewUsersProjectsTable()->getUsersInProject($projectId)->buffer();
       $users = $this->_getUserTable()->getAllUsers()->buffer();
 
@@ -211,17 +212,15 @@ class ProjectController extends AbstractActionController
       foreach($users as $user)
       {
          $mustAdd = true;
+         
          foreach($members as $member)
          {
             if($user->id == $member->id)
-            {
                $mustAdd = false;
-            }
          }
+
          if($mustAdd)
-         {
             array_push($notMembersArray, $user);
-         }
       }
 
       return $notMembersArray;
