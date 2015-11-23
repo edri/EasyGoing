@@ -28,6 +28,7 @@ class ProjectController extends AbstractActionController
    private $_viewUsersProjectsTable;
    private $_projectsUsersMembersTable;
    private $_viewUsersTasksTable;
+   private $_viewProjectDetailsTable;
 
    // Get the task's table's entity, represented by the created model.
    // Act as a singleton : we only can have one instance of the object.
@@ -99,6 +100,16 @@ class ProjectController extends AbstractActionController
          $this->_viewUsersTasksTable = $sm->get('Application\Model\ViewUsersTasksTable');
       }
       return $this->_viewUsersTasksTable;
+   }
+   
+   // Get projects' details and users' mapping entity, which contains all important project's data.
+   private function _getViewProjectDetailsTable()
+   {
+       if (!$this->_viewProjectDetailsTable) {
+           $sm = $this->getServiceLocator();
+           $this->_viewProjectDetailsTable = $sm->get('Application\Model\ViewProjectDetailsTable');
+       }
+       return $this->_viewProjectDetailsTable;
    }
 
    public function indexAction()
@@ -205,11 +216,12 @@ class ProjectController extends AbstractActionController
    public function detailsAction()
    {
         $id = (int)$this->params('id');
+        $projectDetails = $this->_getViewProjectDetailsTable()->getProjectDetails($id, 4);
 
         // Send the success message back with JSON.
         $result = new JsonModel(array(
             'success' => true,
-            'message' => $id
+            'projectDetails' => $projectDetails,
         ));
 
         return $result;
@@ -232,8 +244,8 @@ class ProjectController extends AbstractActionController
       foreach($users as $user)
       {
          $mustAdd = true;
-
-         foreach($members as $member) 
+         
+         foreach($members as $member)
          {
             if($user->id == $member->id)
                $mustAdd = false;

@@ -1,15 +1,42 @@
 <h1>Tests pour le tutoriel...</h1>
 
 <script type="application/javascript">
-    $.ajax({
-        type: 'GET',
-        url: '/tutorial/projects',
-        dataType: 'json',
-        success: function(res) 
-        {
-            res.forEach(function(element) {
-                console.log("Balise div : " + element.div + ", Texte : " + element.text);
-            });
-        }
+    
+    var tutoData;
+    var current = 0;
+
+    var nextTutorial = function() {
+        
+        var d = tutoData[current];
+        
+        // Affichage du tutoriel sur la page
+        $("div[role=tutorial][id != " + d.div + "]").fadeOut();       
+        $("div[role=tutorial][id = " + d.div + "]").html(d.text).fadeIn();
+        
+        current = (current + 1) % tutoData.length;
+        console.log(current);
+        
+    };
+
+    Tutorial('projects', function(data) {
+        tutoData = data;
+        nextTutorial();
     });
+    
 </script>
+
+<b><font color=red><div id="salut" role='tutorial'></div></font></b>
+
+<h2>Ici s'affiche le tutoriel 1</h2>
+<div id="bonjour" role='tutorial'></div>
+
+
+<h2>Ici s'affiche le tutoriel 2</h2>
+<div id="coucou" role='tutorial'></div>
+
+<a href="#" onClick="nextTutorial()">
+    Next
+</a>
+
+
+

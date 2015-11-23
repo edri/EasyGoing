@@ -25,6 +25,8 @@ use Application\Model\Project;
 use Application\Model\ProjectTable;
 use Application\Model\ViewProjectMin;
 use Application\Model\ViewProjectMinTable;
+use Application\Model\ViewProjectDetails;
+use Application\Model\ViewProjectDetailsTable;
 use Application\Model\ProjectsUsersMembers;
 use Application\Model\ProjectsUsersMembersTable;
 use Application\Model\Task;
@@ -161,6 +163,17 @@ class Module
                 'Application\Model\ViewProjectMinTable' =>  function($sm) {
                     $tableGateway = $sm->get('ViewProjectMinTableGateway');
                     $table = new ViewProjectMinTable($tableGateway);
+                    return $table;
+                },
+                'ViewProjectDetailsTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ViewProjectDetails());
+                    return new TableGateway('view_projects_details', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ViewProjectDetailsTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ViewProjectDetailsTableGateway');
+                    $table = new ViewProjectDetailsTable($tableGateway);
                     return $table;
                 },
                 'ProjectsUsersMembersTableGateway' => function ($sm) {

@@ -26,6 +26,7 @@ CREATE TABLE users
     filePhoto VARCHAR(30),
     wantTutorial BOOLEAN NOT NULL DEFAULT TRUE,
     wantNotifications BOOLEAN NOT NULL DEFAULT TRUE,
+	cookie VARCHAR(64),
     UNIQUE(email),
 	UNIQUE(username),
     PRIMARY KEY(id)
@@ -182,6 +183,22 @@ CREATE VIEW view_users_projects AS
 	FROM users
 	INNER JOIN projectsUsersMembers ON users.id = projectsUsersMembers.user
 );
+
+DROP VIEW IF EXISTS view_users_tasks;
+CREATE VIEW view_users_tasks AS
+(
+	SELECT * 
+	FROM tasks as t INNER JOIN usersTasksAffectations as ut
+		ON ut.task = t.id
+);
+
+DROP VIEW IF EXISTS view_projects_details;
+CREATE VIEW view_projects_details AS
+(
+	SELECT p.id AS projectId, p.name, p.description, p.startDate, p.deadLineDate, pu.user AS userId
+	FROM projects AS p INNER JOIN projectsUsersMembers AS pu
+		ON p.id = pu.project
+ );
 
 /* This function check if a user can be affected to a task */
 USE easygoing;
@@ -398,7 +415,7 @@ VALUES(
 	"Raphaël",
 	"Racine",
 	"default.png",
-	true, true
+	true, true, null
 );
 
 INSERT INTO users
@@ -410,7 +427,7 @@ VALUES(
 	"Karim",
 	"Ghozlani",
 	"default.png",
-	false, true
+	false, true, null
 );
 
 INSERT INTO users
@@ -422,7 +439,7 @@ VALUES(
 	"Thibault",
 	"Duchoud",
 	"default.png",
-	true, false
+	true, false, null
 );
 
 INSERT INTO users
@@ -434,7 +451,7 @@ VALUES(
 	"Miguel",
 	"Santamaria",
 	"default.png",
-	false, false
+	false, false, null
 );
 
 INSERT INTO users
@@ -446,7 +463,7 @@ VALUES(
 	"Vanessa",
 	"Meguep",
 	"default.png",
-	true, true
+	true, true, null
 );
 
 SELECT id INTO @user1
