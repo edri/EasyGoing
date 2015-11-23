@@ -11,10 +11,9 @@
         
         // Affichage du tutoriel sur la page
         $("div[role=tutorial][id != " + d.div + "]").fadeOut();       
-        $("div[role=tutorial][id = " + d.div + "]").html(d.text).fadeIn();
+        $("div[role=tutorial][id = " + d.div + "]").fadeIn();
         
         current = (current + 1) % tutoData.length;
-        console.log(current);
         
     };
 
@@ -25,18 +24,27 @@
     
 </script>
 
-<b><font color=red><div id="salut" role='tutorial'></div></font></b>
+<div id="salut" role='tutorial' hidden=true>
+    <img src="/img/tuto.png">Coucou mon ami</img>
+    <a href="#" onClick="nextTutorial()">Next</a>
+</div>
 
 <h2>Ici s'affiche le tutoriel 1</h2>
-<div id="bonjour" role='tutorial'></div>
+
+<div id="bonjour" role='tutorial' hidden=true>
+    <img src="/img/tuto.png">Coucou mon ami</img>
+    <a href="#" onClick="nextTutorial()">Next</a>
+</div>
 
 
 <h2>Ici s'affiche le tutoriel 2</h2>
-<div id="coucou" role='tutorial'></div>
 
-<a href="#" onClick="nextTutorial()">
-    Next
-</a>
+<div id="coucou" role='tutorial' hidden=true>
+    <img src="/img/tuto.png">Coucou mon ami</img>
+    <a href="#" onClick="nextTutorial()">Next</a>
+</div>
+
+
 
 
 
