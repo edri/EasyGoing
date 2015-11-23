@@ -1,3 +1,47 @@
+<h1 class="pageTitle" align = "center">Registration</h1>
+<?php
+    if (isset($result))
+    {
+?>
+        <div class="panel panel-danger error">
+            <div class="panel-heading">
+							<?php
+								switch($result){
+
+									case "errorPictureSize":
+									echo("file too large");
+									break;
+									case "errorPictureType":
+									echo("can't allow this file extension");
+									break;
+									case  "errorPicture":
+									echo("there's an error in the image file");
+									break;
+									case  "errorFilesUpload":
+									echo("can't apply this file!check if it respect the requirements");
+									break;
+									case  "errorDatabaseAdding":
+									echo("can't add this account in the database. user already exists");
+									break;
+									case  "errorMailInvalid":
+									echo("Not a valid mail format");
+									break;
+									case  "errorPasswordsDontMatch":
+									echo("passwords doesn't match");
+									break;
+									case  "errorDatabaseAdding":
+									echo("can't add this account in the database. user already exists");
+									break;
+
+
+								}
+                 ?>
+            </div>
+        </div>
+<?php
+    }
+?>
+
 <form action="/registration" class="form-horizontal" method="POST" role="form">
 	<div class="form-group">
         <label class="control-label col-sm-2" for="username">Username (can't be modified) *</label>

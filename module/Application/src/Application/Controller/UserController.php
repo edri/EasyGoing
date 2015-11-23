@@ -55,7 +55,7 @@ class UserController extends AbstractActionController
 		if ($sessionUser && $sessionUser->connected)
 		{
 			// Redirect the user if it is already connected.
-			$this->redirect()->toRoute('projects');
+			$this->redirect()->toRoute();
 		}
 		else
 		{
@@ -74,7 +74,7 @@ class UserController extends AbstractActionController
 					$sessionUser->id = $user->id;
 					$sessionUser->username = $user->username;
 					//go To projects
-					$this->redirect()->toRoute('projects');
+					$this->redirect()->toRoute();
 				}
 				else
 				{
@@ -176,7 +176,7 @@ class UserController extends AbstractActionController
 											//$this->resizeImageWeight($_FILES["logo"]["tmp_name"], getcwd() . "/public/img/projects/" . $fileName, $extension);
 
 											// Create a thumbnail (50px) of the image and save it in the hard drive of the server.
-											$this->getUtilities()->createSquareImage($_FILES["picture"]["tmp_name"], $extension, getcwd() . "/public/img/projects/" . $fileName, 50);
+											$this->getUtilities()->createSquareImage($_FILES["picture"]["tmp_name"], $extension, getcwd() . "/public/img/users/" . $fileName, 50);
 										}
 										catch (Exception $e)
 										{
@@ -210,10 +210,10 @@ class UserController extends AbstractActionController
 					{
 						$result	= 'errorPasswordsDontMatch';
 					}
-					
+
 				if ($result == "success")
 				{
-					$this->redirect()->toRoute('projects');
+					$this->redirect()->toRoute();
 				}
 				else
 					return new ViewModel(array(
@@ -254,7 +254,7 @@ class UserController extends AbstractActionController
 
 	public function validationAction()
 	{
-		$this->redirect()->toRoute('/');
+		$this->redirect()->toRoute();
 
 		return new ViewModel();
 	}
@@ -262,7 +262,7 @@ class UserController extends AbstractActionController
 
 	public function cancelAction()
 	{
-			$this->redirect()->toRoute('/');
+			$this->redirect()->toRoute();
 	}
 
 }
