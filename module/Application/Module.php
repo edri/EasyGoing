@@ -27,6 +27,8 @@ use Application\Model\ViewProjectMin;
 use Application\Model\ViewProjectMinTable;
 use Application\Model\ViewProjectDetails;
 use Application\Model\ViewProjectDetailsTable;
+use Application\Model\ViewProjectsMembersSpecializations;
+use Application\Model\ViewProjectsMembersSpecializationsTable;
 use Application\Model\ProjectsUsersMembers;
 use Application\Model\ProjectsUsersMembersTable;
 use Application\Model\Task;
@@ -218,6 +220,17 @@ class Module
                 'Application\Model\UsersTasksAffectations' =>  function($sm) {
                     $tableGateway = $sm->get('UsersTasksAffectationsTableGateway');
                     $table = new UsersTasksAffectationsTable($tableGateway);
+                    return $table;
+                },
+                'ViewProjectsMembersSpecializationsTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ViewProjectsMembersSpecializations());
+                    return new TableGateway('view_projects_members_specializations', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ViewProjectsMembersSpecializationsTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ViewProjectsMembersSpecializationsTableGateway');
+                    $table = new ViewProjectsMembersSpecializationsTable($tableGateway);
                     return $table;
                 },
 				// Configure the session service.

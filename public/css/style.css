@@ -219,6 +219,10 @@ title:focus, .title:hover {
     resize: none;
 }
 
+.membersTable {
+    width: 70%;
+}
+
 .membersTable td, th {
     border: 1px solid black;
     padding: 8px;
