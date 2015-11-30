@@ -101,7 +101,7 @@ class ProjectController extends AbstractActionController
       }
       return $this->_viewUsersTasksTable;
    }
-   
+
    // Get projects' details and users' mapping entity, which contains all important project's data.
    private function _getViewProjectDetailsTable()
    {
@@ -121,21 +121,11 @@ class ProjectController extends AbstractActionController
 
       $tasks = $this->_getTaskTable()->getAllTasksInProject($this->params('id'));
       $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
-      $arrayTasksForMember = array();
-
-      foreach($members as $member) {
-         $arrayTasksForMember[$member->id] = array();
-         $tasksForMember = $this->_getViewUsersTasksTable()->getTasksForMemberInProject($this->params('id'), $member->id);
-         foreach($tasksForMember as $task) {
-            array_push($arrayTasksForMember[$member->id], $task);
-         }
-      }
 
       return new ViewModel(array(
          'project'           => $project,
          'tasks'             => $tasks,
-         'members'           => $members,
-         'tasksForMember'    => $arrayTasksForMember
+         'members'           => $members
       ));
    }
 
@@ -160,7 +150,49 @@ class ProjectController extends AbstractActionController
          $deadlineDate = $_POST["deadlineDate"];
 
          $this->_getTaskTable()->addTask($name, $description, $deadlineDate, 10, $priority, $projectId);
+
+         $this->redirect()->toRoute('project', array(
+             'controller' => 'project',
+             'action' =>  'index',
+             'id' =>'1'
+         ));
       }
+   }
+
+   public function boardViewMembersAction()
+   {
+      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
+      $arrayTasksForMember = array();
+
+      foreach($members as $member) {
+         $arrayTasksForMember[$member->id] = array();
+         $tasksForMember = $this->_getViewUsersTasksTable()->getTasksForMemberInProject($this->params('id'), $member->id);
+         foreach($tasksForMember as $task) {
+            array_push($arrayTasksForMember[$member->id], $task);
+         }
+      }
+
+      $result = new ViewModel(array(
+         'members'           => $members,
+         'tasksForMember'    => $arrayTasksForMember
+      ));
+      $result->setTerminal(true);
+
+      return $result;
+   }
+
+   public function boardViewTasksAction()
+   {
+      $tasks = $this->_getTaskTable()->getAllTasksInProject($this->params('id'));
+      $arrayMembersForTask = array();
+
+      $result = new ViewModel(array(
+         'tasks'             => $tasks,
+         'membersForTask'    => $arrayMembersForTask
+      ));
+      $result->setTerminal(true);
+
+      return $result;
    }
 
    public function editTaskAction()
