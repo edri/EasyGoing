@@ -119,8 +119,22 @@ title:focus, .title:hover {
 
 
 /* PROJECTS LIST */
+.projectsHeaderTable {
+    margin-bottom: 80px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.projectsTitle {
+    margin: 0;
+}
+
 .newProject {
     float: right;
+}
+
+.projectsToolsTable {
+    width: 100%;
 }
 
 .tableListProjects {
@@ -257,17 +271,18 @@ hr {
     border: 0;
     border-top: 1px solid #ccc;
     margin: 1em 0;
-    padding: 0; 
+    padding: 0;
 }
 
 
 /** ====== BOARD ====== **/
-.board {
+.board, .board-header {
     display: table;
     margin: 0;
     padding: 0;
     border-spacing: 5px;
 }
+
 .section {
     display: table-cell;
     margin: 0;

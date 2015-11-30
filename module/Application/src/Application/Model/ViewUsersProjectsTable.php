@@ -20,9 +20,4 @@ class ViewUsersProjectsTable
    {
       return $this->_tableGateway->select(array("project" => $projectId))->buffer();
    }
-
-   public function getUsersNotInProject($projectId)
-   {
-      
-   }
 }

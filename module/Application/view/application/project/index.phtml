@@ -3,29 +3,59 @@
 <p>Durée : du <?php echo $project->startDate . ' au ' . $project->deadLineDate; ?></p>
 <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a> -
 <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
+<p id="result">Result</p>
 <br><br><hr><br>
-<?php foreach ($members as $member): ?>
-<div class="board">
+<div class="board-header">
    <div class="users section">
       <h1>Users</h1>
+   </div>
+   <div class="section">
+      <h1>To do</h1>
+   </div>
+   <div class="section">
+      <h1>Doing</h1>
+   </div>
+   <div class="section">
+      <h1>Done</h1>
+   </div>
+</div>
+<?php foreach ($members as $member): ?>
+<div class="board" member-id="<?php echo $member->id; ?>">
+   <div class="users section" section="users">
      <div class="user" draggable="false"><?php echo $member->firstName . ' ' . $member->lastName; ?></div>
    </div>
-   <div class="todo section">
-      <h1>To Do</h1>
+   <div class="todo section" section="TODO">
       <?php
-      $i = 1;
-      foreach ($tasks as $task)
+      foreach($tasksForMember[$member->id] as $task) 
       {
-         echo '<div id="'.$member->email.$i.'" class="card">'.$task->name.'</div>';
-         $i++;
+         if($task->state == "TODO")
+         {
+            echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="card">'.$task->name.'</div>';
+         }
       }
       ?>
    </div>
-   <div class="doing section">
-      <h1>Doing</h1>
+   <div class="doing section" section="DOING">
+      <?php
+      foreach($tasksForMember[$member->id] as $task) 
+      {
+         if($task->state == "DOING")
+         {
+            echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="card">'.$task->name.'</div>';
+         }
+      }
+      ?>
    </div>
-   <div class="done section">
-      <h1>Done</h1>
+   <div class="done section" section="DONE">
+      <?php
+      foreach($tasksForMember[$member->id] as $task) 
+      {
+         if($task->state == "DONE")
+         {
+            echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="card">'.$task->name.'</div>';
+         }
+      }
+      ?>
    </div>
 </div>
 <?php endforeach; ?>
@@ -49,6 +79,18 @@
                <?php foreach ($members as $member) : ?>
                <p><?php echo $member->username; ?></p>
                <?php endforeach; ?>
+            </div>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="panel panel-default">
+            <div class="panel-heading">Test</div>
+            <div class="panel-body">
+               <pre>
+               <?php foreach ($tasksForMember as $t) : ?>
+               <p><?php var_dump($t); ?></p>
+               <?php endforeach; ?>
+               </pre>
             </div>
          </div>
       </div>
@@ -116,14 +158,26 @@ for (var i in board) {
       var section = closestWithClass(e.target, 'section');
       var id = e.dataTransfer.getData('card');
       if (id) {
-         var card = document.getElementById(id);
+         var task = document.getElementById(id);
          // Might be a card from another window.
-         if (card) {
+         if (task) {
             if (section !== card.parentNode) {
-               section.appendChild(card);
+
+               var targetMemberId = e.target.parentNode.getAttribute('member-id');
+               var taskId = task.getAttribute('task-id');
+               var targetSection = e.target.getAttribute('section');
+
+               console.log('before ajax');
+               $.post("http://easygoing/project/2/moveTask", { taskId: taskId, targetMemberId: targetMemberId, targetSection: targetSection })
+                  .done(function( data ) {
+                     $('#result').append(data);
+               });
+
+               section.appendChild(task);
+
             }
          } else {
-            alert('couldn\'t find card #' + id);
+            alert('couldn\'t find task #' + id);
          }
       }
       section.classList.remove('droppable');

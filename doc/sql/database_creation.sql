@@ -168,10 +168,10 @@ DROP VIEW IF EXISTS view_projects_members_specializations;
 CREATE VIEW view_projects_members_specializations AS
 (
 	SELECT pum.project, u.username, pus.specialization, pum.isAdmin
-	FROM projectsusersmembers AS pum 
+	FROM projectsUsersMembers AS pum 
 		INNER JOIN users AS u 
 			ON u.id = pum.user
-		LEFT JOIN projectsusersspecializations AS pus 
+		LEFT JOIN projectsUsersSpecializations AS pus 
 			ON u.id = pus.user AND pus.project = pum.project
 );
 
@@ -183,6 +183,22 @@ CREATE VIEW view_users_projects AS
 	FROM users
 	INNER JOIN projectsUsersMembers ON users.id = projectsUsersMembers.user
 );
+
+DROP VIEW IF EXISTS view_users_tasks;
+CREATE VIEW view_users_tasks AS
+(
+	SELECT * 
+	FROM tasks as t INNER JOIN usersTasksAffectations as ut
+		ON ut.task = t.id
+);
+
+DROP VIEW IF EXISTS view_projects_details;
+CREATE VIEW view_projects_details AS
+(
+	SELECT p.id AS projectId, p.name, p.description, p.startDate, p.deadLineDate, pu.user AS userId
+	FROM projects AS p INNER JOIN projectsUsersMembers AS pu
+		ON p.id = pu.project
+ );
 
 /* This function check if a user can be affected to a task */
 USE easygoing;
@@ -296,7 +312,7 @@ END $$
 DELIMITER ;
 
 USE easygoing;
-DROP TRIGGER IF EXISTS usersTasksAffectationsBeforeUpdate
+DROP TRIGGER IF EXISTS usersTasksAffectationsBeforeUpdate;
 
 DELIMITER $$
 USE easygoing $$

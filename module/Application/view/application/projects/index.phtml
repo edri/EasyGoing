@@ -149,18 +149,66 @@
              }
          }
     }
+
+    // Search for a project when the user types in the search field.
+    function filterSearch()
+    {
+       var text = $('#search').val();
+
+       // For each tr in table...
+       $.each($('#tableListProjects'), function(i, table)
+       {
+          $('tr[name="projectLine"]', table).each(function(i, tr)
+          {
+             if($(tr).attr('title').indexOf(text) > -1)
+             {
+                $(tr).show("fast");
+            }
+             else
+             {
+                // If the project-to-hide is currently selected, close the details
+                // row.
+                if ($(tr).attr("class") === "projectLineSelected")
+                {
+                    isSelectionChanging = true;
+
+                    // Reset previous selected element.
+                    $("#project" + currentSelected).attr("class", "projectLine");
+                    $("#collapseArrow" + currentSelected).hide();
+
+                    currentSelected = undefined;
+
+                    $("#projectDetails").hide("fast");
+                    // Indicate the system that the function finished.
+                    isSelectionChanging = false;
+                }
+
+                $(tr).hide("fast");
+            }
+          });
+      });
+    }
 -->
 </script>
 
-<h1 class="pageTitle">Your projects</h1>
-
-<a class="newProject" href="/projects/add"><b>Create a new project !</b></a>
+<table class="projectsHeaderTable">
+    <tr>
+        <td><h1 class="projectsTitle">Your projects</h1></td>
+        <td><a class="newProject" href="/projects/add"><b>Create a new project !</b></a></td>
+    </tr>
+</table>
 
 <?php
 	if (sizeof($userProjects) > 0)
 	{
 ?>
-        Click on a project to see details.
+        <table class="projectsToolsTable">
+            <tr>
+                <td>Click on a project to see details.</td>
+                <td><input onkeyup="filterSearch();" type="text" id="search" class="form-control" placeholder="Search for..." /></td>
+            </tr>
+        </table>
+
         <table id="tableListProjects" class="tableListProjects">
     <?php
         foreach ($userProjects as $p) :
@@ -168,7 +216,8 @@
             <tr name="projectLine" id="project<?php echo $p->id; ?>" class="projectLine"
                 onMouseOver="showExpandArrow(<?php echo $p->id; ?>);"
                 onMouseOut="hideExpandArrow(<?php echo $p->id; ?>);"
-                onClick="loadProjectDetails(<?php echo $p->id; ?>);">
+                onClick="loadProjectDetails(<?php echo $p->id; ?>);"
+                title="<?php echo $this->escapeHtml($p->name); ?>">
                 <td class="projectTitle">
                     <img src="<?php echo $this->basePath('img/projects/' . $p->fileLogo); ?>"
                          alt="<?php echo $this->escapeHtml($p->name); ?>" height=50 width=50
