@@ -1,18 +1,56 @@
 <h1>Dashboard - <?php echo $project->name; ?></h1>
-<p>Description : <?php echo $project->description; ?></p>
-<p>Durée : du <?php echo $project->startDate . ' au ' . $project->deadLineDate; ?></p>
-<a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a> -
-<a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
-<br><br>
-<div class="btn-group" data-toggle="buttons">
-  <label class="btn btn-primary active btnEasygoing">
-    <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
-  </label>
-  <label class="btn btn-primary btnEasygoing">
-    <input type="radio" name="options" id="option2" autocomplete="off" onchange="loadBoardViewTasks();"> View per tasks
-  </label>
+
+<div class="projectHeader">
+    <div class="leftPart">
+        <p>Description : <?php echo $project->description; ?></p>
+        <p>Durée : du <?php echo $project->startDate . ' au ' . $project->deadLineDate; ?></p>
+        <p>
+            <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a><br/>
+            <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
+        </p>
+    </div>
+
+    <div class="rightPart">
+        <div>
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="historicalTabs" role="tablist">
+                <li role="presentation" class="active"><a href="#all" aria-controls="all" role="tab" data-toggle="tab" style="outline: 0 none;">All</a></li>
+                <li role="presentation"><a href="#events" aria-controls="events" role="tab" data-toggle="tab" style="outline: 0 none;">Events</a></li>
+                <li role="presentation"><a href="#comments" aria-controls="comments" role="tab" data-toggle="tab" style="outline: 0 none;">Comments</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content historicalTab">
+                <div role="tabpanel" class="tab-pane fade in active" id="all">
+                    ALL<br/>
+                    ALL<br/>
+                    ALL<br/>
+                    ALL<br/>
+                    ALL<br/>
+                    ALL<br/>
+                    ALL<br/>
+                    ALL<br/>
+
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="events">EVENTS</div>
+                <div role="tabpanel" class="tab-pane fade" id="comments">COMMENTS</div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<br/><hr/>
 <p id="result"></p>
+<p class="boardButtons">
+  <div class="btn-group" data-toggle="buttons">
+    <label class="btn btn-primary active btnEasygoing">
+      <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
+    </label>
+    <label class="btn btn-primary btnEasygoing">
+      <input type="radio" name="options" id="option2" autocomplete="off" onchange="loadBoardViewTasks();"> View per tasks
+    </label>
+  </div>
+</p>
 <div id="board-container"></div>
 <br><br><hr><br>
 <br>
@@ -54,15 +92,23 @@
 </div>
 
 <script>
+    function loadBoardViewMembers()
+    {
+       $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewMembers"'; ?>);
+    }
 
-function loadBoardViewMembers()
-{
-   $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewMembers"'; ?>);
-}
-function loadBoardViewTasks()
-{
-   $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewTasks"'; ?>);
-}
+    function loadBoardViewTasks()
+    {
+       $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewTasks"'; ?>);
+    }
 
-loadBoardViewMembers();
+    $(document).ready(function() {
+        loadBoardViewMembers();
+
+        // Enable tabbable tabs on the historical panel.
+        $("#historicalTabs a").click(function(event) {
+            event.preventDefault();
+            $(this).tab("show");
+        });
+    });
 </script>
