@@ -186,7 +186,7 @@ class UserController extends AbstractActionController
 											{
 												$fileName = uniqid() . ".png";
 											}
-											while (file_exists(getcwd() . "/public/img/projects/" . $fileName));
+											while (file_exists(getcwd() . "/public/img/users/" . $fileName));
 
 											//move_uploaded_file($_FILES['logo']['tmp_name'], getcwd() . "/public/img/projects/" . $fileName . "tmp");
 
