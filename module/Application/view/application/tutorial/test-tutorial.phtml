@@ -9,12 +9,16 @@
         
         var d = tutoData[current];
         
-        // Affichage du tutoriel sur la page
-        $("div[role=tutorial][id != " + d.div + "]").fadeOut();       
-        $("div[role=tutorial][id = " + d.div + "]").html(d.text).fadeIn();
+        // Affichage du tutoriel sur la page      
+        
+        // Voir pour mettre template Handlebars
+        $("div[role=tutorial][id = " + d.div + "]").html(
+            "<img src=/img/tuto.png /> " + d.text + "<a href='#' onClick='nextTutorial()'>   Next</a>"
+        ).fadeIn();
+        
+        $("div[role=tutorial][id != " + d.div + "]").fadeOut(); 
         
         current = (current + 1) % tutoData.length;
-        console.log(current);
         
     };
 
@@ -25,18 +29,21 @@
     
 </script>
 
-<b><font color=red><div id="salut" role='tutorial'></div></font></b>
+<div id="salut" role='tutorial'>
+</div>
 
 <h2>Ici s'affiche le tutoriel 1</h2>
-<div id="bonjour" role='tutorial'></div>
+
+<div id="bonjour" role='tutorial'>
+</div>
 
 
 <h2>Ici s'affiche le tutoriel 2</h2>
-<div id="coucou" role='tutorial'></div>
 
-<a href="#" onClick="nextTutorial()">
-    Next
-</a>
+<div id="coucou" role='tutorial'>
+</div>
+
+
 
 
 
