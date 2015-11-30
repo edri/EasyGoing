@@ -15,6 +15,6 @@ class UsersTasksAffectationsTable
 
    public function updateTaskAffectation($userId, $taskId) 
    {
-      
+      $this->tableGateway->update(array('user' => $userId), array('task' => $taskId));
    }
 }

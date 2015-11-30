@@ -33,4 +33,9 @@ class TaskTable
          'project' => $projectId
       ))->buffer();
    }
+
+   public function updateStateOfTask($taskId, $newState)
+   {
+      $this->_tableGateway->update(array('state' => $newState), array('id' => $taskId));
+   }
 }

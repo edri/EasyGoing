@@ -39,11 +39,16 @@
 </div>
 
 <br/><hr/>
-
 <p id="result"></p>
 <p class="boardButtons">
-    <button class="btn btn-info" onclick="loadBoardViewMembers();">Board view members</button>
-    <button class="btn btn-info" onclick="loadBoardViewTasks();">Board view tasks</button>
+  <div class="btn-group" data-toggle="buttons">
+    <label class="btn btn-primary active btnEasygoing">
+      <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
+    </label>
+    <label class="btn btn-primary btnEasygoing">
+      <input type="radio" name="options" id="option2" autocomplete="off" onchange="loadBoardViewTasks();"> View per tasks
+    </label>
+  </div>
 </p>
 <div id="board-container"></div>
 <br><br><hr><br>
