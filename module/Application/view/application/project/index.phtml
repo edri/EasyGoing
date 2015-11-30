@@ -8,24 +8,30 @@
             <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a><br/>
             <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
         </p>
-        <p>
-            <button class="btn btn-info" onclick="loadBoardViewMembers();">Board view members</button>
-            <button class="btn btn-info" onclick="loadBoardViewTasks();">Board view tasks</button>
-        </p>
     </div>
 
     <div class="rightPart">
         <div>
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" id="historicalTabs" role="tablist">
-                <li role="presentation" class="active"><a href="#all" aria-controls="all" role="tab" data-toggle="tab">All</a></li>
-                <li role="presentation"><a href="#events" aria-controls="events" role="tab" data-toggle="tab">Events</a></li>
-                <li role="presentation"><a href="#comments" aria-controls="comments" role="tab" data-toggle="tab">Comments</a></li>
+                <li role="presentation" class="active"><a href="#all" aria-controls="all" role="tab" data-toggle="tab" style="outline: 0 none;">All</a></li>
+                <li role="presentation"><a href="#events" aria-controls="events" role="tab" data-toggle="tab" style="outline: 0 none;">Events</a></li>
+                <li role="presentation"><a href="#comments" aria-controls="comments" role="tab" data-toggle="tab" style="outline: 0 none;">Comments</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content historicalTab">
-                <div role="tabpanel" class="tab-pane fade in active" id="all">ALL</div>
+                <div role="tabpanel" class="tab-pane fade in active" id="all">
+                    ALL<br/>
+                    ALL<br/>
+                    ALL<br/>
+                    ALL<br/>
+                    ALL<br/>
+                    ALL<br/>
+                    ALL<br/>
+                    ALL<br/>
+
+                </div>
                 <div role="tabpanel" class="tab-pane fade" id="events">EVENTS</div>
                 <div role="tabpanel" class="tab-pane fade" id="comments">COMMENTS</div>
             </div>
@@ -36,7 +42,11 @@
 <br/><hr/>
 
 <p id="result"></p>
-<div class="boardContainer" id="board-container"></div>
+<p class="boardButtons">
+    <button class="btn btn-info" onclick="loadBoardViewMembers();">Board view members</button>
+    <button class="btn btn-info" onclick="loadBoardViewTasks();">Board view tasks</button>
+</p>
+<div id="board-container"></div>
 <br><br><hr><br>
 <br>
 <div class="container-fluid">
