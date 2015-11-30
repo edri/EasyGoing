@@ -9,7 +9,7 @@ class ViewProjectDetails
 	public $name;
 	public $description;
 	public $startDate;
-	public $deadlineDate;
+	public $deadLineDate;
 	public $userId;
 
 	public function exchangeArray($data)
@@ -18,7 +18,7 @@ class ViewProjectDetails
 		$this->name  = (!empty($data['name'])) ? $data['name'] : null;
 		$this->description  = (!empty($data['description'])) ? $data['description'] : null;
 		$this->startDate  = (!empty($data['startDate'])) ? $data['startDate'] : null;
-		$this->deadlineDate  = (!empty($data['deadlineDate'])) ? $data['deadlineDate'] : null;
+		$this->deadLineDate  = (!empty($data['deadLineDate'])) ? $data['deadLineDate'] : null;
 		$this->userId  = (!empty($data['userId'])) ? $data['userId'] : null;
 	}
 }

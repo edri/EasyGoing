@@ -27,7 +27,9 @@ class ProjectController extends AbstractActionController
    private $_userTable;
    private $_viewUsersProjectsTable;
    private $_projectsUsersMembersTable;
+   private $_viewUsersTasksTable;
    private $_viewProjectDetailsTable;
+   private $_viewProjectsMembersSpecializationsTable;
 
    // Get the task's table's entity, represented by the created model.
    // Act as a singleton : we only can have one instance of the object.
@@ -91,6 +93,16 @@ class ProjectController extends AbstractActionController
       return $this->_projectsUsersMembersTable;
    }
 
+   // Get the users-tasks' mapping entity, represented by the created model.
+   private function _getViewUsersTasksTable()
+   {
+      if (!$this->_viewUsersTasksTable) {
+         $sm = $this->getServiceLocator();
+         $this->_viewUsersTasksTable = $sm->get('Application\Model\ViewUsersTasksTable');
+      }
+      return $this->_viewUsersTasksTable;
+   }
+
    // Get projects' details and users' mapping entity, which contains all important project's data.
    private function _getViewProjectDetailsTable()
    {
@@ -101,19 +113,30 @@ class ProjectController extends AbstractActionController
        return $this->_viewProjectDetailsTable;
    }
 
+   // Get the project's members' entity.
+   private function _getViewProjectsMembersSpecializationsTable()
+   {
+       if (!$this->_viewProjectsMembersSpecializationsTable) {
+           $sm = $this->getServiceLocator();
+           $this->_viewProjectsMembersSpecializationsTable = $sm->get('Application\Model\ViewProjectsMembersSpecializationsTable');
+       }
+       return $this->_viewProjectsMembersSpecializationsTable;
+   }
+
    public function indexAction()
    {
       $project = $this->_getProjectTable()->getProject($this->params('id'));
-      $tasks = $this->_getTaskTable()->getAllTasksInProject($this->params('id'));
-      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
 
       if(empty($project))
          $this->redirect()->toRoute('projects');
 
+      $tasks = $this->_getTaskTable()->getAllTasksInProject($this->params('id'));
+      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
+
       return new ViewModel(array(
-         'project' => $project,
-         'tasks'   => $tasks,
-         'members' => $members
+         'project'           => $project,
+         'tasks'             => $tasks,
+         'members'           => $members
       ));
    }
 
@@ -138,12 +161,64 @@ class ProjectController extends AbstractActionController
          $deadlineDate = $_POST["deadlineDate"];
 
          $this->_getTaskTable()->addTask($name, $description, $deadlineDate, 10, $priority, $projectId);
+
+         $this->redirect()->toRoute('project', array(
+             'controller' => 'project',
+             'action' =>  'index',
+             'id' =>'1'
+         ));
       }
+   }
+
+   public function boardViewMembersAction()
+   {
+      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
+      $arrayTasksForMember = array();
+
+      foreach($members as $member) {
+         $arrayTasksForMember[$member->id] = array();
+         $tasksForMember = $this->_getViewUsersTasksTable()->getTasksForMemberInProject($this->params('id'), $member->id);
+         foreach($tasksForMember as $task) {
+            array_push($arrayTasksForMember[$member->id], $task);
+         }
+      }
+
+      $result = new ViewModel(array(
+         'members'           => $members,
+         'tasksForMember'    => $arrayTasksForMember
+      ));
+      $result->setTerminal(true);
+
+      return $result;
+   }
+
+   public function boardViewTasksAction()
+   {
+      $tasks = $this->_getTaskTable()->getAllTasksInProject($this->params('id'));
+      $arrayMembersForTask = array();
+
+      $result = new ViewModel(array(
+         'tasks'             => $tasks,
+         'membersForTask'    => $arrayMembersForTask
+      ));
+      $result->setTerminal(true);
+
+      return $result;
    }
 
    public function editTaskAction()
    {
 
+   }
+
+   public function moveTaskAction() {
+      $data = $this->getRequest()->getPost();
+      //echo json_encode(array('id' => $data['id'], 'details' => $data['details']));
+      return $this->getResponse()->setContent(json_encode(array(
+         'taskId' => $data['taskId'],
+         'targetMemberId' => $data['targetMemberId'],
+         'targetSection' => $data['targetSection']
+      )));
    }
 
    public function deleteTaskAction()
@@ -185,11 +260,48 @@ class ProjectController extends AbstractActionController
    {
         $id = (int)$this->params('id');
         $projectDetails = $this->_getViewProjectDetailsTable()->getProjectDetails($id, 4);
+        $tempMembers = $this->_getViewProjectsMembersSpecializationsTable()->getProjectMembers($id);
+        $members = array();
+        $i = 0;
+
+        // Struct the members array.
+        foreach ($tempMembers as $tmpM)
+        {
+            // Indicate whether the current member already exists in the members
+            // list or not.
+            // If yes, we just have to add the object's specialization to the
+            // existing specializations of the user.
+            $alreadyExisting = false;
+            $nbCurrentMembers = count($members);
+
+            // Check if the current member already exists.
+            for ($j = 0; $j < $nbCurrentMembers; ++$j)
+            {
+                // Add the specialization to the specializations list.
+                if ($tmpM->username == $members[$j]["username"])
+                {
+                    $alreadyExisting = true;
+                    $members[$j]["specializations"][] = (empty($tmpM->specialization) ? "-" : $tmpM->specialization);
+                    break;
+                }
+            }
+
+            // If the current member is not already existing in the members list,
+            // add it.
+            if (!$alreadyExisting)
+            {
+                $members[$i]["username"] = $tmpM->username;
+                $members[$i]["specializations"][] = empty($tmpM->specialization) ? "-" : $tmpM->specialization;
+                $members[$i]["isAdmin"] = $tmpM->isAdmin;
+                ++$i;
+            }
+        }
 
         // Send the success message back with JSON.
         $result = new JsonModel(array(
             'success' => true,
             'projectDetails' => $projectDetails,
+            'members'   => $members
         ));
 
         return $result;
@@ -212,7 +324,7 @@ class ProjectController extends AbstractActionController
       foreach($users as $user)
       {
          $mustAdd = true;
-         
+
          foreach($members as $member)
          {
             if($user->id == $member->id)

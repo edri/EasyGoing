@@ -168,10 +168,10 @@ DROP VIEW IF EXISTS view_projects_members_specializations;
 CREATE VIEW view_projects_members_specializations AS
 (
 	SELECT pum.project, u.username, pus.specialization, pum.isAdmin
-	FROM projectsusersmembers AS pum 
+	FROM projectsUsersMembers AS pum 
 		INNER JOIN users AS u 
 			ON u.id = pum.user
-		LEFT JOIN projectsusersspecializations AS pus 
+		LEFT JOIN projectsUsersSpecializations AS pus 
 			ON u.id = pus.user AND pus.project = pum.project
 );
 
@@ -312,7 +312,7 @@ END $$
 DELIMITER ;
 
 USE easygoing;
-DROP TRIGGER IF EXISTS usersTasksAffectationsBeforeUpdate
+DROP TRIGGER IF EXISTS usersTasksAffectationsBeforeUpdate;
 
 DELIMITER $$
 USE easygoing $$
@@ -487,19 +487,21 @@ FROM users
 WHERE username = 'vanessameguep';
 
 /* Create some projects */
-INSERT INTO projects(name, description, startDate, deadLineDate) VALUES
+INSERT INTO projects(name, description, startDate, deadLineDate, fileLogo) VALUES
 (
 	"Travail de Bachelor",	
 	"Un projet difficile... Mais intéressant !", 
 	"2015-01-26", 
-	"2016-10-04"
+	"2016-10-04",
+	"default.png"
 );
 
-INSERT INTO projects(name, description, startDate) VALUES
+INSERT INTO projects(name, description, startDate, fileLogo) VALUES
 (
 	"TWEB Liechti Moustache Project",
 	"Description is too long and unuseful...",
-	"2015-03-06"
+	"2015-03-06",
+	"default.png"
 );
 
 SELECT id INTO @project1

@@ -27,12 +27,18 @@ use Application\Model\ViewProjectMin;
 use Application\Model\ViewProjectMinTable;
 use Application\Model\ViewProjectDetails;
 use Application\Model\ViewProjectDetailsTable;
+use Application\Model\ViewProjectsMembersSpecializations;
+use Application\Model\ViewProjectsMembersSpecializationsTable;
 use Application\Model\ProjectsUsersMembers;
 use Application\Model\ProjectsUsersMembersTable;
 use Application\Model\Task;
 use Application\Model\TaskTable;
 use Application\Model\ViewUsersProjects;
 use Application\Model\ViewUsersProjectsTable;
+use Application\Model\ViewUsersTasks;
+use Application\Model\ViewUsersTasksTable;
+use Application\Model\UsersTasksAffectations;
+use Application\Model\UsersTasksAffectationsTable;
 
 @ini_set('zend_monitor.enable', 0);
 if(@function_exists('output_cache_disable')) {
@@ -192,6 +198,39 @@ class Module
                 'Application\Model\ViewUsersProjectsTable' =>  function($sm) {
                     $tableGateway = $sm->get('ViewUsersProjectsTableGateway');
                     $table = new ViewUsersProjectsTable($tableGateway);
+                    return $table;
+                },
+                'ViewUsersTasksTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ViewUsersTasks());
+                    return new TableGateway('view_users_tasks', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ViewUsersTasksTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ViewUsersTasksTableGateway');
+                    $table = new ViewUsersTasksTable($tableGateway);
+                    return $table;
+                },
+                'UsersTasksAffectationsTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new UsersTasksAffectations());
+                    return new TableGateway('usersTasksAffectations', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\UsersTasksAffectations' =>  function($sm) {
+                    $tableGateway = $sm->get('UsersTasksAffectationsTableGateway');
+                    $table = new UsersTasksAffectationsTable($tableGateway);
+                    return $table;
+                },
+                'ViewProjectsMembersSpecializationsTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ViewProjectsMembersSpecializations());
+                    return new TableGateway('view_projects_members_specializations', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ViewProjectsMembersSpecializationsTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ViewProjectsMembersSpecializationsTableGateway');
+                    $table = new ViewProjectsMembersSpecializationsTable($tableGateway);
                     return $table;
                 },
 				// Configure the session service.

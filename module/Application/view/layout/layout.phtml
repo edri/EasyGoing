@@ -44,7 +44,8 @@
 		<?php
 			echo $this->headScript()->prependFile($this->basePath() . '/js/bootstrap-datepicker.js')
                               			->prependFile($this->basePath() . '/js/bootstrap.min.js')
-										->prependFile($this->basePath() . '/js/jquery.min.js');
+										->prependFile($this->basePath() . '/js/jquery.min.js')
+                                        ->prependFile($this->basePath() . '/js/tuto.js');
         ?>
     </head>
     <body>

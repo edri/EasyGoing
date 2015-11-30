@@ -10,6 +10,7 @@ class Task
    public $deadLineDate;
    public $durationInHours;
    public $priorityLevel;
+   public $state;
    public $project;
 
    public function exchangeArray($data)
@@ -20,6 +21,7 @@ class Task
       $this->deadLineDate  = (!empty($data['deadLineDate'])) ? $data['deadLineDate'] : null;
       $this->durationInHours  = (!empty($data['durationInHours'])) ? $data['durationInHours'] : null;
       $this->priorityLevel  = (!empty($data['priorityLevel'])) ? $data['priorityLevel'] : null;
+      $this->state  = (!empty($data['state'])) ? $data['state'] : null;
       $this->project  = (!empty($data['project'])) ? $data['project'] : null;
    }
 }

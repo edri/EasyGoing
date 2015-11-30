@@ -54,6 +54,7 @@ class UserController extends AbstractActionController
 		// Checks if the user isn't already connected.
 		if ($sessionUser && $sessionUser->connected)
 		{
+
 			// Redirect the user if he is already connected.
 			$this->redirect()->toRoute('projects');
 		}
@@ -78,7 +79,7 @@ class UserController extends AbstractActionController
 				//$this->redirect()->toRoute('projects');	
 				return new ViewModel();		
 			}
-			
+
 			if ($request->isPost())
 			{
 				$username = $_POST["username"];
@@ -94,12 +95,18 @@ class UserController extends AbstractActionController
 					$sessionUser->connected = true;
 					$sessionUser->id = $user->id;
 					$sessionUser->username = $user->username;
+
+					//go To projects
+					$this->redirect()->toRoute();
+
 					//Check if the user has ticked "Remember Me" button
 					//If so, create a cookie
-					if (isset($_POST['checkbox'])) {					
-						//Set a secured cookieValue with username, password and random salt						
-						$salt = rand();			
+					if (isset($_POST['checkbox']))
+					{
+						//Set a secured cookieValue with username, password and random salt
+						$salt = rand();
 						$cookieValue = $this->_hashPassword($username . $password . $salt);
+
 						//store it in the db
 						$this->_getUserTable()->addCookie($cookieValue,$user->id);
 						// Set expiration time to 30 days												
@@ -203,7 +210,7 @@ class UserController extends AbstractActionController
 											{
 												$fileName = uniqid() . ".png";
 											}
-											while (file_exists(getcwd() . "/public/img/projects/" . $fileName));
+											while (file_exists(getcwd() . "/public/img/users/" . $fileName));
 
 											//move_uploaded_file($_FILES['logo']['tmp_name'], getcwd() . "/public/img/projects/" . $fileName . "tmp");
 
@@ -211,7 +218,7 @@ class UserController extends AbstractActionController
 											//$this->resizeImageWeight($_FILES["logo"]["tmp_name"], getcwd() . "/public/img/projects/" . $fileName, $extension);
 
 											// Create a thumbnail (50px) of the image and save it in the hard drive of the server.
-											$this->getUtilities()->createSquareImage($_FILES["picture"]["tmp_name"], $extension, getcwd() . "/public/img/projects/" . $fileName, 50);
+											$this->getUtilities()->createSquareImage($_FILES["picture"]["tmp_name"], $extension, getcwd() . "/public/img/users/" . $fileName, 50);
 										}
 										catch (Exception $e)
 										{
@@ -235,7 +242,7 @@ class UserController extends AbstractActionController
 
 							}
 							else
-								$result	= 'errorMailAlreadyExist';
+								$result	 = 'errorMailAlreadyExist';
 						}
 						else{
 									$result	= 'errorMailInvalid';
@@ -245,10 +252,10 @@ class UserController extends AbstractActionController
 					{
 						$result	= 'errorPasswordsDontMatch';
 					}
-					
+
 				if ($result == "success")
 				{
-					$this->redirect()->toRoute('projects');
+					$this->redirect()->toRoute();
 				}
 				else
 					return new ViewModel(array(
@@ -298,7 +305,7 @@ class UserController extends AbstractActionController
 
 	public function validationAction()
 	{
-		$this->redirect()->toRoute('/');
+		$this->redirect()->toRoute();
 
 		return new ViewModel();
 	}
@@ -306,7 +313,7 @@ class UserController extends AbstractActionController
 
 	public function cancelAction()
 	{
-			$this->redirect()->toRoute('/');
+			$this->redirect()->toRoute();
 	}
 
 }

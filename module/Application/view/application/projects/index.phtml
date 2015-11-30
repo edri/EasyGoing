@@ -22,6 +22,45 @@
         }
     }
 
+    // Display the given project's details.
+    function displayProjectDetails(details, members)
+    {
+        // Clear the members table.
+        // We have to select the elements inside the "projectDetails" row, otherwise
+        // it would be possible to select an element of "oldProjectDetails" one.
+        $("#projectDetails #membersTable tr").not("#membersTableHeader").remove();
+
+        // Add each member in the members table.
+        members.forEach(function(m) {
+            var tableContent =
+                "<tr>\
+                    <td>" + m.username + "</td>\
+                    <td>";
+
+            // Add each member's specialization in the table's cell.
+            m.specializations.forEach(function(s) {
+                tableContent += s + "<br/>";
+            });
+
+            tableContent +=
+                    "</td>\
+                    <td class='checkboxManager'>\
+                        <input " + (m.isAdmin ? "checked " : "") + "type='checkbox' name='chkManager' value='Manager' disabled='disabled'>\
+                    </td>\
+                    </td>\
+                </tr>";
+
+            // Insert the new row right after the last one.
+            $("#projectDetails #membersTable tr:last").after(tableContent);
+        });
+
+        // Display project's details.
+        $("#projectDetails #txtName").val(details.name);
+        $("#projectDetails #txtDescription").text(details.description);
+        $("#projectDetails #txtStartDate").val(details.startDate);
+        $("#projectDetails #txtDeadline").val(details.deadLineDate ? details.deadLineDate : "-");
+    }
+
     // Expend or collapse the project identified by the given ID.
     // We can expect a few cases :
     //    1. If the function is currently executed, when just exit it.
@@ -31,7 +70,7 @@
     //       project's properties.
     //    3. If another project is currently selected, we slide it up as the
     //       time that we are sliding down the new selected one.
-    function expandProject(id)
+    function expandProject(id, details, members)
     {
         // If there was no AJAX request before the calling, when just exit.
         if (isAjaxRequestComplete)
@@ -74,6 +113,9 @@
                 }
 
                 currentSelected = id;
+
+                // Display project's details.
+                displayProjectDetails(details, members);
 
                 // Move the details row right after the selected projects'
                 // table's row and then slide it down.
@@ -119,7 +161,7 @@
                         if(data.success)
                         {
                             isAjaxRequestComplete = true;
-                            expandProject(id);
+                            expandProject(id, data.projectDetails, data.members);
                         }
                     },
     				error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -246,40 +288,25 @@
                             <div class="form-group formProjectDetails">
                                 <label class="control-label col-sm-2" for="name">Full name</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="projectName" name="name" value="Gary Gary Gary Gary Gary Gary Gary Gary Gary Gary Gary !" disabled="disabled" />
+                                    <input class="projectName" disabled="disabled" id="txtName" name="name" type="text" />
                                 </div>
                             </div>
 
                             <div class="form-group formProjectDetails">
                                 <label class="control-label col-sm-2" for="description">Description</label>
                                 <div class="col-sm-10">
-                                    <textarea id="txtDescription" name="description" class="form-control projectDescriptionInList" disabled="disabled" rows=6>Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ... Ce projet est réalisé dans le cadre de ...
-                                    </textarea>
+                                    <textarea id="txtDescription" name="description" class="form-control projectDescriptionInList" disabled="disabled" rows=6></textarea>
                                 </div>
                             </div>
 
                             <div class="form-group formProjectDetails">
                                 <label class="control-label col-sm-2" for="members">Members</label>
                                 <div class="col-sm-10">
-                                    <table name="members" class="membersTable">
-                                        <tr>
+                                    <table class="membersTable" id="membersTable" name="members">
+                                        <tr id="membersTableHeader">
                                             <th>Name</th>
-                                            <th>Specialization</th>
+                                            <th>Specializations</th>
                                             <th>Manager</th>
-                                        </tr>
-                                        <tr>
-                                            <td>miguelsantamaria</td>
-                                            <td>Design</td>
-                                            <td class="checkboxManager">
-                                                <input type="checkbox" name="chkManager" value="Manager" disabled="disabled">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>raphaelracine</td>
-                                            <td>Database</td>
-                                            <td class="checkboxManager">
-                                                <input type="checkbox" name="chkManager" value="Manager" disabled="disabled" checked="checked">
-                                            </td>
                                         </tr>
                                     </table>
                                 </div>
@@ -290,11 +317,11 @@
                                 <div class="col-sm-10">
                                     <p>
                                         From<br/>
-                                        <input type="date" name="txtBeginDate" disabled="disabled" value="2015-10-10" />
+                                        <input disabled="disabled" id="txtStartDate" name="txtStartDate" type="text" />
                                     </p>
                                     <p>
                                         To<br/>
-                                        <input type="date" name="txtBeginDate" disabled="disabled" value="2015-12-20" />
+                                        <input disabled="disabled" id="txtDeadline" name="txtBeginDate" type="text" />
                                     </p>
                                     <div class="linkToProject"><a id="projectLink" href="/project/">Click here to see your project's progression.</a></div>
                                 </div>

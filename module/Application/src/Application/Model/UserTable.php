@@ -53,8 +53,8 @@ class UserTable
 	public function addUser($username, $password, $fname, $lname, $email, $picture)
 	{
 		$this->tableGateway->insert(array(
-			'username'				=> $username,
-			'hashedPassword'			=> $password,
+			'username'			=> $username,
+			'hashedPassword'	=> $password,
 			'firstName'			=> isset($fname) ? $fname : "-",
 			'lastName'			=> isset($lname) ? $lname : "-",
 			'email'				=> $email,
