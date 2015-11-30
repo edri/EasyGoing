@@ -30,6 +30,7 @@ class ProjectController extends AbstractActionController
    private $_viewUsersTasksTable;
    private $_viewProjectDetailsTable;
    private $_viewProjectsMembersSpecializationsTable;
+   private $_usersTasksAffectationsTable;
 
    // Get the task's table's entity, represented by the created model.
    // Act as a singleton : we only can have one instance of the object.
@@ -123,6 +124,15 @@ class ProjectController extends AbstractActionController
        return $this->_viewProjectsMembersSpecializationsTable;
    }
 
+   public function _getUsersTasksAffectationsTable()
+   {
+       if (!$this->_usersTasksAffectationsTable) {
+           $sm = $this->getServiceLocator();
+           $this->_usersTasksAffectationsTable = $sm->get('Application\Model\UsersTasksAffectationsTable');
+       }
+       return $this->_usersTasksAffectationsTable;
+   }
+
    public function indexAction()
    {
       $project = $this->_getProjectTable()->getProject($this->params('id'));
@@ -214,6 +224,10 @@ class ProjectController extends AbstractActionController
    public function moveTaskAction() {
       $data = $this->getRequest()->getPost();
       //echo json_encode(array('id' => $data['id'], 'details' => $data['details']));
+
+      $this->_getTaskTable()->updateStateOfTask($data['taskId'], $data['targetSection']);
+      //$this->_getUsersTasksAffectationsTable()->updateTaskAffectation(5, 4);
+
       return $this->getResponse()->setContent(json_encode(array(
          'taskId' => $data['taskId'],
          'targetMemberId' => $data['targetMemberId'],

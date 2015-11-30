@@ -112,4 +112,5 @@ class Utilities
 		imagedestroy($smaller_image);
 		imagedestroy($square_image);
 	}
+
 }

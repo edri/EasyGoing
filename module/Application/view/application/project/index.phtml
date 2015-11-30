@@ -3,9 +3,15 @@
 <p>Durée : du <?php echo $project->startDate . ' au ' . $project->deadLineDate; ?></p>
 <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a> -
 <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
-<button class="btn btn-info" onclick="loadBoardViewMembers();">Board view members</button>
-<button class="btn btn-info" onclick="loadBoardViewTasks();">Board view tasks</button>
-<button class="btn btn-info" onclick="testWebsocket();">Test websockets</button>
+<br><br>
+<div class="btn-group" data-toggle="buttons">
+  <label class="btn btn-primary active btnEasygoing">
+    <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
+  </label>
+  <label class="btn btn-primary btnEasygoing">
+    <input type="radio" name="options" id="option2" autocomplete="off" onchange="loadBoardViewTasks();"> View per tasks
+  </label>
+</div>
 <p id="result"></p>
 <div id="board-container"></div>
 <br><br><hr><br>
@@ -48,7 +54,7 @@
 </div>
 
 <script>
-$('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewMembers"'; ?>);
+
 function loadBoardViewMembers()
 {
    $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewMembers"'; ?>);
