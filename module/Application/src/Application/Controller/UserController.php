@@ -49,17 +49,36 @@ class UserController extends AbstractActionController
 	// In normal case, it will be calling when the user access the "easygoing/myController/" page,
 	// but here we are in the default controller so the page will be "easygoing/".
 	public function indexAction()
-	{
+	{		
 		$sessionUser = new container('user');
 		// Checks if the user isn't already connected.
 		if ($sessionUser && $sessionUser->connected)
 		{
-			// Redirect the user if it is already connected.
+			// Redirect the user if he is already connected.
 			$this->redirect()->toRoute('projects');
 		}
 		else
 		{
+			
 			$request = $this->getRequest();			
+			// We can now retrieve this cookie using : $this->getRequest()->getCookie('loginCookie');			
+			if (isset($_COOKIE['loginCookie'])&&isset($_COOKIE['idCookie']))
+			{
+				$loginCookie = $_COOKIE['loginCookie'];
+				$idCookie = $_COOKIE['idCookie'];			
+				$cookieUser = $this->_getUserTable()->getUser($idCookie,$loginCookie);
+			}
+			
+			if(isset($cookieUser)){
+				//add session attributes
+				$sessionUser->connected = true;
+				$sessionUser->id = $cookieUser->id;
+				$sessionUser->username = $cookieUser->username;
+
+				//$this->redirect()->toRoute('projects');	
+				return new ViewModel();		
+			}
+			
 			if ($request->isPost())
 			{
 				$username = $_POST["username"];
@@ -67,7 +86,6 @@ class UserController extends AbstractActionController
 				$hashPassword = $this->_hashPassword($password);
 
 				//Check if creditentials are correct
-
 				$user = $this->_getUserTable()->checkCreditentials($username,$hashPassword);
 				//If so, user is not null
 				if(!$user == null)
@@ -83,10 +101,11 @@ class UserController extends AbstractActionController
 						$salt = rand();			
 						$cookieValue = $this->_hashPassword($username . $password . $salt);
 						//store it in the db
-						$this->_getUserTable->addCookie($cookieValue,$user->id);
+						$this->_getUserTable()->addCookie($cookieValue,$user->id);
 						// Set expiration time to 30 days												
 						$expirationTime = 60*60*24*30 ;
 						setcookie('loginCookie', $cookieValue, time() + $expirationTime);
+						setcookie('idCookie', $user->id, time() + $expirationTime);
 						// We can now retrieve this cookie using : $this->getRequest()->getCookie('loginCookie');												
 					}					
 					//go To projects					
@@ -259,6 +278,15 @@ class UserController extends AbstractActionController
 		$sessionUser->offsetUnset("id");
 		$sessionUser->offsetUnset("username");
 		$this->redirect()->toRoute('user');
+
+		if (isset($_COOKIE['loginCookie'])) {
+		    unset($_COOKIE['loginCookie']);	
+		    unset($_COOKIE['idCookie']);		    
+		    setcookie('loginCookie', null, -1);
+		    setcookie('idCookie', null, -1);		    		    
+		} 
+		//kill cookies ?
+		
 		return new ViewModel();
 	}
 
