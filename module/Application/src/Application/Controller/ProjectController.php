@@ -169,28 +169,34 @@ class ProjectController extends AbstractActionController
          $priority = $_POST["priority"];
          $startDate = $_POST["startDate"];
          $deadlineDate = $_POST["deadlineDate"];
+         $sessionUser = new container('user');
 
-         $this->_getTaskTable()->addTask($name, $description, $deadlineDate, 10, $priority, $projectId);
+         $affectation = $this->_getTaskTable()->addTask($name, $description, $deadlineDate, 10, $priority, $projectId);
+
+         // TODO : Mettre $sessionUser->id à la place de 3
+         $this->_getUsersTasksAffectationsTable()->addAffectation(3, $affectation);
 
          $this->redirect()->toRoute('project', array(
              'controller' => 'project',
              'action' =>  'index',
-             'id' =>'1'
+             'projectId' =>'1'
          ));
       }
    }
 
    public function boardViewMembersAction()
    {
+      // Get members of a project
       $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
-      $arrayTasksForMember = array();
 
-      foreach($members as $member) {
+      // Get tasks in a project for each member
+      $arrayTasksForMember = array();
+      foreach($members as $member) 
+      {
          $arrayTasksForMember[$member->id] = array();
          $tasksForMember = $this->_getViewUsersTasksTable()->getTasksForMemberInProject($this->params('id'), $member->id);
-         foreach($tasksForMember as $task) {
+         foreach($tasksForMember as $task)
             array_push($arrayTasksForMember[$member->id], $task);
-         }
       }
 
       $result = new ViewModel(array(
@@ -204,8 +210,17 @@ class ProjectController extends AbstractActionController
 
    public function boardViewTasksAction()
    {
+      // Get tasks in a project
       $tasks = $this->_getTaskTable()->getAllTasksInProject($this->params('id'));
+
+      // Get user(s) doing a task
       $arrayMembersForTask = array();
+      foreach($tasks as $task) 
+      {
+
+      }
+
+      
 
       $result = new ViewModel(array(
          'tasks'             => $tasks,
@@ -226,7 +241,7 @@ class ProjectController extends AbstractActionController
       //echo json_encode(array('id' => $data['id'], 'details' => $data['details']));
 
       $this->_getTaskTable()->updateStateOfTask($data['taskId'], $data['targetSection']);
-      //this->_getUsersTasksAffectationsTable()->updateTaskAffectation(5, 4);
+      $this->_getUsersTasksAffectationsTable()->updateTaskAffectation(5, 4);
 
       return $this->getResponse()->setContent(json_encode(array(
          'taskId' => $data['taskId'],

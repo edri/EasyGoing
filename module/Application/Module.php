@@ -217,7 +217,7 @@ class Module
                     $resultSetPrototype->setArrayObjectPrototype(new UsersTasksAffectations());
                     return new TableGateway('usersTasksAffectations', $dbAdapter, null, $resultSetPrototype);
                 },
-                'Application\Model\UsersTasksAffectations' =>  function($sm) {
+                'Application\Model\UsersTasksAffectationsTable' =>  function($sm) {
                     $tableGateway = $sm->get('UsersTasksAffectationsTableGateway');
                     $table = new UsersTasksAffectationsTable($tableGateway);
                     return $table;
