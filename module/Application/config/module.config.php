@@ -69,7 +69,7 @@ return array(
             'project' => array(
                 'type'    => 'segment',
                 'options' => array(
-                    'route'    => '/project[/:id][/][:action][/:id]',                  // Creating the route, identified by the controller's name.
+                    'route'    => '/project[/:id][/][:action][/:otherId]',                  // Creating the route, identified by the controller's name.
                     'constraints' => array(
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'     => '[0-9]+'           // Regular expression for the action's name ; should not be modified.
