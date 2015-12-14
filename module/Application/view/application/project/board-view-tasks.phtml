@@ -104,7 +104,6 @@ for (var i in board) {
                $.post("http://easygoing/project/2/moveTask", { taskId: taskId, targetMemberId: targetMemberId, targetSection: targetSection })
                   .done(function( data ) {
                      $('#result').append(data);
-
                });
 
                section.appendChild(task);
