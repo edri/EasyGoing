@@ -31,8 +31,12 @@ class TutorialController extends AbstractActionController
         );
     }
     
-    public function testTutorialAction() 
+    public function tutoAction() 
     {
+        return new ViewModel();
+    }
+    
+    public function testTutoAction() {
         return new ViewModel();
     }
 }
