@@ -174,7 +174,7 @@ class ProjectController extends AbstractActionController
          $affectation = $this->_getTaskTable()->addTask($name, $description, $deadlineDate, 10, $priority, $projectId);
 
          // TODO : Mettre $sessionUser->id à la place de 3
-         $this->_getUsersTasksAffectationsTable()->addAffectation(3, $affectation);
+         $this->_getUsersTasksAffectationsTable()->addAffectation(4, $affectation);
 
          $this->redirect()->toRoute('project', array(
              'controller' => 'project',
@@ -191,7 +191,7 @@ class ProjectController extends AbstractActionController
 
       // Get tasks in a project for each member
       $arrayTasksForMember = array();
-      foreach($members as $member) 
+      foreach($members as $member)
       {
          $arrayTasksForMember[$member->id] = array();
          $tasksForMember = $this->_getViewUsersTasksTable()->getTasksForMemberInProject($this->params('id'), $member->id);
@@ -215,12 +215,12 @@ class ProjectController extends AbstractActionController
 
       // Get user(s) doing a task
       $arrayMembersForTask = array();
-      foreach($tasks as $task) 
+      foreach($tasks as $task)
       {
 
       }
 
-      
+
 
       $result = new ViewModel(array(
          'tasks'             => $tasks,
