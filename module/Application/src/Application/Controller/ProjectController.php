@@ -22,126 +22,26 @@ use Zend\Session\Container;
 // Be careful about the class' name, which must be the same as the file's name.
 class ProjectController extends AbstractActionController
 {
-   private $_taskTable;
-   private $_projectTable;
-   private $_userTable;
-   private $_viewUsersProjectsTable;
-   private $_projectsUsersMembersTable;
-   private $_viewUsersTasksTable;
-   private $_viewProjectDetailsTable;
-   private $_viewProjectsMembersSpecializationsTable;
-   private $_usersTasksAffectationsTable;
-
    // Get the task's table's entity, represented by the created model.
    // Act as a singleton : we only can have one instance of the object.
-   private function _getTaskTable()
+   private function _getTable($tableName)
    {
-      // If the object is not currencly instanciated, we do it.
-      if (!$this->_taskTable) {
-         $sm = $this->getServiceLocator();
-         // Instanciate the object with the created model.
-         $this->_taskTable = $sm->get('Application\Model\TaskTable');
-      }
-      return $this->_taskTable;
-   }
-
-   // Get the project's table's entity, represented by the created model.
-   // Act as a singleton : we only can have one instance of the object.
-   private function _getProjectTable()
-   {
-      // If the object is not currencly instanciated, we do it.
-      if (!$this->_projectTable) {
-         $sm = $this->getServiceLocator();
-         // Instanciate the object with the created model.
-         $this->_projectTable = $sm->get('Application\Model\ProjectTable');
-      }
-      return $this->_projectTable;
-   }
-
-   // Get the user's table's entity, represented by the created model.
-   // Act as a singleton : we only can have one instance of the object.
-   private function _getUserTable()
-   {
-      // If the object is not currencly instanciated, we do it.
-      if (!$this->_userTable) {
-         $sm = $this->getServiceLocator();
-         // Instanciate the object with the created model.
-         $this->_userTable = $sm->get('Application\Model\UserTable');
-      }
-      return $this->_userTable;
-   }
-
-   // Get the viewUsersProjects's table's entity, represented by the created model.
-   // Act as a singleton : we only can have one instance of the object.
-   private function _getViewUsersProjectsTable()
-   {
-      // If the object is not currencly instanciated, we do it.
-      if (!$this->_viewUsersProjectsTable) {
-         $sm = $this->getServiceLocator();
-         // Instanciate the object with the created model.
-         $this->_viewUsersProjectsTable = $sm->get('Application\Model\ViewUsersProjectsTable');
-      }
-      return $this->_viewUsersProjectsTable;
-   }
-
-   // Get the projects-members' mapping entity, represented by the created model.
-   private function _getProjectsUsersMembersTable()
-   {
-      if (!$this->_projectsUsersMembersTable) {
-         $sm = $this->getServiceLocator();
-         $this->_projectsUsersMembersTable = $sm->get('Application\Model\ProjectsUsersMembersTable');
-      }
-      return $this->_projectsUsersMembersTable;
-   }
-
-   // Get the users-tasks' mapping entity, represented by the created model.
-   private function _getViewUsersTasksTable()
-   {
-      if (!$this->_viewUsersTasksTable) {
-         $sm = $this->getServiceLocator();
-         $this->_viewUsersTasksTable = $sm->get('Application\Model\ViewUsersTasksTable');
-      }
-      return $this->_viewUsersTasksTable;
-   }
-
-   // Get projects' details and users' mapping entity, which contains all important project's data.
-   private function _getViewProjectDetailsTable()
-   {
-       if (!$this->_viewProjectDetailsTable) {
-           $sm = $this->getServiceLocator();
-           $this->_viewProjectDetailsTable = $sm->get('Application\Model\ViewProjectDetailsTable');
-       }
-       return $this->_viewProjectDetailsTable;
-   }
-
-   // Get the project's members' entity.
-   private function _getViewProjectsMembersSpecializationsTable()
-   {
-       if (!$this->_viewProjectsMembersSpecializationsTable) {
-           $sm = $this->getServiceLocator();
-           $this->_viewProjectsMembersSpecializationsTable = $sm->get('Application\Model\ViewProjectsMembersSpecializationsTable');
-       }
-       return $this->_viewProjectsMembersSpecializationsTable;
-   }
-
-   public function _getUsersTasksAffectationsTable()
-   {
-       if (!$this->_usersTasksAffectationsTable) {
-           $sm = $this->getServiceLocator();
-           $this->_usersTasksAffectationsTable = $sm->get('Application\Model\UsersTasksAffectationsTable');
-       }
-       return $this->_usersTasksAffectationsTable;
+      $sm = $this->getServiceLocator();
+      // Instanciate the object with the created model.
+      $table = $sm->get('Application\Model\\'.$tableName);
+      
+      return $table;
    }
 
    public function indexAction()
    {
-      $project = $this->_getProjectTable()->getProject($this->params('id'));
+      $project = $this->_getTable('ProjectTable')->getProject($this->params('id'));
 
       if(empty($project))
          $this->redirect()->toRoute('projects');
 
-      $tasks = $this->_getTaskTable()->getAllTasksInProject($this->params('id'));
-      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
+      $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
+      $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
 
       return new ViewModel(array(
          'project'           => $project,
@@ -171,15 +71,13 @@ class ProjectController extends AbstractActionController
          $deadlineDate = $_POST["deadlineDate"];
          $sessionUser = new container('user');
 
-         $affectation = $this->_getTaskTable()->addTask($name, $description, $deadlineDate, 10, $priority, $projectId);
+         $affectation = $this->_getTable('TaskTable')->addTask($name, $description, $deadlineDate, 10, $priority, $projectId);
 
          // TODO : Mettre $sessionUser->id à la place de 3
-         $this->_getUsersTasksAffectationsTable()->addAffectation(4, $affectation);
+         $this->_getTable('UsersTasksAffectationsTable')->addAffectation(4, $affectation);
 
          $this->redirect()->toRoute('project', array(
-             'controller' => 'project',
-             'action' =>  'index',
-             'projectId' =>'1'
+             'id' => $projectId
          ));
       }
    }
@@ -187,14 +85,14 @@ class ProjectController extends AbstractActionController
    public function boardViewMembersAction()
    {
       // Get members of a project
-      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
+      $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));//$this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
 
       // Get tasks in a project for each member
       $arrayTasksForMember = array();
       foreach($members as $member)
       {
          $arrayTasksForMember[$member->id] = array();
-         $tasksForMember = $this->_getViewUsersTasksTable()->getTasksForMemberInProject($this->params('id'), $member->id);
+         $tasksForMember = $this->_getTable('ViewUsersTasksTable')->getTasksForMemberInProject($this->params('id'), $member->id);
          foreach($tasksForMember as $task)
             array_push($arrayTasksForMember[$member->id], $task);
       }
@@ -211,13 +109,16 @@ class ProjectController extends AbstractActionController
    public function boardViewTasksAction()
    {
       // Get tasks in a project
-      $tasks = $this->_getTaskTable()->getAllTasksInProject($this->params('id'));
+      $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
 
       // Get user(s) doing a task
       $arrayMembersForTask = array();
       foreach($tasks as $task)
       {
-
+         $arrayMembersForTask[$task->id] = array();
+         $membersForTask = $this->_getTable('ViewTasksUsersTable')->getUsersAffectedOnTask($task->id);
+         foreach($membersForTask as $member)
+            array_push($arrayMembersForTask[$task->id], $member);
       }
 
 
@@ -237,11 +138,11 @@ class ProjectController extends AbstractActionController
    }
 
    public function moveTaskAction() {
+      // Get POST data
       $data = $this->getRequest()->getPost();
-      //echo json_encode(array('id' => $data['id'], 'details' => $data['details']));
 
-      $this->_getTaskTable()->updateStateOfTask($data['taskId'], $data['targetSection']);
-      $this->_getUsersTasksAffectationsTable()->updateTaskAffectation($data['targetMemberId'], $data['taskId']);
+      $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
+      $this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['targetMemberId'], $data['taskId']);
 
       return $this->getResponse()->setContent(json_encode(array(
          'taskId' => $data['taskId'],
@@ -263,7 +164,7 @@ class ProjectController extends AbstractActionController
       {
          foreach ($_POST as $value)
          {
-            $this->_getProjectsUsersMembersTable()->addMemberToProject($value, $this->params('id'));
+            $this->_getTable('ProjectsUsersMembersTable')->addMemberToProject($value, $this->params('id'));
          }
       }
       $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
@@ -288,8 +189,8 @@ class ProjectController extends AbstractActionController
    public function detailsAction()
    {
         $id = (int)$this->params('id');
-        $projectDetails = $this->_getViewProjectDetailsTable()->getProjectDetails($id, 4);
-        $tempMembers = $this->_getViewProjectsMembersSpecializationsTable()->getProjectMembers($id);
+        $projectDetails = $this->_getTable('ViewProjectDetailsTable')->getProjectDetails($id, 4);
+        $tempMembers = $this->_getTable('ViewProjectsMembersSpecializationsTable')->getProjectMembers($id);
         $members = array();
         $i = 0;
 
@@ -346,8 +247,8 @@ class ProjectController extends AbstractActionController
           WHERE projectsUsersMembers.project = 2
       )
    */
-      $members = $this->_getViewUsersProjectsTable()->getUsersInProject($projectId)->buffer();
-      $users = $this->_getUserTable()->getAllUsers()->buffer();
+      $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($projectId)->buffer();
+      $users = $this->_getTable('UserTable')->getAllUsers()->buffer();
 
       $notMembersArray = array();
       foreach($users as $user)

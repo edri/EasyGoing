@@ -347,6 +347,7 @@ hr {
     width: 180px;
 }
 .card, .user {
+    margin: auto;
     display: inline-block;
     vertical-align: top;
     margin: 10px 5px;
