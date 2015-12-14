@@ -3,7 +3,7 @@ namespace Application\Model;
 
 use Zend\Db\TableGateway\TableGateway;
 
-// Contains the methods that allows to work with a projects-members' mapping entity.
+// Contains the methods that allows to work with a users-tasks's mapping entity.
 class UsersTasksAffectationsTable
 {
    protected $_tableGateway;

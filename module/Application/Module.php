@@ -39,6 +39,8 @@ use Application\Model\ViewUsersTasks;
 use Application\Model\ViewUsersTasksTable;
 use Application\Model\UsersTasksAffectations;
 use Application\Model\UsersTasksAffectationsTable;
+use Application\Model\ViewTasksUsers;
+use Application\Model\ViewTasksUsersTable;
 
 @ini_set('zend_monitor.enable', 0);
 if(@function_exists('output_cache_disable')) {
@@ -231,6 +233,17 @@ class Module
                 'Application\Model\ViewProjectsMembersSpecializationsTable' =>  function($sm) {
                     $tableGateway = $sm->get('ViewProjectsMembersSpecializationsTableGateway');
                     $table = new ViewProjectsMembersSpecializationsTable($tableGateway);
+                    return $table;
+                },
+                'ViewTasksUsersTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ViewTasksUsers());
+                    return new TableGateway('view_tasks_users', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ViewTasksUsersTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ViewTasksUsersTableGateway');
+                    $table = new ViewTasksUsersTable($tableGateway);
                     return $table;
                 },
 				// Configure the session service.

@@ -19,12 +19,38 @@
      <div class="user" draggable="false"><?php echo $task->name; ?></div>
    </div>
    <div class="todo section" section="TODO">
+      <?php
+         if($task->state == "TODO")
+         {
+            foreach($membersForTask[$task->id] as $member)
+            {
+               echo '<div id="'.$member->email.$task->id.'" member-id="'.$member->id.'" class="card"><img class="imgProject" width="40px" src="'.$this->basePath('img/users/'.$member->filePhoto).'"><br>'.$member->firstName.'</div>';
+            }
+            
+         }
+      ?>
    </div>
    <div class="doing section" section="DOING">
-
+      <?php
+         if($task->state == "DOING")
+         {
+            foreach($membersForTask[$task->id] as $member)
+            {
+               echo '<div id="'.$member->email.$task->id.'" member-id="'.$member->id.'" class="card"><img class="imgProject" width="40px" src="'.$this->basePath('img/users/'.$member->filePhoto).'"><br>'.$member->firstName.'</div>';
+            }
+         }
+      ?>
    </div>
    <div class="done section" section="DONE">
-
+      <?php
+         if($task->state == "DONE")
+         {
+            foreach($membersForTask[$task->id] as $member)
+            {
+               echo '<div id="'.$member->email.$task->id.'" member-id="'.$member->id.'" class="card"><img class="imgProject" width="40px" src="'.$this->basePath('img/users/'.$member->filePhoto).'"><br>'.$member->firstName.'</div>';
+            }
+         }
+      ?>
    </div>
 </div>
 <?php endforeach; ?>
@@ -91,26 +117,22 @@ for (var i in board) {
       var section = closestWithClass(e.target, 'section');
       var id = e.dataTransfer.getData('card');
       if (id) {
-         var task = document.getElementById(id);
+         var member = document.getElementById(id);
          // Might be a card from another window.
-         if (task) {
+         if (member) {
             if (section !== card.parentNode) {
 
-               var targetMemberId = e.target.parentNode.getAttribute('member-id');
-               var taskId = task.getAttribute('task-id');
+               var targetTaskId = e.target.parentNode.getAttribute('task-id');
+               var memberId = member.getAttribute('member-id');
                var targetSection = e.target.getAttribute('section');
 
-               console.log('before ajax');
-               $.post("http://easygoing/project/2/moveTask", { taskId: taskId, targetMemberId: targetMemberId, targetSection: targetSection })
-                  .done(function( data ) {
-                     $('#result').append(data);
-               });
+               // TODO : Faire de l'ajax ici
 
-               section.appendChild(task);
+               section.appendChild(member);
 
             }
          } else {
-            alert('couldn\'t find task #' + id);
+            alert('couldn\'t find member #' + id);
          }
       }
       section.classList.remove('droppable');
