@@ -43,6 +43,7 @@ class Easygoing implements Aware\ApplicationInterface
      */
     public function onOpen($clientId)
     {
+		$this->say("A new client opened a connection: #" . $clientId);
     }
 
     /**
@@ -53,6 +54,7 @@ class Easygoing implements Aware\ApplicationInterface
      */
     public function onMessage($clientId, $message)
     {
+		$this->say("New message from client #" . $clientId . ": '" . $message . "'");
     }
 
     /**
@@ -62,6 +64,7 @@ class Easygoing implements Aware\ApplicationInterface
      */
     public function onClose($clientId)
     {
+		$this->say("Client #" . $clientId . " left the server");
     }
 
     /**
@@ -71,6 +74,8 @@ class Easygoing implements Aware\ApplicationInterface
      */
     public function say($message)
     {
+		$message = mb_convert_encoding($message, $this->_server->config['encoding']);
+		echo date('[Y-m-d H:i:s] ').$message."\r\n";
     }
 
     /**
@@ -80,8 +85,15 @@ class Easygoing implements Aware\ApplicationInterface
      * @return null
      */
     public function __call($name, $arguments)
-    {
-    }
+	{
+		if(!method_exists(get_class($this->_server), $name))
+			throw new Exception\ExceptionStrategy("Error! Function {$name} does not exist in ".get_class($this->_server));
+
+		else if(sizeof($arguments) != 2)
+			throw new Exception\ExceptionStrategy("Error! Arguments setup incorrectly in ".__CLASS__);
+
+		return $this->_server->$name($arguments[0], $arguments[1], $this);
+	}
 
     /**
      * run() running application

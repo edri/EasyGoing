@@ -44,4 +44,4 @@ WINDOWS :
 	2. Backup
 	3. php composer.phar install
 	4. Quand le token est demandé, coller la clé générée plus tôt.
-	5. composer update
+	5. php -q public/index.php websocket open Easygoing
