@@ -74,6 +74,16 @@ class Easygoing implements Aware\ApplicationInterface
     }
 
     /**
+     * __call($name, $argument) need to do overloading! Its mostly setup event from server object
+     * @param string $name function from webSocket Server class
+     * @param array $argument
+     * @return null
+     */
+    public function __call($name, $arguments)
+    {
+    }
+
+    /**
      * run() running application
      * @access public
      */
