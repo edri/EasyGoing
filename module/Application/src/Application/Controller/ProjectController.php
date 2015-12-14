@@ -241,7 +241,7 @@ class ProjectController extends AbstractActionController
       //echo json_encode(array('id' => $data['id'], 'details' => $data['details']));
 
       $this->_getTaskTable()->updateStateOfTask($data['taskId'], $data['targetSection']);
-      $this->_getUsersTasksAffectationsTable()->updateTaskAffectation(5, 4);
+      $this->_getUsersTasksAffectationsTable()->updateTaskAffectation($data['targetMemberId'], $data['taskId']);
 
       return $this->getResponse()->setContent(json_encode(array(
          'taskId' => $data['taskId'],
