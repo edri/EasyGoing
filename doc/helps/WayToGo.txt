@@ -21,3 +21,10 @@
 5.	Linux :  
 		cd /opt/lampp
 		sudo chmod 777 -R htdocs
+
+Pour pouvoir utiliser les WebSockets :
+	1. Se rendre dans le fichier php.ini du serveur.
+	2. Décommenter la ligne suivante, si cela n'est pas déjà fait :
+		;extension=php_ldap.dll
+	3. Sur Linux dans la console :
+		sudo apt-get install php5-ldap
