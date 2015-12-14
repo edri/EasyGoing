@@ -20,7 +20,7 @@
    </div>
    <div class="todo section" section="TODO">
       <?php
-      foreach($tasksForMember[$member->id] as $task) 
+      foreach($tasksForMember[$member->id] as $task)
       {
          if($task->state == "TODO")
          {
@@ -31,7 +31,7 @@
    </div>
    <div class="doing section" section="DOING">
       <?php
-      foreach($tasksForMember[$member->id] as $task) 
+      foreach($tasksForMember[$member->id] as $task)
       {
          if($task->state == "DOING")
          {
@@ -42,7 +42,7 @@
    </div>
    <div class="done section" section="DONE">
       <?php
-      foreach($tasksForMember[$member->id] as $task) 
+      foreach($tasksForMember[$member->id] as $task)
       {
          if($task->state == "DONE")
          {
@@ -129,6 +129,23 @@ for (var i in board) {
                $.post("http://easygoing/project/2/moveTask", { taskId: taskId, targetMemberId: targetMemberId, targetSection: targetSection })
                   .done(function( data ) {
                      $('#result').append(data);
+                     console.log("Sending socket...");
+                     var connection = new WebSocket('ws://127.0.0.1:9001');
+
+                     // When the connection is open, send some data to the server
+                    connection.onopen = function () {
+                      connection.send('Ping'); // Send the message 'Ping' to the server
+                    };
+
+                    // Log errors
+                    connection.onerror = function (error) {
+                      console.log('WebSocket Error ' + error);
+                    };
+
+                    // Log messages from the server
+                    connection.onmessage = function (e) {
+                      console.log('Server: ' + e.data);
+                    };
                });
 
                section.appendChild(task);
