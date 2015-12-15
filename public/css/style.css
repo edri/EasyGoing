@@ -336,6 +336,7 @@ hr {
 
 .board-header {
     margin-bottom: 10px;
+    background-color: #CCC;
 }
 
 .board-section.droppable {
@@ -344,13 +345,12 @@ hr {
 
 .board-section, .board-header-section > h1 {
     margin: 0;
-    border-bottom: 1px solid #999;
     padding: 0;
-    font-size: 12pt;
+    font-size: 15pt;
     text-align: center;
 }
 
-.board-task {
+.board-task, .board-user {
     margin: auto;
     display: inline-block;
     vertical-align: top;
@@ -378,6 +378,10 @@ hr {
     background: -ms-linear-gradient(top, #fefdca 0%,#f7f381 100%); /* IE10+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefdca', endColorstr='#f7f381',GradientType=0 ); /* IE6-9 */
     background: linear-gradient(top, #fefdca 0%,#f7f381 100%); /* W3C; A catch-all for everything else */
+}
+
+.board-user {
+    
 }
 
 .board-first-column {
