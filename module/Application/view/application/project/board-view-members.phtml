@@ -1,25 +1,25 @@
  <div class="board-header">
-   <div class="section">
+   <div class="board-header-section">
       <h1>Members</h1>
    </div>
-   <div class="section">
+   <div class="board-header-section">
       <h1>To do</h1>
    </div>
-   <div class="section">
+   <div class="board-header-section">
       <h1>Doing</h1>
    </div>
-   <div class="section">
+   <div class="board-header-section">
       <h1>Done</h1>
    </div>
 </div>
 
 <?php foreach ($members as $member): ?>
 <div class="board" member-id="<?php echo $member->id; ?>">
-   <div class="board-first-column section" section="board-user">
+   <div class="board-first-column" section="board-user">
      <img class="imgProject" draggable="false" src="<?php echo $this->basePath('img/users/'.$member->filePhoto); ?>">
      <h4><?php echo $member->firstName . ' ' . $member->lastName; ?></h4>
    </div>
-   <div class="todo section" section="TODO">
+   <div class="board-section" id="todo" section="TODO">
       <?php
       foreach($tasksForMember[$member->id] as $task)
       {
@@ -30,7 +30,7 @@
       }
       ?>
    </div>
-   <div class="doing section" section="DOING">
+   <div class="doing board-section" id="doing" section="DOING">
       <?php
       foreach($tasksForMember[$member->id] as $task)
       {
@@ -41,7 +41,7 @@
       }
       ?>
    </div>
-   <div class="done section" section="DONE">
+   <div class="done board-section" id="done" section="DONE">
       <?php
       foreach($tasksForMember[$member->id] as $task)
       {
@@ -104,7 +104,7 @@ for (var i in board) {
       }
       // Save this to check in dragleave.
       lastEntered = e.target;
-      var section = closestWithClass(e.target, 'section');
+      var section = closestWithClass(e.target, 'board-section');
       // TODO: Check that it's not the original section.
       if (section) {
          section.classList.add('droppable');
@@ -115,7 +115,7 @@ for (var i in board) {
    board[i].ondragover = function(e) {
       // TODO: Check data type.
       // TODO: Check that it's not the original section.
-      if (closestWithClass(e.target, 'section')) {
+      if (closestWithClass(e.target, 'board-section')) {
          e.preventDefault();
       }
    };
@@ -125,7 +125,7 @@ for (var i in board) {
          // dragleave for outer elements can trigger after dragenter for inner elements
          // so make sure we're really leaving by checking what we just entered.
          // relatedTarget is missing in WebKit: https://bugs.webkit.org/show_bug.cgi?id=66547
-         var section = closestWithClass(e.target, 'section');
+         var section = closestWithClass(e.target, 'board-section');
          if (section && !section.contains(lastEntered)) {
             section.classList.remove('droppable');
          }
@@ -133,7 +133,7 @@ for (var i in board) {
       lastEntered = null; // No need to keep this around.
    };
    board[i].ondrop = function(e) {
-      var section = closestWithClass(e.target, 'section');
+      var section = closestWithClass(e.target, 'board-section');
       var id = e.dataTransfer.getData('board-task');
       if (id) {
          var task = document.getElementById(id);

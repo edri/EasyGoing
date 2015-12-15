@@ -323,29 +323,33 @@ hr {
     display: table;
     margin: 0;
     padding: 0;
-    border-spacing: 5px;
+    width: 1080px;
 }
 
-.section {
+.board-section, .board-header-section, .board-first-column {
     display: table-cell;
     margin: 0;
     border: 1px solid #666;
     padding: 5px;
-    width: 300px;
+    width: 270px;
 }
-.section.droppable {
+
+.board-header {
+    margin-bottom: 10px;
+}
+
+.board-section.droppable {
     border: 1px dashed #666;
 }
-.section > h1 {
+
+.board-section, .board-header-section > h1 {
     margin: 0;
     border-bottom: 1px solid #999;
     padding: 0;
     font-size: 12pt;
     text-align: center;
 }
-.users {
-    width: 180px;
-}
+
 .board-task {
     margin: auto;
     display: inline-block;

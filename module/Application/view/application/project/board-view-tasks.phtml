@@ -1,24 +1,24 @@
  <div class="board-header">
-   <div class="section">
+   <div class="board-header-section">
       <h1>Tasks</h1>
    </div>
-   <div class="section">
+   <div class="board-header-section">
       <h1>To do</h1>
    </div>
-   <div class="section">
+   <div class="board-header-section">
       <h1>Doing</h1>
    </div>
-   <div class="section">
+   <div class="board-header-section">
       <h1>Done</h1>
    </div>
 </div>
 
 <?php foreach ($tasks as $task): ?>
 <div class="board" task-id="<?php echo $task->id; ?>">
-   <div class="board-first-column section" section="users">
+   <div class="board-first-column" section="users">
      <h4><?php echo $task->name; ?></h4>
    </div>
-   <div class="todo section" section="TODO">
+   <div class="todo board-section" section="TODO">
       <?php
          if($task->state == "TODO")
          {
@@ -30,7 +30,7 @@
          }
       ?>
    </div>
-   <div class="doing section" section="DOING">
+   <div class="doing board-section" section="DOING">
       <?php
          if($task->state == "DOING")
          {
@@ -41,7 +41,7 @@
          }
       ?>
    </div>
-   <div class="done section" section="DONE">
+   <div class="done board-section" section="DONE">
       <?php
          if($task->state == "DONE")
          {
