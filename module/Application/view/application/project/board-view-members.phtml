@@ -1,5 +1,5 @@
  <div class="board-header">
-   <div class="users section">
+   <div class="section">
       <h1>Members</h1>
    </div>
    <div class="section">
@@ -15,8 +15,9 @@
 
 <?php foreach ($members as $member): ?>
 <div class="board" member-id="<?php echo $member->id; ?>">
-   <div class="users section" section="users">
-     <div class="user" draggable="false"><?php echo $member->firstName . ' ' . $member->lastName; ?></div>
+   <div class="board-user section" section="board-user">
+     <img class="imgProject" draggable="false" src="<?php echo $this->basePath('img/users/'.$member->filePhoto); ?>">
+     <h4><?php echo $member->firstName . ' ' . $member->lastName; ?></h4>
    </div>
    <div class="todo section" section="TODO">
       <?php
@@ -24,7 +25,7 @@
       {
          if($task->state == "TODO")
          {
-            echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="card">'.$task->name.'</div>';
+            echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task">'.$task->name.'</div>';
          }
       }
       ?>
@@ -35,7 +36,7 @@
       {
          if($task->state == "DOING")
          {
-            echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="card">'.$task->name.'</div>';
+            echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task">'.$task->name.'</div>';
          }
       }
       ?>
@@ -46,7 +47,7 @@
       {
          if($task->state == "DONE")
          {
-            echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="card">'.$task->name.'</div>';
+            echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task">'.$task->name.'</div>';
          }
       }
       ?>
@@ -55,6 +56,7 @@
 <?php endforeach; ?>
 
 <script>
+/*
 console.log("Init socket...");
 var connection = new WebSocket('ws://127.0.0.1:9001/websocket/open/');
 
@@ -72,12 +74,12 @@ connection.onerror = function (error) {
 connection.onmessage = function (e) {
     console.log('Receive socket message from server: ' + e.data);
 };
-
-var cards = document.querySelectorAll('.card');
-for (var i = 0, n = cards.length; i < n; i++) {
-   var card = cards[i];
-   card.draggable = true;
+*/
+var tasks = document.querySelectorAll('.board-task');
+for (var i = 0, n = tasks.length; i < n; i++) {
+   tasks[i].draggable = true;
 };
+
 var board = document.getElementsByClassName('board');
 var hideMe;
 for (var i in board) {
@@ -87,7 +89,7 @@ for (var i in board) {
    board[i].ondragstart = function(e) {
       console.log('dragstart');
       hideMe = e.target;
-      e.dataTransfer.setData('card', e.target.id);
+      e.dataTransfer.setData('board-task', e.target.id);
       e.dataTransfer.effectAllowed = 'move';
    };
    board[i].ondragend = function(e) {
@@ -132,29 +134,27 @@ for (var i in board) {
    };
    board[i].ondrop = function(e) {
       var section = closestWithClass(e.target, 'section');
-      var id = e.dataTransfer.getData('card');
+      var id = e.dataTransfer.getData('board-task');
       if (id) {
          var task = document.getElementById(id);
          // Might be a card from another window.
          if (task) {
-            if (section !== card.parentNode) {
+            if (section !== task.parentNode) {
 
                var targetMemberId = e.target.parentNode.getAttribute('member-id');
                var taskId = task.getAttribute('task-id');
                var targetSection = e.target.getAttribute('section');
 
-               console.log('before ajax');
                $.post("http://easygoing/project/2/moveTask", { taskId: taskId, targetMemberId: targetMemberId, targetSection: targetSection })
                   .done(function( data ) {
                      $('#result').append(data);
-                     console.log("Sending socket...");
-                     connection.send("HAHAHA");
                });
 
                section.appendChild(task);
 
             }
-         } else {
+         } 
+         else {
             alert('couldn\'t find task #' + id);
          }
       }

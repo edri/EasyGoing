@@ -346,7 +346,7 @@ hr {
 .users {
     width: 180px;
 }
-.card, .user {
+.board-task {
     margin: auto;
     display: inline-block;
     vertical-align: top;
@@ -376,15 +376,18 @@ hr {
     background: linear-gradient(top, #fefdca 0%,#f7f381 100%); /* W3C; A catch-all for everything else */
 }
 
-.user {
-    height: 55px;
-    background: #EEE; /* Old browsers */
-    background: -moz-linear-gradient(top, #EEE 0%, #999 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#EEE), color-stop(100%,#999)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #EEE 0%,#999 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #EEE 0%,#999 100%); /* Opera11.10+ */
-    background: -ms-linear-gradient(top, #EEE 0%,#999 100%); /* IE10+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#EEE', endColorstr='#999',GradientType=0 ); /* IE6-9 */
-    background: linear-gradient(top, #EEE 0%,#999 100%); /* W3C; A catch-all for everything else */
+.board-user {
+    padding: 15px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.board-user h4 {
+    padding-top: 10px;
+}
+
+.board-user img {
+    width: 60px;
+    vertical-align: middle;
 }
 /** ===== FIN BOARD ===== **/
