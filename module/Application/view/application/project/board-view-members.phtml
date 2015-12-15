@@ -1,5 +1,5 @@
 <?php
-    echo $this->headScript()->appendScript('var projectId = "' . $projectId . '";');
+   echo $this->headScript()->appendScript('var projectId = "' . $projectId . '";');
 ?>
 
 <div class="board-header">
@@ -184,7 +184,7 @@
                       var taskId = task.getAttribute('task-id');
                       var targetSection = e.target.getAttribute('section');
 
-                      $.post("http://easygoing/project/2/moveTask", { taskId: taskId, targetMemberId: targetMemberId, targetSection: targetSection })
+                      $.post("http://easygoing/project/" + projectId + "/moveTask", { taskId: taskId, targetMemberId: targetMemberId, targetSection: targetSection })
                          .done(function( data ) {
                             $('#result').append(data);
                             console.log("Sending task-moving socket...")

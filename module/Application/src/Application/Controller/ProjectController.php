@@ -33,12 +33,22 @@ class ProjectController extends AbstractActionController
       return $table;
    }
 
+   public function onDispatch( \Zend\Mvc\MvcEvent $e )
+   {
+      $sessionUser = new container('user');
+
+      // TODO : Décommenter les lignes
+      if(empty($this->_getTable('ProjectTable')->getProject($this->params('id'))))
+         //|| !$sessionUser->connected)
+         $this->redirect()->toRoute('projects');
+
+      return parent::onDispatch( $e );
+   }
+
+
    public function indexAction()
    {
       $project = $this->_getTable('ProjectTable')->getProject($this->params('id'));
-
-      if(empty($project))
-         $this->redirect()->toRoute('projects');
 
       $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
       $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
@@ -121,8 +131,6 @@ class ProjectController extends AbstractActionController
          foreach($membersForTask as $member)
             array_push($arrayMembersForTask[$task->id], $member);
       }
-
-
 
       $result = new ViewModel(array(
          'projectId'         => $this->params('id'),
