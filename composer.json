@@ -1,7 +1,5 @@
 {
     "require": {
-        "zendframework/zendframework": "^2.5",
-        "stanislav-web/zf2-websocket-server-factory": "^2.2",
-        "zendframework/zend-ldap": "^2.5"
+        "zendframework/zendframework": "^2.5"
     }
 }
