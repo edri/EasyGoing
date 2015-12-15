@@ -376,17 +376,12 @@ hr {
     background: linear-gradient(top, #fefdca 0%,#f7f381 100%); /* W3C; A catch-all for everything else */
 }
 
-.board-user {
-    padding: 15px;
+.board-first-column {
     text-align: center;
     vertical-align: middle;
 }
 
-.board-user h4 {
-    padding-top: 10px;
-}
-
-.board-user img {
+.board-first-column img {
     width: 60px;
     vertical-align: middle;
 }

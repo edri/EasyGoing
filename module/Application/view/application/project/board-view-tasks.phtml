@@ -1,5 +1,5 @@
  <div class="board-header">
-   <div class="users section">
+   <div class="section">
       <h1>Tasks</h1>
    </div>
    <div class="section">
@@ -15,8 +15,8 @@
 
 <?php foreach ($tasks as $task): ?>
 <div class="board" task-id="<?php echo $task->id; ?>">
-   <div class="users section" section="users">
-     <div class="user" draggable="false"><?php echo $task->name; ?></div>
+   <div class="board-first-column section" section="users">
+     <h4><?php echo $task->name; ?></h4>
    </div>
    <div class="todo section" section="TODO">
       <?php

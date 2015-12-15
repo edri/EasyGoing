@@ -15,7 +15,7 @@
 
 <?php foreach ($members as $member): ?>
 <div class="board" member-id="<?php echo $member->id; ?>">
-   <div class="board-user section" section="board-user">
+   <div class="board-first-column section" section="board-user">
      <img class="imgProject" draggable="false" src="<?php echo $this->basePath('img/users/'.$member->filePhoto); ?>">
      <h4><?php echo $member->firstName . ' ' . $member->lastName; ?></h4>
    </div>
