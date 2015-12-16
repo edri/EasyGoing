@@ -13,6 +13,13 @@ class TaskTable
       $this->_tableGateway = $tableGateway;
    }
 
+   public function getTaskById($id)
+   {
+      return $this->_tableGateway->select(array(
+         'id' => $id
+      ))->current();
+   }
+
    public function addTask($name, $description, $deadlineDate, $durationsInHours, $priorityLevel, $projectId)
    {
       $this->_tableGateway->insert(array(

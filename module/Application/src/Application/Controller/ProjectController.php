@@ -92,6 +92,25 @@ class ProjectController extends AbstractActionController
       }
    }
 
+   public function editTaskAction()
+   {
+      $request = $this->getRequest();
+
+      if($request->isPost())
+      {
+
+      }
+      else
+      {
+         $taskId = $this->params('otherId');
+         $task = $this->_getTable('TaskTable')->getTaskById($taskId);
+
+         return new ViewModel(array(
+               'task' => $task
+            ));
+      }
+   }
+
    public function boardViewMembersAction()
    {
       // Get members of a project
@@ -140,11 +159,6 @@ class ProjectController extends AbstractActionController
       $result->setTerminal(true);
 
       return $result;
-   }
-
-   public function editTaskAction()
-   {
-
    }
 
    public function moveTaskAction() {
