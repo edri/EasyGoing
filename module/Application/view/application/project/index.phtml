@@ -86,13 +86,11 @@
 </div>
 
 <script>
-    function loadBoardViewMembers()
-    {
+    function loadBoardViewMembers() {
        $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewMembers"'; ?>);
     }
 
-    function loadBoardViewTasks()
-    {
+    function loadBoardViewTasks() {
        $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewTasks"'; ?>);
     }
 

@@ -1,9 +1,5 @@
 <?php
 
-/*
-   SELECT * FROM users INNER JOIN usersTasksAffectations ON users.id = usersTasksAffectations.user
-*/
-
 namespace Application\Model;
 
 // This class contains data of an view mapping projects and users, but containing

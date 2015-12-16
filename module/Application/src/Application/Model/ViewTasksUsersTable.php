@@ -7,11 +7,6 @@ use Zend\Db\Sql\Where;
 
 // Contains the methods that allows to work with the mapping view between
 // projects and users, with only data to show in the projects' list.
-
-/*
-CREATE VIEW view_users_tasks AS
-SELECT * FROM tasks INNER JOIN usersTasksAffectations ON usersTasksAffectations.task = tasks.id;
-*/
 class ViewTasksUsersTable
 {
    protected $_tableGateway;
