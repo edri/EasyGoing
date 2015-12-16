@@ -18,7 +18,6 @@
 </div>
 
 
-
 <?php foreach ($members as $member): ?>
 <div class="board" member-id="<?php echo $member->id; ?>">
   <div class="board-first-column" section="board-user">
@@ -61,166 +60,13 @@
 </div>
 <?php endforeach; ?>
 
+<span class="context-menu-one btn btn-neutral">right click me</span>
+
+<script src="<?php echo $this->basePath('/js/board.contextmenu.js'); ?>"></script>
+<script src="<?php echo $this->basePath('/js/board.websockets.js'); ?>"></script>
+<script src="<?php echo $this->basePath('/js/board.dragdrop.js'); ?>"></script>
+
 <script>
-    $(document).ready(function() {
-        // Websocket connection.
-        var connection;
 
-        // Check if WebSocket is supported by the user's browser.
-        if ("WebSocket" in window) {
-            console.log("Init socket...");
-            connection = new WebSocket('ws://127.0.0.1:8001/');
 
-            // When the connection is open, send current project's ID to the server
-            // so it can add the current user to the project's group.
-            connection.onopen = function () {
-               console.log("Socket connection successfully opened!");
-
-               connection.send(JSON.stringify({
-                   "messageType": "projectListeningRequest",
-                   "projectId": projectId
-               }));
-            };
-
-            connection.onclose = function() {
-                console.log("Socket connection closed.");
-            }
-
-            // Log errors
-            connection.onerror = function (error) {
-                console.log('WebSocket Error ' + error);
-            };
-
-            // Log messages from the server
-            connection.onmessage = function (e) {
-                console.log('Receive socket message from server: ' + e.data);
-
-                try {
-        			// Try to parse received data to JSON.
-        			var data = JSON.parse(e.data);
-
-                    if (data.projectId === projectId) {
-            			// Do some actions, depending on the received data message's type.
-            			switch (data.messageType) {
-            				case "taskMovingEvent":
-                                $("div[task-id='" + data.taskId + "']").appendTo($("div[member-id='" + data.targetMemberId + "'] div[section='" + data.targetSection + "']"));
-            					break;
-            			}
-                    }
-        		}
-        		catch(e) {
-        			console.log("Invalid data format, please send JSON.");
-        		}
-            };
-        }
-
-        var tasks = document.querySelectorAll('.board-task');
-        for (var i = 0, n = tasks.length; i < n; i++) {
-          tasks[i].draggable = true;
-        };
-
-        var board = document.getElementsByClassName('board');
-        var hideMe;
-        for (var i in board) {
-          board[i].onselectstart = function(e) {
-             e.preventDefault();
-          }
-          board[i].ondragstart = function(e) {
-             console.log('dragstart');
-             hideMe = e.target;
-             e.dataTransfer.setData('board-task', e.target.id);
-             e.dataTransfer.effectAllowed = 'move';
-          };
-          board[i].ondragend = function(e) {
-             e.target.style.visibility = 'visible';
-          };
-          var lastEneterd;
-          board[i].ondragenter = function(e) {
-             console.log('dragenter');
-             if (hideMe) {
-                hideMe.style.visibility = 'hidden';
-                hideMe = null;
-             }
-             // Save this to check in dragleave.
-             lastEntered = e.target;
-             var section = closestWithClass(e.target, 'board-section');
-             // TODO: Check that it's not the original section.
-             if (section) {
-                section.classList.add('droppable');
-                e.preventDefault(); // Not sure if these needs to be here. Maybe for IE?
-                return false;
-             }
-          };
-          board[i].ondragover = function(e) {
-             // TODO: Check data type.
-             // TODO: Check that it's not the original section.
-             if (closestWithClass(e.target, 'board-section')) {
-                e.preventDefault();
-             }
-          };
-          board[i].ondragleave = function(e) {
-             // FF is raising this event on text nodes so only check elements.
-             if (e.target.nodeType === 1) {
-                // dragleave for outer elements can trigger after dragenter for inner elements
-                // so make sure we're really leaving by checking what we just entered.
-                // relatedTarget is missing in WebKit: https://bugs.webkit.org/show_bug.cgi?id=66547
-                var section = closestWithClass(e.target, 'board-section');
-                if (section && !section.contains(lastEntered)) {
-                   section.classList.remove('droppable');
-                }
-             }
-             lastEntered = null; // No need to keep this around.
-          };
-          board[i].ondrop = function(e) {
-             var section = closestWithClass(e.target, 'board-section');
-             var id = e.dataTransfer.getData('board-task');
-             if (id) {
-                var task = document.getElementById(id);
-                // Might be a card from another window.
-                if (task) {
-                   if (section !== task.parentNode) {
-
-                      var targetMemberId = e.target.parentNode.getAttribute('member-id');
-                      var taskId = task.getAttribute('task-id');
-                      var targetSection = e.target.getAttribute('section');
-
-                      $.post("http://easygoing/project/" + projectId + "/moveTask", { taskId: taskId, targetMemberId: targetMemberId, targetSection: targetSection })
-                         .done(function( data ) {
-                            $('#result').append(data);
-                            console.log("Sending task-moving socket...")
-                            // Send task-moving socket to the server so it can advertise other clients.
-                            connection.send(JSON.stringify({
-                                "messageType": "taskMoving",
-                                "projectId": projectId,
-                                "taskId": taskId,
-                                "targetMemberId": targetMemberId,
-                                "targetSection": targetSection
-                            }));
-                      });
-
-                      section.appendChild(task);
-
-                   }
-                }
-                else {
-                   alert('couldn\'t find task #' + id);
-                }
-             }
-             section.classList.remove('droppable');
-             e.preventDefault();
-          };
-        }
-
-        function closestWithClass(target, className) {
-          while (target) {
-             if (target.nodeType === 1 &&
-                target.classList.contains(className)) {
-                return target;
-             }
-             target = target.parentNode;
-          }
-          return null;
-        }
-        $('.users').removeClass('droppable');
-    });
 </script>

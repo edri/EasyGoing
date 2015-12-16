@@ -1,51 +1,56 @@
 <?php
-	echo $this->doctype();
+   echo $this->doctype();
 ?>
 
 <?php
-				use Zend\Session\Config\SessionConfig;
-				use Zend\Session\Container;
+   use Zend\Session\Config\SessionConfig;
+   use Zend\Session\Container;
 
-				$sessionUser = new container('user');
+   $sessionUser = new container('user');
 ?>
 
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <?php echo $this->headTitle('EasyGoing')->setSeparator(' - ')->setAutoEscape(false) ?>
+   <head>
+      <meta charset="utf-8">
+      <?php echo $this->headTitle('EasyGoing')->setSeparator(' - ')->setAutoEscape(false) ?>
 
-        <?php echo $this->headMeta()
-            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
-            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
-        ?>
+      <?php echo $this->headMeta()
+         ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+         ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+      ?>
 
         <!-- Styles -->
-	<?php
-		if ($_SERVER['APPLICATION_ENV'] == 'development')
-		{
-			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
-                  ->prependStylesheet($this->basePath() . '/css/style.css')
-                  ->prependStylesheet($this->basePath() . '/css/bootstrap-datepicker.css')
-                  ->prependStylesheet($this->basePath() . '/css/bootstrap-datetimepicker.min.css')
-						->prependStylesheet($this->basePath() . '/css/bootstrap.min.css');
+      <?php
+      	if ($_SERVER['APPLICATION_ENV'] == 'development')
+      	{
+      		echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
+                     ->prependStylesheet($this->basePath() . '/css/style.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datepicker.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datetimepicker.min.css')
+      					->prependStylesheet($this->basePath() . '/css/libraries/bootstrap.min.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/contextmenu.css');
 
-		}
-		else
-		{
-			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
-                  ->prependStylesheet($this->basePath() . '/css/style.css')
-                  ->prependStylesheet($this->basePath() . '/css/bootstrap-datepicker.css')
-                  ->prependStylesheet($this->basePath() . '/css/bootstrap-datetimepicker.min.css')
-						->prependStylesheet($this->basePath() . '/css/bootstrap.min.css');
-		}
-	?>
+      	}
+      	else
+      	{
+      		echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
+                     ->prependStylesheet($this->basePath() . '/css/style.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datepicker.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datetimepicker.min.css')
+      					->prependStylesheet($this->basePath() . '/css/libraries/bootstrap.min.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/contextmenu.css');
+      	}
+      ?>
 
         <!-- Scripts -->
 		<?php
-			echo $this->headScript()->prependFile($this->basePath() . '/js/bootstrap-datepicker.js')
-                              			->prependFile($this->basePath() . '/js/bootstrap.min.js')
-										->prependFile($this->basePath() . '/js/jquery.min.js')
-                                        ->prependFile($this->basePath() . '/js/tuto.js');
+			echo $this->headScript()
+                     ->prependFile($this->basePath() . '/js/libraries/jquery.ui.position.js')
+                     ->prependFile($this->basePath() . '/js/libraries/jquery.contextmenu.js')
+                     ->prependFile($this->basePath() . '/js/libraries/bootstrap-datepicker.js')
+            			->prependFile($this->basePath() . '/js/libraries/bootstrap.min.js')
+						   ->prependFile($this->basePath() . '/js/libraries/jquery.min.js')
+                     ->prependFile($this->basePath() . '/js/tuto.js');
         ?>
     </head>
 
