@@ -79,11 +79,11 @@ class ProjectController extends AbstractActionController
          $name = $_POST["name"];
          $description = $_POST["description"];
          $priority = $_POST["priority"];
-         $startDate = $_POST["startDate"];
-         $deadlineDate = $_POST["deadlineDate"];
+         $deadline = $_POST["deadline"];
+         $duration = $_POST["duration"];
          $sessionUser = new container('user');
 
-         $affectation = $this->_getTable('TaskTable')->addTask($name, $description, $deadlineDate, 10, $priority, $projectId);
+         $affectation = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId);
 
          $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $affectation);
 
@@ -99,7 +99,7 @@ class ProjectController extends AbstractActionController
 
       if($request->isPost())
       {
-         echo '<script>alert("isadjoisad");</script>';
+         echo '<script>alert("Edit task : POST");</script>';
 
          $this->redirect()->toRoute('project', array(
              'id' => $this->params('id')
