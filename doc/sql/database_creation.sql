@@ -192,6 +192,14 @@ CREATE VIEW view_users_tasks AS
 		ON ut.task = t.id
 );
 
+DROP VIEW IF EXISTS view_tasks_users;
+CREATE VIEW view_tasks_users AS
+(
+   SELECT * 
+   FROM users AS u INNER JOIN usersTasksAffectations as ut 
+      ON u.id = ut.user
+);
+
 DROP VIEW IF EXISTS view_projects_details;
 CREATE VIEW view_projects_details AS
 (
