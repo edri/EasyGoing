@@ -30,8 +30,7 @@
 
 <script>
 // Users filters
-function filterSearch()
-{
+function filterSearch() {
    var text = $('#search').val();
 
    // For each divs in row
@@ -46,8 +45,7 @@ function filterSearch()
 }
 
 // Check checkbox when click on user div
-$('.add-user').click(function ()
-{
+$('.add-user').click(function () {
    $(this).find('input[type=checkbox]').prop("checked", !$(this).find('input[type=checkbox]').prop("checked"));
 });
 </script>
