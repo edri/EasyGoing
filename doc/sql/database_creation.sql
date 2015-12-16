@@ -446,8 +446,8 @@ INSERT INTO users
 VALUES(
 	null, 
 	"miguel.santamaria@heig-vd.ch",
-	"miguelsantamaria",
-	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
+	"edri",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
 	"Miguel",
 	"Santamaria",
 	"default.png",
@@ -476,7 +476,7 @@ WHERE username = 'karimghozlani';
 
 SELECT id INTO @user3
 FROM users
-WHERE username = 'miguelsantamaria';
+WHERE username = 'edri';
 
 SELECT id INTO @user4
 FROM users
