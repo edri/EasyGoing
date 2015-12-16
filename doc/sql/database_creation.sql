@@ -70,7 +70,7 @@ CREATE TABLE tasks
 CREATE TABLE eventTypes
 (
     id INT NOT NULL AUTO_INCREMENT,
-    type ENUM('A définir...') NOT NULL UNIQUE,
+    type VARCHAR(20) NOT NULL UNIQUE,
     fileLogo VARCHAR(50),
     PRIMARY KEY(id)
 );
@@ -528,5 +528,9 @@ INSERT INTO projectsUsersSpecializations VALUES(@user3, @project2, "Base de donn
 INSERT INTO projectsUsersSpecializations VALUES(@user3, @project2, "Styles CSS");
 INSERT INTO projectsUsersSpecializations VALUES(@user4, @project2, "Node JS");
 INSERT INTO projectsUsersSpecializations VALUES(@user5, @project2, "Internet Explorer");
+
+INSERT INTO eventTypes(type, fileLogo) VALUES("Project", "project.svg");
+INSERT INTO eventTypes(type, fileLogo) VALUES("Tasks", "task.svg");
+INSERT INTO eventTypes(type, fileLogo) VALUES("Users", "user.svg");
 
 SET GLOBAL log_bin_trust_function_creators = 0; 
