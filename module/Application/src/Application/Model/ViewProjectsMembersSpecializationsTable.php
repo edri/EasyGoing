@@ -9,24 +9,22 @@ use Zend\Db\Sql\Where;
 // of a project with specializations.
 class ViewProjectsMembersSpecializationsTable
 {
-	protected $_tableGateway;
+   protected $_tableGateway;
 
-	public function __construct(TableGateway $tableGateway)
-	{
-		$this->_tableGateway = $tableGateway;
-	}
+   public function __construct(TableGateway $tableGateway)
+   {
+      $this->_tableGateway = $tableGateway;
+   }
 
-	// Return the given project's members with their specializations.
-	public function getProjectMembers($projectId)
-	{
-		$arrayResults = array();
-		$resultSet = $this->_tableGateway->select(array("project" => $projectId));
+   // Return the given project's members with their specializations.
+   public function getProjectMembers($projectId)
+   {
+      $arrayResults = array();
+      $resultSet = $this->_tableGateway->select(array("project" => $projectId));
 
-		foreach ($resultSet as $row)
-		{
-			$arrayResults[] = $row;
-		}
+      foreach ($resultSet as $row)
+         $arrayResults[] = $row;
 
-		return $arrayResults;
-	}
+      return $arrayResults;
+   }
 }

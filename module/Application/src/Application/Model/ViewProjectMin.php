@@ -7,18 +7,18 @@ namespace Application\Model;
 // view.
 class ViewProjectMin
 {
-	public $id;
-	public $name;
-	public $fileLogo;
-	public $userId;
-	public $isAdmin;
+   public $id;
+   public $name;
+   public $fileLogo;
+   public $userId;
+   public $isAdmin;
 
-	public function exchangeArray($data)
-	{
-		$this->id  = (!empty($data['id'])) ? $data['id'] : null;
-		$this->name  = (!empty($data['name'])) ? $data['name'] : null;
-		$this->fileLogo  = (!empty($data['fileLogo'])) ? $data['fileLogo'] : null;
-		$this->userId  = (!empty($data['userId'])) ? $data['userId'] : null;
-		$this->isAdmin  = (!empty($data['isAdmin'])) ? $data['isAdmin'] : null;
-	}
+   public function exchangeArray($data)
+   {
+      $this->id  = (!empty($data['id'])) ? $data['id'] : null;
+      $this->name  = (!empty($data['name'])) ? $data['name'] : null;
+      $this->fileLogo  = (!empty($data['fileLogo'])) ? $data['fileLogo'] : null;
+      $this->userId  = (!empty($data['userId'])) ? $data['userId'] : null;
+      $this->isAdmin  = (!empty($data['isAdmin'])) ? $data['isAdmin'] : null;
+   }
 }
