@@ -8,7 +8,7 @@ class Task
    public $name;
    public $description;
    public $deadLineDate;
-   public $durationInHours;
+   public $durationsInHours;
    public $priorityLevel;
    public $state;
    public $project;
@@ -19,7 +19,7 @@ class Task
       $this->name  = (!empty($data['name'])) ? $data['name'] : null;
       $this->description  = (!empty($data['description'])) ? $data['description'] : null;
       $this->deadLineDate  = (!empty($data['deadLineDate'])) ? $data['deadLineDate'] : null;
-      $this->durationInHours  = (!empty($data['durationInHours'])) ? $data['durationInHours'] : null;
+      $this->durationsInHours  = (!empty($data['durationsInHours'])) ? $data['durationsInHours'] : null;
       $this->priorityLevel  = (!empty($data['priorityLevel'])) ? $data['priorityLevel'] : null;
       $this->state  = (!empty($data['state'])) ? $data['state'] : null;
       $this->project  = (!empty($data['project'])) ? $data['project'] : null;

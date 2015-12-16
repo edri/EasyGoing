@@ -1,14 +1,14 @@
 <h1>Dashboard - <?php echo $project->name; ?></h1>
 <hr>
 <div class="projectHeader">
-    <div class="leftPart">
-        <p>Description : <?php echo $project->description; ?></p>
-        <p>Durée : du <?php echo $project->startDate . ' au ' . $project->deadLineDate; ?></p>
-        <p>
-            <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a><br/>
-            <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
-        </p>
-    </div>
+   <div class="leftPart">
+      <p>Description : <?php echo $project->description; ?></p>
+      <p>Durée : du <?php echo $project->startDate . ' au ' . $project->deadLineDate; ?></p>
+      <p>
+         <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a><br/>
+         <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
+      </p>
+   </div>
 
     <div class="rightPart">
         <div>
@@ -92,14 +92,14 @@
 <br/><hr/>
 <p id="result"></p>
 <p class="boardButtons">
-  <div class="btn-group" data-toggle="buttons">
-    <label class="btn active btnEasygoing">
-      <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
-    </label>
-    <label class="btn btnEasygoing">
-      <input type="radio" name="options" id="option2" autocomplete="off" onchange="loadBoardViewTasks();"> View per tasks
-    </label>
-  </div>
+   <div class="btn-group" data-toggle="buttons">
+      <label class="btn active btnEasygoing">
+         <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
+      </label>
+      <label class="btn btnEasygoing">
+         <input type="radio" name="options" id="option2" autocomplete="off" onchange="loadBoardViewTasks();"> View per tasks
+      </label>
+   </div>
 </p>
 
 <div id="board-container"></div>
@@ -113,7 +113,7 @@
             <div class="panel-heading">Tasks</div>
             <div class="panel-body">
                <?php foreach ($tasks as $task) : ?>
-               <p><?php echo $task->name; ?></p>
+               <p><a href="<?php echo $this->serverUrl(true)."/editTask/".$task->id; ?>"><?php echo $task->name; ?></a><p>
                <?php endforeach; ?>
             </div>
          </div>
@@ -125,18 +125,6 @@
                <?php foreach ($members as $member) : ?>
                <p><?php echo $member->username; ?></p>
                <?php endforeach; ?>
-            </div>
-         </div>
-      </div>
-      <div class="col-md-6">
-         <div class="panel panel-default">
-            <div class="panel-heading">Test</div>
-            <div class="panel-body">
-               <pre>
-               <?php foreach ($tasksForMember as $t) : ?>
-               <p><?php var_dump($t); ?></p>
-               <?php endforeach; ?>
-               </pre>
             </div>
          </div>
       </div>

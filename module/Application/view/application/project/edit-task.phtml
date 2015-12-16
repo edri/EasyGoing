@@ -1,46 +1,57 @@
 <h1>Edit a task</h1>
 <br>
 <form method="POST" action="<?php echo $this->serverUrl(true); ?>" role="form" class="form-horizontal">
+   <input hidden type="text" name="id" value="<?php echo $task->id; ?>">
    <div class="form-group">
       <label class="control-label col-sm-2" for="name">Name</label>
       <div class="col-sm-10">
-         <input type="text" name="name" class="form-control" placeholder="Enter name" required="required" />
+         <input type="text" name="name" value="<?php echo $task->name; ?>" class="form-control" placeholder="Enter name" required="required" />
       </div>
    </div>
    <div class="form-group">
-      <label class="control-label col-sm-2">Deadline</label>
-      <label class="control-label col-sm-2">To</label>
+      <label class="control-label col-sm-2" for="deadline">Deadline</label>
       <div class="col-sm-3">
-         <input type="text" name="startDate" class="form_datetime form-control" placeholder="yyyy-mm-dd hh:ii" required="required" />
+         <div class="input-daterange">
+            <input type="text" required="required" name="deadline" class="form-control" value="<?php echo $task->deadLineDate; ?>">
+         </div>   
       </div>
-      <label class="control-label col-sm-2" for="name">From</label>
-      <div class="col-sm-3">
-         <input type="text" name="deadlineDate" class="form_datetime form-control" placeholder="yyyy-mm-dd hh:ii" required="required" />
+   </div>
+   <div class="form-group">
+      <label class="control-label col-sm-2" for="duration">Duration in hours</label>
+      <div class="col-sm-10">
+         <input type="text" name="duration" value="<?php echo $task->durationsInHours; ?>" class="form-control" placeholder="Duration..." required="required" />
       </div>
    </div>
    <div class="form-group">
       <label class="control-label col-sm-2">Priority</label>
       <div class="col-sm-10">
          <select class="form-control" name="priority">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
+            <?php 
+               for($i = 1; $i <= 3; $i++)
+               {
+                  echo '<option '.($task->priorityLevel == $i ? 'selected' : '').' value"'.$i.'">'.$i.'</option>';
+               }
+            ?>
          </select>
       </div>
    </div>
    <div class="form-group">
       <label class="control-label col-sm-2">Description</label>
       <div class="col-sm-10">
-         <textarea name="description" class="form-control" placeholder="Enter description"></textarea>
+         <textarea name="description" class="form-control" placeholder="Enter description"><?php echo $task->description; ?></textarea>
       </div>
    </div>
    <div class="text-right">
-      <button type="submit" class="btn btn-success btnEasygoing">Create</button>
+      <button type="submit" class="btn btn-success btnEasygoing">Save changes</button>
+      <a class="btn btnEasygoing" href="<?php echo $_SERVER['HTTP_REFERER'] ?>">Back</a>
    </div>
+
 </form>
 
 <script type="text/javascript">
    $(function() {
-      $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd'});
+      $('.input-daterange input').each(function() {
+          $(this).datepicker({format: 'yyyy-mm-dd', autoclose:true});
+      });
    });
 </script>  

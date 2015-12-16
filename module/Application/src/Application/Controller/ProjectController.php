@@ -36,9 +36,10 @@ class ProjectController extends AbstractActionController
    {
       $sessionUser = new container('user');
 
-      // TODO : Décommenter les lignes
+      if(!$sessionUser->connected)
+         $this->redirect()->toRoute('user');
+
       if(empty($this->_getTable('ProjectTable')->getProject($this->params('id'))))
-         //|| !$sessionUser->connected)
          $this->redirect()->toRoute('projects');
 
       return parent::onDispatch( $e );
@@ -77,18 +78,47 @@ class ProjectController extends AbstractActionController
          $name = $_POST["name"];
          $description = $_POST["description"];
          $priority = $_POST["priority"];
-         $startDate = $_POST["startDate"];
-         $deadlineDate = $_POST["deadlineDate"];
+         $deadline = $_POST["deadline"];
+         $duration = $_POST["duration"];
          $sessionUser = new container('user');
 
-         $affectation = $this->_getTable('TaskTable')->addTask($name, $description, $deadlineDate, 10, $priority, $projectId);
+         $affectation = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId);
 
-         // TODO : Mettre $sessionUser->id à la place de 3
-         $this->_getTable('UsersTasksAffectationsTable')->addAffectation(4, $affectation);
+         $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $affectation);
 
          $this->redirect()->toRoute('project', array(
              'id' => $projectId
          ));
+      }
+   }
+
+   public function editTaskAction()
+   {
+      $request = $this->getRequest();
+
+      if($request->isPost())
+      {
+         $id = $_POST["id"];
+         $name = $_POST["name"];
+         $description = $_POST["description"];
+         $priority = $_POST["priority"];
+         $deadline = $_POST["deadline"];
+         $duration = $_POST["duration"];
+
+         $this->_getTable('TaskTable')->updateTask($name, $description, $deadline, $duration, $priority, $id);
+
+         $this->redirect()->toRoute('project', array(
+             'id' => $this->params('id')
+         ));
+      }
+      else
+      {
+         $taskId = $this->params('otherId');
+         $task = $this->_getTable('TaskTable')->getTaskById($taskId);
+
+         return new ViewModel(array(
+               'task' => $task
+            ));
       }
    }
 
@@ -140,11 +170,6 @@ class ProjectController extends AbstractActionController
       $result->setTerminal(true);
 
       return $result;
-   }
-
-   public function editTaskAction()
-   {
-
    }
 
    public function moveTaskAction() {

@@ -13,6 +13,27 @@ class TaskTable
       $this->_tableGateway = $tableGateway;
    }
 
+   public function getTaskById($id)
+   {
+      return $this->_tableGateway->select(array(
+         'id' => $id
+      ))->current();
+   }
+
+   public function updateTask($name, $description, $deadlineDate, $durationsInHours, $priorityLevel, $taskId)
+   {
+      $this->_tableGateway->update(array(
+            'name'               => $name,
+            'description'        => $description,
+            'deadLineDate'       => $deadlineDate,
+            'durationsInHours'   => $durationsInHours,
+            'priorityLevel'      => $priorityLevel
+         ), array(
+            'id' => $taskId
+         ));
+   }
+
+
    public function addTask($name, $description, $deadlineDate, $durationsInHours, $priorityLevel, $projectId)
    {
       $this->_tableGateway->insert(array(
