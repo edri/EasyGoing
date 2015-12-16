@@ -22,6 +22,7 @@ use Zend\Session\Container;
 // Be careful about the class' name, which must be the same as the file's name.
 class ProjectController extends AbstractActionController
 {
+
    // Get the task's table's entity, represented by the created model.
    // Act as a singleton : we only can have one instance of the object.
    private function _getTable($tableName)
@@ -37,9 +38,10 @@ class ProjectController extends AbstractActionController
    {
       $sessionUser = new container('user');
 
-      // TODO : Décommenter les lignes
+      if(!$sessionUser->connected)
+         $this->redirect()->toRoute('user');
+
       if(empty($this->_getTable('ProjectTable')->getProject($this->params('id'))))
-         //|| !$sessionUser->connected)
          $this->redirect()->toRoute('projects');
 
       return parent::onDispatch( $e );
@@ -83,8 +85,7 @@ class ProjectController extends AbstractActionController
 
          $affectation = $this->_getTable('TaskTable')->addTask($name, $description, $deadlineDate, 10, $priority, $projectId);
 
-         // TODO : Mettre $sessionUser->id à la place de 3
-         $this->_getTable('UsersTasksAffectationsTable')->addAffectation(4, $affectation);
+         $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $affectation);
 
          $this->redirect()->toRoute('project', array(
              'id' => $projectId
@@ -98,7 +99,11 @@ class ProjectController extends AbstractActionController
 
       if($request->isPost())
       {
+         echo '<script>alert("isadjoisad");</script>';
 
+         $this->redirect()->toRoute('project', array(
+             'id' => $this->params('id')
+         ));
       }
       else
       {
