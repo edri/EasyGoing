@@ -70,7 +70,7 @@ CREATE TABLE tasks
 CREATE TABLE eventTypes
 (
     id INT NOT NULL AUTO_INCREMENT,
-    type ENUM('A définir...') NOT NULL UNIQUE,
+    type VARCHAR(20) NOT NULL UNIQUE,
     fileLogo VARCHAR(50),
     PRIMARY KEY(id)
 );
@@ -207,6 +207,20 @@ CREATE VIEW view_projects_details AS
 	FROM projects AS p INNER JOIN projectsUsersMembers AS pu
 		ON p.id = pu.project
  );
+
+DROP VIEW IF EXISTS view_events;
+CREATE VIEW view_events AS
+    SELECT 
+        et.type, et.fileLogo, e.id, e.date, e.message, ep.project
+    FROM
+        ((eventTypes AS et
+        JOIN events AS e)
+        JOIN eventsOnProjects AS ep)
+    WHERE
+        ((et.id = e.eventType)
+            AND (e.id = ep.event))
+    ORDER BY
+        e.date DESC, e.id DESC;
 
 /* This function check if a user can be affected to a task */
 USE easygoing;
@@ -536,5 +550,9 @@ INSERT INTO projectsUsersSpecializations VALUES(@user3, @project2, "Base de donn
 INSERT INTO projectsUsersSpecializations VALUES(@user3, @project2, "Styles CSS");
 INSERT INTO projectsUsersSpecializations VALUES(@user4, @project2, "Node JS");
 INSERT INTO projectsUsersSpecializations VALUES(@user5, @project2, "Internet Explorer");
+
+INSERT INTO eventTypes(type, fileLogo) VALUES("Project", "project.svg");
+INSERT INTO eventTypes(type, fileLogo) VALUES("Tasks", "task.svg");
+INSERT INTO eventTypes(type, fileLogo) VALUES("Users", "user.svg");
 
 SET GLOBAL log_bin_trust_function_creators = 0; 
