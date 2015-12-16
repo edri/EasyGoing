@@ -77,7 +77,9 @@ title:focus, .title:hover {
     color: #5a2706;
 }
 
-.btnEasygoing:hover {
+.btnEasygoing:hover,
+.btnEasygoing.active,
+.btnEasygoing:active  {
     background-color: #995527;
     color: #fcd1b5;
 }
@@ -381,7 +383,7 @@ hr {
 }
 
 .board-user {
-    
+
 }
 
 .board-first-column {

@@ -104,14 +104,19 @@
 	<div class="header">
 	   <div class="container">
 	      <a href="/" class="title"><img class="logo" src="<?php echo $this->basePath('img/title.svg'); ?>" height=70 /></a>
-		  <div class="headerLinks">
-		      <a href="<?php echo $this->basePath('projects'); ?>" class="btn btnHeaderSelected btn-link" type="button">Projects</a>
-		      <a href="<?php echo $this->basePath('edit'); ?>" class="btn btnHeader btn-link" type="button">Account</a>
-		  </div>
-	      <div class="headerRight">
-	         <span class="loginInformation">Logged in as <b> <?php echo $sessionUser->username; ?> </b></span>
-	         <a href="/logout" id="btnLogout" class="btn btnLogout btnEasygoing" type="button">Logout</a>
-	      </div>
+		  <?php
+		  	if ($sessionUser && $sessionUser->connected)
+			{
+		  ?>
+			  <div class="headerLinks">
+			      <a href="<?php echo $this->basePath('projects'); ?>" class="btn btnHeaderSelected btn-link" type="button">Projects</a>
+			      <a href="<?php echo $this->basePath('edit'); ?>" class="btn btnHeader btn-link" type="button">Account</a>
+			  </div>
+		      <div class="headerRight">
+		         <span class="loginInformation">Logged in as <b> <?php echo $sessionUser->username; ?> </b></span>
+		         <a href="/logout" id="btnLogout" class="btn btnLogout btnEasygoing" type="button">Logout</a>
+		      </div>
+		 <?php } ?>
 	   </div>
 	</div>
 	<div class="container">

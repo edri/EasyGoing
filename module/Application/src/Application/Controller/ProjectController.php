@@ -29,7 +29,7 @@ class ProjectController extends AbstractActionController
       $sm = $this->getServiceLocator();
       // Instanciate the object with the created model.
       $table = $sm->get('Application\Model\\'.$tableName);
-      
+
       return $table;
    }
 
@@ -190,53 +190,64 @@ class ProjectController extends AbstractActionController
 
    public function detailsAction()
    {
-        $id = (int)$this->params('id');
-        $projectDetails = $this->_getTable('ViewProjectDetailsTable')->getProjectDetails($id, 4);
-        $tempMembers = $this->_getTable('ViewProjectsMembersSpecializationsTable')->getProjectMembers($id);
-        $members = array();
-        $i = 0;
+        $sessionUser = new container('user');
 
-        // Struct the members array.
-        foreach ($tempMembers as $tmpM)
-        {
-            // Indicate whether the current member already exists in the members
-            // list or not.
-            // If yes, we just have to add the object's specialization to the
-            // existing specializations of the user.
-            $alreadyExisting = false;
-            $nbCurrentMembers = count($members);
+		// The user must be authenticated to access this part, otherwise he will be
+		// redirected to the home page.
+		if ($sessionUser && $sessionUser->connected)
+		{
+            $id = (int)$this->params('id');
+            $projectDetails = $this->_getTable('ViewProjectDetailsTable')->getProjectDetails($id, $sessionUser->id);
+            $tempMembers = $this->_getTable('ViewProjectsMembersSpecializationsTable')->getProjectMembers($id);
+            $members = array();
+            $i = 0;
 
-            // Check if the current member already exists.
-            for ($j = 0; $j < $nbCurrentMembers; ++$j)
+            // Struct the members array.
+            foreach ($tempMembers as $tmpM)
             {
-                // Add the specialization to the specializations list.
-                if ($tmpM->username == $members[$j]["username"])
+                // Indicate whether the current member already exists in the members
+                // list or not.
+                // If yes, we just have to add the object's specialization to the
+                // existing specializations of the user.
+                $alreadyExisting = false;
+                $nbCurrentMembers = count($members);
+
+                // Check if the current member already exists.
+                for ($j = 0; $j < $nbCurrentMembers; ++$j)
                 {
-                    $alreadyExisting = true;
-                    $members[$j]["specializations"][] = (empty($tmpM->specialization) ? "-" : $tmpM->specialization);
-                    break;
+                    // Add the specialization to the specializations list.
+                    if ($tmpM->username == $members[$j]["username"])
+                    {
+                        $alreadyExisting = true;
+                        $members[$j]["specializations"][] = (empty($tmpM->specialization) ? "-" : $tmpM->specialization);
+                        break;
+                    }
+                }
+
+                // If the current member is not already existing in the members list,
+                // add it.
+                if (!$alreadyExisting)
+                {
+                    $members[$i]["username"] = $tmpM->username;
+                    $members[$i]["specializations"][] = empty($tmpM->specialization) ? "-" : $tmpM->specialization;
+                    $members[$i]["isAdmin"] = $tmpM->isAdmin;
+                    ++$i;
                 }
             }
 
-            // If the current member is not already existing in the members list,
-            // add it.
-            if (!$alreadyExisting)
-            {
-                $members[$i]["username"] = $tmpM->username;
-                $members[$i]["specializations"][] = empty($tmpM->specialization) ? "-" : $tmpM->specialization;
-                $members[$i]["isAdmin"] = $tmpM->isAdmin;
-                ++$i;
-            }
+            // Send the success message back with JSON.
+            return new JsonModel(array(
+                'success' => true,
+                'projectDetails' => $projectDetails,
+                'members'   => $members
+            ));
         }
-
-        // Send the success message back with JSON.
-        $result = new JsonModel(array(
-            'success' => true,
-            'projectDetails' => $projectDetails,
-            'members'   => $members
-        ));
-
-        return $result;
+		else
+		{
+			return new JsonModel(array(
+                'success' => false
+            ));
+		}
   }
 
   private function _getUsersNotMemberOfProject($projectId)
