@@ -3,36 +3,22 @@ $(document).ready(function() {
    $.contextMenu({
       selector: '.board-task',
       callback: function(key, options) {
-         var m = "clicked: " + key;
-         alert(m);
+         var taskId = $(this).attr('task-id');
+
+         switch(key) {
+            case 'delete':
+               var response = confirm("Are you sure you want to delete this task ?");
+               if(response === true)
+               {
+                  alert('Delete task ' + taskId);
+               }
+               break;
+         }
       },
       items: {
-         "edit": {
-            name: "Edit",
-            icon: "edit"
-         },
-         "cut": {
-            name: "Cut",
-            icon: "cut"
-         },
-         copy: {
-            name: "Copy",
-            icon: "copy"
-         },
-         "paste": {
-            name: "Paste",
-            icon: "paste"
-         },
          "delete": {
             name: "Delete",
             icon: "delete"
-         },
-         "sep1": "---------",
-         "quit": {
-            name: "Quit",
-            icon: function() {
-               return 'context-menu-icon context-menu-icon-quit';
-            }
          }
       }
    });
