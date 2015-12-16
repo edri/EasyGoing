@@ -21,12 +21,10 @@ $(document).ready(function() {
       },
       items: {
          "edit": {
-            name: "Edit",
-            icon: "edit"
+            name: "Edit"
          },
          "delete": {
-            name: "Delete",
-            icon: "delete"
+            name: "Delete"
          }
       }
    });
