@@ -9,11 +9,11 @@ use Zend\Db\Sql\Where;
 // projects' details and users, with all important project's data.
 class ViewProjectDetailsTable
 {
-	protected $tableGateway;
+	protected $_tableGateway;
 
 	public function __construct(TableGateway $tableGateway)
 	{
-		$this->tableGateway = $tableGateway;
+		$this->_tableGateway = $tableGateway;
 	}
 
 	// Get and return the details of the given project.
@@ -21,7 +21,7 @@ class ViewProjectDetailsTable
 	// project's details.
 	public function getProjectDetails($projectId, $userId)
 	{
-		$rowset = $this->tableGateway->select(array("projectId" => $projectId, "userId" => $userId));
+		$rowset = $this->_tableGateway->select(array("projectId" => $projectId, "userId" => $userId));
 		$row = $rowset->current();
 		return $row;
 	}
