@@ -13,9 +13,17 @@ $(document).ready(function() {
                   alert('Delete task ' + taskId);
                }
                break;
+
+            case 'edit':
+               window.location.href = window.location.href + '/editTask/' + taskId;
+               break;
          }
       },
       items: {
+         "edit": {
+            name: "Edit",
+            icon: "edit"
+         },
          "delete": {
             name: "Delete",
             icon: "delete"
