@@ -1,6 +1,7 @@
 <h1>Edit a task</h1>
 <br>
 <form method="POST" action="<?php echo $this->serverUrl(true); ?>" role="form" class="form-horizontal">
+   <input hidden type="text" name="id" value="<?php echo $task->id; ?>">
    <div class="form-group">
       <label class="control-label col-sm-2" for="name">Name</label>
       <div class="col-sm-10">

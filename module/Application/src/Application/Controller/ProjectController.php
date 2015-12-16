@@ -99,7 +99,14 @@ class ProjectController extends AbstractActionController
 
       if($request->isPost())
       {
-         echo '<script>alert("Edit task : POST");</script>';
+         $id = $_POST["id"];
+         $name = $_POST["name"];
+         $description = $_POST["description"];
+         $priority = $_POST["priority"];
+         $deadline = $_POST["deadline"];
+         $duration = $_POST["duration"];
+
+         $this->_getTable('TaskTable')->updateTask($name, $description, $deadline, $duration, $priority, $id);
 
          $this->redirect()->toRoute('project', array(
              'id' => $this->params('id')
