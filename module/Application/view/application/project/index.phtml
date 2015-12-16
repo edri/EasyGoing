@@ -1,5 +1,5 @@
 <h1>Dashboard - <?php echo $project->name; ?></h1>
-
+<hr>
 <div class="projectHeader">
     <div class="leftPart">
         <p>Description : <?php echo $project->description; ?></p>
@@ -13,19 +13,77 @@
     <div class="rightPart">
         <div>
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="historicalTabs" role="tablist">
-                <li role="presentation" class="active"><a href="#all" aria-controls="all" role="tab" data-toggle="tab" style="outline: 0 none;">All</a></li>
-                <li role="presentation"><a href="#events" aria-controls="events" role="tab" data-toggle="tab" style="outline: 0 none;">Events</a></li>
-                <li role="presentation"><a href="#comments" aria-controls="comments" role="tab" data-toggle="tab" style="outline: 0 none;">Comments</a></li>
+            <ul class="nav nav-tabs tabsMain" id="historicalTabs" role="tablist">
+                <li role="presentation" class="active firstTab"><a href="#all" aria-controls="all" role="tab" data-toggle="tab" style="outline: 0 none;">All</a></li>
+                <li role="presentation"><a href="#project" aria-controls="project" role="tab" data-toggle="tab" style="outline: 0 none;">Project</a></li>
+                <li role="presentation"><a href="#tasks" aria-controls="tasks" role="tab" data-toggle="tab" style="outline: 0 none;">Tasks</a></li>
+                <li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab" style="outline: 0 none;">Users</a></li>
+                <li class="historicalTitle">Historical</li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content historicalTab">
-                <div role="tabpanel" class="tab-pane fade in active" id="all">
-                    ALL
+               <div role="tabpanel" class="tab-pane fade in active" id="all">
+               <?php
+                  foreach ($events as $e)
+                  {
+               ?>
+                     <div class="eventElem">
+                        <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
+                        <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
+                     </div>
+               <?php
+                  }
+                ?>
                 </div>
-                <div role="tabpanel" class="tab-pane fade" id="events">EVENTS</div>
-                <div role="tabpanel" class="tab-pane fade" id="comments">COMMENTS</div>
+                <div role="tabpanel" class="tab-pane fade" id="project">
+                   <?php
+                     foreach ($events as $e)
+                     {
+                        if ($e->type == "Project")
+                        {
+                  ?>
+                           <div class="eventElem">
+                              <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
+                              <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
+                           </div>
+                  <?php
+                        }
+                     }
+                   ?>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="tasks">
+                   <?php
+                    foreach ($events as $e)
+                    {
+                       if ($e->type == "Tasks")
+                       {
+                 ?>
+                          <div class="eventElem">
+                             <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
+                             <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
+                          </div>
+                 <?php
+                       }
+                    }
+                 ?>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="users">
+                   <?php
+                    foreach ($events as $e)
+                    {
+                       if ($e->type == "Users")
+                       {
+                 ?>
+                          <div class="eventElem">
+                             <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
+                             <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
+                          </div>
+                 <?php
+                       }
+                    }
+                 ?>
+                </div>
             </div>
         </div>
     </div>

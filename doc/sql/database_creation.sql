@@ -208,6 +208,20 @@ CREATE VIEW view_projects_details AS
 		ON p.id = pu.project
  );
 
+DROP VIEW IF EXISTS view_events;
+CREATE VIEW view_events AS
+    SELECT 
+        et.type, et.fileLogo, e.id, e.date, e.message, ep.project
+    FROM
+        ((eventTypes AS et
+        JOIN events AS e)
+        JOIN eventsOnProjects AS ep)
+    WHERE
+        ((et.id = e.eventType)
+            AND (e.id = ep.event))
+    ORDER BY
+        e.date DESC, e.id DESC;
+
 /* This function check if a user can be affected to a task */
 USE easygoing;
 
