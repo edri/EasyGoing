@@ -2,8 +2,8 @@
 <hr>
 <div class="projectHeader">
    <div class="leftPart">
-      <p>Description : <?php echo $project->description; ?></p>
-      <p>Durée : du <?php echo $project->startDate . ' au ' . $project->deadLineDate; ?></p>
+      <p><u>Description</u> : <?php echo $this->escapeHtml($project->description); ?></p>
+      <p><u>Durée</u> : du <?php echo date('d.m.Y', strtotime($project->startDate)) . ' au ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
       <p>
          <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a><br/>
          <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>

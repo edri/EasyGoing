@@ -70,11 +70,12 @@ class ProjectController extends AbstractActionController
 
    public function addTaskAction()
    {
-      $sessionUser = new container('user');
       $request = $this->getRequest();
 
       if($request->isPost())
       {
+         $sessionUser = new container('user');
+         
          $projectId = $this->params('id');
          $name = $_POST["name"];
          $description = $_POST["description"];
@@ -90,7 +91,7 @@ class ProjectController extends AbstractActionController
          // First of all, get right event type.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
          // Then add the new event in the database.
-         $message = "<u>" . $sessionUser->username . "</u> created task <i>" . $name . "</i>.";
+         $message = "<u>" . $sessionUser->username . "</u> created task <font color=\"#FF6600\">" . $name . "</font>.";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          // Link the new event to the current project.
          $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
@@ -109,6 +110,9 @@ class ProjectController extends AbstractActionController
 
       if($request->isPost())
       {
+         $sessionUser = new container('user');
+         $projectId = $this->params('id');
+
          $id = $_POST["id"];
          $name = $_POST["name"];
          $description = $_POST["description"];
@@ -117,6 +121,17 @@ class ProjectController extends AbstractActionController
          $duration = $_POST["duration"];
 
          $this->_getTable('TaskTable')->updateTask($name, $description, $deadline, $duration, $priority, $id);
+
+         // If task was successfully edited, add a task's edition event.
+         // First of all, get right event type.
+         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
+         // Then add the new event in the database.
+         $message = "<u>" . $sessionUser->username . "</u> updated task <font color=\"#FF6600\">" . $name . "</font>.";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         // Link the new event to the current project.
+         $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+         // Finaly link the new event to the user who created it.
+         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
 
          $this->redirect()->toRoute('project', array(
              'id' => $this->params('id')
@@ -184,11 +199,27 @@ class ProjectController extends AbstractActionController
    }
 
    public function moveTaskAction() {
+      $sessionUser = new container('user');
+      $projectId = $this->params('id');
       // Get POST data
       $data = $this->getRequest()->getPost();
 
       $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
       //$this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['targetMemberId'], $data['taskId']);
+
+      // If task was successfully moved, add a task's movement event.
+      // First of all, get right event type, moved task's name and old/new task's user's name.
+      $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
+      $name = $this->_getTable("TaskTable")->getTaskById($data['taskId'])->name;
+      $oldUsername = $this->_getTable("UserTable")->getUser($data['oldMemberId'])->username;
+      $newUsername = $this->_getTable("UserTable")->getUser($data['targetMemberId'])->username;
+      // Then add the new event in the database.
+      $message = "<u>" . $sessionUser->username . "</u> moved task <font color=\"#FF6600\">" . $name . "</font> from <font color=\"#995527\">(" . $oldUsername . ", " . $data['oldSection'] . ")</font> to <font color=\"#995527\">(" . $newUsername . ", " . $data['targetSection'] . ")</font>.";
+      $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+      // Link the new event to the current project.
+      $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+      // Finaly link the new event to the user who created it.
+      $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
 
       return $this->getResponse()->setContent(json_encode(array(
          'taskId'          => $data['taskId'],
@@ -204,13 +235,28 @@ class ProjectController extends AbstractActionController
 
    public function addMemberAction()
    {
+      $sessionUser = new container('user');
+      $projectId = $this->params('id');
       $request = $this->getRequest();
 
       if($request->isPost())
       {
+         // Get right event type.
+         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
+
          foreach ($_POST as $value)
          {
             $this->_getTable('ProjectsUsersMembersTable')->addMemberToProject($value, $this->params('id'));
+            // If member was successfully added, add an event.
+            // Get new member's username.
+            $addedMemberName = $this->_getTable("UserTable")->getUser($value)->username;
+            // Then add the new event in the database.
+            $message = "<u>" . $sessionUser->username . "</u> added user <u>" . $addedMemberName . "</u> in project.";
+            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+            // Link the new event to the current project.
+            $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+            // Finaly link the new event to the user who created it.
+            $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
          }
       }
       $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));

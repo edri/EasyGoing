@@ -7,6 +7,7 @@ $(document).ready(function() {
 
    var board = document.getElementsByClassName('board');
    var hideMe;
+   var oldTarget;
    for (var i in board) {
       board[i].onselectstart = function(e) {
          e.preventDefault();
@@ -14,6 +15,7 @@ $(document).ready(function() {
       board[i].ondragstart = function(e) {
          console.log('dragstart');
          hideMe = e.target;
+         oldTarget = e.target.parentNode;
          e.dataTransfer.setData('board-task', e.target.id);
          e.dataTransfer.effectAllowed = 'move';
       };
@@ -66,12 +68,16 @@ $(document).ready(function() {
             if (task) {
                if (section !== task.parentNode) {
 
-                  var targetMemberId = e.target.parentNode.getAttribute('member-id');
                   var taskId = task.getAttribute('task-id');
+                  var oldMemberId = oldTarget.parentNode.getAttribute('member-id');
+                  var oldSection = oldTarget.getAttribute('section');
+                  var targetMemberId = e.target.parentNode.getAttribute('member-id');
                   var targetSection = e.target.getAttribute('section');
 
                   $.post("http://easygoing/project/" + projectId + "/moveTask", {
                         taskId: taskId,
+                        oldMemberId: oldMemberId,
+                        oldSection : oldSection,
                         targetMemberId: targetMemberId,
                         targetSection: targetSection
                      })
