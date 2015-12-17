@@ -76,10 +76,8 @@ $(document).ready(function() {
                         targetSection: targetSection
                      })
                      .done(function(data) {
-                        // $('#result').append(data);
-                        /*
                         console.log("Sending task-moving socket...")
-                           // Send task-moving socket to the server so it can advertise other clients.
+                        // Send task-moving socket to the server so it can advertise other clients.
                         connection.send(JSON.stringify({
                            "messageType": "taskMoving",
                            "projectId": projectId,
@@ -87,9 +85,6 @@ $(document).ready(function() {
                            "targetMemberId": targetMemberId,
                            "targetSection": targetSection
                         }));
-                        */
-                        
-                        $('#board-container').load(window.location.href + '/boardViewMembers');
                      });
 
                   section.appendChild(task);

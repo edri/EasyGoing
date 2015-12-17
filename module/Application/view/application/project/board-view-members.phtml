@@ -1,5 +1,7 @@
 <?php
    echo $this->headScript()->appendScript('var projectId = "' . $projectId . '";');
+   echo $this->headScript()
+               ->prependFile($this->basePath() . '/js/board.websockets.js');
 ?>
 
 <div class="board-header">
@@ -61,5 +63,4 @@
 <?php endforeach; ?>
 
 <script src="<?php echo $this->basePath('/js/board.contextmenu.js'); ?>"></script>
-<!--<script src="<?php echo $this->basePath('/js/board.websockets.js'); ?>"></script>-->
 <script src="<?php echo $this->basePath('/js/board.dragdrop.js'); ?>"></script>

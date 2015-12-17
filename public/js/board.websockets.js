@@ -1,7 +1,7 @@
-$(document).ready(function() {
-   // Websocket connection.
-   var connection;
+// Websocket connection.
+var connection;
 
+$(document).ready(function() {
    // Check if WebSocket is supported by the user's browser.
    if ("WebSocket" in window) {
       console.log("Init socket...");
