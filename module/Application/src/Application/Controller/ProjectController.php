@@ -70,25 +70,46 @@ class ProjectController extends AbstractActionController
 
    public function addTaskAction()
    {
-      $request = $this->getRequest();
+      $sessionUser = new container('user');
 
-      if($request->isPost())
+      // The user must be authenticated to access this part, otherwise he will be
+      // redirected to the home page.
+      if ($sessionUser && $sessionUser->connected)
       {
-         $projectId = $this->params('id');
-         $name = $_POST["name"];
-         $description = $_POST["description"];
-         $priority = $_POST["priority"];
-         $deadline = $_POST["deadline"];
-         $duration = $_POST["duration"];
-         $sessionUser = new container('user');
+         $request = $this->getRequest();
 
-         $affectation = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId);
+         if($request->isPost())
+         {
+            $projectId = $this->params('id');
+            $name = $_POST["name"];
+            $description = $_POST["description"];
+            $priority = $_POST["priority"];
+            $deadline = $_POST["deadline"];
+            $duration = $_POST["duration"];
+            $sessionUser = new container('user');
 
-         $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $affectation);
+            $affectation = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId);
 
-         $this->redirect()->toRoute('project', array(
-             'id' => $projectId
-         ));
+            $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $affectation);
+            // If task was successfully added, add a task's creation event.
+            // First of all, get right event type.
+            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
+            // Then add the new event in the database.
+            $message = "<u>" . $sessionUser->username . "</u> created task <i>" . $name . "</i>.";
+            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+            // Link the new event to the current project.
+            $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+            // Finaly link the new event to the user who created it.
+            $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+
+            $this->redirect()->toRoute('project', array(
+                'id' => $projectId
+            ));
+         }
+      }
+      else
+      {
+         $this->redirect()->toRoute('home');
       }
    }
 

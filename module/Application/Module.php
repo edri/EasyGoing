@@ -49,6 +49,8 @@ use Application\Model\EventUser;
 use Application\Model\EventUserTable;
 use Application\Model\ViewEvent;
 use Application\Model\ViewEventTable;
+use Application\Model\EventType;
+use Application\Model\EventTypeTable;
 
 
 @ini_set('zend_monitor.enable', 0);
@@ -297,6 +299,17 @@ class Module
                 'Application\Model\ViewEventTable' =>  function($sm) {
                     $tableGateway = $sm->get('ViewEventTableGateway');
                     $table = new ViewEventTable($tableGateway);
+                    return $table;
+                },
+                'EventTypeTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new EventType());
+                    return new TableGateway('eventTypes', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\EventTypeTable' =>  function($sm) {
+                    $tableGateway = $sm->get('EventTypeTableGateway');
+                    $table = new EventTypeTable($tableGateway);
                     return $table;
                 },
 				// Configure the session service.

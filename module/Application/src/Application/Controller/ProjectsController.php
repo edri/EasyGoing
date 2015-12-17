@@ -23,18 +23,12 @@ class ProjectsController extends AbstractActionController
 {
    // Will contain the Utility class.
    private $_utilities;
-   // The model of the mapping view between projects and users ; used to communicate with the database.
-   private $_viewProjectMinTable;
-   // The model representing a project.
-   private $_projectTable;
-   // The model representing the projects-members' mapping entity.
-   private $_projectsUsersMembersTable;
 
    // Get utilities functions.
    // Act as a singleton : we only can have one instance of the object.
    private function _getUtilities()
    {
-      if (!$this->_utilities) 
+      if (!$this->_utilities)
       {
          $sm = $this->getServiceLocator();
          $this->_utilities = $sm->get('Application\Utility\Utilities');
@@ -42,40 +36,14 @@ class ProjectsController extends AbstractActionController
       return $this->_utilities;
    }
 
-   // Get the projects' view's entity, represented by the created model.
-   // Act as a singleton : we only can have one instance of the object.
-   private function _getViewProjectMinTable()
+   // Get the given table's entity, represented by the created model.
+   private function _getTable($tableName)
    {
-      // If the object is not currencly instanciated, we do it.
-      if (!$this->_viewProjectMinTable) 
-      {
-         $sm = $this->getServiceLocator();
-         // Instanciate the object with the created model.
-         $this->_viewProjectMinTable = $sm->get('Application\Model\viewProjectMinTable');
-      }
-      return $this->_viewProjectMinTable;
-   }
+      $sm = $this->getServiceLocator();
+      // Instanciate the object with the created model.
+      $table = $sm->get('Application\Model\\'.$tableName);
 
-   // Get the projects' entity, represented by the created model.
-   private function _getProjectTable()
-   {
-      if (!$this->_projectTable) 
-      {
-         $sm = $this->getServiceLocator();
-         $this->_projectTable = $sm->get('Application\Model\ProjectTable');
-      }
-      return $this->_projectTable;
-   }
-
-   // Get the projects-members' mapping entity, represented by the created model.
-   private function _getProjectsUsersMembersTable()
-   {
-      if (!$this->_projectsUsersMembersTable) 
-      {
-         $sm = $this->getServiceLocator();
-         $this->_projectsUsersMembersTable = $sm->get('Application\Model\ProjectsUsersMembersTable');
-      }
-      return $this->_projectsUsersMembersTable;
+      return $table;
    }
 
    // Default action of the controller.
@@ -87,7 +55,7 @@ class ProjectsController extends AbstractActionController
       // redirected to the home page.
       if ($sessionUser && $sessionUser->connected)
       {
-         $userProjects = $this->_getViewProjectMinTable()->getUserProjects($sessionUser->id);
+         $userProjects = $this->_getTable('ViewProjectMinTable')->getUserProjects($sessionUser->id);
 
          // For linking the right action's view.
          return new ViewModel(array(
@@ -202,7 +170,7 @@ class ProjectsController extends AbstractActionController
                   {
                      // Adds the new project in the database.
                      if ($result == SUCCESS_MESSAGE)
-                     {	
+                     {
                         try
                         {
                            $newProject = array(
@@ -213,8 +181,29 @@ class ProjectsController extends AbstractActionController
                               'fileLogo'		=> isset($fileName) ? $fileName : "default.png"
                            );
 
-                           $project = $this->_getProjectTable()->saveProject($newProject);
-                           $this->_getProjectsUsersMembersTable()->addMemberToProject($sessionUser->id, $project, true);
+                           $projectId = $this->_getTable("ProjectTable")->saveProject($newProject);
+                           $this->_getTable("ProjectsUsersMembersTable")->addMemberToProject($sessionUser->id, $projectId, true);
+                           // If project was successfully added, add a project's creation event.
+                           // First of all, get right event type.
+                           $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Project")->id;
+                           // Then add the new creation event in the database.
+                           $message = "<u>" . $sessionUser->username . "</u> created the project.";
+                           $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+                           // Link the new event to the new project.
+                           $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+                           // Finaly link the new event to the user who created it.
+                           $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+
+                           // We also have to add a "join" event to be coherent.
+                           // First of all, get right event type.
+                           $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
+                           // Then add the new creation event in the database.
+                           $message = "<u>" . $sessionUser->username . "</u> joined the project.";
+                           $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+                           // Link the new event to the new project.
+                           $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+                           // Finaly link the new event to the user who created it.
+                           $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);                           
 								}
                         catch (\Exception $e)
                         {

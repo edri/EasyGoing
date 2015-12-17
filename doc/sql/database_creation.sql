@@ -555,4 +555,12 @@ INSERT INTO eventTypes(type, fileLogo) VALUES("Project", "project.svg");
 INSERT INTO eventTypes(type, fileLogo) VALUES("Tasks", "task.svg");
 INSERT INTO eventTypes(type, fileLogo) VALUES("Users", "user.svg");
 
+INSERT INTO events VALUES(1, NOW(), "<u>raphaelracine</u> created the project.", 1);
+INSERT INTO eventsOnProjects VALUES(1, @project1);
+INSERT INTO eventsUsers VALUES(@user1, 1);
+
+INSERT INTO events VALUES(2, NOW(), "<u>raphaelracine</u> created the project.", 1);
+INSERT INTO eventsOnProjects VALUES(2, @project2);
+INSERT INTO eventsUsers VALUES(@user1, 2);
+
 SET GLOBAL log_bin_trust_function_creators = 0; 

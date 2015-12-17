@@ -12,7 +12,7 @@
       <div class="col-sm-3">
          <div class="input-daterange">
             <input type="text" required="required" name="deadline" class="form-control" value="<?php echo date("Y-m-d"); ?>">
-         </div>   
+         </div>
       </div>
    </div>
    <div class="form-group">
@@ -38,8 +38,8 @@
       </div>
    </div>
    <div class="text-right">
-      <button type="submit" class="btn btn-success btnEasygoing">Create</button>
       <a class="btn btnEasygoing" href="<?php echo $_SERVER['HTTP_REFERER'] ?>">Back</a>
+      <button type="submit" class="btn btnEasygoing">Create</button>
    </div>
 </form>
 
@@ -50,4 +50,4 @@
           $(this).datepicker({format: 'yyyy-mm-dd', autoclose:true});
       });
    });
-</script>  
+</script>

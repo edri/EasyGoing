@@ -12,4 +12,13 @@ class EventOnProjectsTable
    {
       $this->_tableGateway = $tableGateway;
    }
+
+   // Link the given event's ID to the given project's ID.
+   public function add($eventId, $projectId)
+   {
+      $this->_tableGateway->insert(array(
+         "event"      => $eventId,
+         "project"   => $projectId
+      ));
+   }
 }
