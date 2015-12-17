@@ -558,9 +558,35 @@ INSERT INTO eventTypes(type, fileLogo) VALUES("Users", "user.svg");
 INSERT INTO events VALUES(1, NOW(), "<u>raphaelracine</u> created the project.", 1);
 INSERT INTO eventsOnProjects VALUES(1, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 1);
-
-INSERT INTO events VALUES(2, NOW(), "<u>raphaelracine</u> created the project.", 1);
-INSERT INTO eventsOnProjects VALUES(2, @project2);
+INSERT INTO events VALUES(2, NOW(), "<u>raphaelracine</u> joined the project.", 3);
+INSERT INTO eventsOnProjects VALUES(2, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 2);
+INSERT INTO events VALUES(3, NOW(), "<u>raphaelracine</u> created the project.", 1);
+INSERT INTO eventsOnProjects VALUES(3, @project2);
+INSERT INTO eventsUsers VALUES(@user1, 3);
+INSERT INTO events VALUES(4, NOW(), "<u>raphaelracine</u> joined the project.", 3);
+INSERT INTO eventsOnProjects VALUES(4, @project2);
+INSERT INTO eventsUsers VALUES(@user1, 4);
+
+
+INSERT INTO events VALUES(5, NOW(), "<u>raphaelracine</u> added user <u>karimghozlani</u> in project.", 3);
+INSERT INTO eventsOnProjects VALUES(5, @project1);
+INSERT INTO eventsUsers VALUES(@user1, 5);
+INSERT INTO events VALUES(6, NOW(), "<u>raphaelracine</u> added user <u>edri</u> in project.", 3);
+INSERT INTO eventsOnProjects VALUES(6, @project1);
+INSERT INTO eventsUsers VALUES(@user1, 6);
+INSERT INTO events VALUES(7, NOW(), "<u>raphaelracine</u> added user <u>thibaudduchoud</u> in project.", 3);
+INSERT INTO eventsOnProjects VALUES(7, @project1);
+INSERT INTO eventsUsers VALUES(@user1, 7);
+
+INSERT INTO events VALUES(8, NOW(), "<u>raphaelracine</u> added user <u>edri</u> in project.", 3);
+INSERT INTO eventsOnProjects VALUES(8, @project2);
+INSERT INTO eventsUsers VALUES(@user1, 8);
+INSERT INTO events VALUES(9, NOW(), "<u>raphaelracine</u> added user <u>thibaudduchoud</u> in project.", 3);
+INSERT INTO eventsOnProjects VALUES(9, @project2);
+INSERT INTO eventsUsers VALUES(@user1, 9);
+INSERT INTO events VALUES(10, NOW(), "<u>raphaelracine</u> added user <u>vanessameguep</u> in project.", 3);
+INSERT INTO eventsOnProjects VALUES(10, @project2);
+INSERT INTO eventsUsers VALUES(@user1, 10);
 
 SET GLOBAL log_bin_trust_function_creators = 0; 

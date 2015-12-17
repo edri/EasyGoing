@@ -44,7 +44,7 @@
                   foreach ($events as $e)
                   {
                ?>
-                     <div class="eventElem">
+                     <div class="eventElem" name="eventInAll">
                         <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
                         <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
                      </div>
@@ -59,7 +59,7 @@
                         if ($e->type == "Project")
                         {
                   ?>
-                           <div class="eventElem">
+                           <div class="eventElem" name="eventInProject">
                               <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
                               <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
                            </div>
@@ -75,7 +75,7 @@
                        if ($e->type == "Tasks")
                        {
                  ?>
-                          <div class="eventElem">
+                          <div class="eventElem" name="eventInTasks">
                              <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
                              <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
                           </div>
@@ -91,7 +91,7 @@
                        if ($e->type == "Users")
                        {
                  ?>
-                          <div class="eventElem">
+                          <div class="eventElem" name="eventInUsers">
                              <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
                              <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
                           </div>

@@ -75,7 +75,7 @@ class ProjectController extends AbstractActionController
       if($request->isPost())
       {
          $sessionUser = new container('user');
-         
+
          $projectId = $this->params('id');
          $name = $_POST["name"];
          $description = $_POST["description"];
@@ -220,11 +220,14 @@ class ProjectController extends AbstractActionController
       $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
       // Finaly link the new event to the user who created it.
       $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+      // Get event's data to send them to socket server.
+      $event = $this->_getTable("ViewEventTable")->getEvent($eventId);
 
       return $this->getResponse()->setContent(json_encode(array(
          'taskId'          => $data['taskId'],
          'targetMemberId'  => $data['targetMemberId'],
-         'targetSection'   => $data['targetSection']
+         'targetSection'   => $data['targetSection'],
+         'event'           => $event
       )));
    }
 

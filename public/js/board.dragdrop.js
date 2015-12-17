@@ -82,6 +82,7 @@ $(document).ready(function() {
                         targetSection: targetSection
                      })
                      .done(function(data) {
+                        var eventData = JSON.parse(data).event;
                         console.log("Sending task-moving socket...")
                         // Send task-moving socket to the server so it can advertise other clients.
                         connection.send(JSON.stringify({
@@ -89,7 +90,8 @@ $(document).ready(function() {
                            "projectId": projectId,
                            "taskId": taskId,
                            "targetMemberId": targetMemberId,
-                           "targetSection": targetSection
+                           "targetSection": targetSection,
+                           "event": eventData
                         }));
                      });
 
