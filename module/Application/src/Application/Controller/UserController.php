@@ -54,7 +54,6 @@ class UserController extends AbstractActionController
 		// Checks if the user isn't already connected.
 		if ($sessionUser && $sessionUser->connected)
 		{
-
 			// Redirect the user if he is already connected.
 			$this->redirect()->toRoute('projects');
 		}
@@ -289,8 +288,8 @@ class UserController extends AbstractActionController
 		if (isset($_COOKIE['loginCookie'])) {
 		    unset($_COOKIE['loginCookie']);	
 		    unset($_COOKIE['idCookie']);		    
-		    setcookie('loginCookie', null, -1);
-		    setcookie('idCookie', null, -1);		    		    
+		    setcookie('loginCookie', "", -1);
+		    setcookie('idCookie', "", -1);		    		    
 		} 
 		//kill cookies ?
 		
@@ -299,7 +298,7 @@ class UserController extends AbstractActionController
 
 	public function editAction()
 	{
-		// For linking the right action's view.
+		echo $this->getRequest()->getCookie('loginCookie');
 		return new ViewModel();
 	}
 
