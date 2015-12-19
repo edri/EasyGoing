@@ -17,6 +17,8 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
+use Zend\Http\Client;
+use Zend\Http\Request;
 
 // Project controller ; will be calling when the user access the "easygoing/project" page.
 // Be careful about the class' name, which must be the same as the file's name.
@@ -32,12 +34,16 @@ class ProjectController extends AbstractActionController
       return $table;
    }
 
+   // Acts like a filter : every request go through the dispatcher, in which we
+   // can do some stuff.
+   // In this case, we just prevent unconnected users to access this controller
+   // and check if the accessed project exists.
    public function onDispatch( \Zend\Mvc\MvcEvent $e )
    {
       $sessionUser = new container('user');
 
       if(!$sessionUser->connected)
-         $this->redirect()->toRoute('user');
+         $this->redirect()->toRoute('home');
 
       if(empty($this->_getTable('ProjectTable')->getProject($this->params('id'))))
          $this->redirect()->toRoute('projects');
@@ -45,14 +51,13 @@ class ProjectController extends AbstractActionController
       return parent::onDispatch( $e );
    }
 
-
    public function indexAction()
    {
       $project = $this->_getTable('ProjectTable')->getProject($this->params('id'));
       $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
       $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
       $events = $this->_getTable('ViewEventTable')->getProjectEvents($this->params('id'));
-      
+
       return new ViewModel(array(
          'project'  => $project,
          'tasks'    => $tasks,
@@ -97,6 +102,20 @@ class ProjectController extends AbstractActionController
          $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
          // Finaly link the new event to the user who created it.
          $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get event's data to send them to socket server.
+         $event = $this->_getTable("ViewEventTable")->getEvent($eventId);
+
+         // Make an HTTP POST request to the event's server so he can broadcast a
+         // new websocket related to the new event.
+         $client = new Client('http://127.0.0.1:8002');
+         $client->setMethod(Request::METHOD_POST);
+         // Setting POST data.
+         $client->setParameterPost(array(
+            "requestType"  => "newEvent",
+            "event"        => json_encode($event)
+         ));
+         // Send HTTP request to server.
+         $response = $client->send();
 
          $this->redirect()->toRoute('project', array(
              'id' => $projectId
@@ -132,6 +151,20 @@ class ProjectController extends AbstractActionController
          $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
          // Finaly link the new event to the user who created it.
          $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get event's data to send them to socket server.
+         $event = $this->_getTable("ViewEventTable")->getEvent($eventId);
+
+         // Make an HTTP POST request to the event's server so he can broadcast a
+         // new websocket related to the new event.
+         $client = new Client('http://127.0.0.1:8002');
+         $client->setMethod(Request::METHOD_POST);
+         // Setting POST data.
+         $client->setParameterPost(array(
+            "requestType"  => "newEvent",
+            "event"        => json_encode($event)
+         ));
+         // Send HTTP request to server.
+         $response = $client->send();
 
          $this->redirect()->toRoute('project', array(
              'id' => $this->params('id')
@@ -260,13 +293,27 @@ class ProjectController extends AbstractActionController
             $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
             // Finaly link the new event to the user who created it.
             $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+            // Get event's data to send them to socket server.
+            $event = $this->_getTable("ViewEventTable")->getEvent($eventId);
+
+            // Make an HTTP POST request to the event's server so he can broadcast a
+            // new websocket related to the new event.
+            $client = new Client('http://127.0.0.1:8002');
+            $client->setMethod(Request::METHOD_POST);
+            // Setting POST data.
+            $client->setParameterPost(array(
+               "requestType"  => "newEvent",
+               "event"        => json_encode($event)
+            ));
+            // Send HTTP request to server.
+            $response = $client->send();
          }
-         
+
          $this->redirect()->toRoute('project', array(
              'id' => $projectId
          ));
       }
-      
+
       $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
 
       //$usersNotMemberOfProject = $this->_getUserTable()->getUsersNotMembersOfProject($this->params('id'));
@@ -346,12 +393,12 @@ class ProjectController extends AbstractActionController
             'success' => false
          ));
       }
-   }   
-   
+   }
+
    private function _userIsAdminOfProject($userId, $projectId)
    {
       $sessionUser = new container('user');
-      
+
       return $this->_getTable('ViewProjectMinTable')->userIsAdminOfProject($userId, $projectId);
    }
 
