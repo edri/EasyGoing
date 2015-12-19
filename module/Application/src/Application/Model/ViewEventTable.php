@@ -13,6 +13,13 @@ class ViewEventTable
       $this->_tableGateway = $tableGateway;
    }
 
+   // Get and return the event which match with the given ID.
+   public function getEvent($eventId)
+   {
+      $rowset = $this->_tableGateway->select(array('id' => $eventId));
+      return $rowset->current();
+   }
+
    // Get and return  as an array the events list of the given project.
    public function getProjectEvents($projectId)
    {

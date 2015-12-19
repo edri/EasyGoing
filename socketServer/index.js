@@ -28,6 +28,7 @@ var server = ws.createServer(function(connection) {
 		}
 		catch(e) {
 			console.log("Invalid data format, please send JSON.");
+			console.log(e);
 		}
 	});
 
@@ -39,12 +40,22 @@ var server = ws.createServer(function(connection) {
 // Send a message to every connected users that currently are in the project in which
 // the task was moved.
 function sendTaskMovingEvent(data, fromConnection) {
+	var dataEvent = {
+		"messageType": "newEvent",
+		"event": data.event
+	}
+
 	server.connections.forEach(function(connection) {
-		console.log("Send task-moving socket to every concerned clients...");
+		console.log("Send task-moving and new-event sockets to every concerned clients...");
 		data.messageType = "taskMovingEvent";
 		// Check every connection's project's ID and send message to the right ones.
-		if (connection.projectId === data.projectId && connection != fromConnection) {
-			connection.sendText(JSON.stringify(data));
+		if (connection.projectId === data.projectId) {
+			if (connection != fromConnection) {
+				connection.sendText(JSON.stringify(data));
+			}
+
+			// Send event socket to everyone in the project.
+			connection.sendText(JSON.stringify(dataEvent));
 		}
 	})
 }
