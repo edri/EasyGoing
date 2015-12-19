@@ -45,7 +45,8 @@ function filterSearch() {
 }
 
 // Check checkbox when click on user div
-$('.add-user').click(function () {
-   $(this).find('input[type=checkbox]').prop("checked", !$(this).find('input[type=checkbox]').prop("checked"));
+$('.add-user').click(function (e) {
+   if(!$(e.target).is(':checkbox'))
+      $(this).find('input[type=checkbox]').prop("checked", !$(this).find('input[type=checkbox]').prop("checked"));
 });
 </script>

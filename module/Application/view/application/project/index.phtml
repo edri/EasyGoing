@@ -3,7 +3,7 @@
 <div class="projectHeader">
    <div class="leftPart">
       <p><u>Description</u> : <?php echo $this->escapeHtml($project->description); ?></p>
-      <p><u>Durée</u> : du <?php echo date('d.m.Y', strtotime($project->startDate)) . ' au ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
+      <p><u>Duration</u> : from <?php echo date('d.m.Y', strtotime($project->startDate)) . ' to ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
       <p>
          <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Add a task</a><br/>
          <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Add members</a>

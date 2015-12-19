@@ -52,7 +52,7 @@ class ProjectController extends AbstractActionController
       $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
       $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
       $events = $this->_getTable('ViewEventTable')->getProjectEvents($this->params('id'));
-
+      
       return new ViewModel(array(
          'project'  => $project,
          'tasks'    => $tasks,
@@ -151,7 +151,7 @@ class ProjectController extends AbstractActionController
    public function boardViewMembersAction()
    {
       // Get members of a project
-      $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));//$this->_getViewUsersProjectsTable()->getUsersInProject($this->params('id'));
+      $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
 
       // Get tasks in a project for each member
       $arrayTasksForMember = array();
@@ -261,7 +261,12 @@ class ProjectController extends AbstractActionController
             // Finaly link the new event to the user who created it.
             $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
          }
+         
+         $this->redirect()->toRoute('project', array(
+             'id' => $projectId
+         ));
       }
+      
       $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
 
       //$usersNotMemberOfProject = $this->_getUserTable()->getUsersNotMembersOfProject($this->params('id'));
@@ -283,76 +288,75 @@ class ProjectController extends AbstractActionController
 
    public function detailsAction()
    {
-        $sessionUser = new container('user');
+      $sessionUser = new container('user');
 
-		// The user must be authenticated to access this part, otherwise he will be
-		// redirected to the home page.
-		if ($sessionUser && $sessionUser->connected)
-		{
-            $id = (int)$this->params('id');
-            $projectDetails = $this->_getTable('ViewProjectDetailsTable')->getProjectDetails($id, $sessionUser->id);
-            $tempMembers = $this->_getTable('ViewProjectsMembersSpecializationsTable')->getProjectMembers($id);
-            $members = array();
-            $i = 0;
+      // The user must be authenticated to access this part, otherwise he will be
+      // redirected to the home page.
+      if ($sessionUser && $sessionUser->connected)
+      {
+         $id = (int)$this->params('id');
+         $projectDetails = $this->_getTable('ViewProjectDetailsTable')->getProjectDetails($id, $sessionUser->id);
+         $tempMembers = $this->_getTable('ViewProjectsMembersSpecializationsTable')->getProjectMembers($id);
+         $members = array();
+         $i = 0;
 
-            // Struct the members array.
-            foreach ($tempMembers as $tmpM)
+         // Struct the members array.
+         foreach ($tempMembers as $tmpM)
+         {
+            // Indicate whether the current member already exists in the members
+            // list or not.
+            // If yes, we just have to add the object's specialization to the
+            // existing specializations of the user.
+            $alreadyExisting = false;
+            $nbCurrentMembers = count($members);
+
+            // Check if the current member already exists.
+            for ($j = 0; $j < $nbCurrentMembers; ++$j)
             {
-                // Indicate whether the current member already exists in the members
-                // list or not.
-                // If yes, we just have to add the object's specialization to the
-                // existing specializations of the user.
-                $alreadyExisting = false;
-                $nbCurrentMembers = count($members);
-
-                // Check if the current member already exists.
-                for ($j = 0; $j < $nbCurrentMembers; ++$j)
-                {
-                    // Add the specialization to the specializations list.
-                    if ($tmpM->username == $members[$j]["username"])
-                    {
-                        $alreadyExisting = true;
-                        $members[$j]["specializations"][] = (empty($tmpM->specialization) ? "-" : $tmpM->specialization);
-                        break;
-                    }
-                }
-
-                // If the current member is not already existing in the members list,
-                // add it.
-                if (!$alreadyExisting)
-                {
-                    $members[$i]["username"] = $tmpM->username;
-                    $members[$i]["specializations"][] = empty($tmpM->specialization) ? "-" : $tmpM->specialization;
-                    $members[$i]["isAdmin"] = $tmpM->isAdmin;
-                    ++$i;
-                }
+               // Add the specialization to the specializations list.
+               if ($tmpM->username == $members[$j]["username"])
+               {
+                  $alreadyExisting = true;
+                  $members[$j]["specializations"][] = (empty($tmpM->specialization) ? "-" : $tmpM->specialization);
+                  break;
+               }
             }
 
-            // Send the success message back with JSON.
-            return new JsonModel(array(
-                'success' => true,
-                'projectDetails' => $projectDetails,
-                'members'   => $members
-            ));
-        }
-		else
-		{
-			return new JsonModel(array(
-                'success' => false
-            ));
-		}
-  }
+            // If the current member is not already existing in the members list,
+            // add it.
+            if (!$alreadyExisting)
+            {
+               $members[$i]["username"] = $tmpM->username;
+               $members[$i]["specializations"][] = empty($tmpM->specialization) ? "-" : $tmpM->specialization;
+               $members[$i]["isAdmin"] = $tmpM->isAdmin;
+               ++$i;
+            }
+         }
 
-  private function _getUsersNotMemberOfProject($projectId)
-  {
-   /*
-      SELECT * FROM users
-      WHERE id NOT IN (
-         SELECT id FROM users
-          INNER JOIN projectsUsersMembers ON projectsUsersMembers.user = users.id
-          WHERE projectsUsersMembers.project = 2
-      )
-   */
+         // Send the success message back with JSON.
+         return new JsonModel(array(
+            'success' => true,
+            'projectDetails' => $projectDetails,
+            'members'   => $members
+         ));
+      }
+      else
+      {
+         return new JsonModel(array(
+            'success' => false
+         ));
+      }
+   }   
+   
+   private function _userIsAdminOfProject($userId, $projectId)
+   {
+      $sessionUser = new container('user');
+      
+      return $this->_getTable('ViewProjectMinTable')->userIsAdminOfProject($userId, $projectId);
+   }
+
+   private function _getUsersNotMemberOfProject($projectId)
+   {
       $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($projectId)->buffer();
       $users = $this->_getTable('UserTable')->getAllUsers()->buffer();
 
@@ -364,7 +368,7 @@ class ProjectController extends AbstractActionController
          foreach($members as $member)
          {
             if($user->id == $member->id)
-               $mustAdd = false;
+            $mustAdd = false;
          }
 
          if($mustAdd)
@@ -372,7 +376,7 @@ class ProjectController extends AbstractActionController
       }
 
       return $notMembersArray;
-  }
+   }
 }
 
 
