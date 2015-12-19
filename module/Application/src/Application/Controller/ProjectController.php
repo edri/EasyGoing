@@ -205,7 +205,7 @@ class ProjectController extends AbstractActionController
       $data = $this->getRequest()->getPost();
 
       $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
-      //$this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['targetMemberId'], $data['taskId']);
+      // $this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['targetMemberId'], $data['taskId']);
 
       // If task was successfully moved, add a task's movement event.
       // First of all, get right event type, moved task's name and old/new task's user's name.
