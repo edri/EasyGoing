@@ -247,7 +247,7 @@ BEGIN
 		)
 	);
 END $$
-DELIMITER;
+DELIMITER ;
 
 /* This function check if a user can produce in a task */
 USE easygoing;
@@ -270,7 +270,7 @@ BEGIN
 			AND uta.user = user
 	);
 END $$
-DELIMITER;
+DELIMITER ;
 
 /* This function check if a user can login or not */
 USE easygoing;

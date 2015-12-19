@@ -432,4 +432,12 @@ hr {
     width: 60px;
     vertical-align: middle;
 }
+
+.high-priority {
+  background: red !important;
+}
+
+.medium-priority {
+  background: green !important;
+}
 /** ===== FIN BOARD ===== **/

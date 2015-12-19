@@ -30,7 +30,7 @@
      {
         if($task->state == "TODO")
         {
-           echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task">'.$task->name.'</div>';
+           echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task '.($task->priorityLevel == 1 ? "red" : "green").'">'.$task->name.'</div>';
         }
      }
      ?>
