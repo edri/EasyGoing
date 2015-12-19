@@ -1,3 +1,9 @@
+<?php
+   echo $this->headScript()->appendScript('var projectId = "' . $project->id . '";');
+   echo $this->headScript()
+               ->prependFile($this->basePath() . '/js/board.websockets.js');
+?>
+
 <h1>Dashboard - <?php echo $project->name; ?></h1>
 <hr>
 <div class="projectHeader">

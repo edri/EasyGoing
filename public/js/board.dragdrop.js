@@ -74,29 +74,33 @@ $(document).ready(function() {
                   var targetMemberId = e.target.parentNode.getAttribute('member-id');
                   var targetSection = e.target.getAttribute('section');
 
-                  $.post("http://easygoing/project/" + projectId + "/moveTask", {
-                        taskId: taskId,
-                        oldMemberId: oldMemberId,
-                        oldSection : oldSection,
-                        targetMemberId: targetMemberId,
-                        targetSection: targetSection
-                     })
-                     .done(function(data) {
-                        var eventData = JSON.parse(data).event;
-                        console.log("Sending task-moving socket...")
-                        // Send task-moving socket to the server so it can advertise other clients.
-                        connection.send(JSON.stringify({
-                           "messageType": "taskMoving",
-                           "projectId": projectId,
-                           "taskId": taskId,
-                           "targetMemberId": targetMemberId,
-                           "targetSection": targetSection,
-                           "event": eventData
-                        }));
-                     });
+                  if (targetMemberId && targetSection) {
+                     $.post("http://easygoing/project/" + projectId + "/moveTask", {
+                           taskId: taskId,
+                           oldMemberId: oldMemberId,
+                           oldSection : oldSection,
+                           targetMemberId: targetMemberId,
+                           targetSection: targetSection
+                        })
+                        .done(function(data) {
+                           var eventData = JSON.parse(data).event;
+                           console.log("Sending task-moving socket...")
+                           // Send task-moving socket to the server so it can advertise other clients.
+                           connection.send(JSON.stringify({
+                              "messageType": "taskMoving",
+                              "projectId": projectId,
+                              "taskId": taskId,
+                              "targetMemberId": targetMemberId,
+                              "targetSection": targetSection,
+                              "event": eventData
+                           }));
+                        });
 
-                  section.appendChild(task);
-
+                     section.appendChild(task);
+                  }
+                  else {
+                     alert("An error occured, please retry.");
+                  }
                }
             } else {
                alert('couldn\'t find task #' + id);
