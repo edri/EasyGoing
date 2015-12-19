@@ -83,7 +83,6 @@ $(document).ready(function() {
                            targetSection: targetSection
                         })
                         .done(function(data) {
-                           console.log("DATA: " + data);
                            var eventData = JSON.parse(data).event;
                            console.log("Sending task-moving socket...")
                            // Send task-moving socket to the server so it can advertise other clients.
@@ -95,8 +94,6 @@ $(document).ready(function() {
                               "targetSection": targetSection,
                               "event": eventData
                            }));
-
-                           $('#board-container').load(window.location.href + '/boardViewMembers')
                         });
 
                      section.appendChild(task);
