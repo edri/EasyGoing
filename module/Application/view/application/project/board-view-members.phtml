@@ -2,6 +2,17 @@
    echo $this->headScript()
                ->prependFile($this->basePath() . '/js/board.contextmenu.js')
                ->prependFile($this->basePath() . '/js/board.dragdrop.js');
+
+   function taskRendering($member, $task)
+   {
+      $taskContent =
+         '<div id='.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task '.($task->priorityLevel == 1 ? "red" : "green").'">' .
+            $task->name .
+            '<div class="task-details"><a href="/project/' . $task->project . '/taskDetails/' . $task->id . '">Details...</a></div>
+         </div>';
+
+      return $taskContent;
+   }
 ?>
 
 <div class="board-header">
@@ -32,7 +43,7 @@
      {
         if($task->state == "TODO")
         {
-           echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task '.($task->priorityLevel == 1 ? "red" : "green").'">'.$task->name.'</div>';
+           echo taskRendering($member, $task);
         }
      }
      ?>
@@ -43,7 +54,7 @@
      {
         if($task->state == "DOING")
         {
-           echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task">'.$task->name.'</div>';
+           echo taskRendering($member, $task);
         }
      }
      ?>
@@ -54,7 +65,7 @@
      {
         if($task->state == "DONE")
         {
-           echo '<div id="'.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task">'.$task->name.'</div>';
+           echo taskRendering($member, $task);
         }
      }
      ?>

@@ -123,6 +123,16 @@ class ProjectController extends AbstractActionController
       }
    }
 
+   public function taskDetailsAction()
+   {
+      $taskId = $this->params('otherId');
+      $task = $this->_getTable('TaskTable')->getTaskById($taskId);
+
+      return new ViewModel(array(
+         'task' => $task
+      ));
+   }
+
    public function editTaskAction()
    {
       $request = $this->getRequest();

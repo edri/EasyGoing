@@ -11,6 +11,10 @@ a:hover {
     color: #4E2E18;
 }
 
+a:active, a:focus {
+   color: #4E2E18;
+}
+
 .form-control:focus {
     border-color: #995527;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(153, 85, 39, 0.6);
@@ -417,10 +421,18 @@ hr {
     background: -ms-linear-gradient(top, #fefdca 0%,#f7f381 100%); /* IE10+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefdca', endColorstr='#f7f381',GradientType=0 ); /* IE6-9 */
     background: linear-gradient(top, #fefdca 0%,#f7f381 100%); /* W3C; A catch-all for everything else */
+    position: relative;
 }
 
 .board-user {
 
+}
+
+.task-details {
+   bottom: 10px;
+   left: 0;
+   position: absolute;
+   width: 100%;
 }
 
 .board-first-column {
