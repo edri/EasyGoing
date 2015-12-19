@@ -22,8 +22,9 @@ function formatDate(date) {
 }
 
 $(document).ready(function() {
-   // Check if WebSocket is supported by the user's browser.
-   if ("WebSocket" in window) {
+   // Check if WebSocket is supported by the user's browser and if connection has not
+   // been initialized already.
+   if ("WebSocket" in window && !connection) {
       console.log("Init socket...");
       connection = new WebSocket('ws://127.0.0.1:8001/');
 
@@ -75,8 +76,7 @@ $(document).ready(function() {
                      $("#" + data.event.type.toLowerCase()).prepend(introType + newTaskDiv);
                      $("#" + data.event.type.toLowerCase() + " > div[name='eventIn" + data.event.type + "']").first().show("fast");
 
-                     /*$(introAll + newTaskDiv).insertBefore($("div[name='eventInAll']").first()).show("fast");
-                     $(introType + newTaskDiv).insertBefore($("div[name='eventIn" + data.event.type + "']").first()).show("fast");*/
+                     $('#board-container').load(window.location.href + '/boardViewMembers')
                   }
 
                   break;

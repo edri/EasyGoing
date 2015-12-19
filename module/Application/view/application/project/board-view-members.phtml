@@ -1,7 +1,5 @@
 <?php
-   echo $this->headScript()->appendScript('var projectId = "' . $projectId . '";');
    echo $this->headScript()
-               ->prependFile($this->basePath() . '/js/board.websockets.js')
                ->prependFile($this->basePath() . '/js/board.contextmenu.js')
                ->prependFile($this->basePath() . '/js/board.dragdrop.js');
 ?>

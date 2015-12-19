@@ -93,6 +93,8 @@ $(document).ready(function() {
                            "targetSection": targetSection,
                            "event": eventData
                         }));
+
+                        $('#board-container').load(window.location.href + '/boardViewMembers')
                      });
 
                   section.appendChild(task);
