@@ -73,6 +73,9 @@ $(document).ready(function() {
                   var oldSection = oldTarget.getAttribute('section');
                   var targetMemberId = e.target.parentNode.getAttribute('member-id');
                   var targetSection = e.target.getAttribute('section');
+                  
+                  targetMemberId = targetMemberId ? targetMemberId : $(e.target.parentNode).parent().attr('member-id');
+                  targetSection = targetSection ? targetSection :  $(e.target).parent().attr('section');
 
                   if (targetMemberId && targetSection) {
                      $.post("http://easygoing/project/" + projectId + "/moveTask", {
@@ -99,7 +102,7 @@ $(document).ready(function() {
                      section.appendChild(task);
                   }
                   else {
-                     alert("An error occured, please retry.");
+                     alert("An error occured please retry !");
                   }
                }
             } else {
