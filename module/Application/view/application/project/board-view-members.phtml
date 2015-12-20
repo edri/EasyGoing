@@ -5,8 +5,19 @@
 
    function taskRendering($member, $task)
    {
+      $priorityClass = "medium-priority";
+      switch($task->priorityLevel)
+      {
+         case 1:
+            $priorityClass = "high-priority";
+            break;
+         case 3:
+            $priorityClass = "low-priority";
+            break;
+      }
+      
       $taskContent =
-         '<div id='.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task '.($task->priorityLevel == 1 ? "red" : "green").'">' .
+         '<div id='.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task '.$priorityClass.'">' .
             $task->name .
             '<div class="task-details"><a href="/project/' . $task->project . '/taskDetails/' . $task->id . '">Details...</a></div>
          </div>';
