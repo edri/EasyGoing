@@ -71,11 +71,8 @@ $(document).ready(function() {
                   var taskId = task.getAttribute('task-id');
                   var oldMemberId = oldTarget.parentNode.getAttribute('member-id');
                   var oldSection = oldTarget.getAttribute('section');
-                  var targetMemberId = e.target.parentNode.getAttribute('member-id');
-                  var targetSection = e.target.getAttribute('section');
-                  
-                  targetMemberId = targetMemberId ? targetMemberId : $(e.target.parentNode).parent().attr('member-id');
-                  targetSection = targetSection ? targetSection :  $(e.target).parent().attr('section');
+                  var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
+                  var targetSection = $(e.target).closest('[section]').attr('section');
 
                   if (targetMemberId && targetSection) {
                      $.post("http://easygoing/project/" + projectId + "/moveTask", {
