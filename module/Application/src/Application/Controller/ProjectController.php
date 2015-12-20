@@ -42,10 +42,13 @@ class ProjectController extends AbstractActionController
    {
       $sessionUser = new container('user');
 
-      if(!$sessionUser->connected)
+      if (!$sessionUser->connected)
          $this->redirect()->toRoute('home');
 
-      if(empty($this->_getTable('ProjectTable')->getProject($this->params('id'))))
+      if (empty($this->_getTable('ProjectTable')->getProject($this->params('id'))))
+         $this->redirect()->toRoute('projects');
+
+      if ($this->params('otherId') != null && empty($this->_getTable('TaskTable')->getTaskById($this->params('otherId'))))
          $this->redirect()->toRoute('projects');
 
       return parent::onDispatch( $e );
