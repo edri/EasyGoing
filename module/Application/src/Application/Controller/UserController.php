@@ -82,7 +82,7 @@ class UserController extends AbstractActionController
 
                //Check if the user has ticked "Remember Me" button
                //If so, create a cookie
-               if (isset($_POST['checkbox'])) 
+               if (isset($_POST['checkbox']))
                {
                   //Set a secured cookieValue with username, password and random salt
                   $salt = rand();
@@ -122,7 +122,7 @@ class UserController extends AbstractActionController
       {
          $request = $this->getRequest();
 
-         if ($request->isPost()) 
+         if ($request->isPost())
          {
             $result = "success";
             // POST action's values.
@@ -204,7 +204,7 @@ class UserController extends AbstractActionController
                                  // Create a thumbnail (50px) of the image and save it in the hard drive of the server.
                                  $this->getUtilities()->createSquareImage($_FILES["picture"]["tmp_name"], $extension, getcwd() . "/public/img/users/" . $fileName, 50);
                               }
-                              catch (Exception $e)
+                              catch (\Exception $e)
                               {
                                  $result = "errorFilesUpload";
                               }

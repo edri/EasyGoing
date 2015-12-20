@@ -105,17 +105,24 @@ class ProjectController extends AbstractActionController
          // Get event's data to send them to socket server.
          $event = $this->_getTable("ViewEventTable")->getEvent($eventId);
 
-         // Make an HTTP POST request to the event's server so he can broadcast a
-         // new websocket related to the new event.
-         $client = new Client('http://127.0.0.1:8002');
-         $client->setMethod(Request::METHOD_POST);
-         // Setting POST data.
-         $client->setParameterPost(array(
-            "requestType"  => "newEvent",
-            "event"        => json_encode($event)
-         ));
-         // Send HTTP request to server.
-         $response = $client->send();
+         try
+         {
+            // Make an HTTP POST request to the event's server so he can broadcast a
+            // new websocket related to the new event.
+            $client = new Client('http://127.0.0.1:8002');
+            $client->setMethod(Request::METHOD_POST);
+            // Setting POST data.
+            $client->setParameterPost(array(
+               "requestType"  => "newEvent",
+               "event"        => json_encode($event)
+            ));
+            // Send HTTP request to server.
+            $response = $client->send();
+         }
+         catch (\Exception $e)
+         {
+            error_log("WARNING: could not connect to events servers. Maybe offline?");
+         }
 
          $this->redirect()->toRoute('project', array(
              'id' => $projectId
@@ -164,17 +171,24 @@ class ProjectController extends AbstractActionController
          // Get event's data to send them to socket server.
          $event = $this->_getTable("ViewEventTable")->getEvent($eventId);
 
-         // Make an HTTP POST request to the event's server so he can broadcast a
-         // new websocket related to the new event.
-         $client = new Client('http://127.0.0.1:8002');
-         $client->setMethod(Request::METHOD_POST);
-         // Setting POST data.
-         $client->setParameterPost(array(
-            "requestType"  => "newEvent",
-            "event"        => json_encode($event)
-         ));
-         // Send HTTP request to server.
-         $response = $client->send();
+         try
+         {
+            // Make an HTTP POST request to the event's server so he can broadcast a
+            // new websocket related to the new event.
+            $client = new Client('http://127.0.0.1:8002');
+            $client->setMethod(Request::METHOD_POST);
+            // Setting POST data.
+            $client->setParameterPost(array(
+               "requestType"  => "newEvent",
+               "event"        => json_encode($event)
+            ));
+            // Send HTTP request to server.
+            $response = $client->send();
+         }
+         catch (\Exception $e)
+         {
+            error_log("WARNING: could not connect to events servers. Maybe offline?");
+         }
 
          $this->redirect()->toRoute('project', array(
              'id' => $this->params('id')
@@ -247,7 +261,7 @@ class ProjectController extends AbstractActionController
       // Get POST data
       $data = $this->getRequest()->getPost();
       $couldAssignTaskToOtherMember = true;
-      
+
       $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
       if($data['oldMemberId'] != $data['targetMemberId'])
       {
@@ -288,9 +302,9 @@ class ProjectController extends AbstractActionController
       $sessionUser = new container('user');
       $taskId = $this->params('otherId');
       $resMessage = 'Delete success';
-      
-      
-      if($this->_userIsAdminOfProject($sessionUser->id, $projectId)) 
+
+
+      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
          // TODO : Finir les droits et faire suppression de la tâche
       }
@@ -298,8 +312,8 @@ class ProjectController extends AbstractActionController
       {
          $resMessage = 'You do not have rights to delete this task !';
       }
-      
-      
+
+
       return $this->getResponse()->setContent(json_encode(array(
          'message' => $resMessage
       )));
@@ -332,17 +346,24 @@ class ProjectController extends AbstractActionController
             // Get event's data to send them to socket server.
             $event = $this->_getTable("ViewEventTable")->getEvent($eventId);
 
-            // Make an HTTP POST request to the event's server so he can broadcast a
-            // new websocket related to the new event.
-            $client = new Client('http://127.0.0.1:8002');
-            $client->setMethod(Request::METHOD_POST);
-            // Setting POST data.
-            $client->setParameterPost(array(
-               "requestType"  => "newEvent",
-               "event"        => json_encode($event)
-            ));
-            // Send HTTP request to server.
-            $response = $client->send();
+            try
+            {
+               // Make an HTTP POST request to the event's server so he can broadcast a
+               // new websocket related to the new event.
+               $client = new Client('http://127.0.0.1:8002');
+               $client->setMethod(Request::METHOD_POST);
+               // Setting POST data.
+               $client->setParameterPost(array(
+                  "requestType"  => "newEvent",
+                  "event"        => json_encode($event)
+               ));
+               // Send HTTP request to server.
+               $response = $client->send();
+            }
+            catch (\Exception $e)
+            {
+               error_log("WARNING: could not connect to events servers. Maybe offline?");
+            }
          }
 
          $this->redirect()->toRoute('project', array(

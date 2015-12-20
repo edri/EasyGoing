@@ -535,5 +535,33 @@ hr {
    background: linear-gradient(top, #cafeca 0%, #81f786 100%);
 }
 
-
 /** ===== FIN BOARD ===== **/
+
+/* TASK DETAILS */
+.taskDetailsTable {
+   width: 100%;
+}
+
+.taskDetailsTable td {
+   padding: 10px;
+}
+
+.taskDetailsContentTable {
+   max-width: 40%;
+   width: 40%;
+}
+
+.attributeName {
+   font-weight: bold;
+   padding-right: 20px !important;
+   width: 20%;
+}
+
+.taskDescription {
+   text-align: justify;
+}
+
+.newsFeed {
+   padding-left: 10% !important;
+   vertical-align: top;
+}

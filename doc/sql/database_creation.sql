@@ -552,9 +552,12 @@ INSERT INTO projectsUsersSpecializations VALUES(@user3, @project2, "Styles CSS")
 INSERT INTO projectsUsersSpecializations VALUES(@user4, @project2, "Node JS");
 INSERT INTO projectsUsersSpecializations VALUES(@user5, @project2, "Internet Explorer");
 
-INSERT INTO eventTypes(type, fileLogo) VALUES("Project", "project.svg");
-INSERT INTO eventTypes(type, fileLogo) VALUES("Tasks", "task.svg");
-INSERT INTO eventTypes(type, fileLogo) VALUES("Users", "user.svg");
+INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Project", "project.svg", 0);
+INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Tasks", "task.svg", 0);
+INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Users", "user.svg", 0);
+INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Info", "info.svg", 1);
+INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Warning", "warning.svg", 1);
+INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Error", "error.svg", 1);
 
 INSERT INTO events VALUES(1, NOW(), "<u>raphaelracine</u> created the project.", 1);
 INSERT INTO eventsOnProjects VALUES(1, @project1);

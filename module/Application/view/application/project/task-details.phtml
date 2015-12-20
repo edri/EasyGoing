@@ -1,1 +1,85 @@
-TODO
+<h1>Task details</h1>
+
+<hr/>
+
+<table class="taskDetailsTable">
+   <tr>
+      <td class="taskDetailsContentTable">
+         <table>
+            <tr>
+               <td class="attributeName">Name</td>
+               <td><?php echo $task->name; ?></td>
+            </tr>
+            <tr>
+               <td class="attributeName">Deadline</td>
+               <td><?php echo $task->deadLineDate; ?></td>
+            </tr>
+            <tr>
+               <td class="attributeName">Duration</td>
+               <td><?php echo $task->durationsInHours; ?>h</td>
+            </tr>
+            <tr>
+               <td class="attributeName">Priority</td>
+               <td>
+                  <?php
+                     $priority = ['High', 'Medium', 'Low'];
+                     echo $priority[$task->priorityLevel - 1];
+                  ?>
+               </td>
+            </tr>
+            <tr>
+               <td class="attributeName">Description</td>
+               <td class="taskDescription"><?php echo $task->description; ?></td>
+            </tr>
+         </table>
+      </td>
+      <td class="newsFeed">
+          <div>
+              <!-- Nav tabs -->
+              <ul class="nav nav-tabs tabsMain" id="historicalTabs" role="tablist">
+                  <li role="presentation" class="active firstTab">
+                     <a href="#all" aria-controls="all" role="tab" data-toggle="tab" style="outline: 0 none;">
+                        All
+                     </a>
+                  </li>
+                  <li role="presentation">
+                     <a href="#info" aria-controls="info" role="tab" data-toggle="tab" style="outline: 0 none;">
+                        Info
+                     </a>
+                  </li>
+                  <li role="presentation">
+                     <a href="#warning" aria-controls="warning" role="tab" data-toggle="tab" style="outline: 0 none;">
+                        Warning
+                     </a>
+                  </li>
+                  <li role="presentation">
+                     <a href="#error" aria-controls="error" role="tab" data-toggle="tab" style="outline: 0 none;">
+                        Error
+                     </a>
+                  </li>
+                  <li class="historicalTitle">News Feed</li>
+              </ul>
+
+              <!-- Tab panes -->
+              <div class="tab-content historicalTab">
+                 <div role="tabpanel" class="tab-pane fade in active" id="all">
+                    ALL
+                 </div>
+                 <div role="tabpanel" class="tab-pane fade in" id="info">
+                    INFO
+                 </div>
+                 <div role="tabpanel" class="tab-pane fade in" id="warning">
+                    WARNING
+                 </div>
+                 <div role="tabpanel" class="tab-pane fade in" id="error">
+                    ERROR
+                 </div>
+              </div>
+          </div>
+      </td>
+   </tr>
+</table>
+
+<hr/>
+
+<a class="btn btnEasygoing" href="<?php echo $_SERVER['HTTP_REFERER'] ?>">Back</a>
