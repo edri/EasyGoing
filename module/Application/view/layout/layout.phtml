@@ -27,7 +27,7 @@
                      ->prependStylesheet($this->basePath() . '/css/style.css')
                      ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datepicker.css')
                      ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datetimepicker.min.css')
-      					->prependStylesheet($this->basePath() . '/css/libraries/bootstrap.min.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap.min.css')
                      ->prependStylesheet($this->basePath() . '/css/libraries/contextmenu.css');
 
       	}
@@ -37,7 +37,7 @@
                      ->prependStylesheet($this->basePath() . '/css/style.css')
                      ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datepicker.css')
                      ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datetimepicker.min.css')
-      					->prependStylesheet($this->basePath() . '/css/libraries/bootstrap.min.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap.min.css')
                      ->prependStylesheet($this->basePath() . '/css/libraries/contextmenu.css');
       	}
       ?>
@@ -45,11 +45,12 @@
         <!-- Scripts -->
 		<?php
 			echo $this->headScript()
+                     ->prependFile($this->basePath() . '/js/utilities.js')
                      ->prependFile($this->basePath() . '/js/libraries/jquery.ui.position.js')
                      ->prependFile($this->basePath() . '/js/libraries/jquery.contextmenu.js')
                      ->prependFile($this->basePath() . '/js/libraries/bootstrap-datepicker.js')
-            			->prependFile($this->basePath() . '/js/libraries/bootstrap.min.js')
-						   ->prependFile($this->basePath() . '/js/libraries/jquery.min.js')
+                     ->prependFile($this->basePath() . '/js/libraries/bootstrap.min.js')
+                     ->prependFile($this->basePath() . '/js/libraries/jquery.min.js')
                      ->prependFile($this->basePath() . '/js/tuto.js');
         ?>
     </head>
