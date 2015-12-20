@@ -246,9 +246,16 @@ class ProjectController extends AbstractActionController
       $projectId = $this->params('id');
       // Get POST data
       $data = $this->getRequest()->getPost();
-
+      $couldAssignTaskToOtherMember = true;
+      
       $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
-      //$this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['targetMemberId'], $data['taskId']);
+      if($data['oldMemberId'] != $data['targetMemberId'])
+      {
+         if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
+            $this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['targetMemberId'], $data['taskId']);
+         else
+            $couldAssignTaskToOtherMember = false;
+      }
 
       // If task was successfully moved, add a task's movement event.
       // First of all, get right event type, moved task's name and old/new task's user's name.
@@ -267,16 +274,35 @@ class ProjectController extends AbstractActionController
       $event = $this->_getTable("ViewEventTable")->getEvent($eventId);
 
       return $this->getResponse()->setContent(json_encode(array(
-         'taskId'          => $data['taskId'],
-         'targetMemberId'  => $data['targetMemberId'],
-         'targetSection'   => $data['targetSection'],
-         'event'           => $event
+         'taskId'                       => $data['taskId'],
+         'targetMemberId'               => $data['targetMemberId'],
+         'targetSection'                => $data['targetSection'],
+         'event'                        => $event,
+         'couldAssignTaskToOtherMember' => $couldAssignTaskToOtherMember
       )));
    }
 
    public function deleteTaskAction()
    {
-
+      $projectId = $this->params('id');
+      $sessionUser = new container('user');
+      $taskId = $this->params('otherId');
+      $resMessage = 'Delete success';
+      
+      
+      if($this->_userIsAdminOfProject($sessionUser->id, $projectId)) 
+      {
+         // TODO : Finir les droits et faire suppression de la tâche
+      }
+      else
+      {
+         $resMessage = 'You do not have rights to delete this task !';
+      }
+      
+      
+      return $this->getResponse()->setContent(json_encode(array(
+         'message' => $resMessage
+      )));
    }
 
    public function addMemberAction()

@@ -71,8 +71,8 @@ $(document).ready(function() {
                   var taskId = task.getAttribute('task-id');
                   var oldMemberId = oldTarget.parentNode.getAttribute('member-id');
                   var oldSection = oldTarget.getAttribute('section');
-                  var targetMemberId = e.target.parentNode.getAttribute('member-id');
-                  var targetSection = e.target.getAttribute('section');
+                  var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
+                  var targetSection = $(e.target).closest('[section]').attr('section');
 
                   if (targetMemberId && targetSection) {
                      $.post("http://easygoing/project/" + projectId + "/moveTask", {
@@ -83,7 +83,13 @@ $(document).ready(function() {
                            targetSection: targetSection
                         })
                         .done(function(data) {
-                           var eventData = JSON.parse(data).event;
+                           var data = JSON.parse(data);
+                        
+                           if(!data.couldAssignTaskToOtherMember) {
+                              addBootstrapAlert('board-alert-container', 'You do not have the right to assign this task to other member.', 'danger');
+                           }
+                        
+                           var eventData = data.event;
                            console.log("Sending task-moving socket...")
                            // Send task-moving socket to the server so it can advertise other clients.
                            connection.send(JSON.stringify({
@@ -99,7 +105,7 @@ $(document).ready(function() {
                      section.appendChild(task);
                   }
                   else {
-                     alert("An error occured, please retry.");
+                     alert("An error occured please retry !");
                   }
                }
             } else {
