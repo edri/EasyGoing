@@ -72,6 +72,7 @@ CREATE TABLE eventTypes
     id INT NOT NULL AUTO_INCREMENT,
     type VARCHAR(20) NOT NULL UNIQUE,
     fileLogo VARCHAR(50),
+    isTaskTag BOOLEAN DEFAULT 0,
     PRIMARY KEY(id)
 );
 
