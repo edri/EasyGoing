@@ -14,9 +14,12 @@ class ViewEventTable
    }
 
    // Get and return the event which match with the given ID.
-   public function getEvent($eventId)
+   public function getEvent($eventId, $isTaskEvent)
    {
-      $rowset = $this->_tableGateway->select(array('id' => $eventId));
+      $rowset = $this->_tableGateway->select(array(
+         "id"           => $eventId,
+         "isTaskEvent"  => $isTaskEvent
+      ));
       return $rowset->current();
    }
 
@@ -24,7 +27,10 @@ class ViewEventTable
    public function getProjectEvents($projectId)
    {
       $arrayResults = array();
-      $resultSet = $this->_tableGateway->select(array("project" => $projectId));
+      $resultSet = $this->_tableGateway->select(array(
+         "linkedEntityId"  => $projectId,
+         "isTaskEvent"     => 0
+      ));
 
       foreach ($resultSet as $row)
          $arrayResults[] = $row;

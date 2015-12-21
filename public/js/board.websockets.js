@@ -56,35 +56,38 @@ $(document).ready(function() {
             // Try to parse received data to JSON.
             var data = JSON.parse(e.data);
 
-            // Do some actions, depending on the received data message's type.
-            switch (data.messageType) {
-               // New event received ; add it dynamically into the historical.
-               case "newEvent":
-                  // We must ensure than the received event is for the current project.
-                  if (data.event.project == projectId) {
-                     var introAll = '<div class="eventElem" name="eventInAll" style="display: none;">';
-                     var introType = '<div class="eventElem" name="eventIn' + data.event.type + '" style="display: none;">';
+            // The received event must not be a task event, but a project event.
+            if (!data.event.isTaskEvent) {
+               // Do some actions, depending on the received data message's type.
+               switch (data.messageType) {
+                  // New event received ; add it dynamically into the historical.
+                  case "newEvent":
+                     // We must ensure than the received event is for the current project.
+                     if (data.event.linkedEntityId == projectId) {
+                        var introAll = '<div class="eventElem" name="eventInAll" style="display: none;">';
+                        var introType = '<div class="eventElem" name="eventIn' + data.event.type + '" style="display: none;">';
 
-                     var newTaskDiv =
-                           '<img class="eventImg" src="/img/events/' + data.event.fileLogo + '" />\
-                           <b>[' + formatDate(new Date(data.event.date)) + ']</b> <div class="eventMessage">' + data.event.message + '</div>\
-                        </div>';
+                        var newTaskDiv =
+                              '<img class="eventImg" src="/img/events/' + data.event.fileLogo + '" />\
+                              <b>[' + formatDate(new Date(data.event.date)) + ']</b> <div class="eventMessage">' + data.event.message + '</div>\
+                           </div>';
 
-                     $("#all").prepend(introAll + newTaskDiv);
-                     $("#all > div[name='eventInAll']").first().show("fast");
+                        $("#all").prepend(introAll + newTaskDiv);
+                        $("#all > div[name='eventInAll']").first().show("fast");
 
-                     $("#" + data.event.type.toLowerCase()).prepend(introType + newTaskDiv);
-                     $("#" + data.event.type.toLowerCase() + " > div[name='eventIn" + data.event.type + "']").first().show("fast");
+                        $("#" + data.event.type.toLowerCase()).prepend(introType + newTaskDiv);
+                        $("#" + data.event.type.toLowerCase() + " > div[name='eventIn" + data.event.type + "']").first().show("fast");
 
-                     $('#board-container').load(window.location.href + '/boardViewMembers')
-                  }
+                        $('#board-container').load(window.location.href + '/boardViewMembers')
+                     }
 
-                  break;
-               case "taskMovingEvent":
-                  if (data.projectId === projectId) {
-                     $("div[task-id='" + data.taskId + "']").appendTo($("div[member-id='" + data.targetMemberId + "'] div[section='" + data.targetSection + "']"));
-                  }
-                  break;
+                     break;
+                  case "taskMovingEvent":
+                     if (data.linkedEntityId === projectId) {
+                        $("div[task-id='" + data.taskId + "']").appendTo($("div[member-id='" + data.targetMemberId + "'] div[section='" + data.targetSection + "']"));
+                     }
+                     break;
+               }
             }
          } catch (e) {
             console.log(e);

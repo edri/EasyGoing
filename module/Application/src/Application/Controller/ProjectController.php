@@ -37,7 +37,7 @@ class ProjectController extends AbstractActionController
    // Acts like a filter : every request go through the dispatcher, in which we
    // can do some stuff.
    // In this case, we just prevent unconnected users to access this controller
-   // and check if the accessed project exists.
+   // and check if the accessed project/task exists.
    public function onDispatch( \Zend\Mvc\MvcEvent $e )
    {
       $sessionUser = new container('user');
@@ -92,10 +92,12 @@ class ProjectController extends AbstractActionController
          $duration = $_POST["duration"];
          $sessionUser = new container('user');
 
-         $affectation = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId);
+         $taskId = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId);
+         $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $taskId);
 
-         $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $affectation);
-         // If task was successfully added, add a task's creation event.
+         // If task was successfully added, add two task's creation events: one for
+         // the project's history, and another for the new task's news feed.
+         // For the project's history.
          // First of all, get right event type.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
          // Then add the new event in the database.
@@ -106,7 +108,14 @@ class ProjectController extends AbstractActionController
          // Finaly link the new event to the user who created it.
          $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
          // Get event's data to send them to socket server.
-         $event = $this->_getTable("ViewEventTable")->getEvent($eventId);
+         $event1 = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+         // For the task's news feed.
+         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
+         $message = "<u>" . $sessionUser->username . "</u> created the task.";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         $this->_getTable("EventOnTaskTable")->add($eventId, $taskId);
+         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         $event2 = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
 
          try
          {
@@ -116,8 +125,8 @@ class ProjectController extends AbstractActionController
             $client->setMethod(Request::METHOD_POST);
             // Setting POST data.
             $client->setParameterPost(array(
-               "requestType"  => "newEvent",
-               "event"        => json_encode($event)
+               "requestType"  => "newEvents",
+               "events"       => array(json_encode($event1), json_encode($event2))
             ));
             // Send HTTP request to server.
             $response = $client->send();
@@ -172,7 +181,7 @@ class ProjectController extends AbstractActionController
          // Finaly link the new event to the user who created it.
          $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
          // Get event's data to send them to socket server.
-         $event = $this->_getTable("ViewEventTable")->getEvent($eventId);
+         $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
 
          try
          {
@@ -288,7 +297,7 @@ class ProjectController extends AbstractActionController
       // Finaly link the new event to the user who created it.
       $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
       // Get event's data to send them to socket server.
-      $event = $this->_getTable("ViewEventTable")->getEvent($eventId);
+      $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
 
       return $this->getResponse()->setContent(json_encode(array(
          'taskId'                       => $data['taskId'],
@@ -347,7 +356,7 @@ class ProjectController extends AbstractActionController
             // Finaly link the new event to the user who created it.
             $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
             // Get event's data to send them to socket server.
-            $event = $this->_getTable("ViewEventTable")->getEvent($eventId);
+            $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
 
             try
             {

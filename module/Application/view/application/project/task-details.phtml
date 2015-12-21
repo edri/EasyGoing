@@ -29,7 +29,7 @@
             </tr>
             <tr>
                <td class="attributeName">Description</td>
-               <td class="taskDescription"><?php echo $task->description; ?></td>
+               <td class="taskDescription"><?php echo (empty($task->description) ? "-" : $task->description); ?></td>
             </tr>
          </table>
       </td>

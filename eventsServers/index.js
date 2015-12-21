@@ -53,11 +53,10 @@ function sendEventSocket(eventData) {
 		"event": eventData
 	};
 
+	console.log("WEBSOCKET: send new-event socket to every concerned clients...");
 	socketServer.connections.forEach(function(connection) {
-		console.log("WEBSOCKET: send new-event socket to every concerned clients...");
-
 		// Send event socket to everyone in the project.
-		if (connection.projectId == eventData.project) {
+		if (!eventData.isTaskEvent && connection.projectId == eventData.linkedEntityId) {
 			connection.sendText(JSON.stringify(newEventData));
 		}
 	})
@@ -66,11 +65,11 @@ function sendEventSocket(eventData) {
 // Send a message to every connected users that currently are in the project in which
 // the task was moved so they can dynamically move it.
 function sendTaskMovingSocket(data, fromConnection) {
+	console.log("WEBSOCKET: Send task-moving socket to every concerned clients...");
 	socketServer.connections.forEach(function(connection) {
-		console.log("WEBSOCKET: Send task-moving socket to every concerned clients...");
 		data.messageType = "taskMovingEvent";
 		// Check every connection's project's ID and send message to the right ones.
-		if (connection.projectId === data.projectId) {
+		if (!data.isTaskEvent && connection.projectId === data.linkedEntityId) {
 			if (connection != fromConnection) {
 				connection.sendText(JSON.stringify(data));
 			}
@@ -99,6 +98,18 @@ function handleRequest(req, res) {
 					var event = JSON.parse(fields.event);
 					// Send the received event to all concerned clients.
 					sendEventSocket(event);
+					break;
+				// Several simultaneous events.
+				case "newEvents":
+					console.log("HTTP: received several simultaneous events.");
+					var objectSize = Object.keys(fields).length;
+					// Send each request.
+					for (var i = 0; i < objectSize - 1; ++i) {
+						// Parse event's data to JSON.
+						var event = JSON.parse(fields["events[" + i + "]"]);
+						// Send the received event to all concerned clients.
+						sendEventSocket(event);
+					}
 					break;
 			}
 

@@ -211,17 +211,26 @@ CREATE VIEW view_projects_details AS
 
 DROP VIEW IF EXISTS view_events;
 CREATE VIEW view_events AS
-    SELECT 
-        et.type, et.fileLogo, e.id, e.date, e.message, ep.project
+    (SELECT 
+        et.type, et.fileLogo, e.id, e.date, e.message, ep.project AS `linkedEntityId`, 0 AS `isTaskEvent`
     FROM
         ((eventTypes AS et
         JOIN events AS e)
         JOIN eventsOnProjects AS ep)
     WHERE
         ((et.id = e.eventType)
-            AND (e.id = ep.event))
-    ORDER BY
-        e.date DESC, e.id DESC;
+            AND (e.id = ep.event)))
+    UNION
+        (SELECT 
+			et.type, et.fileLogo, e.id, e.date, e.message, eot.task AS `linkedEntityId`, 1 AS `isTaskEvent`
+		FROM
+			((eventTypes AS et
+			JOIN events AS e)
+			JOIN eventsOnTasks AS eot)
+		WHERE
+			((et.id = e.eventType)
+				AND (e.id = eot.event)))
+    ORDER BY date DESC, id DESC;
 
 /* This function check if a user can be affected to a task */
 USE easygoing;

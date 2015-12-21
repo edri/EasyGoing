@@ -9,7 +9,8 @@ class ViewEvent
    public $id;
    public $date;
    public $message;
-   public $project;
+   public $linkedEntityId;
+   public $isTaskEvent;
 
    public function exchangeArray($data)
    {
@@ -18,6 +19,7 @@ class ViewEvent
       $this->id  = (!empty($data['id'])) ? $data['id'] : null;
       $this->date  = (!empty($data['date'])) ? $data['date'] : null;
       $this->message  = (!empty($data['message'])) ? $data['message'] : null;
-      $this->project  = (!empty($data['project'])) ? $data['project'] : null;
+      $this->linkedEntityId  = (!empty($data['linkedEntityId'])) ? $data['linkedEntityId'] : null;
+      $this->isTaskEvent  = (!empty($data['isTaskEvent'])) ? $data['isTaskEvent'] : null;
    }
 }
