@@ -1,3 +1,6 @@
+<?php use Application\Utility\Priority; ?>
+  
+
 <?php
    echo $this->headScript()
                ->prependFile($this->basePath() . '/js/board.contextmenu.js')
@@ -41,6 +44,7 @@
   </div>
 </div>
 
+<p><?php echo Priority::High; ?></p>
 
 <?php foreach ($members as $member): ?>
 <div class="board" member-id="<?php echo $member->id; ?>">

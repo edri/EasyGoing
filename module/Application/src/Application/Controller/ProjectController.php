@@ -19,6 +19,7 @@ use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
 use Zend\Http\Client;
 use Zend\Http\Request;
+use Application\Utility\Priority;
 
 // Project controller ; will be calling when the user access the "easygoing/project" page.
 // Be careful about the class' name, which must be the same as the file's name.
@@ -60,7 +61,7 @@ class ProjectController extends AbstractActionController
       $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
       $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
       $events = $this->_getTable('ViewEventTable')->getProjectEvents($this->params('id'));
-
+      
       return new ViewModel(array(
          'project'  => $project,
          'tasks'    => $tasks,
