@@ -276,16 +276,21 @@ class ProjectController extends AbstractActionController
       $projectId = $this->params('id');
       // Get POST data
       $data = $this->getRequest()->getPost();
-      $couldAssignTaskToOtherMember = true;
+      $hasRightToMoveTask = true;
+      
 
-      $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
-      if($data['oldMemberId'] != $data['targetMemberId'])
+      // Check if current user has rights to move the task
+      if($this->_userIsAdminOfProject($sessionUser->id, $projectId)
+        || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['taskId']))
       {
-         if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
-            $this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['targetMemberId'], $data['taskId']);
-         else
-            $couldAssignTaskToOtherMember = false;
+         $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
+         $this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['targetMemberId'], $data['taskId']);
       }
+      else
+      {
+         $hasRightToMoveTask = false;
+      }
+      
 
       // If task was successfully moved, add a task's movement event.
       // First of all, get right event type, moved task's name and old/new task's user's name.
@@ -304,11 +309,11 @@ class ProjectController extends AbstractActionController
       $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
 
       return $this->getResponse()->setContent(json_encode(array(
-         'taskId'                       => $data['taskId'],
-         'targetMemberId'               => $data['targetMemberId'],
-         'targetSection'                => $data['targetSection'],
-         'event'                        => $event,
-         'couldAssignTaskToOtherMember' => $couldAssignTaskToOtherMember
+         'taskId'              => $data['taskId'],
+         'targetMemberId'      => $data['targetMemberId'],
+         'targetSection'       => $data['targetSection'],
+         'event'               => $event,
+         'hasRightToMoveTask'  => $hasRightToMoveTask
       )));
    }
 

@@ -12,6 +12,14 @@ class UsersTasksAffectationsTable
    {
       $this->_tableGateway = $tableGateway;
    }
+   
+   public function getAffectation($userId, $taskId)
+   {
+      return $this->_tableGateway->select(array(
+         'user' => $userId,
+         'task' => $taskId
+      ))->current();
+   }
 
    public function updateTaskAffectation($userId, $taskId) 
    {
