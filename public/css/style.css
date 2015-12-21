@@ -313,7 +313,7 @@ hr {
 
 .projectHeader {
    margin-top: 15px;
-   height: 235px;
+   height: 230px;
    width: 100%;
 }
 
@@ -328,7 +328,7 @@ hr {
    width: 60%;
 }
 
-.historicalTab {
+.historicalTab, .newsFeedTab {
    -moz-border-bottom-colors: none;
    -moz-border-left-colors: none;
    -moz-border-right-colors: none;
@@ -339,7 +339,7 @@ hr {
    border-style: none solid solid;
    border-width: medium 1px 1px;
    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.05);
-   height: 185px;
+   height: 180px;
    overflow: auto;
 }
 
@@ -372,6 +372,10 @@ hr {
    cursor: pointer;
 }
 
+.eventTable td {
+   padding: 2px !important;
+}
+
 .eventImg {
    height: 25px;
    margin-right: 10px;
@@ -379,8 +383,7 @@ hr {
 }
 
 .eventMessage {
-   margin-left: 38px;
-   margin-top: 2px;
+   color: #995527;
 }
 
 
@@ -501,6 +504,10 @@ hr {
    background: linear-gradient(top, #fecaca 0%, #f78181 100%);
 }
 
+.high-priority a {
+   color: #550000;
+}
+
 .medium-priority {
       /* Old browsers */
    background: -moz-linear-gradient(top, #fefdca 0%, #f7f381 100%);
@@ -535,6 +542,10 @@ hr {
    background: linear-gradient(top, #cafeca 0%, #81f786 100%);
 }
 
+.low-priority a {
+   color: #0F4800;
+}
+
 /** ===== FIN BOARD ===== **/
 
 /* TASK DETAILS */
@@ -564,4 +575,9 @@ hr {
 .newsFeed {
    padding-left: 10% !important;
    vertical-align: top;
+}
+
+.newsFeedInfo {
+   color: #5a2706;
+   font-weight: bold;
 }

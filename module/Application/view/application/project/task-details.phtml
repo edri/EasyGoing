@@ -4,8 +4,15 @@
    {
       $eventContent =
          '<div class="eventElem" name="eventIn' . $type . '">
-            <img class="eventImg" src="/img/events/' . $event->fileLogo . '" />
-            <b>[' . date('d.m.Y', strtotime($event->date)) . ']</b> <div class="eventMessage">' . $event->message . '</div>
+            <table class="eventTable">
+               <tr>
+                  <td rowspan=2><img class="eventImg" src="/img/events/' . $event->fileLogo . '" /></td>
+                  <td><span class="newsFeedInfo">Posted on ' . date('d.m.Y', strtotime($event->date)) . ' by <u>' . $event->username . '</u></span></td>
+               </tr>
+               <tr>
+                  <td><div class="eventMessage">' . $event->message . '</div></td>
+               </tr>
+            </table>
          </div>';
 
       return $eventContent;
@@ -75,18 +82,47 @@
               </ul>
 
               <!-- Tab panes -->
-              <div class="tab-content historicalTab">
+              <div class="tab-content newsFeedTab">
                  <div role="tabpanel" class="tab-pane fade in active" id="all">
-                    ALL
+                    <?php
+                       foreach ($events as $e)
+                       {
+                          echo eventRendering("All", $e);
+                       }
+                     ?>
                  </div>
                  <div role="tabpanel" class="tab-pane fade in" id="info">
-                    INFO
+                    <?php
+                       foreach ($events as $e)
+                       {
+                          if ($e->type == "Info")
+                          {
+                             echo eventRendering($e->type, $e);
+                          }
+                       }
+                     ?>
                  </div>
                  <div role="tabpanel" class="tab-pane fade in" id="warning">
-                    WARNING
+                    <?php
+                       foreach ($events as $e)
+                       {
+                          if ($e->type == "Warning")
+                          {
+                             echo eventRendering($e->type, $e);
+                          }
+                       }
+                     ?>
                  </div>
                  <div role="tabpanel" class="tab-pane fade in" id="error">
-                    ERROR
+                    <?php
+                       foreach ($events as $e)
+                       {
+                          if ($e->type == "Error")
+                          {
+                             echo eventRendering($e->type, $e);
+                          }
+                       }
+                     ?>
                  </div>
               </div>
           </div>

@@ -8,8 +8,15 @@
    {
       $eventContent =
          '<div class="eventElem" name="eventIn' . $type . '">
-            <img class="eventImg" src="/img/events/' . $event->fileLogo . '" />
-            <b>[' . date('d.m.Y', strtotime($event->date)) . ']</b> <div class="eventMessage">' . $event->message . '</div>
+            <table class="eventTable">
+               <tr>
+                  <td rowspan=2><img class="eventImg" src="/img/events/' . $event->fileLogo . '" /></td>
+                  <td><b>[' . date('d.m.Y', strtotime($event->date)) . ']</b></td>
+               </tr>
+               <tr>
+                  <td><div class="eventMessage">' . $event->message . '</div></td>
+               </tr>
+            </table>
          </div>';
 
       return $eventContent;
@@ -71,7 +78,7 @@
                      {
                         if ($e->type == "Project")
                         {
-                           echo eventRendering("Project", $e);
+                           echo eventRendering($e->type, $e);
                         }
                      }
                    ?>
@@ -82,7 +89,7 @@
                     {
                        if ($e->type == "Tasks")
                        {
-                          echo eventRendering("Tasks", $e);
+                          echo eventRendering($e->type, $e);
                        }
                     }
                  ?>
@@ -93,7 +100,7 @@
                     {
                        if ($e->type == "Users")
                        {
-                          echo eventRendering("Users", $e);
+                          echo eventRendering($e->type, $e);
                        }
                     }
                  ?>

@@ -68,8 +68,15 @@ $(document).ready(function() {
                         var introType = '<div class="eventElem" name="eventIn' + data.event.type + '" style="display: none;">';
 
                         var newTaskDiv =
-                              '<img class="eventImg" src="/img/events/' + data.event.fileLogo + '" />\
-                              <b>[' + formatDate(new Date(data.event.date)) + ']</b> <div class="eventMessage">' + data.event.message + '</div>\
+                              '<table class="eventTable">\
+                                 <tr>\
+                                    <td rowspan=2><img class="eventImg" src="/img/events/' + data.event.fileLogo + '" /></td>\
+                                    <td><b>[' + formatDate(new Date(data.event.date)) + ']</b></td>\
+                                 </tr>\
+                                 <tr>\
+                                    <td><div class="eventMessage">' + data.event.message + '</div></td>\
+                                 </tr>\
+                              </table>\
                            </div>';
 
                         $("#all").prepend(introAll + newTaskDiv);

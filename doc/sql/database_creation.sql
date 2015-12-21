@@ -212,24 +212,32 @@ CREATE VIEW view_projects_details AS
 DROP VIEW IF EXISTS view_events;
 CREATE VIEW view_events AS
     (SELECT 
-        et.type, et.fileLogo, e.id, e.date, e.message, ep.project AS `linkedEntityId`, 0 AS `isTaskEvent`
+        et.type, et.fileLogo, e.id, e.date, e.message, u.username, ep.project AS `linkedEntityId`, 0 AS `isTaskEvent`
     FROM
-        ((eventTypes AS et
+        ((((eventTypes AS et
         JOIN events AS e)
         JOIN eventsOnProjects AS ep)
+        JOIN eventsUsers AS eu)
+        JOIN users AS u)
     WHERE
         ((et.id = e.eventType)
-            AND (e.id = ep.event)))
+            AND (e.id = ep.event)
+            AND (e.id = eu.event)
+            AND (u.id = eu.user)))
     UNION
         (SELECT 
-			et.type, et.fileLogo, e.id, e.date, e.message, eot.task AS `linkedEntityId`, 1 AS `isTaskEvent`
-		FROM
-			((eventTypes AS et
-			JOIN events AS e)
-			JOIN eventsOnTasks AS eot)
-		WHERE
-			((et.id = e.eventType)
-				AND (e.id = eot.event)))
+            et.type, et.fileLogo, e.id, e.date, e.message, u.username, eot.task AS `linkedEntityId`, 1 AS `isTaskEvent`
+        FROM
+            ((((eventTypes AS et
+            JOIN events AS e)
+            JOIN eventsOnTasks AS eot)
+            JOIN eventsUsers AS eu)
+            JOIN users AS u)
+        WHERE
+            ((et.id = e.eventType)
+                AND (e.id = eot.event)
+                AND (e.id = eu.event)
+                AND (u.id = eu.user)))
     ORDER BY date DESC, id DESC;
 
 /* This function check if a user can be affected to a task */
