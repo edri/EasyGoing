@@ -23,13 +23,17 @@ class ViewEventTable
       return $rowset->current();
    }
 
-   // Get and return  as an array the events list of the given project.
-   public function getProjectEvents($projectId)
+   // Get and return as an array the events list of the given project or task.
+   // Parameters:
+   //    linkedEntityId: the project or task's ID, depending on the second parameter.
+   //    isTaskEvent: indicate whether the function return project's events (false) or
+   //                 task's events (true).
+   public function getEntityEvents($linkedEntityId, $isTaskEvent)
    {
       $arrayResults = array();
       $resultSet = $this->_tableGateway->select(array(
-         "linkedEntityId"  => $projectId,
-         "isTaskEvent"     => 0
+         "linkedEntityId"  => $linkedEntityId,
+         "isTaskEvent"     => $isTaskEvent
       ));
 
       foreach ($resultSet as $row)

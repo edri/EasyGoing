@@ -60,7 +60,8 @@ class ProjectController extends AbstractActionController
       $project = $this->_getTable('ProjectTable')->getProject($this->params('id'));
       $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
       $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
-      $events = $this->_getTable('ViewEventTable')->getProjectEvents($this->params('id'));
+      // Get project's events.
+      $events = $this->_getTable('ViewEventTable')->getEntityEvents($this->params('id'), false);
       
       return new ViewModel(array(
          'project'  => $project,
@@ -147,9 +148,11 @@ class ProjectController extends AbstractActionController
    {
       $taskId = $this->params('otherId');
       $task = $this->_getTable('TaskTable')->getTaskById($taskId);
+      $events = $this->_getTable('ViewEventTable')->getEntityEvents($taskId, true);
 
       return new ViewModel(array(
-         'task' => $task
+         'task'   => $task,
+         'events' => $events
       ));
    }
 
