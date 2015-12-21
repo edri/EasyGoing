@@ -1,3 +1,17 @@
+<?php
+   // Return an HTML code rendering an event div, using for code factoring.
+   function eventRendering($type, $event)
+   {
+      $eventContent =
+         '<div class="eventElem" name="eventIn' . $type . '">
+            <img class="eventImg" src="/img/events/' . $event->fileLogo . '" />
+            <b>[' . date('d.m.Y', strtotime($event->date)) . ']</b> <div class="eventMessage">' . $event->message . '</div>
+         </div>';
+
+      return $eventContent;
+   }
+?>
+
 <h1>Task details</h1>
 
 <hr/>

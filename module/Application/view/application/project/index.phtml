@@ -2,6 +2,18 @@
    echo $this->headScript()->appendScript('var projectId = "' . $project->id . '";');
    echo $this->headScript()
                ->prependFile($this->basePath() . '/js/board.websockets.js');
+
+   // Return an HTML code rendering an event div, using for code factoring.
+   function eventRendering($type, $event)
+   {
+      $eventContent =
+         '<div class="eventElem" name="eventIn' . $type . '">
+            <img class="eventImg" src="/img/events/' . $event->fileLogo . '" />
+            <b>[' . date('d.m.Y', strtotime($event->date)) . ']</b> <div class="eventMessage">' . $event->message . '</div>
+         </div>';
+
+      return $eventContent;
+   }
 ?>
 
 <h1>Dashboard - <?php echo $project->name; ?></h1>
@@ -49,12 +61,7 @@
                <?php
                   foreach ($events as $e)
                   {
-               ?>
-                     <div class="eventElem" name="eventInAll">
-                        <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
-                        <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
-                     </div>
-               <?php
+                     echo eventRendering("All", $e);
                   }
                 ?>
                 </div>
@@ -64,12 +71,7 @@
                      {
                         if ($e->type == "Project")
                         {
-                  ?>
-                           <div class="eventElem" name="eventInProject">
-                              <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
-                              <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
-                           </div>
-                  <?php
+                           echo eventRendering("Project", $e);
                         }
                      }
                    ?>
@@ -80,12 +82,7 @@
                     {
                        if ($e->type == "Tasks")
                        {
-                 ?>
-                          <div class="eventElem" name="eventInTasks">
-                             <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
-                             <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
-                          </div>
-                 <?php
+                          echo eventRendering("Tasks", $e);
                        }
                     }
                  ?>
@@ -96,12 +93,7 @@
                     {
                        if ($e->type == "Users")
                        {
-                 ?>
-                          <div class="eventElem" name="eventInUsers">
-                             <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
-                             <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
-                          </div>
-                 <?php
+                          echo eventRendering("Users", $e);
                        }
                     }
                  ?>
