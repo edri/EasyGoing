@@ -32,7 +32,6 @@
                foreach(Priority::getConstants() as $value)
                {
                   echo '<option '.($task->priorityLevel == $value ? 'selected' : '').' value="'.$value.'">'.Priority::toString($value).'</option>';
-                  echo '<option value="'.$value.'">'.Priority::toString($value).'</option>';
                }
             ?>
          </select>
