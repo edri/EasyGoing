@@ -73,40 +73,24 @@ $(document).ready(function() {
                   var oldSection = oldTarget.getAttribute('section');
                   var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
                   var targetSection = $(e.target).closest('[section]').attr('section');
+                  
+                  if(targetMemberId !== oldMemberId)
+                  {
+                     bootbox.confirm('Are sure you want to assign this task to another member ?', function(result) {
+                        if(result === true) {
+                           moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection);
 
-                  if (targetMemberId && targetSection) {
-                     $.post("http://easygoing/project/" + projectId + "/moveTask", {
-                           taskId: taskId,
-                           oldMemberId: oldMemberId,
-                           oldSection : oldSection,
-                           targetMemberId: targetMemberId,
-                           targetSection: targetSection
-                        })
-                        .done(function(data) {
-                           var data = JSON.parse(data);
-                        
-                           if(!data.couldAssignTaskToOtherMember) {
-                              addBootstrapAlert('board-alert-container', 'You do not have the right to assign this task to other member.', 'danger');
-                           }
-                        
-                           var eventData = data.event;
-                           console.log("Sending task-moving socket...")
-                           // Send task-moving socket to the server so it can advertise other clients.
-                           connection.send(JSON.stringify({
-                              "messageType": "taskMoving",
-                              "projectId": projectId,
-                              "taskId": taskId,
-                              "targetMemberId": targetMemberId,
-                              "targetSection": targetSection,
-                              "event": eventData
-                           }));
-                        });
+                           section.appendChild(task);
+                        }
+                     });
+                  }
+                  else
+                  {
+                     moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection);
 
                      section.appendChild(task);
                   }
-                  else {
-                     alert("An error occured please retry !");
-                  }
+
                }
             } else {
                alert('couldn\'t find task #' + id);
@@ -117,6 +101,35 @@ $(document).ready(function() {
       };
    }
 
+   function moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection) {
+      $.post("http://easygoing/project/" + projectId + "/moveTask", {
+         taskId: taskId,
+         oldMemberId: oldMemberId,
+         oldSection : oldSection,
+         targetMemberId: targetMemberId,
+         targetSection: targetSection
+      })
+      .done(function(data) {
+         var data = JSON.parse(data);
+
+         if(!data.hasRightToMoveTask) {
+            addBootstrapAlert('board-alert-container', 'You do not have the right to move this task. You are not manager or this task is not assigned to you.', 'danger');
+         }
+
+         var eventData = data.event;
+         console.log("Sending task-moving socket...")
+         // Send task-moving socket to the server so it can advertise other clients.
+         connection.send(JSON.stringify({
+            "messageType": "taskMoving",
+            "projectId": projectId,
+            "taskId": taskId,
+            "targetMemberId": targetMemberId,
+            "targetSection": targetSection,
+            "event": eventData
+         }));
+      });
+   }
+   
    function closestWithClass(target, className) {
       while (target) {
          if (target.nodeType === 1 &&
