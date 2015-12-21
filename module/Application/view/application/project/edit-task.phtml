@@ -30,7 +30,7 @@
                $priority = ['High', 'Medium', 'Low'];
                for($i = 1; $i <= 3; $i++)
                {
-                  echo '<option '.($task->priorityLevel == $i ? 'selected' : '').' value"'.$i.'">'.$priority[$i - 1].'</option>';
+                  echo '<option '.($task->priorityLevel == $i ? 'selected' : '').' value="'.$i.'">'.$priority[$i - 1].'</option>';
                }
             ?>
          </select>
