@@ -1,3 +1,5 @@
+To be rewritten...
+
 ZendSkeletonApplication
 =======================
 
