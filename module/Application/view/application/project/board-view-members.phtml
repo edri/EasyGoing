@@ -1,3 +1,6 @@
+<?php use Application\Utility\Priority; ?>
+  
+
 <?php
    echo $this->headScript()
                ->prependFile($this->basePath() . '/js/board.contextmenu.js')
@@ -40,7 +43,6 @@
      <h1>Done</h1>
   </div>
 </div>
-
 
 <?php foreach ($members as $member): ?>
 <div class="board" member-id="<?php echo $member->id; ?>">
