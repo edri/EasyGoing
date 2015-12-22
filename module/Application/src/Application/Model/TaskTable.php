@@ -59,4 +59,11 @@ class TaskTable
    {
       $this->_tableGateway->update(array('state' => $newState), array('id' => $taskId));
    }
+   
+   public function deleteTask($taskId)
+   {
+      $this->_tableGateway->delete(array(
+         'id' => $taskId
+      ));
+   }
 }

@@ -79,16 +79,14 @@ $(document).ready(function() {
                   {
                      bootbox.confirm('Are sure you want to assign this task to another member ?', function(result) {
                         if(result === true) {
-                           moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection);
-
+                           moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection, task);
                            section.appendChild(task);
                         }
                      });
                   }
                   else
                   {
-                     moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection);
-
+                     moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection, task);
                      section.appendChild(task);
                   }
 
@@ -129,6 +127,8 @@ $(document).ready(function() {
             "event": eventData
          }));
       });
+      
+      
    }
    
    function closestWithClass(target, className) {

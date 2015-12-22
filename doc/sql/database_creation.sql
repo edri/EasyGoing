@@ -91,8 +91,8 @@ CREATE TABLE eventsOnTasks
     event INT NOT NULL,
     task INT NOT NULL,
     PRIMARY KEY(event),
-    FOREIGN KEY(event) REFERENCES events(id),
-    FOREIGN KEY(task) REFERENCES tasks(id)
+    FOREIGN KEY(event) REFERENCES events(id) ON DELETE CASCADE,
+    FOREIGN KEY(task) REFERENCES tasks(id) ON DELETE CASCADE
 );
 
 CREATE TABLE eventsOnProjects

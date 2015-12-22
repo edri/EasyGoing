@@ -21,9 +21,14 @@ class UsersTasksAffectationsTable
       ))->current();
    }
 
-   public function updateTaskAffectation($userId, $taskId) 
+   public function updateTaskAffectation($userId, $taskId, $newUserId) 
    {
-      $this->_tableGateway->update(array('user' => $userId), array('task' => $taskId));
+      $this->_tableGateway->update(array(
+         'user' => $newUserId
+      ), array(
+         'task' => $taskId,
+         'user' => $userId
+      ));
    }
 
    public function addAffectation($userId, $taskId)

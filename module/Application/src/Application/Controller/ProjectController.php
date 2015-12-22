@@ -295,7 +295,9 @@ class ProjectController extends AbstractActionController
         || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['taskId']))
       {
          $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
-         $this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['targetMemberId'], $data['taskId']);
+         
+         if($data['oldMemberId'] != $data['targetMemberId'])
+            $this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['oldMemberId'], $data['taskId'], $data['targetMemberId']);
       }
       else
       {
@@ -338,7 +340,7 @@ class ProjectController extends AbstractActionController
 
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
-         // TODO : Finir les droits et faire suppression de la tâche
+         $this->_getTable('TaskTable')->deleteTask($taskId);
       }
       else
       {

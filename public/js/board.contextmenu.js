@@ -16,6 +16,8 @@ $(document).ready(function() {
                         {
                            case 'Delete success':
                               addBootstrapAlert('board-alert-container', data.message, 'success');
+                              // TODO : Enlever la ligne dessous quand les events seront faits pour la suppression
+                              $('#board-container').load(window.location.href + '/boardViewMembers');
                               break;
 
                            default:
