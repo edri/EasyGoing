@@ -600,3 +600,11 @@ hr {
    height: 20px;
    width: 20px
 }
+
+.btnTag {
+   min-width: 125px;
+}
+
+.elemType {
+   cursor: pointer;
+}

@@ -114,19 +114,19 @@
              <span class="input-group-addon" id="basic-addon1"><img id="imgType" class="eventSelectImg" src="/img/events/default.svg" /></span>
              <input class="form-control taskEventTextInput" placeholder="Enter a news..." type="text" />
              <div class="input-group-btn">
-                <button id="tagBtn" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select a tag... <span class="caret"></span></button>
+                <button id="btnTag" type="button" class="btn btn-default dropdown-toggle btnTag" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select a tag... <span class="caret"></span></button>
                 <ul id="tagMenu" class="dropdown-menu" role="menu">
                    <?php
                       // Dynamically add each tasks' events types content to the list.
                       foreach ($eventsTypes as $type)
                       {
                    ?>
-                         <li><a href="#"><span id="spanType" img-type="<?php echo $type->fileLogo; ?>"><?php echo $type->type; ?> </span></a></li>
+                         <li><a class="elemType"><span id="spanType" img-type="<?php echo $type->fileLogo; ?>"><?php echo $type->type; ?> </span></a></li>
                    <?php
                       }
                    ?>
                 </ul>
-                <button class="btn btn-default" type="button">Post!</button>
+                <button class="btn btn-default" disabled="disabled" id="postBtn" type="button">Post!</button>
              </div>
          </div>
       </td>
@@ -139,10 +139,14 @@
 
 <script>
    $(document).ready(function() {
+      // Triggered when the user choose a tag in the tags list.
       $('.dropdown-menu a').on('click', function() {
+         // This custom event is used to make the <ul> tag act like a Bootstrap's dropdown list.
          $('.dropdown-toggle').html($(this).html() + '<span class="caret"></span>');
-
+         // Change the image on the left of the text input.
          $("#imgType").attr("src", "/img/events/" + $(this).find("#spanType").attr("img-type"));
+         // Enable the "Post!" button.
+         $("#postBtn").prop("disabled", false);
       });
    });
 </script>
