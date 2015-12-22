@@ -60,14 +60,17 @@ class ProjectController extends AbstractActionController
       $project = $this->_getTable('ProjectTable')->getProject($this->params('id'));
       $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
       $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
+      // Get projects' events types.
+      $eventsTypes = $this->_getTable('EventTypeTable')->getTypes(false);
       // Get project's events.
       $events = $this->_getTable('ViewEventTable')->getEntityEvents($this->params('id'), false);
-      
+
       return new ViewModel(array(
-         'project'  => $project,
-         'tasks'    => $tasks,
-         'members'  => $members,
-         'events'   => $events
+         'project'      => $project,
+         'tasks'        => $tasks,
+         'members'      => $members,
+         'eventsTypes'  => $eventsTypes,
+         'events'       => $events
       ));
    }
 
@@ -148,11 +151,15 @@ class ProjectController extends AbstractActionController
    {
       $taskId = $this->params('otherId');
       $task = $this->_getTable('TaskTable')->getTaskById($taskId);
+      // Get tasks' events types.
+      $eventsTypes = $this->_getTable('EventTypeTable')->getTypes(true);
+      // Get task's events.
       $events = $this->_getTable('ViewEventTable')->getEntityEvents($taskId, true);
 
       return new ViewModel(array(
-         'task'   => $task,
-         'events' => $events
+         'task'         => $task,
+         'eventsTypes'  => $eventsTypes,
+         'events'       => $events
       ));
    }
 
@@ -277,7 +284,7 @@ class ProjectController extends AbstractActionController
       // Get POST data
       $data = $this->getRequest()->getPost();
       $hasRightToMoveTask = true;
-      
+
 
       // Check if current user has rights to move the task
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId)
@@ -290,7 +297,7 @@ class ProjectController extends AbstractActionController
       {
          $hasRightToMoveTask = false;
       }
-      
+
 
       // If task was successfully moved, add a task's movement event.
       // First of all, get right event type, moved task's name and old/new task's user's name.

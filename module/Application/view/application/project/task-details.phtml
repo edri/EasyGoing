@@ -63,21 +63,19 @@
                         All
                      </a>
                   </li>
-                  <li role="presentation">
-                     <a href="#info" aria-controls="info" role="tab" data-toggle="tab" style="outline: 0 none;">
-                        Info
-                     </a>
-                  </li>
-                  <li role="presentation">
-                     <a href="#warning" aria-controls="warning" role="tab" data-toggle="tab" style="outline: 0 none;">
-                        Warning
-                     </a>
-                  </li>
-                  <li role="presentation">
-                     <a href="#error" aria-controls="error" role="tab" data-toggle="tab" style="outline: 0 none;">
-                        Error
-                     </a>
-                  </li>
+                  <?php
+                    // Dynamically add each tasks' events types to the tabs list.
+                    foreach ($eventsTypes as $type)
+                    {
+                  ?>
+                       <li role="presentation">
+                          <a href="#<?php echo strtolower($type->type); ?>" aria-controls="<?php echo strtolower($type->type); ?>" role="tab" data-toggle="tab" style="outline: 0 none;">
+                             <?php echo $type->type; ?>
+                          </a>
+                       </li>
+                  <?php
+                    }
+                  ?>
                   <li class="historicalTitle">News Feed</li>
               </ul>
 
@@ -88,44 +86,53 @@
                        foreach ($events as $e)
                        {
                           echo eventRendering("All", $e);
+                          echo eventRendering("All", $e);
+                          echo eventRendering("All", $e);
+                          echo eventRendering("All", $e);
+
                        }
                      ?>
                  </div>
-                 <div role="tabpanel" class="tab-pane fade in" id="info">
-                    <?php
-                       foreach ($events as $e)
-                       {
-                          if ($e->type == "Info")
-                          {
-                             echo eventRendering($e->type, $e);
-                          }
-                       }
-                     ?>
-                 </div>
-                 <div role="tabpanel" class="tab-pane fade in" id="warning">
-                    <?php
-                       foreach ($events as $e)
-                       {
-                          if ($e->type == "Warning")
-                          {
-                             echo eventRendering($e->type, $e);
-                          }
-                       }
-                     ?>
-                 </div>
-                 <div role="tabpanel" class="tab-pane fade in" id="error">
-                    <?php
-                       foreach ($events as $e)
-                       {
-                          if ($e->type == "Error")
-                          {
-                             echo eventRendering($e->type, $e);
-                          }
-                       }
-                     ?>
-                 </div>
+                 <?php
+                   // Dynamically add each tasks' events types content to the tabs list.
+                   foreach ($eventsTypes as $type)
+                   {
+                 ?>
+                       <div role="tabpanel" class="tab-pane fade" id="<?php echo strtolower($type->type); ?>">
+                          <?php
+                            foreach ($events as $e)
+                            {
+                               if ($e->type == $type->type)
+                               {
+                                  echo eventRendering($e->type, $e);
+                               }
+                            }
+                          ?>
+                       </div>
+                 <?php
+                    }
+                 ?>
               </div>
           </div>
+          <div class="input-group taskEventInput">
+             <span class="input-group-addon" id="basic-addon1"><img id="imgType" class="eventSelectImg" src="/img/events/default.svg" /></span>
+             <input class="form-control taskEventTextInput" placeholder="Enter a news..." type="text" />
+             <div class="input-group-btn">
+                <button id="tagBtn" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select a tag... <span class="caret"></span></button>
+                <ul id="tagMenu" class="dropdown-menu" role="menu">
+                   <?php
+                      // Dynamically add each tasks' events types content to the list.
+                      foreach ($eventsTypes as $type)
+                      {
+                   ?>
+                         <li><a href="#"><span id="spanType" img-type="<?php echo $type->fileLogo; ?>"><?php echo $type->type; ?> </span></a></li>
+                   <?php
+                      }
+                   ?>
+                </ul>
+                <button class="btn btn-default" type="button">Post!</button>
+             </div>
+         </div>
       </td>
    </tr>
 </table>
@@ -133,3 +140,13 @@
 <hr/>
 
 <a class="btn btnEasygoing" href="<?php echo $_SERVER['HTTP_REFERER'] ?>">Back</a>
+
+<script>
+   $(document).ready(function() {
+      $('.dropdown-menu a').on('click', function() {
+         $('.dropdown-toggle').html($(this).html() + '<span class="caret"></span>');
+
+         $("#imgType").attr("src", "/img/events/" + $(this).find("#spanType").attr("img-type"));
+      });
+   });
+</script>

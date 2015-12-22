@@ -44,21 +44,19 @@
                       All
                    </a>
                 </li>
-                <li role="presentation">
-                   <a href="#project" aria-controls="project" role="tab" data-toggle="tab" style="outline: 0 none;">
-                      Project
-                   </a>
-                </li>
-                <li role="presentation">
-                   <a href="#tasks" aria-controls="tasks" role="tab" data-toggle="tab" style="outline: 0 none;">
-                      Tasks
-                   </a>
-                </li>
-                <li role="presentation">
-                   <a href="#users" aria-controls="users" role="tab" data-toggle="tab" style="outline: 0 none;">
-                      Users
-                   </a>
-                </li>
+                <?php
+                  // Dynamically add each projects' events types to the tabs list.
+                  foreach ($eventsTypes as $type)
+                  {
+                ?>
+                     <li role="presentation">
+                        <a href="#<?php echo strtolower($type->type); ?>" aria-controls="<?php echo strtolower($type->type); ?>" role="tab" data-toggle="tab" style="outline: 0 none;">
+                           <?php echo $type->type; ?>
+                        </a>
+                     </li>
+                <?php
+                  }
+                ?>
                 <li class="historicalTitle">Historical</li>
             </ul>
 
@@ -72,39 +70,25 @@
                   }
                 ?>
                 </div>
-                <div role="tabpanel" class="tab-pane fade" id="project">
-                   <?php
-                     foreach ($events as $e)
-                     {
-                        if ($e->type == "Project")
-                        {
-                           echo eventRendering($e->type, $e);
-                        }
-                     }
-                   ?>
-                </div>
-                <div role="tabpanel" class="tab-pane fade" id="tasks">
-                   <?php
-                    foreach ($events as $e)
-                    {
-                       if ($e->type == "Tasks")
-                       {
-                          echo eventRendering($e->type, $e);
-                       }
-                    }
-                 ?>
-                </div>
-                <div role="tabpanel" class="tab-pane fade" id="users">
-                   <?php
-                    foreach ($events as $e)
-                    {
-                       if ($e->type == "Users")
-                       {
-                          echo eventRendering($e->type, $e);
-                       }
-                    }
-                 ?>
-                </div>
+                <?php
+                  // Dynamically add each projects' events types content to the tabs list.
+                  foreach ($eventsTypes as $type)
+                  {
+                ?>
+                      <div role="tabpanel" class="tab-pane fade" id="<?php echo strtolower($type->type); ?>">
+                         <?php
+                           foreach ($events as $e)
+                           {
+                              if ($e->type == $type->type)
+                              {
+                                 echo eventRendering($e->type, $e);
+                              }
+                           }
+                         ?>
+                      </div>
+                <?php
+                   }
+                ?>
             </div>
         </div>
     </div>
