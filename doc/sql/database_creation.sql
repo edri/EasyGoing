@@ -63,8 +63,8 @@ CREATE TABLE tasks
     project INT NOT NULL,
     
     PRIMARY KEY(id),
-    FOREIGN KEY(parentTask) REFERENCES tasks(id),
-    FOREIGN KEY(project) REFERENCES projects(id)
+    FOREIGN KEY(parentTask) REFERENCES tasks(id) ON DELETE CASCADE,
+    FOREIGN KEY(project) REFERENCES projects(id) ON DELETE CASCADE
 );
 
 CREATE TABLE eventTypes
@@ -137,8 +137,8 @@ CREATE TABLE usersTasksAffectations
     user INT NOT NULL,
     task INT NOT NULL,
     UNIQUE(user, task),
-    FOREIGN KEY(user) REFERENCES users(id),
-    FOREIGN KEY(task) REFERENCES tasks(id)
+    FOREIGN KEY(user) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(task) REFERENCES tasks(id) ON DELETE CASCADE
 );
 
 CREATE TABLE usersTasksProductions 
@@ -146,8 +146,8 @@ CREATE TABLE usersTasksProductions
     user INT NOT NULL,
     task INT NOT NULL,
     effectiveDurationInHours FLOAT NOT NULL,
-    FOREIGN KEY(user) REFERENCES users(id),
-    FOREIGN KEY(task) REFERENCES tasks(id)
+    FOREIGN KEY(user) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(task) REFERENCES tasks(id) ON DELETE CASCADE
 );
 
 /* Views */
@@ -473,9 +473,9 @@ VALUES(
 INSERT INTO users
 VALUES(
 	null, 
-	"thibault.duchoud@heig-vd.ch",
-	"thibaudduchoud",
-	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
+	"thibaud.duchoud@heig-vd.ch",
+	"manamiz",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
 	"Thibault",
 	"Duchoud",
 	"default.png",
@@ -520,7 +520,7 @@ WHERE username = 'edri';
 
 SELECT id INTO @user4
 FROM users
-WHERE username = 'thibaudduchoud';
+WHERE username = 'manamiz';
 
 SELECT id INTO @user5
 FROM users

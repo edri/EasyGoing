@@ -73,6 +73,7 @@ $(document).ready(function() {
                   var oldSection = oldTarget.getAttribute('section');
                   var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
                   var targetSection = $(e.target).closest('[section]').attr('section');
+                  var isManager = $('#hidden').attr('is-manager');
                   
                   if(targetMemberId !== oldMemberId)
                   {
