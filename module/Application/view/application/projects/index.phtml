@@ -146,7 +146,7 @@
                 // because we cannot have to projects which are loadind simultaneously.
                 isSelectionChanging = true;
 
-                // Make an AJAX GET request to the ProjectsController to get back
+                // Make an AJAX GET request to the ProjectController to get back
                 // all selected project information.
                 // We expect to receive back JSON as a response.
                 $.ajax({
@@ -164,10 +164,10 @@
                             expandProject(id, data.projectDetails, data.members);
                         }
                     },
-    				error: function (XMLHttpRequest, textStatus, errorThrown) {
-    					alert("An error occurs, please retry.");
+          			  error: function (XMLHttpRequest, textStatus, errorThrown) {
+          					alert("An error occured, please retry.");
                         isSelectionChanging = false;
-    				}
+          			  }
                  });
              }
              // If the user clicked to the currently selected project, we

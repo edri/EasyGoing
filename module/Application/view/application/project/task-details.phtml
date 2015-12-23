@@ -1,6 +1,15 @@
 <?php
+   // Send Javascript variable with Zend.
+   echo $this->headScript()->appendScript('// Indicate that the user is currently in the task page. Used in the board.websocket.js script.
+                                           var isProjectPage = false;
+                                           var taskId = "' . $task->id . '";
+                                           var projectId = "' . $projectId . '";');
+   // Load websocket script.
+   echo $this->headScript()
+             ->prependFile($this->basePath() . '/js/board.websockets.js');
+
    // Return an HTML code rendering an event div, using for code factoring.
-   function eventRendering($type, $event)
+   function eventRendering($context, $type, $event)
    {
       $eventContent =
          '<div class="eventElem" name="eventIn' . $type . '">
@@ -10,7 +19,7 @@
                   <td><span class="newsFeedInfo">Posted on ' . date('d.m.Y', strtotime($event->date)) . ' by <u>' . $event->username . '</u></span></td>
                </tr>
                <tr>
-                  <td><div class="eventMessage">' . $event->message . '</div></td>
+                  <td><div class="eventMessage">' . $context->escapeHtml($event->message) . '</div></td>
                </tr>
             </table>
          </div>';
@@ -85,7 +94,7 @@
                     <?php
                        foreach ($events as $e)
                        {
-                          echo eventRendering("All", $e);
+                          echo eventRendering($this, "All", $e);
                        }
                      ?>
                  </div>
@@ -100,7 +109,7 @@
                             {
                                if ($e->type == $type->type)
                                {
-                                  echo eventRendering($e->type, $e);
+                                  echo eventRendering($this, $e->type, $e);
                                }
                             }
                           ?>
@@ -110,9 +119,8 @@
                  ?>
               </div>
           </div>
-          <div class="input-group taskEventInput">
+          <div class="input-group newsFeedInputs">
              <span class="input-group-addon imgType" id="basic-addon1"><img id="imgType" class="eventSelectImg" src="/img/events/default.svg" /></span>
-             <input class="form-control taskEventTextInput" placeholder="Enter a news..." type="text" />
              <div class="input-group-btn">
                 <button id="btnTag" type="button" class="btn btn-default dropdown-toggle btnTag" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select a tag... <span class="caret"></span></button>
                 <ul id="tagMenu" class="dropdown-menu" role="menu">
@@ -121,13 +129,16 @@
                       foreach ($eventsTypes as $type)
                       {
                    ?>
-                         <li><a class="elemType"><span id="spanType" img-type="<?php echo $type->fileLogo; ?>"><?php echo $type->type; ?> </span></a></li>
+                         <li><a class="elemType"><span id="spanType" img-type="<?php echo $type->fileLogo; ?>" id-type="<?php echo $type->id; ?>"><?php echo $type->type; ?> </span></a></li>
                    <?php
                       }
                    ?>
                 </ul>
-                <button class="btn btn-default" disabled="disabled" id="postBtn" type="button">Post!</button>
              </div>
+             <input class="form-control taskEventTextInput" id="newsText" placeholder="Enter a news..." type="text" />
+             <span class="input-group-btn">
+                <button class="btn btnEasygoing" disabled="disabled" id="postBtn" type="button">Post!</button>
+             </span>
          </div>
       </td>
    </tr>
@@ -147,6 +158,54 @@
          $("#imgType").attr("src", "/img/events/" + $(this).find("#spanType").attr("img-type"));
          // Enable the "Post!" button.
          $("#postBtn").prop("disabled", false);
+      });
+
+      // Click on the "Post!" button when the user pressed the "Enter" key in the
+      // text field.
+      $("#newsText").keyup(function(event){
+         if(event.keyCode == 13) {
+            $("#postBtn").click();
+         }
+      });
+
+      // Add the event in the database if it is correctly formated.
+      $("#postBtn").click(function() {
+         // The post button must be enabled.
+         if ($("#postBtn").is(':enabled') && $("#spanType").attr("id-type") > 0 && $("#newsText").val())
+         {
+            var postData = {
+               "taskId": taskId,
+               "text": $("#newsText").val(),
+               "typeId": $("#spanType").attr("id-type")
+            };
+
+            // Make an AJAX GET request to the ProjectController to send the new
+            // news feed's post.
+            // We expect to receive back JSON as a response.
+            $.ajax({
+               type: "POST",
+               url:  "/project/" + projectId + "/postNewsFeed",
+               data: postData,
+               dataType: 'json',
+               // Occurs when the AJAX request was successfully executed.
+               success: function (data)
+               {
+                  // In case of success, we send back the data to the expandProject()
+                  // function.
+                  if(data.success)
+                  {
+                     $("#newsText").val("");
+                  }
+                  else
+                  {
+                     console.log("An error occured, please retry.");
+                  }
+               },
+               error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  alert("An error occured, please retry.");
+               }
+            });
+         }
       });
    });
 </script>

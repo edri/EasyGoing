@@ -5,6 +5,11 @@ var formidable = require('formidable');
 // Websocket and HTTP servers' ports.
 const SOCKET_PORT = 8001;
 const HTTP_PORT = 8002;
+// Protocole const.
+// Will be used to know which type is a connection (from a project page or from a
+// task's details page).
+const PROJECT_CONNECTION = "Project";
+const TASK_CONNECTION = "Task";
 
 // Create websocket server.
 var socketServer = ws.createServer(function(connection) {
@@ -22,14 +27,26 @@ var socketServer = ws.createServer(function(connection) {
 
 			// Do some actions, depending on the received data message's type.
 			switch (data.messageType) {
+				// When an user accessed a project page.
 				case "projectListeningRequest":
 					console.log("WEBSOCKET: adding current connection to project #" + data.projectId + "...");
 					// Set current connection's project.
 					connection.projectId = data.projectId;
+					// Indicate that the connection is a project one.
+					connection.connectionType = PROJECT_CONNECTION;
 					break;
+				// When an user moved a task inside a project.
 				case "taskMoving":
 					sendTaskMovingSocket(data, connection);
-					sendEventSocket(data.event);
+					sendEventSocket(data.event, PROJECT_CONNECTION);
+					break;
+				// When the user accessed a task's details page.
+				case "taskListeningRequest":
+					console.log("WEBSOCKET: adding current connection to task #" + data.taskId + " of project #" + data.projectId + "...");
+					// Set current connection's task.
+					connection.taskId = data.taskId;
+					// Indicate that the connection is a project one.
+					connection.connectionType = TASK_CONNECTION;
 					break;
 			}
 		}
@@ -47,17 +64,23 @@ var socketServer = ws.createServer(function(connection) {
 console.log("Websocket server listening on: ws://127.0.0.1:%s", SOCKET_PORT);
 
 // Send a new event to every connected users that currently are in the concerned project.
-function sendEventSocket(eventData) {
+// Parameters :
+//		- eventData: data of the event-to-send.
+//		- sendTo : indicate to who we need to send the event ; must be a protocol const
+//					  like PROJECT_CONNECTION and TASK_CONNECTION.
+function sendEventSocket(eventData, sendTo) {
 	var newEventData = {
-		"messageType": "newEvent",
+		"messageType": (sendTo == TASK_CONNECTION ? "newTaskEvent" : "newEvent"),
 		"event": eventData
 	};
 
 	console.log("WEBSOCKET: send new-event socket to every concerned clients...");
 	socketServer.connections.forEach(function(connection) {
-		// Send event socket to everyone in the project.
-		if (!eventData.isTaskEvent && connection.projectId == eventData.linkedEntityId) {
-			connection.sendText(JSON.stringify(newEventData));
+		// Send event socket to everyone in the project or task, depending on the parameter.
+		if (connection.connectionType === sendTo &&
+			((sendTo === PROJECT_CONNECTION && !eventData.isTaskEvent && connection.projectId == eventData.linkedEntityId) ||
+			(sendTo === TASK_CONNECTION && eventData.isTaskEvent&& connection.taskId == eventData.linkedEntityId))) {
+				connection.sendText(JSON.stringify(newEventData));
 		}
 	})
 }
@@ -66,10 +89,11 @@ function sendEventSocket(eventData) {
 // the task was moved so they can dynamically move it.
 function sendTaskMovingSocket(data, fromConnection) {
 	console.log("WEBSOCKET: Send task-moving socket to every concerned clients...");
+	data.messageType = "taskMovingEvent";
+
 	socketServer.connections.forEach(function(connection) {
-		data.messageType = "taskMovingEvent";
 		// Check every connection's project's ID and send message to the right ones.
-		if (!data.isTaskEvent && connection.projectId === data.linkedEntityId) {
+		if (connection.connectionType === PROJECT_CONNECTION && !data.isTaskEvent && connection.projectId === data.linkedEntityId) {
 			if (connection != fromConnection) {
 				connection.sendText(JSON.stringify(data));
 			}
@@ -92,24 +116,33 @@ function handleRequest(req, res) {
 
 			// Do some actions, depending on the received data message's type.
 			switch (fields.requestType) {
+				// An event is received from a project page.
 				case "newEvent":
-					console.log("HTTP: received a new event.");
+					console.log("HTTP: received a new project's event.");
 					// Parse event's data to JSON.
 					var event = JSON.parse(fields.event);
 					// Send the received event to all concerned clients.
-					sendEventSocket(event);
+					sendEventSocket(event, PROJECT_CONNECTION);
 					break;
-				// Several simultaneous events.
+				// Several simultaneous project's events.
 				case "newEvents":
-					console.log("HTTP: received several simultaneous events.");
+					console.log("HTTP: received several simultaneous project's events.");
 					var objectSize = Object.keys(fields).length;
 					// Send each request.
 					for (var i = 0; i < objectSize - 1; ++i) {
 						// Parse event's data to JSON.
 						var event = JSON.parse(fields["events[" + i + "]"]);
 						// Send the received event to all concerned clients.
-						sendEventSocket(event);
+						sendEventSocket(event, PROJECT_CONNECTION);
 					}
+					break;
+				// An event is received from a task page.
+				case "newTaskEvent":
+					console.log("HTTP: received a new task's event.");
+					// Parse event's data to JSON.
+					var event = JSON.parse(fields.event);
+					// Send the received event to all concerned clients.
+					sendEventSocket(event, TASK_CONNECTION);
 					break;
 			}
 

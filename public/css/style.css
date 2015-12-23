@@ -591,7 +591,11 @@ hr {
    font-weight: bold;
 }
 
-.taskEventInput input, .taskEventInput button, .imgType {
+.newsFeedInputs {
+   box-shadow: 3px 2px 2px rgba(0, 0, 0, 0.05);
+}
+
+.newsFeedInputs input, .newsFeedInputs button, .imgType {
    border-radius: 0;
    height: 34px;
 }
@@ -602,6 +606,7 @@ hr {
 }
 
 .btnTag {
+   border-right: medium none;
    min-width: 125px;
 }
 

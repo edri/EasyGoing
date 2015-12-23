@@ -116,7 +116,7 @@ class ProjectController extends AbstractActionController
          $event1 = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
          // For the task's news feed.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
-         $message = "<u>" . $sessionUser->username . "</u> created the task.";
+         $message = "\"" . $sessionUser->username . "\" created the task.";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          $this->_getTable("EventOnTaskTable")->add($eventId, $taskId);
          $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
@@ -150,6 +150,7 @@ class ProjectController extends AbstractActionController
    public function taskDetailsAction()
    {
       $taskId = $this->params('otherId');
+      $projectId = $this->params('id');
       $task = $this->_getTable('TaskTable')->getTaskById($taskId);
       // Get tasks' events types.
       $eventsTypes = $this->_getTable('EventTypeTable')->getTypes(true);
@@ -158,6 +159,7 @@ class ProjectController extends AbstractActionController
 
       return new ViewModel(array(
          'task'         => $task,
+         'projectId'    => $projectId,
          'eventsTypes'  => $eventsTypes,
          'events'       => $events
       ));
@@ -421,59 +423,101 @@ class ProjectController extends AbstractActionController
    public function detailsAction()
    {
       $sessionUser = new container('user');
+      $id = (int)$this->params('id');
+      $projectDetails = $this->_getTable('ViewProjectDetailsTable')->getProjectDetails($id, $sessionUser->id);
+      $tempMembers = $this->_getTable('ViewProjectsMembersSpecializationsTable')->getProjectMembers($id);
+      $members = array();
+      $i = 0;
 
-      // The user must be authenticated to access this part, otherwise he will be
-      // redirected to the home page.
-      if ($sessionUser && $sessionUser->connected)
+      // Struct the members array.
+      foreach ($tempMembers as $tmpM)
       {
-         $id = (int)$this->params('id');
-         $projectDetails = $this->_getTable('ViewProjectDetailsTable')->getProjectDetails($id, $sessionUser->id);
-         $tempMembers = $this->_getTable('ViewProjectsMembersSpecializationsTable')->getProjectMembers($id);
-         $members = array();
-         $i = 0;
+         // Indicate whether the current member already exists in the members
+         // list or not.
+         // If yes, we just have to add the object's specialization to the
+         // existing specializations of the user.
+         $alreadyExisting = false;
+         $nbCurrentMembers = count($members);
 
-         // Struct the members array.
-         foreach ($tempMembers as $tmpM)
+         // Check if the current member already exists.
+         for ($j = 0; $j < $nbCurrentMembers; ++$j)
          {
-            // Indicate whether the current member already exists in the members
-            // list or not.
-            // If yes, we just have to add the object's specialization to the
-            // existing specializations of the user.
-            $alreadyExisting = false;
-            $nbCurrentMembers = count($members);
-
-            // Check if the current member already exists.
-            for ($j = 0; $j < $nbCurrentMembers; ++$j)
+            // Add the specialization to the specializations list.
+            if ($tmpM->username == $members[$j]["username"])
             {
-               // Add the specialization to the specializations list.
-               if ($tmpM->username == $members[$j]["username"])
-               {
-                  $alreadyExisting = true;
-                  $members[$j]["specializations"][] = (empty($tmpM->specialization) ? "-" : $tmpM->specialization);
-                  break;
-               }
+               $alreadyExisting = true;
+               $members[$j]["specializations"][] = (empty($tmpM->specialization) ? "-" : $tmpM->specialization);
+               break;
             }
+         }
 
-            // If the current member is not already existing in the members list,
-            // add it.
-            if (!$alreadyExisting)
-            {
-               $members[$i]["username"] = $tmpM->username;
-               $members[$i]["specializations"][] = empty($tmpM->specialization) ? "-" : $tmpM->specialization;
-               $members[$i]["isAdmin"] = $tmpM->isAdmin;
-               ++$i;
-            }
+         // If the current member is not already existing in the members list,
+         // add it.
+         if (!$alreadyExisting)
+         {
+            $members[$i]["username"] = $tmpM->username;
+            $members[$i]["specializations"][] = empty($tmpM->specialization) ? "-" : $tmpM->specialization;
+            $members[$i]["isAdmin"] = $tmpM->isAdmin;
+            ++$i;
+         }
+      }
+
+      // Send the success message back with JSON.
+      return new JsonModel(array(
+         'success' => true,
+         'projectDetails' => $projectDetails,
+         'members'   => $members
+      ));
+   }
+
+   public function postNewsFeedAction()
+   {
+      $request = $this->getRequest();
+      if ($request->isPost())
+      {
+         $sessionUser = new container('user');
+         // Get request's parameters.
+         $taskId = (int)$_POST['taskId'];
+         $eventText = $_POST["text"];
+         $typeId = $_POST["typeId"];
+
+         // Add new data in the database.
+         // First of all, add the new event in the database.
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $eventText, $typeId);
+         // Link the new event to the current project.
+         $this->_getTable("EventOnTaskTable")->add($eventId, $taskId);
+         // Finaly link the new event to the user who created it.
+         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get event's data to send them to socket server.
+         $event = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
+
+         try
+         {
+            // Make an HTTP POST request to the event's server so he can broadcast a
+            // new websocket related to the new event.
+            $client = new Client('http://127.0.0.1:8002');
+            $client->setMethod(Request::METHOD_POST);
+            // Setting POST data.
+            $client->setParameterPost(array(
+               "requestType"  => "newTaskEvent",
+               "event"        => json_encode($event)
+            ));
+            // Send HTTP request to server.
+            $response = $client->send();
+         }
+         catch (\Exception $e)
+         {
+            error_log("WARNING: could not connect to events servers. Maybe offline?");
          }
 
          // Send the success message back with JSON.
          return new JsonModel(array(
-            'success' => true,
-            'projectDetails' => $projectDetails,
-            'members'   => $members
+            'success' => true
          ));
       }
       else
       {
+         // Send the success message back with JSON.
          return new JsonModel(array(
             'success' => false
          ));

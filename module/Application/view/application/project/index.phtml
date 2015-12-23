@@ -1,5 +1,9 @@
 <?php
-   echo $this->headScript()->appendScript('var projectId = "' . $project->id . '";');
+   // Send Javascript variable with Zend.
+   echo $this->headScript()->appendScript('// Indicate that the user is currently in the task page. Used in the board.websocket.js script.
+                                           var isProjectPage = true;
+                                           var projectId = "' . $project->id . '";');
+   // Load websocket script.
    echo $this->headScript()
                ->prependFile($this->basePath() . '/js/board.websockets.js');
 
