@@ -74,7 +74,7 @@ $(document).ready(function() {
                   var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
                   var targetSection = $(e.target).closest('[section]').attr('section');
                   var isManager = $('#hidden').attr('is-manager');
-                  
+
                   if(targetMemberId !== oldMemberId)
                   {
                      bootbox.confirm('Are sure you want to assign this task to another member ?', function(result) {
@@ -112,7 +112,7 @@ $(document).ready(function() {
          var data = JSON.parse(data);
 
          if(!data.hasRightToMoveTask) {
-            addBootstrapAlert('board-alert-container', 'You do not have the right to move this task. You are not manager or this task is not assigned to you.', 'danger');
+            addBootstrapAlert('board-alert-container', 'You do not have the right to move this task because you are either not manager or this task is not assigned to you.', 'danger');
          }
 
          var eventData = data.event;
@@ -127,10 +127,10 @@ $(document).ready(function() {
             "event": eventData
          }));
       });
-      
-      
+
+
    }
-   
+
    function closestWithClass(target, className) {
       while (target) {
          if (target.nodeType === 1 &&

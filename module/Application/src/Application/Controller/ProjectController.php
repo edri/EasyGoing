@@ -67,7 +67,7 @@ class ProjectController extends AbstractActionController
       $events = $this->_getTable('ViewEventTable')->getEntityEvents($this->params('id'), false);
       $isManager = $this->_userIsAdminOfProject($sessionUser->id, $this->params('id'));
 
-      
+
       return new ViewModel(array(
          'project'      => $project,
          'tasks'        => $tasks,
@@ -297,7 +297,7 @@ class ProjectController extends AbstractActionController
         || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['taskId']))
       {
          $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
-         
+
          if($data['oldMemberId'] != $data['targetMemberId'])
             $this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['oldMemberId'], $data['taskId'], $data['targetMemberId']);
       }
@@ -342,7 +342,41 @@ class ProjectController extends AbstractActionController
 
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
+         // Get the name of the task-do-delete.
+         $name = $this->_getTable('TaskTable')->getTaskById($taskId)->name;
          $this->_getTable('TaskTable')->deleteTask($taskId);
+
+         // If task was successfully deleted, add a task's deletion event.
+         // First of all, get right event type.
+         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
+         // Then add the new event in the database.
+         $message = "<u>" . $sessionUser->username . "</u> deleted task <font color=\"#FF6600\">" . $name . "</font>.";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         // Link the new event to the current project.
+         $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+         // Finaly link the new event to the user who created it.
+         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get event's data to send them to socket server.
+         $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+
+         try
+         {
+            // Make an HTTP POST request to the event's server so he can broadcast a
+            // new websocket related to the new event.
+            $client = new Client('http://127.0.0.1:8002');
+            $client->setMethod(Request::METHOD_POST);
+            // Setting POST data.
+            $client->setParameterPost(array(
+               "requestType"  => "newEvent",
+               "event"        => json_encode($event)
+            ));
+            // Send HTTP request to server.
+            $response = $client->send();
+         }
+         catch (\Exception $e)
+         {
+            error_log("WARNING: could not connect to events servers. Maybe offline?");
+         }
       }
       else
       {
