@@ -555,6 +555,19 @@ hr {
    color: #0F4800;
 }
 
+.imgMember {
+   border: 1px solid #e5b494;
+   border-radius: 30px;
+}
+
+.memberName {
+   margin-bottom: 0;
+}
+
+.memberUsername {
+   font-size: 12px;
+}
+
 /** ===== FIN BOARD ===== **/
 
 /* TASK DETAILS */

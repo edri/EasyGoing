@@ -1,5 +1,5 @@
 <?php use Application\Utility\Priority; ?>
-  
+
 
 <?php
    echo $this->headScript()
@@ -18,7 +18,7 @@
             $priorityClass = "low-priority";
             break;
       }
-      
+
       $taskContent =
          '<div id='.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task '.$priorityClass.'">' .
             $task->name .
@@ -47,8 +47,9 @@
 <?php foreach ($members as $member): ?>
 <div class="board" member-id="<?php echo $member->id; ?>">
   <div class="board-first-column" section="board-user">
-    <img class="imgProject" draggable="false" src="<?php echo $this->basePath('img/users/'.$member->filePhoto); ?>">
-    <h4><?php echo $member->firstName . ' ' . $member->lastName; ?></h4>
+    <img class="imgMember" draggable="false" src="<?php echo $this->basePath('img/users/'.$member->filePhoto); ?>">
+    <h4 class="memberName"><?php echo $member->firstName . ' ' . $member->lastName; ?></h4>
+    <span class="memberUsername"><?php echo $member->username; ?></span>
   </div>
   <div class="board-section" id="todo" section="TODO">
      <?php
