@@ -117,14 +117,13 @@ class ProjectController extends AbstractActionController
          // Finaly link the new event to the user who created it.
          $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
          // Get event's data to send them to socket server.
-         $event1 = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+         $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
          // For the task's news feed.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
          $message = "\"" . $sessionUser->username . "\" created the task.";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          $this->_getTable("EventOnTaskTable")->add($eventId, $taskId);
          $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
-         $event2 = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
 
          try
          {
@@ -134,8 +133,8 @@ class ProjectController extends AbstractActionController
             $client->setMethod(Request::METHOD_POST);
             // Setting POST data.
             $client->setParameterPost(array(
-               "requestType"  => "newEvents",
-               "events"       => array(json_encode($event1), json_encode($event2))
+               "requestType"  => "newEvent",
+               "event"        => json_encode($event)
             ));
             // Send HTTP request to server.
             $response = $client->send();
@@ -198,7 +197,14 @@ class ProjectController extends AbstractActionController
          // Finaly link the new event to the user who created it.
          $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
          // Get event's data to send them to socket server.
-         $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+         $event1 = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+         // For the task's news feed.
+         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
+         $message = "\"" . $sessionUser->username . "\" updated the task.";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         $this->_getTable("EventOnTaskTable")->add($eventId, $id);
+         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         $event2 = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
 
          try
          {
@@ -208,8 +214,8 @@ class ProjectController extends AbstractActionController
             $client->setMethod(Request::METHOD_POST);
             // Setting POST data.
             $client->setParameterPost(array(
-               "requestType"  => "newEvent",
-               "event"        => json_encode($event)
+               "requestType"  => "newEvents",
+               "events"       => array(json_encode($event1), json_encode($event2))
             ));
             // Send HTTP request to server.
             $response = $client->send();
@@ -289,8 +295,6 @@ class ProjectController extends AbstractActionController
       $projectId = $this->params('id');
       // Get POST data
       $data = $this->getRequest()->getPost();
-      $hasRightToMoveTask = true;
-
 
       // Check if current user has rights to move the task
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId)
@@ -299,37 +303,68 @@ class ProjectController extends AbstractActionController
          $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
 
          if($data['oldMemberId'] != $data['targetMemberId'])
+         {
             $this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['oldMemberId'], $data['taskId'], $data['targetMemberId']);
+         }
+
+         // If task was successfully moved, add a task's movement event.
+         // First of all, get right event type, moved task's name and old/new task's user's name.
+         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
+         $name = $this->_getTable("TaskTable")->getTaskById($data['taskId'])->name;
+         $oldUsername = $this->_getTable("UserTable")->getUser($data['oldMemberId'])->username;
+         $newUsername = $this->_getTable("UserTable")->getUser($data['targetMemberId'])->username;
+         // Then add the new event in the database.
+         $message = "<u>" . $sessionUser->username . "</u> moved task <font color=\"#FF6600\">" . $name . "</font> from <font color=\"#995527\">(" . $oldUsername . ", " . $data['oldSection'] . ")</font> to <font color=\"#995527\">(" . $newUsername . ", " . $data['targetSection'] . ")</font>.";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         // Link the new event to the current project.
+         $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+         // Finaly link the new event to the user who created it.
+         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get event's data to send them to socket server.
+         $event1 = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+         // For the task's news feed.
+         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
+         $message = "\"" . $sessionUser->username . "\" moved the task from \"(" . $oldUsername . ", " . $data['oldSection'] . ")\" to \"(" . $newUsername . ", " . $data['targetSection'] . ")\".";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         $this->_getTable("EventOnTaskTable")->add($eventId, $data['taskId']);
+         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         $event2 = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
+
+         // Send task's event socket.
+         try
+         {
+            // Make an HTTP POST request to the event's server so he can broadcast a
+            // new websocket related to the new event.
+            $client = new Client('http://127.0.0.1:8002');
+            $client->setMethod(Request::METHOD_POST);
+            // Setting POST data.
+            $client->setParameterPost(array(
+               "requestType"  => "newEvent",
+               "event"       => json_encode($event2)
+            ));
+            // Send HTTP request to server.
+            $response = $client->send();
+         }
+         catch (\Exception $e)
+         {
+            error_log("WARNING: could not connect to events servers. Maybe offline?");
+         }
+
+         // Send back data and project's event socket's data.
+         return $this->getResponse()->setContent(json_encode(array(
+            'taskId'              => $data['taskId'],
+            'targetMemberId'      => $data['targetMemberId'],
+            'targetSection'       => $data['targetSection'],
+            'event'               => $event1,
+            'hasRightToMoveTask'  => true
+         )));
       }
       else
       {
-         $hasRightToMoveTask = false;
+         return $this->getResponse()->setContent(json_encode(array(
+            'hasRightToMoveTask'  => false
+         )));
       }
-
-
-      // If task was successfully moved, add a task's movement event.
-      // First of all, get right event type, moved task's name and old/new task's user's name.
-      $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
-      $name = $this->_getTable("TaskTable")->getTaskById($data['taskId'])->name;
-      $oldUsername = $this->_getTable("UserTable")->getUser($data['oldMemberId'])->username;
-      $newUsername = $this->_getTable("UserTable")->getUser($data['targetMemberId'])->username;
-      // Then add the new event in the database.
-      $message = "<u>" . $sessionUser->username . "</u> moved task <font color=\"#FF6600\">" . $name . "</font> from <font color=\"#995527\">(" . $oldUsername . ", " . $data['oldSection'] . ")</font> to <font color=\"#995527\">(" . $newUsername . ", " . $data['targetSection'] . ")</font>.";
-      $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
-      // Link the new event to the current project.
-      $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
-      // Finaly link the new event to the user who created it.
-      $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
-      // Get event's data to send them to socket server.
-      $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
-
-      return $this->getResponse()->setContent(json_encode(array(
-         'taskId'              => $data['taskId'],
-         'targetMemberId'      => $data['targetMemberId'],
-         'targetSection'       => $data['targetSection'],
-         'event'               => $event,
-         'hasRightToMoveTask'  => $hasRightToMoveTask
-      )));
    }
 
    public function deleteTaskAction()

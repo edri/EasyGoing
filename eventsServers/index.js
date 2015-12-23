@@ -116,33 +116,25 @@ function handleRequest(req, res) {
 
 			// Do some actions, depending on the received data message's type.
 			switch (fields.requestType) {
-				// An event is received from a project page.
+				// An event is received from a project or task page.
 				case "newEvent":
-					console.log("HTTP: received a new project's event.");
 					// Parse event's data to JSON.
 					var event = JSON.parse(fields.event);
+					console.log("HTTP: received a new " + (event.isTaskEvent ? "task" : "project") + "'s event.");
 					// Send the received event to all concerned clients.
-					sendEventSocket(event, PROJECT_CONNECTION);
+					sendEventSocket(event, (event.isTaskEvent ? TASK_CONNECTION : PROJECT_CONNECTION));
 					break;
-				// Several simultaneous project's events.
+				// Several simultaneous events (could be project and task's events).
 				case "newEvents":
-					console.log("HTTP: received several simultaneous project's events.");
+					console.log("HTTP: received several simultaneous events.");
 					var objectSize = Object.keys(fields).length;
 					// Send each request.
 					for (var i = 0; i < objectSize - 1; ++i) {
 						// Parse event's data to JSON.
 						var event = JSON.parse(fields["events[" + i + "]"]);
 						// Send the received event to all concerned clients.
-						sendEventSocket(event, PROJECT_CONNECTION);
+						sendEventSocket(event, (event.isTaskEvent ? TASK_CONNECTION : PROJECT_CONNECTION));
 					}
-					break;
-				// An event is received from a task page.
-				case "newTaskEvent":
-					console.log("HTTP: received a new task's event.");
-					// Parse event's data to JSON.
-					var event = JSON.parse(fields.event);
-					// Send the received event to all concerned clients.
-					sendEventSocket(event, TASK_CONNECTION);
 					break;
 			}
 
