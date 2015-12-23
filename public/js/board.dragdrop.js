@@ -73,21 +73,20 @@ $(document).ready(function() {
                   var oldSection = oldTarget.getAttribute('section');
                   var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
                   var targetSection = $(e.target).closest('[section]').attr('section');
+                  var isManager = $('#hidden').attr('is-manager');
                   
                   if(targetMemberId !== oldMemberId)
                   {
                      bootbox.confirm('Are sure you want to assign this task to another member ?', function(result) {
                         if(result === true) {
-                           moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection);
-
+                           moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection, task);
                            section.appendChild(task);
                         }
                      });
                   }
                   else
                   {
-                     moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection);
-
+                     moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection, task);
                      section.appendChild(task);
                   }
 
@@ -128,6 +127,8 @@ $(document).ready(function() {
             "event": eventData
          }));
       });
+      
+      
    }
    
    function closestWithClass(target, className) {

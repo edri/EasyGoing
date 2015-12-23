@@ -57,6 +57,7 @@ class ProjectController extends AbstractActionController
 
    public function indexAction()
    {
+      $sessionUser = new container('user');
       $project = $this->_getTable('ProjectTable')->getProject($this->params('id'));
       $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
       $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
@@ -64,13 +65,16 @@ class ProjectController extends AbstractActionController
       $eventsTypes = $this->_getTable('EventTypeTable')->getTypes(false);
       // Get project's events.
       $events = $this->_getTable('ViewEventTable')->getEntityEvents($this->params('id'), false);
+      $isManager = $this->_userIsAdminOfProject($sessionUser->id, $this->params('id'));
 
+      
       return new ViewModel(array(
          'project'      => $project,
          'tasks'        => $tasks,
          'members'      => $members,
          'eventsTypes'  => $eventsTypes,
-         'events'       => $events
+         'events'       => $events,
+         'isManager'    => $isManager ? 'true' : 'false'
       ));
    }
 
@@ -293,7 +297,9 @@ class ProjectController extends AbstractActionController
         || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['taskId']))
       {
          $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
-         $this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['targetMemberId'], $data['taskId']);
+         
+         if($data['oldMemberId'] != $data['targetMemberId'])
+            $this->_getTable('UsersTasksAffectationsTable')->updateTaskAffectation($data['oldMemberId'], $data['taskId'], $data['targetMemberId']);
       }
       else
       {
@@ -336,7 +342,7 @@ class ProjectController extends AbstractActionController
 
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
-         // TODO : Finir les droits et faire suppression de la tâche
+         $this->_getTable('TaskTable')->deleteTask($taskId);
       }
       else
       {
@@ -526,8 +532,6 @@ class ProjectController extends AbstractActionController
 
    private function _userIsAdminOfProject($userId, $projectId)
    {
-      $sessionUser = new container('user');
-
       return $this->_getTable('ViewProjectMinTable')->userIsAdminOfProject($userId, $projectId);
    }
 

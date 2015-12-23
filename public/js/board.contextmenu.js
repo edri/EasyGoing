@@ -7,7 +7,7 @@ $(document).ready(function() {
 
          switch(key) {
             case 'delete':
-               bootbox.confirm("Are you sure you want to delete this task ?", function(result) {
+               bootbox.confirm("Are you sure you want to delete this task ? All affectations will be deleted !", function(result) {
                   if(result === true) {
                      $.get(window.location.href + '/deleteTask/' + taskId, function(data) {
                         var data = JSON.parse(data);
@@ -16,6 +16,8 @@ $(document).ready(function() {
                         {
                            case 'Delete success':
                               addBootstrapAlert('board-alert-container', data.message, 'success');
+                              // TODO : Enlever la ligne dessous quand les events seront faits pour la suppression
+                              $('#board-container').load(window.location.href + '/boardViewMembers');
                               break;
 
                            default:
