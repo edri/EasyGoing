@@ -400,10 +400,19 @@ class ProjectController extends AbstractActionController
             // new websocket related to the new event.
             $client = new Client('http://127.0.0.1:8002');
             $client->setMethod(Request::METHOD_POST);
-            // Setting POST data.
+            // Setting POST data for the project page.
             $client->setParameterPost(array(
                "requestType"  => "newEvent",
                "event"        => json_encode($event)
+            ));
+            // Send HTTP request to server.
+            $response = $client->send();
+            // Send a delete request to inform users which are currently in the task page.
+            // Setting POST data for the project page.
+            $client->setParameterPost(array(
+               "requestType"  => "taskDeleted",
+               "taskId"       => $taskId,
+               "username"     => $sessionUser->username
             ));
             // Send HTTP request to server.
             $response = $client->send();

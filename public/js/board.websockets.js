@@ -95,7 +95,6 @@ $(document).ready(function() {
 
                      $('#board-container').load(window.location.href + '/boardViewMembers');
                   }
-
                   break;
                // Received a socket indicating an element's moving.
                case "taskMovingEvent":
@@ -131,7 +130,14 @@ $(document).ready(function() {
                      $("#eventIn" + data.event.type + " #taskEvent" + data.event.id).text(data.event.message);
                      $("#" + data.event.type.toLowerCase() + " > div[name='eventIn" + data.event.type + "']").first().show("fast");
                   }
-
+                  break;
+               // New tasks deletion event received ; inform the user and redirect it back
+               // to the project's page.
+               case "taskDeleted":
+                  // Show an information dialog and redirect back the user.
+                  bootbox.alert("Oops <u>" + data.username + "</u> just deleted the task you currently are in...<br/>You're going to be automatically redirected once this window is closed.", function() {
+                     window.location.href = "/project/" + projectId;
+                  });
                   break;
             }
          } catch (e) {

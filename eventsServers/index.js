@@ -88,15 +88,38 @@ function sendEventSocket(eventData, sendTo) {
 // Send a message to every connected users that currently are in the project in which
 // the task was moved so they can dynamically move it.
 function sendTaskMovingSocket(data, fromConnection) {
-	console.log("WEBSOCKET: Send task-moving socket to every concerned clients...");
+	console.log("WEBSOCKET: send task-moving socket to every concerned clients...");
 	data.messageType = "taskMovingEvent";
 
 	socketServer.connections.forEach(function(connection) {
 		// Check every connection's project's ID and send message to the right ones.
-		if (connection.connectionType === PROJECT_CONNECTION && !data.isTaskEvent && connection.projectId === data.linkedEntityId) {
-			if (connection != fromConnection) {
+		if (connection.connectionType === PROJECT_CONNECTION &&
+			!data.isTaskEvent &&
+			connection.projectId === data.linkedEntityId &&
+			connection != fromConnection) {
 				connection.sendText(JSON.stringify(data));
-			}
+		}
+	})
+}
+
+// Send a websocket to every users that currently are in the deleted task's page so
+// they can leave it.
+// Parameters:
+//		- taskId: the deleted task's ID.
+//		- username: the name of the user who deleted the task.
+function sendTaskDeletion(taskId, username) {
+	var data = {
+		"messageType": "taskDeleted",
+		"taskId": taskId,
+		"username": username
+	}
+
+	console.log("WEBSOCKET: send task #" + taskId + "'s deletion event to every concerned clients...");
+
+	socketServer.connections.forEach(function(connection) {
+		// Check every connection's task's ID and send message to the right ones.
+		if (connection.connectionType === TASK_CONNECTION && connection.taskId === taskId) {
+			connection.sendText(JSON.stringify(data));
 		}
 	})
 }
@@ -135,6 +158,10 @@ function handleRequest(req, res) {
 						// Send the received event to all concerned clients.
 						sendEventSocket(event, (event.isTaskEvent ? TASK_CONNECTION : PROJECT_CONNECTION));
 					}
+					break;
+				// Occured when a task has been deleted.
+				case "taskDeleted":
+					sendTaskDeletion(fields.taskId, fields.username);
 					break;
 			}
 
