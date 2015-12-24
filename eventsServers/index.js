@@ -114,7 +114,7 @@ function sendTaskDeletion(taskId, username) {
 		"username": username
 	}
 
-	console.log("WEBSOCKET: send task #" + taskId + "'s deletion event to every concerned clients...");
+	console.log("WEBSOCKET: send task #" + taskId + "'s deletion message to every concerned clients...");
 
 	socketServer.connections.forEach(function(connection) {
 		// Check every connection's task's ID and send message to the right ones.
@@ -161,6 +161,7 @@ function handleRequest(req, res) {
 					break;
 				// Occured when a task has been deleted.
 				case "taskDeleted":
+					console.log("HTTP: received a task's deletion message.");
 					sendTaskDeletion(fields.taskId, fields.username);
 					break;
 			}
