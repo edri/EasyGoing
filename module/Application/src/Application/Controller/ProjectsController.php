@@ -163,11 +163,6 @@ class ProjectsController extends AbstractActionController
 								}
 								while (file_exists(getcwd() . "/public/img/projects/" . $fileName));
 
-								//move_uploaded_file($_FILES['logo']['tmp_name'], getcwd() . "/public/img/projects/" . $fileName . "tmp");
-
-								// Reduction of the image's weight and save it.
-								//$this->resizeImageWeight($_FILES["logo"]["tmp_name"], getcwd() . "/public/img/projects/" . $fileName, $extension);
-
 								// Create a thumbnail (50px) of the image and save it in the hard drive of the server.
 								$this->_getUtilities()->createSquareImage($_FILES["logo"]["tmp_name"], $extension, getcwd() . "/public/img/projects/" . $fileName, 50);
 							}

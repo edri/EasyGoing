@@ -26,6 +26,20 @@ class UserController extends AbstractActionController
 {
 	// The user's model used to communicate with the database.
 	private $userTable;
+	// Will contain the Utility class.
+	private $_utilities;
+
+	// Get utilities functions.
+	// Act as a singleton : we only can have one instance of the object.
+	private function _getUtilities()
+	{
+
+		if (!$this->_utilities) {
+			$sm = $this->getServiceLocator();
+			$this->_utilities = $sm->get('Application\Utility\Utilities');
+		}
+		return $this->_utilities;
+	}
 
 	// Get the user's table's entity, represented by the created model.
 	// Act as a singleton : we only can have one instance of the object.
@@ -117,19 +131,17 @@ class UserController extends AbstractActionController
 
 			$result = "success";
 			// POST action's values.
-			$password1 = (empty($_POST["password1"]) ? "******" : $_POST["password1"]);
+			$password1 = (empty($_POST["password1"]) ? "-" :$_POST["password1"]);
 			//$password1 = $_POST["password1"];
-			$password2 = (empty($_POST["password2"]) ? "******" : $_POST["password2"]);
+			$password2 =  (empty($_POST["password2"]) ? "-" :$_POST["password2"]);
 
-			$fname = (empty($_POST["fname"]) ? "*****" : $_POST["fname"]);
-			$lname= (empty($_POST["lname"]) ? "******" : $_POST["lname"]);
-	  		$email =  (empty($_POST["email"]) ? "******" : $_POST["email"]);
-			$username= (empty($_POST["username"]) ? "******" : $_POST["username"]);
-		  	$picture = (empty($_POST["picture"]) ? "default.png" : $_POST["picture"]);
+			$fname = (empty($_POST["fname"]) ? "-" : $_POST["fname"]);
+			$lname= (empty($_POST["lname"]) ? "-" : $_POST["lname"]);
+	  	$email = (empty($_POST["email"]) ? "-" :$_POST["email"]);
+			$username= (empty($_POST["username"]) ? "-" :$_POST["username"]);
+		  $fileName ="default.png";
 
 				// Checks the fields.
-				if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
-				{
 
 					// The two passwords must match.
 					if ($password1 == $password2)
@@ -148,7 +160,7 @@ class UserController extends AbstractActionController
 									// Allowed file's extensions.
 									$allowedExts = array("jpeg", "JPEG", "jpg", "JPG", "png", "PNG");
 									// Get the file's extension.
-									$temp = explode(".", $picture);
+									$temp = explode(".", $fileName);
 									$extension = end($temp);
 									// Validates the file's size.
 									if ($_FILES["picture"]["size"] > 5 * 1024 * 1024 || !$_FILES["picture"]["size"])
@@ -188,13 +200,10 @@ class UserController extends AbstractActionController
 											}
 											while (file_exists(getcwd() . "/public/img/users/" . $fileName));
 
-											//move_uploaded_file($_FILES['logo']['tmp_name'], getcwd() . "/public/img/projects/" . $fileName . "tmp");
-
-											// Reduction of the image's weight and save it.
-											//$this->resizeImageWeight($_FILES["logo"]["tmp_name"], getcwd() . "/public/img/projects/" . $fileName, $extension);
+											move_uploaded_file($_FILES['picture']['tmp_name'], $_FILES['picture']['tmp_name']);
 
 											// Create a thumbnail (50px) of the image and save it in the hard drive of the server.
-											$this->getUtilities()->createSquareImage($_FILES["picture"]["tmp_name"], $extension, getcwd() . "/public/img/users/" . $fileName, 50);
+											$this->_getUtilities()->createSquareImage($_FILES["picture"]["tmp_name"], $extension, getcwd() . "/public/img/users/" . $fileName, 50);
 										}
 										catch (Exception $e)
 										{
@@ -207,7 +216,7 @@ class UserController extends AbstractActionController
 								{
 									//then we allow the registration
 										$userId = $this->_getUserTable()->addUser($username, $this->_hashPassword($password1),
-									  											  $fname, $lname, $email, $picture);
+									  											  $fname, $lname, $email, $fileName);
 								}
 								catch (\Exception $e)
 								{
@@ -236,18 +245,13 @@ class UserController extends AbstractActionController
 				else
 					return new ViewModel(array(
 						'result' 			=> $result,
-						'username' 			=> $username,
+						'username' 		=> $username,
 						'email'				=> $email,
 						'password1' 	=>$password1,
-					//	'password2' 	=>$password2,
 						'fName'				=> $fname,
 						'lName'				=> $lname,
+						'picture'			=> isset($fileName) ? $fileName : "default.png"
 					));
-
-			}
-			else{
-				$result = "errorFieldEmpty";
-			}
 		}
 
 		return new ViewModel();
