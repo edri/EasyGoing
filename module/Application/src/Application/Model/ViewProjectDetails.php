@@ -5,20 +5,20 @@ namespace Application\Model;
 // project's data.
 class ViewProjectDetails
 {
-	public $projectId;
-	public $name;
-	public $description;
-	public $startDate;
-	public $deadLineDate;
-	public $userId;
+   public $projectId;
+   public $name;
+   public $description;
+   public $startDate;
+   public $deadLineDate;
+   public $userId;
 
-	public function exchangeArray($data)
-	{
-		$this->projectId  = (!empty($data['projectId'])) ? $data['projectId'] : null;
-		$this->name  = (!empty($data['name'])) ? $data['name'] : null;
-		$this->description  = (!empty($data['description'])) ? $data['description'] : null;
-		$this->startDate  = (!empty($data['startDate'])) ? $data['startDate'] : null;
-		$this->deadLineDate  = (!empty($data['deadLineDate'])) ? $data['deadLineDate'] : null;
-		$this->userId  = (!empty($data['userId'])) ? $data['userId'] : null;
-	}
+   public function exchangeArray($data)
+   {
+      $this->projectId  = (!empty($data['projectId'])) ? $data['projectId'] : null;
+      $this->name  = (!empty($data['name'])) ? $data['name'] : null;
+      $this->description  = (!empty($data['description'])) ? $data['description'] : null;
+      $this->startDate  = (!empty($data['startDate'])) ? $data['startDate'] : null;
+      $this->deadLineDate  = (!empty($data['deadLineDate'])) ? $data['deadLineDate'] : null;
+      $this->userId  = (!empty($data['userId'])) ? $data['userId'] : null;
+   }
 }

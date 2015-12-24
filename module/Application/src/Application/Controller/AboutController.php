@@ -20,11 +20,11 @@ use Zend\Session\Container;
 // About controller ; will be calling when the user access the "easygoing/about" page.
 // Be careful about the class' name, which must be the same as the file's name.
 class AboutController extends AbstractActionController
-{
-	// Default action of the controller.
-	public function indexAction()
-	{
-		// For linking the right action's view.
-		return new ViewModel();
-	}
+{   
+   // Default action of the controller.
+   public function indexAction()
+   {
+      // For linking the right action's view.
+      return new ViewModel();
+   }
 }

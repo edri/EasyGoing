@@ -39,6 +39,21 @@ use Application\Model\ViewUsersTasks;
 use Application\Model\ViewUsersTasksTable;
 use Application\Model\UsersTasksAffectations;
 use Application\Model\UsersTasksAffectationsTable;
+use Application\Model\ViewTasksUsers;
+use Application\Model\ViewTasksUsersTable;
+use Application\Model\Event;
+use Application\Model\EventTable;
+use Application\Model\EventOnProjects;
+use Application\Model\EventOnProjectsTable;
+use Application\Model\EventUser;
+use Application\Model\EventUserTable;
+use Application\Model\ViewEvent;
+use Application\Model\ViewEventTable;
+use Application\Model\EventType;
+use Application\Model\EventTypeTable;
+use Application\Model\EventOnTask;
+use Application\Model\EventOnTaskTable;
+
 
 @ini_set('zend_monitor.enable', 0);
 if(@function_exists('output_cache_disable')) {
@@ -217,7 +232,7 @@ class Module
                     $resultSetPrototype->setArrayObjectPrototype(new UsersTasksAffectations());
                     return new TableGateway('usersTasksAffectations', $dbAdapter, null, $resultSetPrototype);
                 },
-                'Application\Model\UsersTasksAffectations' =>  function($sm) {
+                'Application\Model\UsersTasksAffectationsTable' =>  function($sm) {
                     $tableGateway = $sm->get('UsersTasksAffectationsTableGateway');
                     $table = new UsersTasksAffectationsTable($tableGateway);
                     return $table;
@@ -231,6 +246,83 @@ class Module
                 'Application\Model\ViewProjectsMembersSpecializationsTable' =>  function($sm) {
                     $tableGateway = $sm->get('ViewProjectsMembersSpecializationsTableGateway');
                     $table = new ViewProjectsMembersSpecializationsTable($tableGateway);
+                    return $table;
+                },
+                'ViewTasksUsersTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ViewTasksUsers());
+                    return new TableGateway('view_tasks_users', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ViewTasksUsersTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ViewTasksUsersTableGateway');
+                    $table = new ViewTasksUsersTable($tableGateway);
+                    return $table;
+                },
+                'EventTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Event());
+                    return new TableGateway('events', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\EventTable' =>  function($sm) {
+                    $tableGateway = $sm->get('EventTableGateway');
+                    $table = new EventTable($tableGateway);
+                    return $table;
+                },
+                'EventOnProjectsTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new EventOnProjects());
+                    return new TableGateway('eventsOnProjects', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\EventOnProjectsTable' =>  function($sm) {
+                    $tableGateway = $sm->get('EventOnProjectsTableGateway');
+                    $table = new EventOnProjectsTable($tableGateway);
+                    return $table;
+                },
+                'EventUserTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new EventUser());
+                    return new TableGateway('eventsUsers', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\EventUserTable' =>  function($sm) {
+                    $tableGateway = $sm->get('EventUserTableGateway');
+                    $table = new EventUserTable($tableGateway);
+                    return $table;
+                },
+                'ViewEventTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ViewEvent());
+                    return new TableGateway('view_events', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ViewEventTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ViewEventTableGateway');
+                    $table = new ViewEventTable($tableGateway);
+                    return $table;
+                },
+                'EventTypeTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new EventType());
+                    return new TableGateway('eventTypes', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\EventTypeTable' =>  function($sm) {
+                    $tableGateway = $sm->get('EventTypeTableGateway');
+                    $table = new EventTypeTable($tableGateway);
+                    return $table;
+                },
+                'EventOnTaskTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new EventOnTask());
+                    return new TableGateway('eventsOnTasks', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\EventOnTaskTable' =>  function($sm) {
+                    $tableGateway = $sm->get('EventOnTaskTableGateway');
+                    $table = new EventOnTaskTable($tableGateway);
                     return $table;
                 },
 				// Configure the session service.

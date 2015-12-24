@@ -1,0 +1,16 @@
+{
+  "name": "easygoing-websocket-server",
+  "version": "1.0.0",
+  "description": "Node server used to send and receive websockets through the Easygoing application.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edri/EasyGoing.git"
+  },
+  "author": "Miguel Santamaria",
+  "license": "ISC",
+  "dependencies": {
+    "formidable": "^1.0.17",
+    "nodejs-websocket": "^1.4.1"
+  }
+}

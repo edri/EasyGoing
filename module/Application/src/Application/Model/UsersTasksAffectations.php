@@ -12,4 +12,6 @@ class UsersTasksAffectations
       $this->user  = (!empty($data['user'])) ? $data['user'] : null;
       $this->task  = (!empty($data['task'])) ? $data['task'] : null;
    }
+   
+
 }

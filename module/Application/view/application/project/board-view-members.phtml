@@ -1,0 +1,88 @@
+<?php use Application\Utility\Priority; ?>
+
+
+<?php
+   echo $this->headScript()
+               ->prependFile($this->basePath() . '/js/board.contextmenu.js')
+               ->prependFile($this->basePath() . '/js/board.dragdrop.js');
+
+   function taskRendering($member, $task)
+   {
+      $priorityClass = "medium-priority";
+      switch($task->priorityLevel)
+      {
+         case 1:
+            $priorityClass = "high-priority";
+            break;
+         case 3:
+            $priorityClass = "low-priority";
+            break;
+      }
+
+      $taskContent =
+         '<div id='.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task '.$priorityClass.'">' .
+            $task->name .
+            '<div class="task-details"><a href="/project/' . $task->project . '/taskDetails/' . $task->id . '">Details...</a></div>
+         </div>';
+
+      return $taskContent;
+   }
+?>
+
+<div class="board-header">
+  <div class="board-header-section">
+     <h1>Members</h1>
+  </div>
+  <div class="board-header-section">
+     <h1>To do</h1>
+  </div>
+  <div class="board-header-section">
+     <h1>Doing</h1>
+  </div>
+  <div class="board-header-section">
+     <h1>Done</h1>
+  </div>
+</div>
+
+<?php foreach ($members as $member): ?>
+<div class="board" member-id="<?php echo $member->id; ?>">
+  <div class="board-first-column" section="board-user">
+    <img class="imgMember" draggable="false" src="<?php echo $this->basePath('img/users/'.$member->filePhoto); ?>">
+    <h4 class="memberName"><?php echo $member->firstName . ' ' . $member->lastName; ?></h4>
+    <span class="memberUsername"><?php echo $member->username; ?></span>
+  </div>
+  <div class="board-section" id="todo" section="TODO">
+     <?php
+     foreach($tasksForMember[$member->id] as $task)
+     {
+        if($task->state == "TODO")
+        {
+           echo taskRendering($member, $task);
+        }
+     }
+     ?>
+  </div>
+  <div class="doing board-section" id="doing" section="DOING">
+     <?php
+     foreach($tasksForMember[$member->id] as $task)
+     {
+        if($task->state == "DOING")
+        {
+           echo taskRendering($member, $task);
+        }
+     }
+     ?>
+  </div>
+  <div class="done board-section" id="done" section="DONE">
+     <?php
+     foreach($tasksForMember[$member->id] as $task)
+     {
+        if($task->state == "DONE")
+        {
+           echo taskRendering($member, $task);
+        }
+     }
+     ?>
+  </div>
+</div>
+<?php endforeach; ?>

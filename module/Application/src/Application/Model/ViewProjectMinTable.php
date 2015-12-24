@@ -7,17 +7,27 @@ use Zend\Db\TableGateway\TableGateway;
 // projects and users, with only data to show in the projects' list.
 class ViewProjectMinTable
 {
-	protected $tableGateway;
+   protected $_tableGateway;
 
-	public function __construct(TableGateway $tableGateway)
-	{
-		$this->tableGateway = $tableGateway;
-	}
+   public function __construct(TableGateway $tableGateway)
+   {
+      $this->_tableGateway = $tableGateway;
+   }
 
-	// Get and return the list of an user's projects, by its ID.
-	public function getUserProjects($userId)
-	{
-		$resultSet = $this->tableGateway->select(array("userId" => $userId));
-		return $resultSet;
-	}
+   // Get and return the list of an user's projects, by its ID.
+   public function getUserProjects($userId)
+   {
+      $resultSet = $this->_tableGateway->select(array("userId" => $userId));
+      return $resultSet;
+   }
+   
+   public function userIsAdminOfProject($userId, $projectId)
+   {
+      $result = $this->_tableGateway->select(array(
+         'id'     => $projectId,
+         'userId' => $userId
+      ))->current();
+      
+      return $result->isAdmin ? true : false;
+   }
 }
