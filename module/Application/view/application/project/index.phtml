@@ -1,13 +1,125 @@
 <h1>Dashboard - <?php echo $project->name; ?></h1>
-<p>Description : <?php echo $project->description; ?></p>
-<p>Durée : du <?php echo $project->startDate . ' au ' . $project->deadLineDate; ?></p>
-<a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a> -
-<a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
-<button class="btn btn-info" onclick="loadBoardViewMembers();">Board view members</button>
-<button class="btn btn-info" onclick="loadBoardViewTasks();">Board view tasks</button>
-<button class="btn btn-info" onclick="testWebsocket();">Test websockets</button>
+<hr>
+<div class="projectHeader">
+   <div class="leftPart">
+      <p><u>Description</u> : <?php echo $this->escapeHtml($project->description); ?></p>
+      <p><u>Durée</u> : du <?php echo date('d.m.Y', strtotime($project->startDate)) . ' au ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
+      <p>
+         <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a><br/>
+         <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
+      </p>
+   </div>
+
+    <div class="rightPart">
+        <div>
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs tabsMain" id="historicalTabs" role="tablist">
+                <li role="presentation" class="active firstTab">
+                   <a href="#all" aria-controls="all" role="tab" data-toggle="tab" style="outline: 0 none;">
+                      All
+                   </a>
+                </li>
+                <li role="presentation">
+                   <a href="#project" aria-controls="project" role="tab" data-toggle="tab" style="outline: 0 none;">
+                      Project
+                   </a>
+                </li>
+                <li role="presentation">
+                   <a href="#tasks" aria-controls="tasks" role="tab" data-toggle="tab" style="outline: 0 none;">
+                      Tasks
+                   </a>
+                </li>
+                <li role="presentation">
+                   <a href="#users" aria-controls="users" role="tab" data-toggle="tab" style="outline: 0 none;">
+                      Users
+                   </a>
+                </li>
+                <li class="historicalTitle">Historical</li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content historicalTab">
+               <div role="tabpanel" class="tab-pane fade in active" id="all">
+               <?php
+                  foreach ($events as $e)
+                  {
+               ?>
+                     <div class="eventElem" name="eventInAll">
+                        <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
+                        <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
+                     </div>
+               <?php
+                  }
+                ?>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="project">
+                   <?php
+                     foreach ($events as $e)
+                     {
+                        if ($e->type == "Project")
+                        {
+                  ?>
+                           <div class="eventElem" name="eventInProject">
+                              <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
+                              <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
+                           </div>
+                  <?php
+                        }
+                     }
+                   ?>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="tasks">
+                   <?php
+                    foreach ($events as $e)
+                    {
+                       if ($e->type == "Tasks")
+                       {
+                 ?>
+                          <div class="eventElem" name="eventInTasks">
+                             <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
+                             <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
+                          </div>
+                 <?php
+                       }
+                    }
+                 ?>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="users">
+                   <?php
+                    foreach ($events as $e)
+                    {
+                       if ($e->type == "Users")
+                       {
+                 ?>
+                          <div class="eventElem" name="eventInUsers">
+                             <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
+                             <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
+                          </div>
+                 <?php
+                       }
+                    }
+                 ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br/><hr/>
 <p id="result"></p>
+<p class="boardButtons">
+   <div class="btn-group" data-toggle="buttons">
+      <label class="btn active btnEasygoing">
+         <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
+      </label>
+      <label class="btn btnEasygoing">
+         <input type="radio" name="options" id="option2" autocomplete="off" onchange="loadBoardViewTasks();"> View per tasks
+      </label>
+   </div>
+</p>
+
 <div id="board-container"></div>
+
 <br><br><hr><br>
 <br>
 <div class="container-fluid">
@@ -17,7 +129,7 @@
             <div class="panel-heading">Tasks</div>
             <div class="panel-body">
                <?php foreach ($tasks as $task) : ?>
-               <p><?php echo $task->name; ?></p>
+               <p><a href="<?php echo $this->serverUrl(true)."/editTask/".$task->id; ?>"><?php echo $task->name; ?></a><p>
                <?php endforeach; ?>
             </div>
          </div>
@@ -32,31 +144,25 @@
             </div>
          </div>
       </div>
-      <div class="col-md-6">
-         <div class="panel panel-default">
-            <div class="panel-heading">Test</div>
-            <div class="panel-body">
-               <pre>
-               <?php foreach ($tasksForMember as $t) : ?>
-               <p><?php var_dump($t); ?></p>
-               <?php endforeach; ?>
-               </pre>
-            </div>
-         </div>
-      </div>
    </div>
 </div>
 
 <script>
-$('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewMembers"'; ?>);
-function loadBoardViewMembers()
-{
-   $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewMembers"'; ?>);
-}
-function loadBoardViewTasks()
-{
-   $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewTasks"'; ?>);
-}
+    function loadBoardViewMembers() {
+       $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewMembers"'; ?>);
+    }
 
-loadBoardViewMembers();
+    function loadBoardViewTasks() {
+       $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewTasks"'; ?>);
+    }
+
+    $(document).ready(function() {
+        loadBoardViewMembers();
+
+        // Enable tabbable tabs on the historical panel.
+        $("#historicalTabs a").click(function(event) {
+            event.preventDefault();
+            $(this).tab("show");
+        });
+    });
 </script>

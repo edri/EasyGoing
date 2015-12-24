@@ -1,65 +1,127 @@
 <?php
-	echo $this->doctype();
+   echo $this->doctype();
 ?>
 
 <?php
-				use Zend\Session\Config\SessionConfig;
-				use Zend\Session\Container;
+   use Zend\Session\Config\SessionConfig;
+   use Zend\Session\Container;
 
-				$sessionUser = new container('user');
+   $sessionUser = new container('user');
 ?>
 
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <?php echo $this->headTitle('EasyGoing')->setSeparator(' - ')->setAutoEscape(false) ?>
+   <head>
+      <meta charset="utf-8">
+      <?php echo $this->headTitle('EasyGoing')->setSeparator(' - ')->setAutoEscape(false) ?>
 
-        <?php echo $this->headMeta()
-            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
-            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
-        ?>
+      <?php echo $this->headMeta()
+         ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+         ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+      ?>
 
         <!-- Styles -->
-	<?php
-		if ($_SERVER['APPLICATION_ENV'] == 'development')
-		{
-			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
-                  ->prependStylesheet($this->basePath() . '/css/style.css')
-                  ->prependStylesheet($this->basePath() . '/css/bootstrap-datepicker.css')
-                  ->prependStylesheet($this->basePath() . '/css/bootstrap-datetimepicker.min.css')
-						->prependStylesheet($this->basePath() . '/css/bootstrap.min.css');
+      <?php
+      	if ($_SERVER['APPLICATION_ENV'] == 'development')
+      	{
+      		echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
+                     ->prependStylesheet($this->basePath() . '/css/style.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datepicker.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datetimepicker.min.css')
+      					->prependStylesheet($this->basePath() . '/css/libraries/bootstrap.min.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/contextmenu.css');
 
-		}
-		else
-		{
-			echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
-                  ->prependStylesheet($this->basePath() . '/css/style.css')
-                  ->prependStylesheet($this->basePath() . '/css/bootstrap-datepicker.css')
-                  ->prependStylesheet($this->basePath() . '/css/bootstrap-datetimepicker.min.css')
-						->prependStylesheet($this->basePath() . '/css/bootstrap.min.css');
-		}
-	?>
+      	}
+      	else
+      	{
+      		echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
+                     ->prependStylesheet($this->basePath() . '/css/style.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datepicker.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datetimepicker.min.css')
+      					->prependStylesheet($this->basePath() . '/css/libraries/bootstrap.min.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/contextmenu.css');
+      	}
+      ?>
 
         <!-- Scripts -->
 		<?php
-			echo $this->headScript()->prependFile($this->basePath() . '/js/bootstrap-datepicker.js')
-                              			->prependFile($this->basePath() . '/js/bootstrap.min.js')
-										->prependFile($this->basePath() . '/js/jquery.min.js')
-                                        ->prependFile($this->basePath() . '/js/tuto.js');
+			echo $this->headScript()
+                     ->prependFile($this->basePath() . '/js/libraries/jquery.ui.position.js')
+                     ->prependFile($this->basePath() . '/js/libraries/jquery.contextmenu.js')
+                     ->prependFile($this->basePath() . '/js/libraries/bootstrap-datepicker.js')
+            			->prependFile($this->basePath() . '/js/libraries/bootstrap.min.js')
+						   ->prependFile($this->basePath() . '/js/libraries/jquery.min.js')
+                     ->prependFile($this->basePath() . '/js/tuto.js');
         ?>
     </head>
+
+    <script type="application/javascript">
+
+        var tutoData;
+        var current = 0;
+
+        var nextTutorial = function() {
+
+            var d = tutoData[current];
+
+            $("div[role=tutorial][id = " + d.div + "]").html(
+                "<img src=/img/tuto.png /> " + d.text + "<a href='#' onClick='nextTutorial()'>   Next</a>"
+            ).fadeIn();
+
+            $("div[role=tutorial][id != " + d.div + "]").fadeOut();
+
+            current = (current + 1) % tutoData.length;
+
+        };
+
+        function loadTutorial(tuto) {
+
+                Tutorial(tuto, function(data) {
+
+                $("div[role=tutorial]").each(function() {
+                    var div = $(this);
+                    var position = div.position();
+
+                    div.css({
+                        position: 'absolute',
+                        top: position.top,
+                        left: position.left,
+                        width: position.width,
+                        height: position.heigth,
+                        paddingLeft: 25,
+                        paddingRight: 25,
+                        paddingBottom: 10,
+                        paddingTop: 10,
+                        borderRadius: 10,
+                        background: "lightblue",
+                        borderStyle: "solid"
+                    });
+
+                });
+
+                tutoData = data;
+                nextTutorial();
+            });
+        };
+
+    </script>
+
     <body>
 	<div class="header">
 	   <div class="container">
 	      <a href="/" class="title"><img class="logo" src="<?php echo $this->basePath('img/title.svg'); ?>" height=70 /></a>
-		  <div class="headerLinks">
-		      <a href="<?php echo $this->basePath('projects'); ?>" class="btn btnHeaderSelected btn-link" type="button">Projects</a>
-		      <a href="<?php echo $this->basePath('edit'); ?>" class="btn btnHeader btn-link" type="button">Account</a>
-		  </div>
-	      <div class="headerRight">
-	         <span class="loginInformation">Logged in as <b> <?php echo $sessionUser->username; ?> </b></span>
-	         <a href="/logout" id="btnLogout" class="btn btnLogout btnEasygoing" type="button">Logout</a>
-	      </div>
+		  <?php
+		  	if ($sessionUser && $sessionUser->connected)
+			{
+		  ?>
+			  <div class="headerLinks">
+			      <a href="<?php echo $this->basePath('projects'); ?>" class="btn btnHeaderSelected btn-link" type="button">Projects</a>
+			      <a href="<?php echo $this->basePath('edit'); ?>" class="btn btnHeader btn-link" type="button">Account</a>
+			  </div>
+		      <div class="headerRight">
+		         <span class="loginInformation">Logged in as <b> <?php echo $sessionUser->username; ?> </b></span>
+		         <a href="/logout" id="btnLogout" class="btn btnLogout btnEasygoing" type="button">Logout</a>
+		      </div>
+		 <?php } ?>
 	   </div>
 	</div>
 	<div class="container">

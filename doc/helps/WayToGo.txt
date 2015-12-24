@@ -1,3 +1,5 @@
+TODO : COMPOSER
+
 1.	Placer le dossier du projet dans le répertoire "www" de "Wamp".
 2.	"C:/Windows/System32/drivers/etc/hosts" => 127.0.0.1	easygoing ; si problème => ouvrir en tant qu'administrateur.
 3. 	Wamp/bin/apache/conf/httpd.conf 
@@ -21,3 +23,25 @@
 5.	Linux :  
 		cd /opt/lampp
 		sudo chmod 777 -R htdocs
+
+Pour pouvoir utiliser les WebSockets :
+	1. Se rendre dans le fichier php.ini du serveur.
+	2. Décommenter la ligne suivante, si cela n'est pas déjà fait :
+		;extension=php_ldap.dll
+	3. Sur Linux dans la console :
+		sudo apt-get install php5-ldap
+
+
+WINDOWS :
+	TOKEN
+		1. https://github.com/settings/tokens/new?scopes=repo&description=Composer+on+ASUS-RAPHAEL+2015-12-14+1542
+		2. Confirmer mot de passe
+		3. Generate token
+		4. Copier-coller la clé et la garder EN LIEU SÛR !
+
+	1. Installer Composer.
+		Site
+	2. Backup
+	3. php composer.phar install
+	4. Quand le token est demandé, coller la clé générée plus tôt.
+	5. php -q public/index.php websocket open Easygoing

@@ -12,6 +12,7 @@ class ViewUsersProjects
    public $username;
    public $firstName;
    public $lastName;
+   public $filePhoto;
    public $projectId;
 
    public function exchangeArray($data)
@@ -21,6 +22,7 @@ class ViewUsersProjects
       $this->username  = (!empty($data['username'])) ? $data['username'] : null;
       $this->firstName  = (!empty($data['firstName'])) ? $data['firstName'] : null;
       $this->lastName  = (!empty($data['lastName'])) ? $data['lastName'] : null;
+      $this->filePhoto  = (!empty($data['filePhoto'])) ? $data['filePhoto'] : null;
       $this->projectId  = (!empty($data['projectId'])) ? $data['projectId'] : null;
    }
 }

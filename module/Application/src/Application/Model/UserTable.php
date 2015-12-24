@@ -7,6 +7,7 @@ use Zend\Db\Sql\Sql;
 // Contains the methods that allows to work with an user entity.
 class UserTable
 {
+
 	protected $tableGateway;
 
 	public function __construct(TableGateway $tableGateway)

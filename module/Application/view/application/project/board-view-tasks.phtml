@@ -1,39 +1,64 @@
  <div class="board-header">
-   <div class="users section">
+   <div class="board-header-section">
       <h1>Tasks</h1>
    </div>
-   <div class="section">
+   <div class="board-header-section">
       <h1>To do</h1>
    </div>
-   <div class="section">
+   <div class="board-header-section">
       <h1>Doing</h1>
    </div>
-   <div class="section">
+   <div class="board-header-section">
       <h1>Done</h1>
    </div>
 </div>
 
 <?php foreach ($tasks as $task): ?>
 <div class="board" task-id="<?php echo $task->id; ?>">
-   <div class="users section" section="users">
-     <div class="user" draggable="false"><?php echo $task->name; ?></div>
+   <div class="board-first-column" section="board-task">
+     <h4><?php echo $task->name; ?></h4>
    </div>
-   <div class="todo section" section="TODO">
+   <div class="board-section" id="todo" section="TODO">
+      <?php
+         if($task->state == "TODO")
+         {
+            foreach($membersForTask[$task->id] as $member)
+            {
+               echo '<div id="'.$member->email.$task->id.'" member-id="'.$member->id.'" class="board-user"><img draggable="false" class="imgProject" width="40px" src="'.$this->basePath('img/users/'.$member->filePhoto).'"><br>'.$member->firstName.'</div>';
+            }
+            
+         }
+      ?>
    </div>
-   <div class="doing section" section="DOING">
-
+   <div class="board-section" id="doing" section="DOING">
+      <?php
+         if($task->state == "DOING")
+         {
+            foreach($membersForTask[$task->id] as $member)
+            {
+               echo '<div id="'.$member->email.$task->id.'" member-id="'.$member->id.'" class="board-user"><img draggable="false" class="imgProject" width="40px" src="'.$this->basePath('img/users/'.$member->filePhoto).'"><br>'.$member->firstName.'</div>';
+            }
+         }
+      ?>
    </div>
-   <div class="done section" section="DONE">
-
+   <div class="board-section" id="done" section="DONE">
+      <?php
+         if($task->state == "DONE")
+         {
+            foreach($membersForTask[$task->id] as $member)
+            {
+               echo '<div id="'.$member->email.$task->id.'" member-id="'.$member->id.'" class="board-user"><img draggable="false" class="imgProject" width="40px" src="'.$this->basePath('img/users/'.$member->filePhoto).'"><br>'.$member->firstName.'</div>';
+            }
+         }
+      ?>
    </div>
 </div>
 <?php endforeach; ?>
 
 <script>
-var cards = document.querySelectorAll('.card');
-for (var i = 0, n = cards.length; i < n; i++) {
-   var card = cards[i];
-   card.draggable = true;
+var users = document.querySelectorAll('.board-user');
+for (var i = 0, n = users.length; i < n; i++) {
+   users[i].draggable = true;
 };
 var board = document.getElementsByClassName('board');
 var hideMe;
@@ -44,7 +69,7 @@ for (var i in board) {
    board[i].ondragstart = function(e) {
       console.log('dragstart');
       hideMe = e.target;
-      e.dataTransfer.setData('card', e.target.id);
+      e.dataTransfer.setData('board-user', e.target.id);
       e.dataTransfer.effectAllowed = 'move';
    };
    board[i].ondragend = function(e) {
@@ -59,7 +84,7 @@ for (var i in board) {
       }
       // Save this to check in dragleave.
       lastEntered = e.target;
-      var section = closestWithClass(e.target, 'section');
+      var section = closestWithClass(e.target, 'board-section');
       // TODO: Check that it's not the original section.
       if (section) {
          section.classList.add('droppable');
@@ -70,7 +95,7 @@ for (var i in board) {
    board[i].ondragover = function(e) {
       // TODO: Check data type.
       // TODO: Check that it's not the original section.
-      if (closestWithClass(e.target, 'section')) {
+      if (closestWithClass(e.target, 'board-section')) {
          e.preventDefault();
       }
    };
@@ -80,7 +105,7 @@ for (var i in board) {
          // dragleave for outer elements can trigger after dragenter for inner elements
          // so make sure we're really leaving by checking what we just entered.
          // relatedTarget is missing in WebKit: https://bugs.webkit.org/show_bug.cgi?id=66547
-         var section = closestWithClass(e.target, 'section');
+         var section = closestWithClass(e.target, 'board-section');
          if (section && !section.contains(lastEntered)) {
             section.classList.remove('droppable');
          }
@@ -88,29 +113,26 @@ for (var i in board) {
       lastEntered = null; // No need to keep this around.
    };
    board[i].ondrop = function(e) {
-      var section = closestWithClass(e.target, 'section');
-      var id = e.dataTransfer.getData('card');
+      var section = closestWithClass(e.target, 'board-section');
+      var id = e.dataTransfer.getData('board-user');
       if (id) {
-         var task = document.getElementById(id);
+         var member = document.getElementById(id);
          // Might be a card from another window.
-         if (task) {
-            if (section !== card.parentNode) {
+         if (member) {
+            if (section !== member.parentNode) {
 
-               var targetMemberId = e.target.parentNode.getAttribute('member-id');
-               var taskId = task.getAttribute('task-id');
+               var targetTaskId = e.target.parentNode.getAttribute('task-id');
+               var memberId = member.getAttribute('member-id');
                var targetSection = e.target.getAttribute('section');
 
-               console.log('before ajax');
-               $.post("http://easygoing/project/2/moveTask", { taskId: taskId, targetMemberId: targetMemberId, targetSection: targetSection })
-                  .done(function( data ) {
-                     $('#result').append(data);
-               });
+               // TODO : Faire de l'ajax ici
+               console.log('drag drop');
 
-               section.appendChild(task);
+               section.appendChild(member);
 
             }
          } else {
-            alert('couldn\'t find task #' + id);
+            alert('couldn\'t find member #' + id);
          }
       }
       section.classList.remove('droppable');

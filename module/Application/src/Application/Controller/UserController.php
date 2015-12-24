@@ -24,6 +24,7 @@ use Zend\Session\Container;
 // Be careful about the class' name, which must be the same as the file's name.
 class UserController extends AbstractActionController
 {
+
 	// The user's model used to communicate with the database.
 	private $userTable;
 
@@ -93,10 +94,7 @@ class UserController extends AbstractActionController
 					//add session attributes
 					$sessionUser->connected = true;
 					$sessionUser->id = $user->id;
-					$sessionUser->username = $user->username;
-
-					//go To projects
-					$this->redirect()->toRoute();
+					$sessionUser->username = $user->username;					
 
 					//Check if the user has ticked "Remember Me" button
 					//If so, create a cookie
@@ -286,6 +284,7 @@ class UserController extends AbstractActionController
 		$this->redirect()->toRoute('user');
 
 		if (isset($_COOKIE['loginCookie'])) {
+			echo $this->getRequest()->getCookie('loginCookie');
 		    unset($_COOKIE['loginCookie']);	
 		    unset($_COOKIE['idCookie']);		    
 		    setcookie('loginCookie', "", -1);
@@ -313,6 +312,6 @@ class UserController extends AbstractActionController
 	public function cancelAction()
 	{
 			$this->redirect()->toRoute();
-	}
 
+	}
 }

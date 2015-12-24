@@ -70,7 +70,7 @@ CREATE TABLE tasks
 CREATE TABLE eventTypes
 (
     id INT NOT NULL AUTO_INCREMENT,
-    type ENUM('A définir...') NOT NULL UNIQUE,
+    type VARCHAR(20) NOT NULL UNIQUE,
     fileLogo VARCHAR(50),
     PRIMARY KEY(id)
 );
@@ -192,6 +192,14 @@ CREATE VIEW view_users_tasks AS
 		ON ut.task = t.id
 );
 
+DROP VIEW IF EXISTS view_tasks_users;
+CREATE VIEW view_tasks_users AS
+(
+   SELECT * 
+   FROM users AS u INNER JOIN usersTasksAffectations as ut 
+      ON u.id = ut.user
+);
+
 DROP VIEW IF EXISTS view_projects_details;
 CREATE VIEW view_projects_details AS
 (
@@ -199,6 +207,20 @@ CREATE VIEW view_projects_details AS
 	FROM projects AS p INNER JOIN projectsUsersMembers AS pu
 		ON p.id = pu.project
  );
+
+DROP VIEW IF EXISTS view_events;
+CREATE VIEW view_events AS
+    SELECT 
+        et.type, et.fileLogo, e.id, e.date, e.message, ep.project
+    FROM
+        ((eventTypes AS et
+        JOIN events AS e)
+        JOIN eventsOnProjects AS ep)
+    WHERE
+        ((et.id = e.eventType)
+            AND (e.id = ep.event))
+    ORDER BY
+        e.date DESC, e.id DESC;
 
 /* This function check if a user can be affected to a task */
 USE easygoing;
@@ -446,8 +468,8 @@ INSERT INTO users
 VALUES(
 	null, 
 	"miguel.santamaria@heig-vd.ch",
-	"miguelsantamaria",
-	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
+	"edri",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
 	"Miguel",
 	"Santamaria",
 	"default.png",
@@ -476,7 +498,7 @@ WHERE username = 'karimghozlani';
 
 SELECT id INTO @user3
 FROM users
-WHERE username = 'miguelsantamaria';
+WHERE username = 'edri';
 
 SELECT id INTO @user4
 FROM users
@@ -528,5 +550,43 @@ INSERT INTO projectsUsersSpecializations VALUES(@user3, @project2, "Base de donn
 INSERT INTO projectsUsersSpecializations VALUES(@user3, @project2, "Styles CSS");
 INSERT INTO projectsUsersSpecializations VALUES(@user4, @project2, "Node JS");
 INSERT INTO projectsUsersSpecializations VALUES(@user5, @project2, "Internet Explorer");
+
+INSERT INTO eventTypes(type, fileLogo) VALUES("Project", "project.svg");
+INSERT INTO eventTypes(type, fileLogo) VALUES("Tasks", "task.svg");
+INSERT INTO eventTypes(type, fileLogo) VALUES("Users", "user.svg");
+
+INSERT INTO events VALUES(1, NOW(), "<u>raphaelracine</u> created the project.", 1);
+INSERT INTO eventsOnProjects VALUES(1, @project1);
+INSERT INTO eventsUsers VALUES(@user1, 1);
+INSERT INTO events VALUES(2, NOW(), "<u>raphaelracine</u> joined the project.", 3);
+INSERT INTO eventsOnProjects VALUES(2, @project1);
+INSERT INTO eventsUsers VALUES(@user1, 2);
+INSERT INTO events VALUES(3, NOW(), "<u>raphaelracine</u> created the project.", 1);
+INSERT INTO eventsOnProjects VALUES(3, @project2);
+INSERT INTO eventsUsers VALUES(@user1, 3);
+INSERT INTO events VALUES(4, NOW(), "<u>raphaelracine</u> joined the project.", 3);
+INSERT INTO eventsOnProjects VALUES(4, @project2);
+INSERT INTO eventsUsers VALUES(@user1, 4);
+
+
+INSERT INTO events VALUES(5, NOW(), "<u>raphaelracine</u> added user <u>karimghozlani</u> in project.", 3);
+INSERT INTO eventsOnProjects VALUES(5, @project1);
+INSERT INTO eventsUsers VALUES(@user1, 5);
+INSERT INTO events VALUES(6, NOW(), "<u>raphaelracine</u> added user <u>edri</u> in project.", 3);
+INSERT INTO eventsOnProjects VALUES(6, @project1);
+INSERT INTO eventsUsers VALUES(@user1, 6);
+INSERT INTO events VALUES(7, NOW(), "<u>raphaelracine</u> added user <u>thibaudduchoud</u> in project.", 3);
+INSERT INTO eventsOnProjects VALUES(7, @project1);
+INSERT INTO eventsUsers VALUES(@user1, 7);
+
+INSERT INTO events VALUES(8, NOW(), "<u>raphaelracine</u> added user <u>edri</u> in project.", 3);
+INSERT INTO eventsOnProjects VALUES(8, @project2);
+INSERT INTO eventsUsers VALUES(@user1, 8);
+INSERT INTO events VALUES(9, NOW(), "<u>raphaelracine</u> added user <u>thibaudduchoud</u> in project.", 3);
+INSERT INTO eventsOnProjects VALUES(9, @project2);
+INSERT INTO eventsUsers VALUES(@user1, 9);
+INSERT INTO events VALUES(10, NOW(), "<u>raphaelracine</u> added user <u>vanessameguep</u> in project.", 3);
+INSERT INTO eventsOnProjects VALUES(10, @project2);
+INSERT INTO eventsUsers VALUES(@user1, 10);
 
 SET GLOBAL log_bin_trust_function_creators = 0; 
