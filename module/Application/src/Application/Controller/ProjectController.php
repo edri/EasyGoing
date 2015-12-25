@@ -133,8 +133,8 @@ class ProjectController extends AbstractActionController
             $client->setMethod(Request::METHOD_POST);
             // Setting POST data.
             $client->setParameterPost(array(
-               "requestType"  => "newEvent",
-               "event"        => json_encode($event)
+               "requestType"     => "newEvent",
+               "event"           => json_encode($event)
             ));
             // Send HTTP request to server.
             $response = $client->send();
@@ -216,6 +216,20 @@ class ProjectController extends AbstractActionController
             $client->setParameterPost(array(
                "requestType"  => "newEvents",
                "events"       => array(json_encode($event1), json_encode($event2))
+            ));
+            // Send HTTP request to server.
+            $response = $client->send();
+            // Send a edit request to inform users which are currently in the task page.
+            $client->setParameterPost(array(
+               "requestType"  => "taskEdited",
+               "taskId"       => $id,
+               "data"         => json_encode(array(
+                                    "name"         => $name,
+                                    "deadline"     => $deadline,
+                                    "duration"     => $duration,
+                                    "priority"     => $priority,
+                                    "description"  => $description
+                                 ))
             ));
             // Send HTTP request to server.
             $response = $client->send();
@@ -408,7 +422,6 @@ class ProjectController extends AbstractActionController
             // Send HTTP request to server.
             $response = $client->send();
             // Send a delete request to inform users which are currently in the task page.
-            // Setting POST data for the project page.
             $client->setParameterPost(array(
                "requestType"  => "taskDeleted",
                "taskId"       => $taskId,
@@ -583,7 +596,7 @@ class ProjectController extends AbstractActionController
             $client->setMethod(Request::METHOD_POST);
             // Setting POST data.
             $client->setParameterPost(array(
-               "requestType"  => "newTaskEvent",
+               "requestType"  => "newEvent",
                "event"        => json_encode($event)
             ));
             // Send HTTP request to server.
