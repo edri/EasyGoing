@@ -13,6 +13,9 @@
                   case "errorFieldEmpty":
                      echo "Please fill all mandatory fields and check that your username does not contain spaces.";
                      break;
+                  case "errorReservedUsername":
+                     echo "The username you entered is a reserved system username, which means you cannot use it. Please enter another one.";
+                     break;
 						case  "errorPasswordsDontMatch":
 							echo "The passwords you entered don't match, please retry.";
 							break;

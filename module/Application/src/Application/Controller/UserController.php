@@ -153,118 +153,126 @@ class UserController extends AbstractActionController
 				// contain spaces.
             if (!empty($username) && !ctype_space($username) && !empty($fname) && !empty($lname) && !empty($password1) && !empty($password2) && !empty($email))
             {
-               // The two passwords must match.
-               if ($password1 == $password2)
-               {
-                  // The mail address must be valid.
-                  if (filter_var($email, FILTER_VALIDATE_EMAIL))
-                  {
-                     // The email must not already exist.
-                     if(!$this->_getUserTable()->checkIfMailExists($email))
-                     {
-                        // Indicate if the prospective user's picture is valid or not.
-                        $fileValidated = true;
-
-                        // If the user mentioned a picture, validate it.
-                        if (!empty($_FILES["picture"]["name"]))
-                        {
-                           // Allowed file's extensions.
-                           $allowedExts = array("jpeg", "JPEG", "jpg", "JPG", "png", "PNG");
-
-                           // Get the file's extension.
-                           $temp = explode(".", $_FILES["picture"]["name"]);
-                           $extension = end($temp);
-
-                           // Validates the file's size.
-                           if ($_FILES["picture"]["size"] > 5 * 1024 * 1024 || !$_FILES["picture"]["size"])
-                           {
-                              $result = "errorPictureSize";
-                              $fileValidated = false;
-                           }
-			                  // Validates the file's type.
-                           else if (($_FILES["picture"]["type"] != "image/jpeg") &&
-                              ($_FILES["picture"]["type"] != "image/jpg") &&
-                              ($_FILES["picture"]["type"] != "image/pjpeg") &&
-                              ($_FILES["picture"]["type"] != "image/x-png") &&
-                              ($_FILES["picture"]["type"] != "image/png"))
-                           {
-                              $result = "errorPictureType";
-                              $fileValidated = false;
-                           }
-                           // Validates the file's extension.
-                           else if (!in_array($extension, $allowedExts))
-                           {
-                              $result = "errorPictureExtension";
-                              $fileValidated = false;
-                           }
-                           // Check that there is no error in the file.
-                           else if ($_FILES["picture"]["error"] > 0)
-                           {
-                              $result = "errorPicture";
-                              $fileValidated = false;
-                           }
-			                  // If the file is valid, upload the picture.
-                           else
-                           {
-                              try
-                              {
-                                 // Generate a time-based unique ID, and check that this file's name doesn't exist yet.
-                                 do
-                                 {
-                                    $fileName = uniqid() . ".png";
-                                 }
-                                 while (file_exists(getcwd() . "/public/img/users/" . $fileName));
-
-											// First move the temporary uploaded file in the server's directory to
-			                        // avoid some extensions issues with some OS.
-			                        move_uploaded_file($_FILES['picture']['tmp_name'], getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
-                                 // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
-                                 $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 50);
-                              }
-                              catch (\Exception $e)
-                              {
-                                 $result = "errorFilesUpload";
-                              }
-
-										// Delete the temporary file if it exists.
-										if (file_exists(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]))
-											unlink(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
-                           }
-                        }
-
-								// If there is no file or the file is valid, we can add the new
-			               // user in the database.
-			               if ($fileValidated)
-			               {
-			                  // Adds the new user in the database.
-			                  if ($result == SUCCESS_MESSAGE)
-			                  {
-		                        try
-		                        {
-		                           $userId = $this->_getUserTable()->addUser($username, $this->_hashPassword($password1), $fname, $lname, $email, isset($fileName) ? $fileName : "default.png");
-		                        }
-		                        catch (\Exception $e)
-		                        {
-		                           $result = 'errorDatabaseAdding';
-		                        }
-									}
-								}
-                     }
-                     else
-							{
-                        $result = 'errorEmailAlreadyExists';
-							}
-                  }
-                  else
-						{
-                     $result = 'errorEmailInvalid';
-						}
-               }
-               else
+					// The username cannot be a reserved one.
+					if (strtolower($username) != "system")
 					{
-                  $result = 'errorPasswordsDontMatch';
+	               // The two passwords must match.
+	               if ($password1 == $password2)
+	               {
+	                  // The mail address must be valid.
+	                  if (filter_var($email, FILTER_VALIDATE_EMAIL))
+	                  {
+	                     // The email must not already exist.
+	                     if(!$this->_getUserTable()->checkIfMailExists($email))
+	                     {
+	                        // Indicate if the prospective user's picture is valid or not.
+	                        $fileValidated = true;
+
+	                        // If the user mentioned a picture, validate it.
+	                        if (!empty($_FILES["picture"]["name"]))
+	                        {
+	                           // Allowed file's extensions.
+	                           $allowedExts = array("jpeg", "JPEG", "jpg", "JPG", "png", "PNG");
+
+	                           // Get the file's extension.
+	                           $temp = explode(".", $_FILES["picture"]["name"]);
+	                           $extension = end($temp);
+
+	                           // Validates the file's size.
+	                           if ($_FILES["picture"]["size"] > 5 * 1024 * 1024 || !$_FILES["picture"]["size"])
+	                           {
+	                              $result = "errorPictureSize";
+	                              $fileValidated = false;
+	                           }
+				                  // Validates the file's type.
+	                           else if (($_FILES["picture"]["type"] != "image/jpeg") &&
+	                              ($_FILES["picture"]["type"] != "image/jpg") &&
+	                              ($_FILES["picture"]["type"] != "image/pjpeg") &&
+	                              ($_FILES["picture"]["type"] != "image/x-png") &&
+	                              ($_FILES["picture"]["type"] != "image/png"))
+	                           {
+	                              $result = "errorPictureType";
+	                              $fileValidated = false;
+	                           }
+	                           // Validates the file's extension.
+	                           else if (!in_array($extension, $allowedExts))
+	                           {
+	                              $result = "errorPictureExtension";
+	                              $fileValidated = false;
+	                           }
+	                           // Check that there is no error in the file.
+	                           else if ($_FILES["picture"]["error"] > 0)
+	                           {
+	                              $result = "errorPicture";
+	                              $fileValidated = false;
+	                           }
+				                  // If the file is valid, upload the picture.
+	                           else
+	                           {
+	                              try
+	                              {
+	                                 // Generate a time-based unique ID, and check that this file's name doesn't exist yet.
+	                                 do
+	                                 {
+	                                    $fileName = uniqid() . ".png";
+	                                 }
+	                                 while (file_exists(getcwd() . "/public/img/users/" . $fileName));
+
+												// First move the temporary uploaded file in the server's directory to
+				                        // avoid some extensions issues with some OS.
+				                        move_uploaded_file($_FILES['picture']['tmp_name'], getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
+	                                 // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
+	                                 $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 50);
+	                              }
+	                              catch (\Exception $e)
+	                              {
+	                                 $result = "errorFilesUpload";
+	                              }
+
+											// Delete the temporary file if it exists.
+											if (file_exists(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]))
+												unlink(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
+	                           }
+	                        }
+
+									// If there is no file or the file is valid, we can add the new
+				               // user in the database.
+				               if ($fileValidated)
+				               {
+				                  // Adds the new user in the database.
+				                  if ($result == SUCCESS_MESSAGE)
+				                  {
+			                        try
+			                        {
+			                           $userId = $this->_getUserTable()->addUser($username, $this->_hashPassword($password1), $fname, $lname, $email, isset($fileName) ? $fileName : "default.png");
+			                        }
+			                        catch (\Exception $e)
+			                        {
+			                           $result = 'errorDatabaseAdding';
+			                        }
+										}
+									}
+	                     }
+	                     else
+								{
+	                        $result = 'errorEmailAlreadyExists';
+								}
+	                  }
+	                  else
+							{
+	                     $result = 'errorEmailInvalid';
+							}
+	               }
+	               else
+						{
+	                  $result = 'errorPasswordsDontMatch';
+						}
 					}
-            }
+					else
+					{
+						$result = "errorReservedUsername";
+					}
+	         }
             else
 				{
                $result = "errorFieldEmpty";
