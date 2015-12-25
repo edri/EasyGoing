@@ -31,6 +31,9 @@ class UserTable
       else
          return null;
    }
+   public function dontWantTutorial(){
+     $this->_tableGateway->update(array('wantTutorial' => false))
+   }
 
    // Checks if the given e-mail address doesn't already exist in the DB.
    public function checkIfMailExists($email)
@@ -55,6 +58,7 @@ class UserTable
 
       return $this->_tableGateway->lastInsertValue;
    }
+
 
 
    public function getAllUsers()
