@@ -82,7 +82,7 @@ CREATE TABLE events
     date DATE NOT NULL,
     message TINYTEXT,
     eventType INT,
-    details TINYTEXT,
+    details LONGTEXT,
     PRIMARY KEY(id),
     FOREIGN KEY(eventType) REFERENCES eventTypes(id)
 );

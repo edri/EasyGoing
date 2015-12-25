@@ -14,12 +14,13 @@ class EventTable
    }
 
    // Add the given event in the database.
-   public function addEvent($date, $message, $eventType)
+   public function addEvent($date, $message, $eventType, $details = null)
    {
       $this->_tableGateway->insert(array(
          "date"      => $date,
          "message"   => $message,
-         "eventType"   => $eventType
+         "eventType" => $eventType,
+         "details"   => $details
       ));
       // Return new event's ID.
       return $this->_tableGateway->lastInsertValue;

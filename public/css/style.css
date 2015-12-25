@@ -381,8 +381,16 @@ hr {
    cursor: pointer;
 }
 
+.eventTable {
+   width: 100%;
+}
+
 .eventTable td {
    padding: 2px !important;
+}
+
+.eventImgTd {
+   width: 44px;
 }
 
 .eventImg {
@@ -391,8 +399,30 @@ hr {
    width: 30px;
 }
 
+.eventDate {
+   float: left;
+}
+
+.expandEventImg {
+   float: right;
+   height: 17px;
+   width: 17px;
+}
+
 .eventMessage {
    color: #995527;
+}
+
+.eventDetailsRow {
+   display: none;
+}
+
+.eventDetails {
+   padding-top: 10px;
+}
+
+.eventDetailsTable {
+   width: 100%;
 }
 
 

@@ -11,16 +11,42 @@
    function eventRendering($type, $event)
    {
       $eventContent =
-         '<div class="eventElem" name="eventIn' . $type . '">
+         '<div class="eventElem"' . (!empty($event->details) ? 'onclick="expandEventDetails(' . $event->id . ');"' : '') . ' name="eventIn' . $type . '">
             <table class="eventTable">
                <tr>
-                  <td rowspan=2><img class="eventImg" src="/img/events/' . $event->fileLogo . '" /></td>
-                  <td><b>[' . date('d.m.Y', strtotime($event->date)) . ']</b></td>
+                  <td class="eventImgTd" rowspan=2><img class="eventImg" src="/img/events/' . $event->fileLogo . '" /></td>
+                  <td>
+                     <b class="eventDate">[' . date('d.m.Y', strtotime($event->date)) . ']</b>';
+
+      if (!empty($event->details))
+      {
+         $eventContent .=
+                     '<img class="expandEventImg" id="toggleEventDetails' .  $event->id . '" src="/img/expand_event.svg" />';
+      }
+
+      $eventContent .=
+                  '</td>
                </tr>
                <tr>
                   <td><div class="eventMessage">' . $event->message . '</div></td>
-               </tr>
-            </table>
+               </tr>';
+
+      if (!empty($event->details))
+      {
+         $eventContent .=
+               '<tr id="detailsEvent' . $event->id . '" class="eventDetailsRow">
+                  <td></td>
+                  <td>
+                     <div class="eventDetails">
+                        <b><u>Details:</u></b>
+                        <br/>' . $event->details .
+                     '</div>
+                  </td>
+               </tr>';
+      }
+
+      $eventContent .=
+            '</table>
          </div>';
 
       return $eventContent;
@@ -143,21 +169,32 @@
 </div>
 
 <script>
-    function loadBoardViewMembers() {
-       $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewMembers"'; ?>);
-    }
+   function loadBoardViewMembers() {
+      $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewMembers"'; ?>);
+   }
 
-    function loadBoardViewTasks() {
-       $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewTasks"'; ?>);
-    }
+   function loadBoardViewTasks() {
+      $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewTasks"'; ?>);
+   }
 
-    $(document).ready(function() {
-        loadBoardViewMembers();
+   function expandEventDetails(eventId) {
+      if ($('#detailsEvent' + eventId).is(":visible")) {
+         $('#toggleEventDetails' + eventId).attr("src", "/img/expand_event.svg");
+      }
+      else {
+         $('#toggleEventDetails' + eventId).attr("src", "/img/collapse_event.svg");
+      }
 
-        // Enable tabbable tabs on the historical panel.
-        $("#historicalTabs a").click(function(event) {
-            event.preventDefault();
-            $(this).tab("show");
-        });
-    });
+      $('#detailsEvent' + eventId).toggle();
+   }
+
+   $(document).ready(function() {
+     loadBoardViewMembers();
+
+     // Enable tabbable tabs on the historical panel.
+     $("#historicalTabs a").click(function(event) {
+         event.preventDefault();
+         $(this).tab("show");
+     });
+   });
 </script>
