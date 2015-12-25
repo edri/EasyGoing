@@ -82,6 +82,7 @@ CREATE TABLE events
     date DATE NOT NULL,
     message TINYTEXT,
     eventType INT,
+    details TINYTEXT,
     PRIMARY KEY(id),
     FOREIGN KEY(eventType) REFERENCES eventTypes(id)
 );
@@ -212,7 +213,7 @@ CREATE VIEW view_projects_details AS
 DROP VIEW IF EXISTS view_events;
 CREATE VIEW view_events AS
     (SELECT 
-        et.type, et.fileLogo, e.id, e.date, e.message, u.username, ep.project AS `linkedEntityId`, 0 AS `isTaskEvent`
+        et.type, et.fileLogo, e.id, e.date, e.message, e.details, u.username, ep.project AS `linkedEntityId`, 0 AS `isTaskEvent`
     FROM
         ((((eventTypes AS et
         JOIN events AS e)
@@ -226,7 +227,7 @@ CREATE VIEW view_events AS
             AND (u.id = eu.user)))
     UNION
         (SELECT 
-            et.type, et.fileLogo, e.id, e.date, e.message, u.username, eot.task AS `linkedEntityId`, 1 AS `isTaskEvent`
+            et.type, et.fileLogo, e.id, e.date, e.message, e.details, u.username, eot.task AS `linkedEntityId`, 1 AS `isTaskEvent`
         FROM
             ((((eventTypes AS et
             JOIN events AS e)
@@ -588,37 +589,37 @@ INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Info", "info.svg", 1);
 INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Warning", "warning.svg", 1);
 INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Error", "error.svg", 1);
 
-INSERT INTO events VALUES(1, NOW(), "<u>raphaelracine</u> created the project.", 1);
+INSERT INTO events VALUES(1, NOW(), "<u>raphaelracine</u> created the project.", 1, NULL);
 INSERT INTO eventsOnProjects VALUES(1, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 1);
-INSERT INTO events VALUES(2, NOW(), "<u>raphaelracine</u> joined the project.", 3);
+INSERT INTO events VALUES(2, NOW(), "<u>raphaelracine</u> joined the project.", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(2, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 2);
-INSERT INTO events VALUES(3, NOW(), "<u>raphaelracine</u> created the project.", 1);
+INSERT INTO events VALUES(3, NOW(), "<u>raphaelracine</u> created the project.", 1, NULL);
 INSERT INTO eventsOnProjects VALUES(3, @project2);
 INSERT INTO eventsUsers VALUES(@user1, 3);
-INSERT INTO events VALUES(4, NOW(), "<u>raphaelracine</u> joined the project.", 3);
+INSERT INTO events VALUES(4, NOW(), "<u>raphaelracine</u> joined the project.", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(4, @project2);
 INSERT INTO eventsUsers VALUES(@user1, 4);
 
 
-INSERT INTO events VALUES(5, NOW(), "<u>raphaelracine</u> added user <u>karimghozlani</u> in project.", 3);
+INSERT INTO events VALUES(5, NOW(), "<u>raphaelracine</u> added user <u>karimghozlani</u> in project.", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(5, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 5);
-INSERT INTO events VALUES(6, NOW(), "<u>raphaelracine</u> added user <u>edri</u> in project.", 3);
+INSERT INTO events VALUES(6, NOW(), "<u>raphaelracine</u> added user <u>edri</u> in project.", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(6, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 6);
-INSERT INTO events VALUES(7, NOW(), "<u>raphaelracine</u> added user <u>thibaudduchoud</u> in project.", 3);
+INSERT INTO events VALUES(7, NOW(), "<u>raphaelracine</u> added user <u>thibaudduchoud</u> in project.", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(7, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 7);
 
-INSERT INTO events VALUES(8, NOW(), "<u>raphaelracine</u> added user <u>edri</u> in project.", 3);
+INSERT INTO events VALUES(8, NOW(), "<u>raphaelracine</u> added user <u>edri</u> in project.", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(8, @project2);
 INSERT INTO eventsUsers VALUES(@user1, 8);
-INSERT INTO events VALUES(9, NOW(), "<u>raphaelracine</u> added user <u>thibaudduchoud</u> in project.", 3);
+INSERT INTO events VALUES(9, NOW(), "<u>raphaelracine</u> added user <u>thibaudduchoud</u> in project.", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(9, @project2);
 INSERT INTO eventsUsers VALUES(@user1, 9);
-INSERT INTO events VALUES(10, NOW(), "<u>raphaelracine</u> added user <u>vanessameguep</u> in project.", 3);
+INSERT INTO events VALUES(10, NOW(), "<u>raphaelracine</u> added user <u>vanessameguep</u> in project.", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(10, @project2);
 INSERT INTO eventsUsers VALUES(@user1, 10);
 
