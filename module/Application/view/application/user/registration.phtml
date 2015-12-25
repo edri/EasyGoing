@@ -1,113 +1,124 @@
 <h1 class="pageTitle" align = "center">Registration</h1>
-<?php
-    if (isset($result))
-    {
-?>
-        <div class="panel panel-danger error">
-            <div class="panel-heading">
-							<?php
-								switch($result){
 
-									case "errorPictureSize":
-									echo("file too large");
-									break;
-									case "errorPictureType":
-									echo("can't allow this file extension");
-									break;
-									case  "errorPicture":
-									echo("there's an error in the image file");
-									break;
-									case  "errorFilesUpload":
-									echo("can't apply this file!check if it respect the requirements");
-									break;
-									case  "errorDatabaseAdding":
-									echo("can't add this account in the database. user already exists");
-									break;
-									case  "errorMailInvalid":
-									echo("Not a valid mail format");
-									break;
-									case  "errorPasswordsDontMatch":
-									echo("passwords doesn't match");
-									break;
-									case  "errorDatabaseAdding":
-									echo("can't add this account in the database. user already exists");
-									break;
-									default:
-									echo("email already used");
-								}
-                 ?>
-            </div>
-        </div>
 <?php
-    }
+   // if there was an error when creating the posted account, display it.
+   if (isset($error))
+   {
+?>
+      <div class="panel panel-danger error">
+         <div class="panel-heading">
+			   <?php
+               switch($error)
+               {
+                  case "errorFieldEmpty":
+                     echo "Please fill all mandatory fields and check that your username does not contain spaces.";
+                     break;
+						case  "errorPasswordsDontMatch":
+							echo "The passwords you entered don't match, please retry.";
+							break;
+						case  "errorEmailInvalid":
+							echo "Please use a valid email format.";
+							break;
+                  case "errorEmailAlreadyExists":
+                     echo "The email address you entered already exists, please retry.";
+                     break;
+                  case "errorPictureSize":
+							echo "The picture you're trying to upload is too large, please retry.";
+							break;
+                  case "errorPictureType":
+                  case "errorPictureExtension":
+							echo "Please upload a file, which extension is allowed.";
+							break;
+                  case  "errorPicture":
+							echo "Something is wrong with the file you're trying to upload, please retry.";
+							break;
+                  case  "errorFilesUpload":
+							echo "Something wrong happend when uploading the picture, please retry.";
+							break;
+                  case  "errorDatabaseAdding":
+							echo "Something wrong happend when creating the account, please retry.";
+							break;
+                  default:
+						   echo "An error occured, please retry.";
+                     break;
+					}
+            ?>
+         </div>
+      </div>
+<?php
+   }
 ?>
 
 <form action="/registration" class="form-horizontal"  enctype="multipart/form-data" method="POST" role="form">
-	<div class="form-group">
-        <label class="control-label col-sm-2" for="username">Username (can't be modified) *</label>
-        <div class="col-sm-10">
-           <input type="text" name="username" class="form-control"  required="required"
-					 placeholder="Enter username" value="<?php if (isset($username)) echo $this->escapeHtml($username); ?>"/>
-        </div>
+   <div class="form-group">
+     <label class="control-label col-sm-2" for="username">Username *</label>
+     <div class="col-sm-10">
+        <input type="text" name="username" class="form-control"  required="required"
+   			 placeholder="Enter username" value="<?php if (isset($username)) echo $this->escapeHtml($username); ?>"/>
      </div>
+   </div>
 
-     <div class="form-group">
-        <label class="control-label col-sm-2" for="lastname">Last name </label>
-        <div class="col-sm-10">
-           <input type="text" name="lname" class="form-control"
-					 placeholder="Enter last name"  value="<?php if (isset($lname)) echo $this->escapeHtml($lname); ?>" />
-
-        </div>
+   <div class="form-group">
+     <label class="control-label col-sm-2" for="firstname">First name *</label>
+     <div class="col-sm-10">
+        <input type="text" name="fname" class="form-control"
+   			 placeholder="Enter firstname"  value="<?php if (isset($fname)) echo $this->escapeHtml($fname); ?>" />
      </div>
+   </div>
 
-     <div class="form-group">
-        <label class="control-label col-sm-2" for="firstname">First name </label>
-        <div class="col-sm-10">
-           <input type="text" name="fname" class="form-control"
-					 placeholder="Enter firstname"  value="<?php if (isset($fname)) echo $this->escapeHtml($fname); ?>" />
-        </div>
+   <div class="form-group">
+     <label class="control-label col-sm-2" for="lastname">Last name *</label>
+     <div class="col-sm-10">
+        <input type="text" name="lname" class="form-control"
+   			 placeholder="Enter last name"  value="<?php if (isset($lname)) echo $this->escapeHtml($lname); ?>" />
+
      </div>
+   </div>
 
-     <div class="form-group">
-        <label class="control-label col-sm-2" for="password1">Password *</label>
-        <div class="col-sm-10">
-           <input type="password" name="password1" class="form-control" placeholder="Type password" required="required" value="<?php if (isset($password1)) echo $this->escapeHtml($password1); ?>"/>
-        </div>
+   <div class="form-group">
+     <label class="control-label col-sm-2" for="password1">Password *</label>
+     <div class="col-sm-10">
+        <input type="password" name="password1" class="form-control" placeholder="Type password" required="required" value="<?php if (isset($password1)) echo $this->escapeHtml($password1); ?>"/>
      </div>
+   </div>
 
-     <div class="form-group">
-        <label class="control-label col-sm-2" for="password2">Repeat Password *</label>
-        <div class="col-sm-10">
-           <input type="password" name="password2" class="form-control" placeholder="Type password again" required="required" value="<?php if (isset($password2)) echo $this->escapeHtml($password2); ?>"/>
-        </div>
+   <div class="form-group">
+     <label class="control-label col-sm-2" for="password2">Repeat Password *</label>
+     <div class="col-sm-10">
+        <input type="password" name="password2" class="form-control" placeholder="Type password again" required="required" value="<?php if (isset($password2)) echo $this->escapeHtml($password2); ?>"/>
      </div>
+   </div>
 
-     <div class="form-group">
-        <label class="control-label col-sm-2" for="email">Email* </label>
-        <div class="col-sm-10">
-           <input type="email" name="email" class="form-control" required="required"
-					 placeholder="Enter valid email"   value="<?php if (isset($email)) echo $this->escapeHtml($email); ?>"/>
-        </div>
+   <div class="form-group">
+     <label class="control-label col-sm-2" for="email">Email* </label>
+     <div class="col-sm-10">
+        <input type="email" name="email" class="form-control" required="required"
+   			 placeholder="Enter valid email"   value="<?php if (isset($email)) echo $this->escapeHtml($email); ?>"/>
      </div>
+   </div>
 
-	 			<div class="form-group">
-	 					<label class="control-label col-sm-2" for="picture">Picture</label>
-	 					<div class="col-sm-10">
-	 							<p class="logoInformation">Priorize a <b>squared</b> picture - Maximum size of <b>5 MB</b> - Allowed extensions: <b>"jpeg", "jpg" or "png"</b>.</p>
-	 							<input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
-	 							<input id="picture" name="picture" type="file" />
-	 					</div>
-	 			</div>
+   <div class="form-group">
+   	<label class="control-label col-sm-2" for="picture">Picture</label>
+   	<div class="col-sm-10">
+         <p class="logoInformation">Priorize a <b>squared</b> picture - Maximum size of <b>5 MB</b> - Allowed extensions: <b>"jpeg", "jpg" or "png"</b>.</p>
+   		<input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
+   		<input id="picture" name="picture" type="file" />
+   	</div>
+   </div>
+
+   <div class="form-group">
+   	<label class="control-label col-sm-2" for="picture">Tutorial</label>
 		 <div class="col-sm-10">
-			 <label class="checkbox-inline col-sm-1">Tutorial</label><input type="checkbox" value="" />
+			 <input checked="checked" type="checkbox" value="" />
 		 </div>
-
+    </div>
 
 	 <div class="form-group formSending" >
 		<label class="control-label col-sm-2" for="create"></label>
 		<div class="col-sm-10">
 				<span class="mandatoryFields">* Mandatory fields</span>
 				<input class="btnCreate btn btnEasygoing" id="create" name="create" type="submit" value="Register!">
+            <button class="btnCancel btn btnEasygoing" id="cancel" name="cancelButton" onClick="location.href='/';">Cancel</button>
 		</div>
 </div>
 </form>

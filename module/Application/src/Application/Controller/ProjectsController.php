@@ -80,13 +80,14 @@ class ProjectsController extends AbstractActionController
       $request = $this->getRequest();
       if ($request->isPost())
       {
-         // Operation's result.
+         // Operation's result message.
          $result = SUCCESS_MESSAGE;
          // Posted values.
          $name = $_POST["name"];
          $description = (empty($_POST["description"]) ? "-" : $_POST["description"]);
          $startDate = date_parse($_POST["startDate"]);
          $deadline = date_parse($_POST["deadline"]);
+         // Will be used attribute a name to the uploaded file.
          $fileName;
 
          // Checks that the mandatory fields aren't empty.
@@ -151,15 +152,20 @@ class ProjectsController extends AbstractActionController
                         }
                         while (file_exists(getcwd() . "/public/img/projects/" . $fileName));
 
+                        // First move the temporary uploaded file in the server's directory to
+                        // avoid some extensions issues with some OS.
                         move_uploaded_file($_FILES['logo']['tmp_name'], getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"]);
-
-                        // Create a thumbnail (50px) of the image and save it in the hard drive of the server.
+                        // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
                         $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"], $extension, getcwd() . "/public/img/projects/" . $fileName, 50);
                      }
                      catch (\Exception $e)
                      {
                         $result = "errorFilesUpload";
                      }
+
+                     // Delete the temporary file if it exists.
+                     if (file_exists(getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"]))
+                        unlink(getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"]);
                   }
                }
 
@@ -206,7 +212,7 @@ class ProjectsController extends AbstractActionController
 							}
                      catch (\Exception $e)
                      {
-                        $result = 'errorDatabaseAdding';
+                        $result = "errorDatabaseAdding";
                      }
                   }
                }
@@ -229,15 +235,16 @@ class ProjectsController extends AbstractActionController
          }
          else
          {
+            // Delete the tumbnail, if it exists.
             if (isset($fileName) && file_exists(getcwd() . "/public/img/projects/" . $fileName))
                unlink(getcwd() . "/public/img/projects/" . $fileName);
 
             return new ViewModel(array(
-               'error' => $result,
-               'name' => $name,
-               'description' => $description,
-               'startDate' => $_POST["startDate"],
-               'deadline' => $_POST["deadline"]
+               'error'        => $result,
+               'name'         => $name,
+               'description'  => $description,
+               'startDate'    => $_POST["startDate"],
+               'deadline'     => $_POST["deadline"]
             ));
          }
       }

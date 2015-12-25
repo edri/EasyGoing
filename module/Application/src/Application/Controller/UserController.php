@@ -122,6 +122,7 @@ class UserController extends AbstractActionController
 
    public function registrationAction()
    {
+		define("SUCCESS_MESSAGE", "ok");
       $sessionUser = new container('user');
       // Checks if the user isn't already connected.
       if ($sessionUser && $sessionUser->connected)
@@ -131,24 +132,26 @@ class UserController extends AbstractActionController
       }
       else
       {
+			// Check if a request is posted ; in other words, check if the user pressed
+			// the "Register!" button.
          $request = $this->getRequest();
-
          if ($request->isPost())
          {
-            $result = "success";
-            // POST action's values.
-            $password1 = (empty($_POST["password1"]) ? "******" : $_POST["password1"]);
-            //$password1 = $_POST["password1"];
-            $password2 = (empty($_POST["password2"]) ? "******" : $_POST["password2"]);
+				// Operation's result message.
+            $result = SUCCESS_MESSAGE;
+            // POST request's values.
+            $username= $_POST["username"];
+            $fname = $_POST["fname"];
+            $lname= $_POST["lname"];
+            $password1 = $_POST["password1"];
+            $password2 = $_POST["password2"];
+            $email =  $_POST["email"];
+	         // Will be used attribute a name to the uploaded file.
+				$filename;
 
-            $fname = (empty($_POST["fname"]) ? "*****" : $_POST["fname"]);
-            $lname= (empty($_POST["lname"]) ? "******" : $_POST["lname"]);
-            $email =  (empty($_POST["email"]) ? "******" : $_POST["email"]);
-            $username= (empty($_POST["username"]) ? "******" : $_POST["username"]);
-            $picture = (empty($_POST["picture"]) ? "default.png" : $_POST["picture"]);
-
-            // Checks the fields.
-            if (!empty($username) && !ctype_space($username) && !empty($email) && !empty($password1) && !empty($password2) && !empty($fname) && !empty($lname)&& !empty($picture) )
+            // Checks that the mandatory fields aren't empty and that the username doesn't
+				// contain spaces.
+            if (!empty($username) && !ctype_space($username) && !empty($fname) && !empty($lname) && !empty($password1) && !empty($password2) && !empty($email))
             {
                // The two passwords must match.
                if ($password1 == $password2)
@@ -156,25 +159,29 @@ class UserController extends AbstractActionController
                   // The mail address must be valid.
                   if (filter_var($email, FILTER_VALIDATE_EMAIL))
                   {
-                     //the email must not already exist
+                     // The email must not already exist.
                      if(!$this->_getUserTable()->checkIfMailExists($email))
                      {
-                        // Indicate if the prospective project's logo is valid or not.
+                        // Indicate if the prospective user's picture is valid or not.
                         $fileValidated = true;
-                        // the picture must match some size and have particular extensions
+
+                        // If the user mentioned a picture, validate it.
                         if (!empty($_FILES["picture"]["name"]))
                         {
                            // Allowed file's extensions.
                            $allowedExts = array("jpeg", "JPEG", "jpg", "JPG", "png", "PNG");
+
                            // Get the file's extension.
-                           $temp = explode(".", $picture);
+                           $temp = explode(".", $_FILES["picture"]["name"]);
                            $extension = end($temp);
+
                            // Validates the file's size.
                            if ($_FILES["picture"]["size"] > 5 * 1024 * 1024 || !$_FILES["picture"]["size"])
                            {
                               $result = "errorPictureSize";
                               $fileValidated = false;
                            }
+			                  // Validates the file's type.
                            else if (($_FILES["picture"]["type"] != "image/jpeg") &&
                               ($_FILES["picture"]["type"] != "image/jpg") &&
                               ($_FILES["picture"]["type"] != "image/pjpeg") &&
@@ -196,6 +203,7 @@ class UserController extends AbstractActionController
                               $result = "errorPicture";
                               $fileValidated = false;
                            }
+			                  // If the file is valid, upload the picture.
                            else
                            {
                               try
@@ -207,59 +215,81 @@ class UserController extends AbstractActionController
                                  }
                                  while (file_exists(getcwd() . "/public/img/users/" . $fileName));
 
-                                 //move_uploaded_file($_FILES['logo']['tmp_name'], getcwd() . "/public/img/projects/" . $fileName . "tmp");
-
-                                 // Reduction of the image's weight and save it.
-                                 //$this->resizeImageWeight($_FILES["logo"]["tmp_name"], getcwd() . "/public/img/projects/" . $fileName, $extension);
-
-                                 // Create a thumbnail (50px) of the image and save it in the hard drive of the server.
-                                 $this->getUtilities()->createSquareImage($_FILES["picture"]["tmp_name"], $extension, getcwd() . "/public/img/users/" . $fileName, 50);
+											// First move the temporary uploaded file in the server's directory to
+			                        // avoid some extensions issues with some OS.
+			                        move_uploaded_file($_FILES['picture']['tmp_name'], getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
+                                 // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
+                                 $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 50);
                               }
                               catch (\Exception $e)
                               {
                                  $result = "errorFilesUpload";
                               }
+
+										// Delete the temporary file if it exists.
+										if (file_exists(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]))
+											unlink(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
                            }
                         }
 
-                        //then we allow the registration
-                        try
-                        {
-                           //then we allow the registration
-                           $userId = $this->_getUserTable()->addUser($username, $this->_hashPassword($password1), $fname, $lname, $email, $picture);
-                        }
-                        catch (\Exception $e)
-                        {
-                           $result = 'errorDatabaseAdding';
-                        }
+								// If there is no file or the file is valid, we can add the new
+			               // user in the database.
+			               if ($fileValidated)
+			               {
+			                  // Adds the new user in the database.
+			                  if ($result == SUCCESS_MESSAGE)
+			                  {
+		                        try
+		                        {
+		                           $userId = $this->_getUserTable()->addUser($username, $this->_hashPassword($password1), $fname, $lname, $email, isset($fileName) ? $fileName : "default.png");
+		                        }
+		                        catch (\Exception $e)
+		                        {
+		                           $result = 'errorDatabaseAdding';
+		                        }
+									}
+								}
                      }
                      else
-                        $result	 = 'errorMailAlreadyExist';
+							{
+                        $result = 'errorEmailAlreadyExists';
+							}
                   }
                   else
-                     $result	= 'errorMailInvalid';
+						{
+                     $result = 'errorEmailInvalid';
+						}
                }
                else
-                  $result	= 'errorPasswordsDontMatch';
-
-               if ($result == "success")
-               {
-                  $this->redirect()->toRoute();
-               }
-               else
-                  return new ViewModel(array(
-                     'result' 			=> $result,
-                     'username' 			=> $username,
-                     'email'				=> $email,
-                     'password1' 	=>$password1,
-                     //	'password2' 	=>$password2,
-                     'fName'				=> $fname,
-                     'lName'				=> $lname
-                  ));
-
+					{
+                  $result = 'errorPasswordsDontMatch';
+					}
             }
             else
+				{
                $result = "errorFieldEmpty";
+				}
+
+				// Deletes the uploaded file if there was an error.
+				// If not, redirect the user.
+				if ($result == SUCCESS_MESSAGE)
+				{
+					$this->redirect()->toRoute();
+				}
+				else
+				{
+					// Deletes the thumbnail if it exists.
+					if (isset($fileName) && file_exists(getcwd() . "/public/img/users/" . $fileName))
+						unlink(getcwd() . "/public/img/users/" . $fileName);
+
+					return new ViewModel(array(
+						'error' 		=> $result,
+						'username'	=> $username,
+						'fname'		=> $fname,
+						'lname'		=> $lname,
+						'email'		=> $email
+					));
+				}
          }
 
          return new ViewModel();
