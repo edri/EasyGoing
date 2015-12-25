@@ -131,13 +131,31 @@ $(document).ready(function() {
                      $("#" + data.event.type.toLowerCase() + " > div[name='eventIn" + data.event.type + "']").first().show("fast");
                   }
                   break;
-               // New tasks deletion event received ; inform the user and redirect it back
+               // Task deletion event received ; inform the user and redirect it back
                // to the project's page.
                case "taskDeleted":
-                  // Show an information dialog and redirect back the user.
-                  bootbox.alert("Oops <u>" + data.username + "</u> just deleted the task you currently are in...<br/>You're going to be automatically redirected once this window is closed.", function() {
-                     window.location.href = "/project/" + projectId;
-                  });
+                  if (data.taskId == taskId) {
+                     // Show an information dialog and redirect back the user.
+                     bootbox.alert("Oops <u>" + data.username + "</u> just deleted the task you currently are in...<br/>You're going to be automatically redirected once this window is closed.", function() {
+                        window.location.href = "/project/" + projectId;
+                     });
+                  }
+                  break;
+               // Task edition event received ; automatically update task's fields in
+               // the task page.
+               case "taskEdited":
+                  console.log("OK: " + data.taskId + " - " + taskId);
+                  if (data.taskId == taskId) {
+                     console.log(data.taskData);
+                     console.log(data.taskData.name);
+                     var priority = ['High', 'Medium', 'Low'];
+
+                     $("#taskName").text(data.taskData.name);
+                     $("#taskDeadline").text(data.taskData.deadline);
+                     $("#taskDuration").text(data.taskData.duration + "h");
+                     $("#taskPriority").text(priority[data.taskData.priority - 1]);
+                     $("#taskDescription").text(data.taskData.description ? data.taskData.description : "-");
+                  }
                   break;
             }
          } catch (e) {
