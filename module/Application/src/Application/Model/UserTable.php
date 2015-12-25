@@ -29,7 +29,7 @@ class UserTable
       if(isset($row->id))
          return $row;
       else
-         return null;	
+         return null;
    }
 
    // Checks if the given e-mail address doesn't already exist in the DB.
@@ -66,6 +66,17 @@ class UserTable
    {
       $rowset = $this->_tableGateway->select(array(
          'id' 		=> $id
+      ));
+      $row = $rowset->current();
+
+      return $row;
+   }
+
+   // Get and return SYSTEM user, used for some automatic task's events.
+   public function getSystemUser()
+   {
+      $rowset = $this->_tableGateway->select(array(
+         'username'  => "SYSTEM"
       ));
       $row = $rowset->current();
 

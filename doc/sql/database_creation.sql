@@ -448,6 +448,18 @@ DELIMITER ;
 /* Insert some data */
 INSERT INTO users
 VALUES(
+	1, 
+	"SYSTEM_USER",
+	"SYSTEM",
+	"SYSTEM_USER",
+	"SYSTEM_USER",
+	"SYSTEM_USER",
+	"default.png",
+	false, false, null
+);
+
+INSERT INTO users
+VALUES(
 	null, 
 	"raphael.racine@heig-vd.ch",
 	"raphaelracine",

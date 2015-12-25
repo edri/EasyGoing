@@ -123,7 +123,9 @@ class ProjectController extends AbstractActionController
          $message = "\"" . $sessionUser->username . "\" created the task.";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          $this->_getTable("EventOnTaskTable")->add($eventId, $taskId);
-         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get SYSTEM user's ID and link it to the new task's event.
+         $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
+         $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
 
          try
          {
@@ -133,8 +135,8 @@ class ProjectController extends AbstractActionController
             $client->setMethod(Request::METHOD_POST);
             // Setting POST data.
             $client->setParameterPost(array(
-               "requestType"     => "newEvent",
-               "event"           => json_encode($event)
+               "requestType"        => "newEvent",
+               "event"              => json_encode($event)
             ));
             // Send HTTP request to server.
             $response = $client->send();
@@ -203,7 +205,9 @@ class ProjectController extends AbstractActionController
          $message = "\"" . $sessionUser->username . "\" updated the task.";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          $this->_getTable("EventOnTaskTable")->add($eventId, $id);
-         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get SYSTEM user's ID and link it to the new task's event.
+         $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
+         $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
          $event2 = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
 
          try
@@ -341,7 +345,9 @@ class ProjectController extends AbstractActionController
          $message = "\"" . $sessionUser->username . "\" moved the task from \"(" . $oldUsername . ", " . $data['oldSection'] . ")\" to \"(" . $newUsername . ", " . $data['targetSection'] . ")\".";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          $this->_getTable("EventOnTaskTable")->add($eventId, $data['taskId']);
-         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get SYSTEM user's ID and link it to the new task's event.
+         $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
+         $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
          $event2 = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
 
          // Send task's event socket.
