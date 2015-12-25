@@ -207,7 +207,7 @@ class ProjectController extends AbstractActionController
                   <th>New values</th>
                </tr>
                <tr>
-                  <td class='eventDetailsTaskAttribute'>Name: </td>
+                  <td>Name: </td>
                   <td>" . $oldTaskData->name . "</td>
                   <td>" . $name . "</td>
                </tr>
