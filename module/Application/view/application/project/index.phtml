@@ -148,9 +148,11 @@
       <div class="col-md-6">
          <div class="panel panel-default">
             <div class="panel-heading">Tasks</div>
-            <div class="panel-body">
+            <div class="panel-body listed-task">
                <?php foreach ($tasks as $task) : ?>
-               <p><a href="<?php echo $this->serverUrl(true)."/editTask/".$task->id; ?>"><?php echo $task->name; ?></a><p>
+               <p>
+                  <a type="unassigned-task" id="<?php echo $task->id; ?>" task-id="<?php echo $task->id; ?>"  href="<?php echo $this->serverUrl(true)."/editTask/".$task->id; ?>"><?php echo $task->name; ?></a>
+               <p>
                <?php endforeach; ?>
             </div>
          </div>
