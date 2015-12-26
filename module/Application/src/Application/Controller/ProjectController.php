@@ -345,16 +345,16 @@ class ProjectController extends AbstractActionController
 
       return $result;
    }
-   
-   public function assignTaskAction() 
+
+   public function assignTaskAction()
    {
       $sessionUser = new container('user');
       $projectId = $this->params('id');
       $data = $this->getRequest()->getPost();
-      
+
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
-         
+
          if($this->_userIsAssignToTask($data['targetMemberId'], $data['taskId']))
          {
             return $this->getResponse()->setContent(json_encode(array(
@@ -365,7 +365,7 @@ class ProjectController extends AbstractActionController
          else
          {
             $this->_getTable('UsersTasksAffectationsTable')->addAffectation($data['targetMemberId'], $data['taskId']);
-            
+
             return $this->getResponse()->setContent(json_encode(array(
                'hasRightToAssignTask' => true,
                'alreadyAssigned'      => false
@@ -381,7 +381,7 @@ class ProjectController extends AbstractActionController
       }
    }
 
-   public function moveTaskAction() 
+   public function moveTaskAction()
    {
       $sessionUser = new container('user');
       $projectId = $this->params('id');
@@ -735,7 +735,7 @@ class ProjectController extends AbstractActionController
    {
       return !empty($this->_getTable('UsersTasksAffectationsTable')->getAffectation($userId, $taskId));
    }
-   
+
    private function _userIsAdminOfProject($userId, $projectId)
    {
       return $this->_getTable('ViewProjectMinTable')->userIsAdminOfProject($userId, $projectId);
@@ -749,16 +749,20 @@ class ProjectController extends AbstractActionController
       $notMembersArray = array();
       foreach($users as $user)
       {
-         $mustAdd = true;
-
-         foreach($members as $member)
+         // Don't show the SYSTEM user.
+         if ($user->username != "SYSTEM")
          {
-            if($user->id == $member->id)
-            $mustAdd = false;
-         }
+            $mustAdd = true;
 
-         if($mustAdd)
-            array_push($notMembersArray, $user);
+            foreach($members as $member)
+            {
+               if($user->id == $member->id)
+               $mustAdd = false;
+            }
+
+            if($mustAdd)
+               array_push($notMembersArray, $user);
+         }
       }
 
       return $notMembersArray;
