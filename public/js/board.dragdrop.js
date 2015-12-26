@@ -143,19 +143,24 @@ $(document).ready(function() {
 
          if(!data.hasRightToMoveTask) {
             addBootstrapAlert('board-alert-container', 'You do not have the right to move this task because you are either not manager or this task is not assigned to you.', 'danger');
+            
+            $('#board-container').load(window.location.href + '/boardViewMembers');
+         }
+         else {
+            var eventData = data.event;
+            console.log("Sending task-moving socket...")
+            // Send task-moving socket to the server so it can advertise other clients.
+            connection.send(JSON.stringify({
+               "messageType": "taskMoving",
+               "projectId": projectId,
+               "taskId": taskId,
+               "targetMemberId": targetMemberId,
+               "targetSection": targetSection,
+               "event": eventData
+            }));
          }
 
-         var eventData = data.event;
-         console.log("Sending task-moving socket...")
-         // Send task-moving socket to the server so it can advertise other clients.
-         connection.send(JSON.stringify({
-            "messageType": "taskMoving",
-            "projectId": projectId,
-            "taskId": taskId,
-            "targetMemberId": targetMemberId,
-            "targetSection": targetSection,
-            "event": eventData
-         }));
+
       });
 
 
