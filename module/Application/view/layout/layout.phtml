@@ -85,39 +85,48 @@
         };
 
         function loadTutorial(tuto) {
-
-            Tutorial(tuto, function(data) {
+            
+            <?php
+                if($sessionUser->wantTutorial) {
+            ?>
+            
+                Tutorial(tuto, function(data) {
                 
-                var tutoDataFiltered = [];
+                    var tutoDataFiltered = [];
                 
-                data.forEach(function(d) {
-                    $("div[role=tutorial][id=" + d.div + "]").each(function() {
+                    data.forEach(function(d) {
+                        $("div[role=tutorial][id=" + d.div + "]").each(function() {
 
-                        var div = $(this);
-                        
-                        tutoData.push(d);
+                            var div = $(this);
 
-                        var position = div.position();
+                            tutoData.push(d);
 
-                        div.css({
-                            position: 'absolute',
-                            top: position.top,
-                            left: position.left,
-                            width: position.width,
-                            height: position.heigth,
-                            paddingLeft: 25,
-                            paddingRight: 25,
-                            paddingBottom: 10,
-                            paddingTop: 10,
-                            borderRadius: 10,
-                            background: "lightblue",
-                            borderStyle: "solid"
+                            var position = div.position();
+
+                            div.css({
+                                position: 'absolute',
+                                top: position.top,
+                                left: position.left,
+                                width: position.width,
+                                height: position.heigth,
+                                paddingLeft: 25,
+                                paddingRight: 25,
+                                paddingBottom: 10,
+                                paddingTop: 10,
+                                borderRadius: 10,
+                                background: "lightblue",
+                                borderStyle: "solid"
+                            });
                         });
                     });
+
+                    nextTutorial();
                 });
-                
-                nextTutorial();
-            });
+            
+            
+            <?php
+                }
+            ?>
         };
         
     </script>
