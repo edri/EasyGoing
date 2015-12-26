@@ -2,13 +2,26 @@
 
 </br>
 
+<?php
+   if ($successfulRegistration)
+   {
+?>
+      <div class="panel panel-success error">
+         <div class="panel-heading">
+            Yay, you successfully registered! You can now sign in.
+         </div>
+      </div>
+<?php
+   }
+?>
+
 <form class="form-inline" method="POST">
-    
+
   <div class="form-group">
     <label class="sr-only" for="exampleInputEmail3">Username</label>
     <input name = "username" type="name" class="form-control" id="exampleInputEmail3" placeholder="Username">
   </div>
-    
+
   <div class="form-group">
     <label class="sr-only" for="exampleInputPassword3">Password</label>
     <input name= "password" type="password" class="form-control" id="exampleInputPassword3" placeholder="Password">
@@ -18,7 +31,7 @@
       <input type="checkbox" name = "checkbox" value ="1"> Remember me
     </label>
   </div>
-  <button type="submit" class="btn btn-default">Sign in</button>    
+  <button type="submit" class="btn btn-default">Sign in</button>
 </form>
 
 </br>

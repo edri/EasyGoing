@@ -106,15 +106,18 @@ class UserController extends AbstractActionController
          }
       }
 
-		$success = false;
+		$successfulRegistration = false;
 
+		// If there is a successful-registration variable in the URL (comming from
+		// the 'registration' action), we need to display a success message in the
+		// home page.
 		if (isset($_GET["successfulRegistration"]) && $_GET["successfulRegistration"])
 		{
-
+			$successfulRegistration = true;
 		}
 
       return new ViewModel(array(
-			
+			'successfulRegistration'	=> $successfulRegistration
 		));
    }
    public function registrationAction()
