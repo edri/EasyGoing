@@ -178,7 +178,7 @@ class UserController extends AbstractActionController
             $password1 = $_POST["password1"];
             $password2 = $_POST["password2"];
             $email =  $_POST["email"];
-				$tutorial =  $_POST["tutorial"];
+				$tutorial =  (isset($_POST["tutorial"]) && $_POST["tutorial"]) ? true : false;
 	         // Will be used attribute a name to the uploaded file.
 				$filename;
             // Checks that the mandatory fields aren't empty and that the username doesn't
@@ -277,7 +277,7 @@ class UserController extends AbstractActionController
 													$lname,
 													$email,
 													isset($fileName) ? $fileName : "default.png",
-													isset($tutorial)
+													$tutorial
 												);
 			                        }
 			                        catch (\Exception $e)
@@ -370,7 +370,7 @@ class UserController extends AbstractActionController
 		$this->redirect()->toRoute();
 		return new ViewModel();
 	}
-	
+
 	public function cancelAction()
 	{
 		$this->redirect()->toRoute();
