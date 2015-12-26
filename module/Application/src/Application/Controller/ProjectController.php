@@ -42,16 +42,21 @@ class ProjectController extends AbstractActionController
    // and check if the accessed project/task exists.
    public function onDispatch( \Zend\Mvc\MvcEvent $e )
    {
-      $sessionUser = new container('user');
-
+      $sessionUser = new container('user');      
       if (!$sessionUser->connected)
+      {
          $this->redirect()->toRoute('home');
+      }
 
       if (empty($this->_getTable('ProjectTable')->getProject($this->params('id'))))
+      {
          $this->redirect()->toRoute('projects');
+      }
 
       if ($this->params('otherId') != null && empty($this->_getTable('TaskTable')->getTaskById($this->params('otherId'))))
+      {
          $this->redirect()->toRoute('projects');
+      }
 
       return parent::onDispatch( $e );
    }
@@ -74,7 +79,7 @@ class ProjectController extends AbstractActionController
          'members'      => $members,
          'eventsTypes'  => $eventsTypes,
          'events'       => $events,
-         'isManager'    => $isManager ? 'true' : 'false'
+         'isManager'    => $isManager ? true : false
       ));
    }
 
@@ -346,7 +351,7 @@ class ProjectController extends AbstractActionController
 
       return $result;
    }
-   
+
    public function assignTaskAction()
    {
       $sessionUser = new container('user');
@@ -461,21 +466,21 @@ class ProjectController extends AbstractActionController
          )));
       }
    }
-   
+
    public function unassignTaskAction()
    {
       $projectId = $this->params('id');
       $sessionUser = new container('user');
       $data = $this->getRequest()->getPost();
       $resMessage = 'Unassign success';
-      
+
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
          $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($data['userId'], $data['taskId']);
       }
       else
          $resMessage = 'You do not have rights to unassign this task !';
-      
+
       return $this->getResponse()->setContent(json_encode(array(
          'message' => $resMessage
       )));
@@ -670,6 +675,15 @@ class ProjectController extends AbstractActionController
       }
       
       // TODO : Faire une redirection avec un message
+      /*
+      
+      $this->redirect()->toRoute('project', array(
+          'id' => $projectId
+      ), array('query' => array(
+          'message' => 'bar'
+      )));
+      */
+      
       $this->redirect()->toRoute('project', array(
           'id' => $projectId
       ));

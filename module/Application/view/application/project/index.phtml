@@ -176,7 +176,9 @@
                <?php foreach ($members as $member) : ?>
                <p>
                   <?php echo $member->username; ?>
-                  <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>">Remove</a>
+                  <?php if($isManager) : ?>
+                     <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>">Remove</a>
+                  <?php endif; ?>
                </p>
                <?php endforeach; ?>
             </div>
