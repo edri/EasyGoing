@@ -425,9 +425,9 @@ hr {
    width: 100%;
 }
 
-.eventDetailsTable th td {
-   border: 0 !important;
-   padding: 0 30px 0 0;
+.eventDetailsTable td, th {
+   border: 0;
+   padding: 2px 30px 2px 0;
 }
 
 
