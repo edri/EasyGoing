@@ -60,19 +60,31 @@
         ?>
         <script>
            $(document).ready(function() {
+             // Indicate if the header is currently hidden (true) or not (false).
              var isHeaderHidden = false;
 
+             // Occurs when the user scrolled the main content.
              $("#mainContent").on("scroll", function () {
-                console.log("SCROLL");
+                // There is three cases:
+                //   1. The header is shows and the user scrolled down
+                //         => we need to hide the header (to gain some space on the page).
+                //   2. The header is hidden and the user scrolled down
+                //         => nothing to do, just let the system scrolls the element.
+                //   3. The header is hidden and the user scrolled to the maximum top
+                //         => we need to show again the header.
+                // CASE 1
                 if ($(this).scrollTop() > 0) {
                    if (!isHeaderHidden) {
                       $("#header").slideUp(300, function() {
                         isHeaderHidden = true;
                       });
                       $("#mainContainer").addClass("noMarginTop");
+                      // The first scroll doesn't really scroll the content, because
+                      // of the header's hidding.
                       $(this).scrollTop(1);
                    }
                 }
+                // CASE 3
                 else {
                    if (isHeaderHidden) {
                       if (!$("#header").is(":visible")) {
