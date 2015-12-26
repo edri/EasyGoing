@@ -34,11 +34,11 @@
       if (!empty($event->details))
       {
          $eventContent .=
-               '<tr id="detailsEvent' . $event->id . '" class="eventDetailsRow">
+               '<tr id="eventDetails' . $event->id . '" class="eventDetailsRow">
                   <td></td>
                   <td>
-                     <div class="eventDetails">
-                        <b><u>Details:</u></b>
+                     <div class="eventDetails" id="divEventDetails' . $event->id . '">
+                        <b>Details:</b>
                         <br/>' . $event->details .
                      '</div>
                   </td>
@@ -177,15 +177,21 @@
       $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewTasks"'; ?>);
    }
 
+   // Expand or collapse clicked event for showing/hidding event's details.
    function expandEventDetails(eventId) {
-      if ($('#detailsEvent' + eventId).is(":visible")) {
+      // Hide event's details if they was shown.
+      if ($('#eventDetails' + eventId).is(":visible")) {
          $('#toggleEventDetails' + eventId).attr("src", "/img/expand_event.svg");
+         $('#divEventDetails' + eventId).slideUp("fast", function() {
+            $('#eventDetails' + eventId).hide();
+         });
       }
+      // Otherwise show them.
       else {
          $('#toggleEventDetails' + eventId).attr("src", "/img/collapse_event.svg");
+         $('#eventDetails' + eventId).show();
+         $('#divEventDetails' + eventId).slideDown("fast");
       }
-
-      $('#detailsEvent' + eventId).toggle();
    }
 
    $(document).ready(function() {
