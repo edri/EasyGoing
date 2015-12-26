@@ -8,16 +8,46 @@
 <h1 class="pageTitle">Create a new project</h1>
 
 <?php
-    if (isset($error))
-    {
+   // if there was an error when creating the posted project, display it.
+   if (isset($error))
+   {
 ?>
-        <div class="panel panel-danger error">
-            <div class="panel-heading">
-                <?php echo $error; ?>
-            </div>
-        </div>
+      <div class="panel panel-danger error">
+         <div class="panel-heading">
+            <?php
+               switch($error)
+               {
+                  case "errorFieldEmpty":
+                     echo "Please fill all mandatory fields.";
+                     break;
+                  case "errorDate":
+                     echo "Please enter a correct date format (YYYY-MM-DD).";
+                     break;
+                  case "errorLogoSize":
+                     echo "The logo you're trying to upload is too large, please retry.";
+                     break;
+                  case "errorLogoType":
+                  case "errorLogoExtension":
+                     echo "Please upload a file, which extension is allowed.";
+                     break;
+                  case  "errorLogo":
+                     echo "Something is wrong with the file you're trying to upload, please retry.";
+                     break;
+                  case  "errorFilesUpload":
+                     echo "Something wrong happend when uploading the logo, please retry.";
+                     break;
+                  case  "errorDatabaseAdding":
+                     echo "Something wrong happend when creating the project, please retry.";
+                     break;
+                  default:
+                     echo "An error occured, please retry.";
+                     break;
+               }
+            ?>
+         </div>
+      </div>
 <?php
-    }
+   }
 ?>
 
 <!-- 'enctype' attribut is used for posting pictures. -->

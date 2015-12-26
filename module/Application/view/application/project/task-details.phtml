@@ -15,7 +15,7 @@
          '<div class="eventElem" name="eventIn' . $type . '">
             <table class="eventTable">
                <tr>
-                  <td rowspan=2><img class="eventImg" src="/img/events/' . $event->fileLogo . '" /></td>
+                  <td class="eventImgTd" rowspan=2><img class="eventImg" src="/img/events/' . $event->fileLogo . '" /></td>
                   <td><span class="newsFeedInfo">Posted on ' . date('d.m.Y', strtotime($event->date)) . ' by <u>' . $event->username . '</u></span></td>
                </tr>
                <tr>
@@ -38,19 +38,19 @@
          <table>
             <tr>
                <td class="attributeName">Name</td>
-               <td><?php echo $task->name; ?></td>
+               <td id="taskName"><?php echo $task->name; ?></td>
             </tr>
             <tr>
                <td class="attributeName">Deadline</td>
-               <td><?php echo $task->deadLineDate; ?></td>
+               <td id="taskDeadline"><?php echo $task->deadLineDate; ?></td>
             </tr>
             <tr>
                <td class="attributeName">Duration</td>
-               <td><?php echo $task->durationsInHours; ?>h</td>
+               <td id="taskDuration"><?php echo $task->durationsInHours; ?>h</td>
             </tr>
             <tr>
                <td class="attributeName">Priority</td>
-               <td>
+               <td id="taskPriority">
                   <?php
                      $priority = ['High', 'Medium', 'Low'];
                      echo $priority[$task->priorityLevel - 1];
@@ -59,7 +59,7 @@
             </tr>
             <tr>
                <td class="attributeName">Description</td>
-               <td class="taskDescription"><?php echo (empty($task->description) ? "-" : $task->description); ?></td>
+               <td class="taskDescription" id="taskDescription"><?php echo (empty($task->description) ? "-" : $task->description); ?></td>
             </tr>
          </table>
       </td>

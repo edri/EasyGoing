@@ -1,7 +1,7 @@
 <?php
 namespace Application\Model;
 
-// This class contains all data of an user's entity.
+// This class contains all of the data for tutorial
 class Tutorial
 {
    private function _generateData($div, $text) 
@@ -9,12 +9,13 @@ class Tutorial
       return array('div' => $div, 'text' => $text);
    }
 
-   public function projectsTutorial() 
+   public function tutorialProjectsIndex() 
    {
       return array(
-         $this->_generateData('salut', 'Salut les amis'),
-         $this->_generateData('bonjour', 'Bonjour les gens'),
-         $this->_generateData('coucou', 'Bonjour Président !')
+         $this->_generateData('listOfProjects', 'This is the list of the projects you are affected in.
+          Click on a project to see details.'),
+         $this->_generateData('createProject', 'Here you can create a new project.'),
+         $this->_generateData('searchProject', 'Here you can search a project.')
       );
    }
 }

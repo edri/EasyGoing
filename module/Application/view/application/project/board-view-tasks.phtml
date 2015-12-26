@@ -1,154 +1,163 @@
- <div class="board-header">
-   <div class="board-header-section">
-      <h1>Tasks</h1>
+<?php if($tasks->count() == 0): ?>
+  
+   <h1>No tasks</h1>
+      
+<?php else: ?>
+    
+     <div class="board-header">
+      <div class="board-header-section">
+         <h1>Tasks</h1>
+      </div>
+      <div class="board-header-section">
+         <h1>To do</h1>
+      </div>
+      <div class="board-header-section">
+         <h1>Doing</h1>
+      </div>
+      <div class="board-header-section">
+         <h1>Done</h1>
+      </div>
    </div>
-   <div class="board-header-section">
-      <h1>To do</h1>
-   </div>
-   <div class="board-header-section">
-      <h1>Doing</h1>
-   </div>
-   <div class="board-header-section">
-      <h1>Done</h1>
-   </div>
-</div>
 
-<?php foreach ($tasks as $task): ?>
-<div class="board" task-id="<?php echo $task->id; ?>">
-   <div class="board-first-column" section="board-task">
-     <h4><?php echo $task->name; ?></h4>
-   </div>
-   <div class="board-section" id="todo" section="TODO">
-      <?php
-         if($task->state == "TODO")
-         {
-            foreach($membersForTask[$task->id] as $member)
-            {
-               echo '<div id="'.$member->email.$task->id.'" member-id="'.$member->id.'" class="board-user"><img draggable="false" class="imgProject" width="40px" src="'.$this->basePath('img/users/'.$member->filePhoto).'"><br>'.$member->firstName.'</div>';
-            }
+   <?php foreach ($tasks as $task): ?>
+   <div class="board" task-id="<?php echo $task->id; ?>">
+      <div class="board-first-column" section="board-task">
+        <h4><?php echo $task->name; ?></h4>
+      </div>
+      <div class="board-section" id="todo" section="TODO">
+         <?php
             
-         }
-      ?>
-   </div>
-   <div class="board-section" id="doing" section="DOING">
-      <?php
-         if($task->state == "DOING")
-         {
-            foreach($membersForTask[$task->id] as $member)
+            if($task->state == "TODO")
             {
-               echo '<div id="'.$member->email.$task->id.'" member-id="'.$member->id.'" class="board-user"><img draggable="false" class="imgProject" width="40px" src="'.$this->basePath('img/users/'.$member->filePhoto).'"><br>'.$member->firstName.'</div>';
-            }
-         }
-      ?>
-   </div>
-   <div class="board-section" id="done" section="DONE">
-      <?php
-         if($task->state == "DONE")
-         {
-            foreach($membersForTask[$task->id] as $member)
-            {
-               echo '<div id="'.$member->email.$task->id.'" member-id="'.$member->id.'" class="board-user"><img draggable="false" class="imgProject" width="40px" src="'.$this->basePath('img/users/'.$member->filePhoto).'"><br>'.$member->firstName.'</div>';
-            }
-         }
-      ?>
-   </div>
-</div>
-<?php endforeach; ?>
+               foreach($membersForTask[$task->id] as $member)
+               {
+                  echo '<div id="'.$member->email.$task->id.'" member-id="'.$member->id.'" class="board-user"><img draggable="false" class="imgProject" width="40px" src="'.$this->basePath('img/users/'.$member->filePhoto).'"><br>'.$member->firstName.'</div>';
+               }
 
-<script>
-var users = document.querySelectorAll('.board-user');
-for (var i = 0, n = users.length; i < n; i++) {
-   users[i].draggable = true;
-};
-var board = document.getElementsByClassName('board');
-var hideMe;
-for (var i in board) {
-   board[i].onselectstart = function(e) {
-      e.preventDefault();
-   }
-   board[i].ondragstart = function(e) {
-      console.log('dragstart');
-      hideMe = e.target;
-      e.dataTransfer.setData('board-user', e.target.id);
-      e.dataTransfer.effectAllowed = 'move';
+            }
+         ?>
+      </div>
+      <div class="board-section" id="doing" section="DOING">
+         <?php
+            if($task->state == "DOING")
+            {
+               foreach($membersForTask[$task->id] as $member)
+               {
+                  echo '<div id="'.$member->email.$task->id.'" member-id="'.$member->id.'" class="board-user"><img draggable="false" class="imgProject" width="40px" src="'.$this->basePath('img/users/'.$member->filePhoto).'"><br>'.$member->firstName.'</div>';
+               }
+            }
+         ?>
+      </div>
+      <div class="board-section" id="done" section="DONE">
+         <?php
+            if($task->state == "DONE")
+            {
+               foreach($membersForTask[$task->id] as $member)
+               {
+                  echo '<div id="'.$member->email.$task->id.'" member-id="'.$member->id.'" class="board-user"><img draggable="false" class="imgProject" width="40px" src="'.$this->basePath('img/users/'.$member->filePhoto).'"><br>'.$member->firstName.'</div>';
+               }
+            }
+         ?>
+      </div>
+   </div>
+   <?php endforeach; ?>
+
+   <script>
+   var users = document.querySelectorAll('.board-user');
+   for (var i = 0, n = users.length; i < n; i++) {
+      users[i].draggable = true;
    };
-   board[i].ondragend = function(e) {
-      e.target.style.visibility = 'visible';
-   };
-   var lastEneterd;
-   board[i].ondragenter = function(e) {
-      console.log('dragenter');
-      if (hideMe) {
-         hideMe.style.visibility = 'hidden';
-         hideMe = null;
-      }
-      // Save this to check in dragleave.
-      lastEntered = e.target;
-      var section = closestWithClass(e.target, 'board-section');
-      // TODO: Check that it's not the original section.
-      if (section) {
-         section.classList.add('droppable');
-         e.preventDefault(); // Not sure if these needs to be here. Maybe for IE?
-         return false;
-      }
-   };
-   board[i].ondragover = function(e) {
-      // TODO: Check data type.
-      // TODO: Check that it's not the original section.
-      if (closestWithClass(e.target, 'board-section')) {
+   var board = document.getElementsByClassName('board');
+   var hideMe;
+   for (var i in board) {
+      board[i].onselectstart = function(e) {
          e.preventDefault();
       }
-   };
-   board[i].ondragleave = function(e) {
-      // FF is raising this event on text nodes so only check elements.
-      if (e.target.nodeType === 1) {
-         // dragleave for outer elements can trigger after dragenter for inner elements
-         // so make sure we're really leaving by checking what we just entered.
-         // relatedTarget is missing in WebKit: https://bugs.webkit.org/show_bug.cgi?id=66547
+      board[i].ondragstart = function(e) {
+         console.log('dragstart');
+         hideMe = e.target;
+         e.dataTransfer.setData('board-user', e.target.id);
+         e.dataTransfer.effectAllowed = 'move';
+      };
+      board[i].ondragend = function(e) {
+         e.target.style.visibility = 'visible';
+      };
+      var lastEneterd;
+      board[i].ondragenter = function(e) {
+         console.log('dragenter');
+         if (hideMe) {
+            hideMe.style.visibility = 'hidden';
+            hideMe = null;
+         }
+         // Save this to check in dragleave.
+         lastEntered = e.target;
          var section = closestWithClass(e.target, 'board-section');
-         if (section && !section.contains(lastEntered)) {
-            section.classList.remove('droppable');
+         // TODO: Check that it's not the original section.
+         if (section) {
+            section.classList.add('droppable');
+            e.preventDefault(); // Not sure if these needs to be here. Maybe for IE?
+            return false;
          }
-      }
-      lastEntered = null; // No need to keep this around.
-   };
-   board[i].ondrop = function(e) {
-      var section = closestWithClass(e.target, 'board-section');
-      var id = e.dataTransfer.getData('board-user');
-      if (id) {
-         var member = document.getElementById(id);
-         // Might be a card from another window.
-         if (member) {
-            if (section !== member.parentNode) {
-
-               var targetTaskId = e.target.parentNode.getAttribute('task-id');
-               var memberId = member.getAttribute('member-id');
-               var targetSection = e.target.getAttribute('section');
-
-               // TODO : Faire de l'ajax ici
-               console.log('drag drop');
-
-               section.appendChild(member);
-
+      };
+      board[i].ondragover = function(e) {
+         // TODO: Check data type.
+         // TODO: Check that it's not the original section.
+         if (closestWithClass(e.target, 'board-section')) {
+            e.preventDefault();
+         }
+      };
+      board[i].ondragleave = function(e) {
+         // FF is raising this event on text nodes so only check elements.
+         if (e.target.nodeType === 1) {
+            // dragleave for outer elements can trigger after dragenter for inner elements
+            // so make sure we're really leaving by checking what we just entered.
+            // relatedTarget is missing in WebKit: https://bugs.webkit.org/show_bug.cgi?id=66547
+            var section = closestWithClass(e.target, 'board-section');
+            if (section && !section.contains(lastEntered)) {
+               section.classList.remove('droppable');
             }
-         } else {
-            alert('couldn\'t find member #' + id);
          }
-      }
-      section.classList.remove('droppable');
-      e.preventDefault();
-   };
-}
+         lastEntered = null; // No need to keep this around.
+      };
+      board[i].ondrop = function(e) {
+         var section = closestWithClass(e.target, 'board-section');
+         var id = e.dataTransfer.getData('board-user');
+         if (id) {
+            var member = document.getElementById(id);
+            // Might be a card from another window.
+            if (member) {
+               if (section !== member.parentNode) {
 
-function closestWithClass(target, className) {
-   while (target) {
-      if (target.nodeType === 1 &&
-         target.classList.contains(className)) {
-         return target;
-      }
-      target = target.parentNode;
+                  var targetTaskId = e.target.parentNode.getAttribute('task-id');
+                  var memberId = member.getAttribute('member-id');
+                  var targetSection = e.target.getAttribute('section');
+
+                  // TODO : Faire de l'ajax ici
+                  console.log('drag drop');
+
+                  section.appendChild(member);
+
+               }
+            } else {
+               alert('couldn\'t find member #' + id);
+            }
+         }
+         section.classList.remove('droppable');
+         e.preventDefault();
+      };
    }
-   return null;
-}
-$('.users').removeClass('droppable');
-</script>
+
+   function closestWithClass(target, className) {
+      while (target) {
+         if (target.nodeType === 1 &&
+            target.classList.contains(className)) {
+            return target;
+         }
+         target = target.parentNode;
+      }
+      return null;
+   }
+   $('.users').removeClass('droppable');
+   </script>
+
+<?php endif; ?>

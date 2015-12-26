@@ -26,7 +26,10 @@ a:focus {
 
 .header {
    background-color: #232323;
+   height: 86px;
    padding: 5px 0 11px;
+   position: absolute;
+   top: 0;
    width: 100%;
 }
 
@@ -107,10 +110,24 @@ title:focus,
 
 /* CONTENT */
 
+.mainContainer {
+   margin-top: 86px;
+   margin-bottom: 50px;
+   height: calc(100vh - 86px - 50px);
+   transition: margin-top 300ms, height 300ms;
+}
+
+.noMarginTop {
+   margin-top: 0;
+   height: calc(100vh - 50px);
+}
+
 .mainContent {
    background-color: #F0F0F0;
    border-left: 1px solid #5A2706;
    border-right: 1px solid #5A2706;
+   height: 100%;
+   overflow: auto;
    padding: 30px 30px 80px;
 }
 
@@ -121,9 +138,17 @@ title:focus,
 
 /* FOOTER */
 
+.footerWrapper {
+   bottom: 0;
+   height: 50px;
+   position: fixed;
+   width: 100%;
+}
+
 .footer {
    background-color: #212121;
    color: #fcd1b5;
+   height: 100%;
    padding: 15px;
 }
 
@@ -313,7 +338,7 @@ hr {
 
 .projectHeader {
    margin-top: 15px;
-   height: 230px;
+   height: 288px;
    width: 100%;
 }
 
@@ -344,7 +369,7 @@ hr {
 
 .historicalTab {
    border-style: none solid solid;
-   height: 180px;
+   height: 238px;
 }
 
 .newsFeedTab {
@@ -381,8 +406,16 @@ hr {
    cursor: pointer;
 }
 
+.eventTable {
+   width: 100%;
+}
+
 .eventTable td {
    padding: 2px !important;
+}
+
+.eventImgTd {
+   width: 44px;
 }
 
 .eventImg {
@@ -391,8 +424,49 @@ hr {
    width: 30px;
 }
 
+.eventDate {
+   float: left;
+}
+
+.expandEventImg {
+   float: right;
+   height: 17px;
+   width: 17px;
+}
+
 .eventMessage {
    color: #995527;
+}
+
+.eventDetailsRow {
+   display: none;
+}
+
+.eventDetails {
+   display: none;
+   padding-top: 10px;
+}
+
+.eventDetailsTable {
+   border: 1px solid #4e2e18;
+   width: 100%;
+}
+
+.eventDetailsTable td, th {
+   border: 0;
+   padding: 3px 15px !important;
+   vertical-align: top;
+}
+
+.eventDetailsTable td:not(.eventDetailsTaskAttribute) {
+   max-width: 40%;
+}
+
+.eventDetailsTaskAttribute {
+   font-weight: bold;
+   max-width: 20%;
+   min-width: 20%;
+   width: 20%;
 }
 
 
@@ -425,7 +499,7 @@ hr {
    background-color: #CCC;
 }
 
-.board-section.droppable {
+.droppable {
    border: 1px dashed #666;
 }
 

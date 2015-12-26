@@ -72,19 +72,43 @@ $(document).ready(function() {
                   // The received event must not be a task event, but a project event.
                   // We also must ensure than the received event is for the current project.
                   if (!data.event.isTaskEvent && data.event.linkedEntityId == projectId) {
-                     var introAll = '<div class="eventElem" name="eventInAll" style="display: none;">';
-                     var introType = '<div class="eventElem" name="eventIn' + data.event.type + '" style="display: none;">';
+                     var introAll = '<div class="eventElem"' + (data.event.details ? 'onclick="expandEventDetails(' + data.event.id + ');"' : '') + ' name="eventInAll" style="display: none;">';
+                     var introType = '<div class="eventElem"' + (data.event.details ? 'onclick="expandEventDetails(' + data.event.id + ');"' : '') + ' name="eventIn' + data.event.type + '" style="display: none;">';
 
                      var newEventDiv =
                            '<table class="eventTable">\
                               <tr>\
-                                 <td rowspan=2><img class="eventImg" src="/img/events/' + data.event.fileLogo + '" /></td>\
-                                 <td><b>[' + formatDate(new Date(data.event.date)) + ']</b></td>\
+                                 <td class="eventImgTd" rowspan=2><img class="eventImg" src="/img/events/' + data.event.fileLogo + '" /></td>\
+                                 <td>\
+                                    <b class="eventDate">[' + formatDate(new Date(data.event.date)) + ']</b>';
+
+                     if (data.event.details) {
+                        newEventDiv +=
+                                    '<img class="expandEventImg" id="toggleEventDetails' +  data.event.id + '" src="/img/expand_event.svg" />';
+                     }
+
+                     newEventDiv +=
+                                 '</td>\
                               </tr>\
                               <tr>\
                                  <td><div class="eventMessage">' + data.event.message + '</div></td>\
-                              </tr>\
-                           </table>\
+                              </tr>';
+
+                     if (data.event.details) {
+                        newEventDiv +=
+                              '<tr id="eventDetails' + data.event.id + '" class="eventDetailsRow">\
+                                 <td></td>\
+                                 <td>\
+                                    <div class="eventDetails" id="divEventDetails' + data.event.id + '">\
+                                       <b>Details:</b>\
+                                       <br/>' + data.event.details +
+                                    '</div>\
+                                 </td>\
+                              </tr>';
+                     }
+
+                     newEventDiv +=
+                           '</table>\
                         </div>';
 
                      $("#all").prepend(introAll + newEventDiv);
@@ -95,7 +119,6 @@ $(document).ready(function() {
 
                      $('#board-container').load(window.location.href + '/boardViewMembers');
                   }
-
                   break;
                // Received a socket indicating an element's moving.
                case "taskMovingEvent":
@@ -114,7 +137,7 @@ $(document).ready(function() {
                      var newEventDiv =
                            '<table class="eventTable">\
                               <tr>\
-                                 <td rowspan=2><img class="eventImg" src="/img/events/' + data.event.fileLogo + '" /></td>\
+                                 <td class="eventImgTd" rowspan=2><img class="eventImg" src="/img/events/' + data.event.fileLogo + '" /></td>\
                                  <td><span class="newsFeedInfo">Posted on ' + formatDate(new Date(data.event.date)) + ' by <u>' + data.event.username + '</u></span></td>\
                               </tr>\
                               <tr>\
@@ -131,7 +154,32 @@ $(document).ready(function() {
                      $("#eventIn" + data.event.type + " #taskEvent" + data.event.id).text(data.event.message);
                      $("#" + data.event.type.toLowerCase() + " > div[name='eventIn" + data.event.type + "']").first().show("fast");
                   }
+                  break;
+               // Task deletion event received ; inform the user and redirect it back
+               // to the project's page.
+               case "taskDeleted":
+                  if (data.taskId == taskId) {
+                     // Show an information dialog and redirect back the user.
+                     bootbox.alert("Oops <u>" + data.username + "</u> just deleted the task you currently are in...<br/>You're going to be automatically redirected once this window is closed.", function() {
+                        window.location.href = "/project/" + projectId;
+                     });
+                  }
+                  break;
+               // Task edition event received ; automatically update task's fields in
+               // the task page.
+               case "taskEdited":
+                  console.log("OK: " + data.taskId + " - " + taskId);
+                  if (data.taskId == taskId) {
+                     console.log(data.taskData);
+                     console.log(data.taskData.name);
+                     var priority = ['High', 'Medium', 'Low'];
 
+                     $("#taskName").text(data.taskData.name);
+                     $("#taskDeadline").text(data.taskData.deadline);
+                     $("#taskDuration").text(data.taskData.duration + "h");
+                     $("#taskPriority").text(priority[data.taskData.priority - 1]);
+                     $("#taskDescription").text(data.taskData.description ? data.taskData.description : "-");
+                  }
                   break;
             }
          } catch (e) {

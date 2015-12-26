@@ -8,6 +8,7 @@ class Event
    public $date;
    public $message;
    public $eventType;
+   public $details;
 
    public function exchangeArray($data)
    {
@@ -15,5 +16,6 @@ class Event
       $this->date  = (!empty($data['date'])) ? $data['date'] : null;
       $this->message  = (!empty($data['message'])) ? $data['message'] : null;
       $this->eventType  = (!empty($data['eventType'])) ? $data['eventType'] : null;
+      $this->details  = (!empty($data['details'])) ? $data['details'] : null;
    }
 }

@@ -25,6 +25,7 @@ use Application\Utility\Priority;
 // Be careful about the class' name, which must be the same as the file's name.
 class ProjectController extends AbstractActionController
 {
+   
    // Get the given table's entity, represented by the created model.
    private function _getTable($tableName)
    {
@@ -72,7 +73,6 @@ class ProjectController extends AbstractActionController
       // Get project's events.
       $events = $this->_getTable('ViewEventTable')->getEntityEvents($this->params('id'), false);
       $isManager = $this->_userIsAdminOfProject($sessionUser->id, $this->params('id'));
-
 
       return new ViewModel(array(
          'project'      => $project,
@@ -129,7 +129,9 @@ class ProjectController extends AbstractActionController
          $message = "\"" . $sessionUser->username . "\" created the task.";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          $this->_getTable("EventOnTaskTable")->add($eventId, $taskId);
-         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get SYSTEM user's ID and link it to the new task's event.
+         $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
+         $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
 
          try
          {
@@ -139,8 +141,8 @@ class ProjectController extends AbstractActionController
             $client->setMethod(Request::METHOD_POST);
             // Setting POST data.
             $client->setParameterPost(array(
-               "requestType"  => "newEvent",
-               "event"        => json_encode($event)
+               "requestType"        => "newEvent",
+               "event"              => json_encode($event)
             ));
             // Send HTTP request to server.
             $response = $client->send();
@@ -190,6 +192,9 @@ class ProjectController extends AbstractActionController
          $deadline = $_POST["deadline"];
          $duration = $_POST["duration"];
 
+         // Get old task's data for the historical.
+         $oldTaskData = $this->_getTable('TaskTable')->getTaskById($id);
+         // Upload task's data.
          $this->_getTable('TaskTable')->updateTask($name, $description, $deadline, $duration, $priority, $id);
 
          // If task was successfully edited, add a task's edition event.
@@ -197,7 +202,43 @@ class ProjectController extends AbstractActionController
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
          // Then add the new event in the database.
          $message = "<u>" . $sessionUser->username . "</u> updated task <font color=\"#FF6600\">" . $name . "</font>.";
-         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         // This event have some details.
+         // TODO: use priority with BasicEnum.
+         $priorityArray = ['High', 'Medium', 'Low'];
+         $details =
+            "<table class='eventDetailsTable'>
+               <tr>
+                  <th class='eventDetailsTaskAttribute'></th>
+                  <th>Old values</th>
+                  <th>New values</th>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Name: </td>
+                  <td>" . $oldTaskData->name . "</td>
+                  <td>" . $name . "</td>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Deadline: </td>
+                  <td>" . $oldTaskData->deadLineDate . "</td>
+                  <td>" . $deadline . "</td>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Duration: </td>
+                  <td>" . $oldTaskData->durationsInHours . "h</td>
+                  <td>" . $duration . "h</td>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Priority: </td>
+                  <td>" . $priorityArray[$oldTaskData->priorityLevel - 1] . "</td>
+                  <td>" . $priorityArray[$priority - 1] . "</td>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Description: </td>
+                  <td>" . (empty($oldTaskData->description) ? "-" : $oldTaskData->description) . "</td>
+                  <td>" . (empty($description) ? "-" : $description) . "</td>
+               </tr>
+            </table>";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId, $details);
          // Link the new event to the current project.
          $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
          // Finaly link the new event to the user who created it.
@@ -209,7 +250,9 @@ class ProjectController extends AbstractActionController
          $message = "\"" . $sessionUser->username . "\" updated the task.";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          $this->_getTable("EventOnTaskTable")->add($eventId, $id);
-         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get SYSTEM user's ID and link it to the new task's event.
+         $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
+         $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
          $event2 = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
 
          try
@@ -222,6 +265,20 @@ class ProjectController extends AbstractActionController
             $client->setParameterPost(array(
                "requestType"  => "newEvents",
                "events"       => array(json_encode($event1), json_encode($event2))
+            ));
+            // Send HTTP request to server.
+            $response = $client->send();
+            // Send a edit request to inform users which are currently in the task page.
+            $client->setParameterPost(array(
+               "requestType"  => "taskEdited",
+               "taskId"       => $id,
+               "data"         => json_encode(array(
+                                    "name"         => $name,
+                                    "deadline"     => $deadline,
+                                    "duration"     => $duration,
+                                    "priority"     => $priority,
+                                    "description"  => $description
+                                 ))
             ));
             // Send HTTP request to server.
             $response = $client->send();
@@ -295,8 +352,44 @@ class ProjectController extends AbstractActionController
 
       return $result;
    }
+   
+   public function assignTaskAction()
+   {
+      $sessionUser = new container('user');
+      $projectId = $this->params('id');
+      $data = $this->getRequest()->getPost();
 
-   public function moveTaskAction() {
+      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
+      {
+
+         if($this->_userIsAssignToTask($data['targetMemberId'], $data['taskId']))
+         {
+            return $this->getResponse()->setContent(json_encode(array(
+               'hasRightToAssignTask' => true,
+               'alreadyAssigned'      => true
+            )));
+         }
+         else
+         {
+            $this->_getTable('UsersTasksAffectationsTable')->addAffectation($data['targetMemberId'], $data['taskId']);
+
+            return $this->getResponse()->setContent(json_encode(array(
+               'hasRightToAssignTask' => true,
+               'alreadyAssigned'      => false
+            )));
+         }
+      }
+      else
+      {
+         return $this->getResponse()->setContent(json_encode(array(
+            'hasRightToAssignTask' => false,
+            'alreadyAssigned'      => false
+         )));
+      }
+   }
+
+   public function moveTaskAction()
+   {
       $sessionUser = new container('user');
       $projectId = $this->params('id');
       // Get POST data
@@ -333,7 +426,9 @@ class ProjectController extends AbstractActionController
          $message = "\"" . $sessionUser->username . "\" moved the task from \"(" . $oldUsername . ", " . $data['oldSection'] . ")\" to \"(" . $newUsername . ", " . $data['targetSection'] . ")\".";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          $this->_getTable("EventOnTaskTable")->add($eventId, $data['taskId']);
-         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get SYSTEM user's ID and link it to the new task's event.
+         $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
+         $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
          $event2 = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
 
          // Send task's event socket.
@@ -372,6 +467,25 @@ class ProjectController extends AbstractActionController
          )));
       }
    }
+   
+   public function unassignTaskAction()
+   {
+      $projectId = $this->params('id');
+      $sessionUser = new container('user');
+      $data = $this->getRequest()->getPost();
+      $resMessage = 'Unassign success';
+      
+      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
+      {
+         $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($data['userId'], $data['taskId']);
+      }
+      else
+         $resMessage = 'You do not have rights to unassign this task !';
+      
+      return $this->getResponse()->setContent(json_encode(array(
+         'message' => $resMessage
+      )));
+   }
 
    public function deleteTaskAction()
    {
@@ -383,16 +497,46 @@ class ProjectController extends AbstractActionController
 
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
-         // Get the name of the task-do-delete.
-         $name = $this->_getTable('TaskTable')->getTaskById($taskId)->name;
+         // Get old task's data for the historical.
+         $oldTaskData = $this->_getTable('TaskTable')->getTaskById($taskId);
          $this->_getTable('TaskTable')->deleteTask($taskId);
 
          // If task was successfully deleted, add a task's deletion event.
          // First of all, get right event type.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
          // Then add the new event in the database.
-         $message = "<u>" . $sessionUser->username . "</u> deleted task <font color=\"#FF6600\">" . $name . "</font>.";
-         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         $message = "<u>" . $sessionUser->username . "</u> deleted task <font color=\"#FF6600\">" . $oldTaskData->name . "</font>.";
+         // This event have some details.
+         // TODO: use priority with BasicEnum.
+         $priorityArray = ['High', 'Medium', 'Low'];
+         $details =
+            "<table class='eventDetailsTable'>
+               <tr>
+                  <th class='eventDetailsTaskAttribute'></th>
+                  <th>Deleted task's values</th>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Name: </td>
+                  <td>" . $oldTaskData->name . "</td>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Deadline: </td>
+                  <td>" . $oldTaskData->deadLineDate . "</td>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Duration: </td>
+                  <td>" . $oldTaskData->durationsInHours . "h</td>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Priority: </td>
+                  <td>" . $priorityArray[$oldTaskData->priorityLevel - 1] . "</td>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Description: </td>
+                  <td>" . (empty($oldTaskData->description) ? "-" : $oldTaskData->description) . "</td>
+               </tr>
+            </table>";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId, $details);
          // Link the new event to the current project.
          $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
          // Finaly link the new event to the user who created it.
@@ -406,10 +550,18 @@ class ProjectController extends AbstractActionController
             // new websocket related to the new event.
             $client = new Client('http://127.0.0.1:8002');
             $client->setMethod(Request::METHOD_POST);
-            // Setting POST data.
+            // Setting POST data for the project page.
             $client->setParameterPost(array(
                "requestType"  => "newEvent",
                "event"        => json_encode($event)
+            ));
+            // Send HTTP request to server.
+            $response = $client->send();
+            // Send a delete request to inform users which are currently in the task page.
+            $client->setParameterPost(array(
+               "requestType"  => "taskDeleted",
+               "taskId"       => $taskId,
+               "username"     => $sessionUser->username
             ));
             // Send HTTP request to server.
             $response = $client->send();
@@ -493,7 +645,32 @@ class ProjectController extends AbstractActionController
 
    public function removeMemberAction()
    {
-
+      $sessionUser = new container('user');
+      $projectId = $this->params('id');
+      $memberId = $this->params('otherId');
+      
+      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
+      {
+         // Remove from project
+         $this->_getTable('ProjectsUsersMembersTable')->removeMember($memberId, $projectId);
+         
+         // Remove all affectations in the project
+         // Foreach tasks in the project, if the user is assigned we delete it
+         $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($projectId);
+         foreach($tasks as $task)
+         {
+            $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($memberId, $task->id);
+         }
+      }
+      else
+      {
+         // TODO : Faire une redirection avec un message
+      }
+      
+      // TODO : Faire une redirection avec un message
+      $this->redirect()->toRoute('project', array(
+          'id' => $projectId
+      ));
    }
 
    public function loadEventAction()
@@ -580,7 +757,7 @@ class ProjectController extends AbstractActionController
             $client->setMethod(Request::METHOD_POST);
             // Setting POST data.
             $client->setParameterPost(array(
-               "requestType"  => "newTaskEvent",
+               "requestType"  => "newEvent",
                "event"        => json_encode($event)
             ));
             // Send HTTP request to server.
@@ -605,6 +782,11 @@ class ProjectController extends AbstractActionController
       }
    }
 
+   private function _userIsAssignToTask($userId, $taskId)
+   {
+      return !empty($this->_getTable('UsersTasksAffectationsTable')->getAffectation($userId, $taskId));
+   }
+
    private function _userIsAdminOfProject($userId, $projectId)
    {
       return $this->_getTable('ViewProjectMinTable')->userIsAdminOfProject($userId, $projectId);
@@ -618,16 +800,20 @@ class ProjectController extends AbstractActionController
       $notMembersArray = array();
       foreach($users as $user)
       {
-         $mustAdd = true;
-
-         foreach($members as $member)
+         // Don't show the SYSTEM user.
+         if ($user->username != "SYSTEM")
          {
-            if($user->id == $member->id)
-            $mustAdd = false;
-         }
+            $mustAdd = true;
 
-         if($mustAdd)
-            array_push($notMembersArray, $user);
+            foreach($members as $member)
+            {
+               if($user->id == $member->id)
+               $mustAdd = false;
+            }
+
+            if($mustAdd)
+               array_push($notMembersArray, $user);
+         }
       }
 
       return $notMembersArray;

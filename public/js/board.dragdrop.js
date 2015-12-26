@@ -4,18 +4,19 @@ $(document).ready(function() {
    for (var i = 0, n = tasks.length; i < n; i++) {
       tasks[i].draggable = true;
    };
-
-   var board = document.getElementsByClassName('board');
+   
+   var board = [].concat(Array.prototype.slice.call(document.getElementsByClassName('board')), Array.prototype.slice.call(document.getElementsByClassName('listed-task')));
    var hideMe;
    var oldTarget;
+   var isAffectation;
    for (var i in board) {
       board[i].onselectstart = function(e) {
          e.preventDefault();
       }
       board[i].ondragstart = function(e) {
-         console.log('dragstart');
          hideMe = e.target;
          oldTarget = e.target.parentNode;
+         isAffectation = e.target.type === 'unassigned-task' ? true : false;
          e.dataTransfer.setData('board-task', e.target.id);
          e.dataTransfer.effectAllowed = 'move';
       };
@@ -24,20 +25,23 @@ $(document).ready(function() {
       };
       var lastEneterd;
       board[i].ondragenter = function(e) {
-         console.log('dragenter');
+         
          if (hideMe) {
             hideMe.style.visibility = 'hidden';
             hideMe = null;
          }
          // Save this to check in dragleave.
          lastEntered = e.target;
-         var section = closestWithClass(e.target, 'board-section');
-         // TODO: Check that it's not the original section.
-         if (section) {
+         
+         var sectionName = isAffectation ? 'board' : 'board-section';
+         var section = closestWithClass(e.target, sectionName);
+
+         if(section) {
             section.classList.add('droppable');
             e.preventDefault(); // Not sure if these needs to be here. Maybe for IE?
             return false;
          }
+         
       };
       board[i].ondragover = function(e) {
          // TODO: Check data type.
@@ -52,49 +56,75 @@ $(document).ready(function() {
             // dragleave for outer elements can trigger after dragenter for inner elements
             // so make sure we're really leaving by checking what we just entered.
             // relatedTarget is missing in WebKit: https://bugs.webkit.org/show_bug.cgi?id=66547
-            var section = closestWithClass(e.target, 'board-section');
-            if (section && !section.contains(lastEntered)) {
-               section.classList.remove('droppable');
-            }
+            var sectionName = isAffectation ? 'board' : 'board-section';
+            var section = closestWithClass(e.target, sectionName);
+            section.classList.remove('droppable');
          }
          lastEntered = null; // No need to keep this around.
       };
       board[i].ondrop = function(e) {
          var section = closestWithClass(e.target, 'board-section');
          var id = e.dataTransfer.getData('board-task');
-         if (id) {
-            var task = document.getElementById(id);
-            // Might be a card from another window.
-            if (task) {
-               if (section !== task.parentNode) {
+         var task = document.getElementById(id);
+         
+         if(isAffectation) {
+            var taskId = task.getAttribute('task-id');
+            var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
+            var targetSection = $(e.target).closest('[section]').attr('section');
+            
+            
+            $.post("http://easygoing/project/" + projectId + "/assignTask", {
+               taskId: taskId,
+               targetMemberId: targetMemberId,
+               targetSection: targetSection
+            })
+            .done(function(data) {
+               var data = JSON.parse(data);
 
-                  var taskId = task.getAttribute('task-id');
-                  var oldMemberId = oldTarget.parentNode.getAttribute('member-id');
-                  var oldSection = oldTarget.getAttribute('section');
-                  var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
-                  var targetSection = $(e.target).closest('[section]').attr('section');
-                  var isManager = $('#hidden').attr('is-manager');
-
-                  if(targetMemberId !== oldMemberId)
-                  {
-                     bootbox.confirm('Are sure you want to assign this task to another member ?', function(result) {
-                        if(result === true) {
-                           moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection, task);
-                           section.appendChild(task);
-                        }
-                     });
-                  }
-                  else
-                  {
-                     moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection, task);
-                     section.appendChild(task);
-                  }
-
+               if(!data.hasRightToAssignTask) {
+                  addBootstrapAlert('board-alert-container', 'You do not have the right to move this task because you are either not manager.', 'danger');
                }
-            } else {
-               alert('couldn\'t find task #' + id);
+               if(data.alreadyAssigned) {
+                  addBootstrapAlert('board-alert-container', 'Already assigned.', 'danger');
+               }
+               
+               $('#board-container').load(window.location.href + '/boardViewMembers');
+            });
+         }
+         else {
+            if (id) {
+               if (task) {
+                  if (section !== task.parentNode) {
+
+                     var taskId = task.getAttribute('task-id');
+                     var oldMemberId = oldTarget.parentNode.getAttribute('member-id');
+                     var oldSection = oldTarget.getAttribute('section');
+                     var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
+                     var targetSection = $(e.target).closest('[section]').attr('section');
+                     var isManager = $('#hidden').attr('is-manager');
+
+                     if(targetMemberId !== oldMemberId)
+                     {
+                        bootbox.confirm('Are sure you want to assign this task to another member ?', function(result) {
+                           if(result === true) {
+                              moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection, task);
+                              section.appendChild(task);
+                           }
+                        });
+                     }
+                     else
+                     {
+                        moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection, task);
+                        section.appendChild(task);
+                     }
+
+                  }
+               } else {
+                  alert('couldn\'t find task #' + id);
+               }
             }
          }
+         
          section.classList.remove('droppable');
          e.preventDefault();
       };

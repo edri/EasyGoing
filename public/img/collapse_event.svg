@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   sodipodi:docname="collapse_event.svg"
+   inkscape:export-filename="C:\DOCUME~1\elie\LOCALS~1\Temp\dev.png"
+   inkscape:export-xdpi="4500"
+   version="1.1"
+   inkscape:export-ydpi="4500"
+   inkscape:version="0.91 r"
+   viewBox="0 0 16 16">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     id="namedview11"
+     bordercolor="#666666"
+     inkscape:pageshadow="2"
+     guidetolerance="10"
+     pagecolor="#ffffff"
+     gridtolerance="10"
+     inkscape:window-maximized="1"
+     inkscape:zoom="14.75"
+     objecttolerance="10"
+     borderopacity="1"
+     inkscape:current-layer="Group"
+     inkscape:cx="8.1355932"
+     inkscape:cy="7.4237288"
+     inkscape:window-y="0"
+     inkscape:window-x="0"
+     inkscape:window-width="1920"
+     showgrid="false"
+     inkscape:pageopacity="0"
+     inkscape:window-height="1028" />
+  <title
+     id="title4" />
+  <g
+     id="Icons with numbers"
+     fill="none"
+     fill-rule="evenodd">
+    <g
+       id="Group"
+       fill="#000"
+       transform="translate(0 -528)">
+      <path
+         id="Oval 210 copy"
+         sodipodi:nodetypes="cccccsssss"
+         inkscape:connector-curvature="0"
+         d="m4 535v2c7.8196 0.0167 1.0509 0 8 0v-2c-8.0929 0.0129-1.7487 0-8 0zm4 9c-4.4183 0-8-3.58-8-8s3.5817-8 8-8c4.418 0 8 3.58 8 8s-3.582 8-8 8z"
+         style="fill:#4e2e18;fill-opacity:1" />
+    </g>
+  </g>
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

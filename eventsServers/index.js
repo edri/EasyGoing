@@ -88,15 +88,60 @@ function sendEventSocket(eventData, sendTo) {
 // Send a message to every connected users that currently are in the project in which
 // the task was moved so they can dynamically move it.
 function sendTaskMovingSocket(data, fromConnection) {
-	console.log("WEBSOCKET: Send task-moving socket to every concerned clients...");
+	console.log("WEBSOCKET: send task-moving socket to every concerned clients...");
 	data.messageType = "taskMovingEvent";
 
 	socketServer.connections.forEach(function(connection) {
 		// Check every connection's project's ID and send message to the right ones.
-		if (connection.connectionType === PROJECT_CONNECTION && !data.isTaskEvent && connection.projectId === data.linkedEntityId) {
-			if (connection != fromConnection) {
+		if (connection.connectionType === PROJECT_CONNECTION &&
+			!data.isTaskEvent &&
+			connection.projectId === data.linkedEntityId &&
+			connection != fromConnection) {
 				connection.sendText(JSON.stringify(data));
-			}
+		}
+	})
+}
+
+// Send a websocket to every users that currently are in the deleted task's page so
+// they can leave it.
+// Parameters:
+//		- taskId: the deleted task's ID.
+//		- username: the name of the user who deleted the task.
+function sendTaskDeletion(taskId, username) {
+	var data = {
+		"messageType": "taskDeleted",
+		"taskId": taskId,
+		"username": username
+	};
+
+	console.log("WEBSOCKET: send task #" + taskId + "'s deletion message to every concerned clients...");
+
+	socketServer.connections.forEach(function(connection) {
+		// Check every connection's task's ID and send message to the right ones.
+		if (connection.connectionType === TASK_CONNECTION && connection.taskId === taskId) {
+			connection.sendText(JSON.stringify(data));
+		}
+	})
+}
+
+// Send a websocket to every users that currently are in the edited task's page so
+// we can automatically update it.
+// Parameters:
+// 	- taskId: the edited task's ID.
+//		- taskData: the edited task's new data received from the HTTP server.
+function sendTaskEdition(taskId, taskData) {
+	var data = {
+		"messageType": "taskEdited",
+		"taskId": taskId,
+		"taskData": taskData
+	};
+
+	console.log("WEBSOCKET: send task #" + taskId + "'s edition message to every concerned clients...");
+
+	socketServer.connections.forEach(function(connection) {
+		// Check every connection's task's ID and send message to the right ones.
+		if (connection.connectionType === TASK_CONNECTION && connection.taskId === taskId) {
+			connection.sendText(JSON.stringify(data));
 		}
 	})
 }
@@ -109,38 +154,56 @@ function handleRequest(req, res) {
 	if (req.method == "POST") {
 		// Get POST request form data.
 		var form = new formidable.IncomingForm();
-		// Parse form data to get JSON.
-		form.parse(req, function(err, fields, files) {
-			console.log("HTTP: received HTTP POST request:");
-			console.log(fields);
 
-			// Do some actions, depending on the received data message's type.
-			switch (fields.requestType) {
-				// An event is received from a project or task page.
-				case "newEvent":
-					// Parse event's data to JSON.
-					var event = JSON.parse(fields.event);
-					console.log("HTTP: received a new " + (event.isTaskEvent ? "task" : "project") + "'s event.");
-					// Send the received event to all concerned clients.
-					sendEventSocket(event, (event.isTaskEvent ? TASK_CONNECTION : PROJECT_CONNECTION));
-					break;
-				// Several simultaneous events (could be project and task's events).
-				case "newEvents":
-					console.log("HTTP: received several simultaneous events.");
-					var objectSize = Object.keys(fields).length;
-					// Send each request.
-					for (var i = 0; i < objectSize - 1; ++i) {
+		try {
+			// Parse form data to get JSON.
+			form.parse(req, function(err, fields, files) {
+				console.log("HTTP: received HTTP POST request:");
+				console.log(fields);
+
+				// Do some actions, depending on the received data message's type.
+				switch (fields.requestType) {
+					// An event is received from a project or task page.
+					case "newEvent":
 						// Parse event's data to JSON.
-						var event = JSON.parse(fields["events[" + i + "]"]);
+						var event = JSON.parse(fields.event);
+						console.log("HTTP: received a new " + (event.isTaskEvent ? "task" : "project") + "'s event.");
 						// Send the received event to all concerned clients.
 						sendEventSocket(event, (event.isTaskEvent ? TASK_CONNECTION : PROJECT_CONNECTION));
-					}
-					break;
-			}
+						break;
+					// Several simultaneous events (could be project and task's events).
+					case "newEvents":
+						console.log("HTTP: received several simultaneous events.");
+						var objectSize = Object.keys(fields).length;
+						// Send each request.
+						for (var i = 0; i < objectSize - 1; ++i) {
+							// Parse event's data to JSON.
+							var event = JSON.parse(fields["events[" + i + "]"]);
+							// Send the received event to all concerned clients.
+							sendEventSocket(event, (event.isTaskEvent ? TASK_CONNECTION : PROJECT_CONNECTION));
+						}
+						break;
+					// Occurs when a task has been deleted.
+					case "taskDeleted":
+						console.log("HTTP: received a task's deletion message.");
+						sendTaskDeletion(fields.taskId, fields.username);
+						break;
+					// Occurs when a task has been edited.
+					case "taskEdited":
+						console.log("HTTP: received a task's edition message.");
+						var taskData = JSON.parse(fields.data);
+						sendTaskEdition(fields.taskId, taskData);
+						break;
+				}
 
-	      res.writeHead(200, {'content-type': 'text/plain'});
-	      res.end();
-	   });
+		      res.writeHead(200, {'content-type': 'text/plain'});
+		      res.end();
+		   });
+		}
+		catch(e) {
+			console.log("HTTP: an error occured.");
+			console.log(e);
+		}
 	}
 	// Otherwise we send back an error to the client.
 	else {
