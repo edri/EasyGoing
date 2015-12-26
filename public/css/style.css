@@ -499,7 +499,7 @@ hr {
    background-color: #CCC;
 }
 
-.board-section.droppable {
+.droppable {
    border: 1px dashed #666;
 }
 

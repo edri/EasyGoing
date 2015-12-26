@@ -8,6 +8,7 @@ $(document).ready(function() {
    var board = [].concat(Array.prototype.slice.call(document.getElementsByClassName('board')), Array.prototype.slice.call(document.getElementsByClassName('listed-task')));
    var hideMe;
    var oldTarget;
+   var isAffectation;
    for (var i in board) {
       board[i].onselectstart = function(e) {
          e.preventDefault();
@@ -15,7 +16,7 @@ $(document).ready(function() {
       board[i].ondragstart = function(e) {
          hideMe = e.target;
          oldTarget = e.target.parentNode;
-         e.dataTransfer.setData('type', e.target.type);
+         isAffectation = e.target.type === 'unassigned-task' ? true : false;
          e.dataTransfer.setData('board-task', e.target.id);
          e.dataTransfer.effectAllowed = 'move';
       };
@@ -24,20 +25,28 @@ $(document).ready(function() {
       };
       var lastEneterd;
       board[i].ondragenter = function(e) {
-         console.log('dragenter');
+         
          if (hideMe) {
             hideMe.style.visibility = 'hidden';
             hideMe = null;
          }
          // Save this to check in dragleave.
          lastEntered = e.target;
-         var section = closestWithClass(e.target, 'board-section');
-         // TODO: Check that it's not the original section.
-         if (section) {
-            section.classList.add('droppable');
-            e.preventDefault(); // Not sure if these needs to be here. Maybe for IE?
-            return false;
+
+         if(isAffectation) {
+            
          }
+         else {
+            var section = closestWithClass(e.target, 'board-section');
+            if (section) {
+               section.classList.add('droppable');
+               
+            }
+         }
+         
+         e.preventDefault(); // Not sure if these needs to be here. Maybe for IE?
+         return false;
+         
       };
       board[i].ondragover = function(e) {
          // TODO: Check data type.
@@ -53,19 +62,16 @@ $(document).ready(function() {
             // so make sure we're really leaving by checking what we just entered.
             // relatedTarget is missing in WebKit: https://bugs.webkit.org/show_bug.cgi?id=66547
             var section = closestWithClass(e.target, 'board-section');
-            if (section && !section.contains(lastEntered)) {
-               section.classList.remove('droppable');
-            }
+            section.classList.remove('droppable');
          }
          lastEntered = null; // No need to keep this around.
       };
       board[i].ondrop = function(e) {
          var section = closestWithClass(e.target, 'board-section');
          var id = e.dataTransfer.getData('board-task');
-         var type = e.dataTransfer.getData('type');
          var task = document.getElementById(id);
          
-         if(type === 'unassigned-task') {
+         if(isAffectation) {
             var taskId = task.getAttribute('task-id');
             var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
             var targetSection = $(e.target).closest('[section]').attr('section');
