@@ -51,6 +51,8 @@ use Application\Model\ViewEvent;
 use Application\Model\ViewEventTable;
 use Application\Model\EventType;
 use Application\Model\EventTypeTable;
+use Application\Model\EventOnTask;
+use Application\Model\EventOnTaskTable;
 
 
 @ini_set('zend_monitor.enable', 0);
@@ -310,6 +312,17 @@ class Module
                 'Application\Model\EventTypeTable' =>  function($sm) {
                     $tableGateway = $sm->get('EventTypeTableGateway');
                     $table = new EventTypeTable($tableGateway);
+                    return $table;
+                },
+                'EventOnTaskTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new EventOnTask());
+                    return new TableGateway('eventsOnTasks', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\EventOnTaskTable' =>  function($sm) {
+                    $tableGateway = $sm->get('EventOnTaskTableGateway');
+                    $table = new EventOnTaskTable($tableGateway);
                     return $table;
                 },
 				// Configure the session service.

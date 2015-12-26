@@ -107,10 +107,9 @@ class UserTable
 	    return $results;
 	 }
 
-	public function getUser($id,$cookie)
+	public function getUser($cookie)
 	{		
-		$rowset = $this->tableGateway->select(array(
-			'id' 		=> $id,
+		$rowset = $this->tableGateway->select(array(			
 			'cookie'    => $cookie
 		));
 		$row = $rowset->current();

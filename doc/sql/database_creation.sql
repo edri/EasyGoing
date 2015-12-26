@@ -63,8 +63,8 @@ CREATE TABLE tasks
     project INT NOT NULL,
     
     PRIMARY KEY(id),
-    FOREIGN KEY(parentTask) REFERENCES tasks(id),
-    FOREIGN KEY(project) REFERENCES projects(id)
+    FOREIGN KEY(parentTask) REFERENCES tasks(id) ON DELETE CASCADE,
+    FOREIGN KEY(project) REFERENCES projects(id) ON DELETE CASCADE
 );
 
 CREATE TABLE eventTypes
@@ -72,6 +72,7 @@ CREATE TABLE eventTypes
     id INT NOT NULL AUTO_INCREMENT,
     type VARCHAR(20) NOT NULL UNIQUE,
     fileLogo VARCHAR(50),
+    isTaskTag BOOLEAN DEFAULT 0,
     PRIMARY KEY(id)
 );
 
@@ -90,8 +91,8 @@ CREATE TABLE eventsOnTasks
     event INT NOT NULL,
     task INT NOT NULL,
     PRIMARY KEY(event),
-    FOREIGN KEY(event) REFERENCES events(id),
-    FOREIGN KEY(task) REFERENCES tasks(id)
+    FOREIGN KEY(event) REFERENCES events(id) ON DELETE CASCADE,
+    FOREIGN KEY(task) REFERENCES tasks(id) ON DELETE CASCADE
 );
 
 CREATE TABLE eventsOnProjects
@@ -136,8 +137,8 @@ CREATE TABLE usersTasksAffectations
     user INT NOT NULL,
     task INT NOT NULL,
     UNIQUE(user, task),
-    FOREIGN KEY(user) REFERENCES users(id),
-    FOREIGN KEY(task) REFERENCES tasks(id)
+    FOREIGN KEY(user) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(task) REFERENCES tasks(id) ON DELETE CASCADE
 );
 
 CREATE TABLE usersTasksProductions 
@@ -145,8 +146,8 @@ CREATE TABLE usersTasksProductions
     user INT NOT NULL,
     task INT NOT NULL,
     effectiveDurationInHours FLOAT NOT NULL,
-    FOREIGN KEY(user) REFERENCES users(id),
-    FOREIGN KEY(task) REFERENCES tasks(id)
+    FOREIGN KEY(user) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(task) REFERENCES tasks(id) ON DELETE CASCADE
 );
 
 /* Views */
@@ -210,17 +211,34 @@ CREATE VIEW view_projects_details AS
 
 DROP VIEW IF EXISTS view_events;
 CREATE VIEW view_events AS
-    SELECT 
-        et.type, et.fileLogo, e.id, e.date, e.message, ep.project
+    (SELECT 
+        et.type, et.fileLogo, e.id, e.date, e.message, u.username, ep.project AS `linkedEntityId`, 0 AS `isTaskEvent`
     FROM
-        ((eventTypes AS et
+        ((((eventTypes AS et
         JOIN events AS e)
         JOIN eventsOnProjects AS ep)
+        JOIN eventsUsers AS eu)
+        JOIN users AS u)
     WHERE
         ((et.id = e.eventType)
-            AND (e.id = ep.event))
-    ORDER BY
-        e.date DESC, e.id DESC;
+            AND (e.id = ep.event)
+            AND (e.id = eu.event)
+            AND (u.id = eu.user)))
+    UNION
+        (SELECT 
+            et.type, et.fileLogo, e.id, e.date, e.message, u.username, eot.task AS `linkedEntityId`, 1 AS `isTaskEvent`
+        FROM
+            ((((eventTypes AS et
+            JOIN events AS e)
+            JOIN eventsOnTasks AS eot)
+            JOIN eventsUsers AS eu)
+            JOIN users AS u)
+        WHERE
+            ((et.id = e.eventType)
+                AND (e.id = eot.event)
+                AND (e.id = eu.event)
+                AND (u.id = eu.user)))
+    ORDER BY date DESC, id DESC;
 
 /* This function check if a user can be affected to a task */
 USE easygoing;
@@ -247,7 +265,7 @@ BEGIN
 		)
 	);
 END $$
-DELIMITER;
+DELIMITER ;
 
 /* This function check if a user can produce in a task */
 USE easygoing;
@@ -270,7 +288,7 @@ BEGIN
 			AND uta.user = user
 	);
 END $$
-DELIMITER;
+DELIMITER ;
 
 /* This function check if a user can login or not */
 USE easygoing;
@@ -455,9 +473,9 @@ VALUES(
 INSERT INTO users
 VALUES(
 	null, 
-	"thibault.duchoud@heig-vd.ch",
-	"thibaudduchoud",
-	"e35e61fb41f672d781d24d3f5c793b754ee88b41dc43c712477a9f06e1fdb616",
+	"thibaud.duchoud@heig-vd.ch",
+	"manamiz",
+	"d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
 	"Thibault",
 	"Duchoud",
 	"default.png",
@@ -502,7 +520,7 @@ WHERE username = 'edri';
 
 SELECT id INTO @user4
 FROM users
-WHERE username = 'thibaudduchoud';
+WHERE username = 'manamiz';
 
 SELECT id INTO @user5
 FROM users
@@ -551,9 +569,12 @@ INSERT INTO projectsUsersSpecializations VALUES(@user3, @project2, "Styles CSS")
 INSERT INTO projectsUsersSpecializations VALUES(@user4, @project2, "Node JS");
 INSERT INTO projectsUsersSpecializations VALUES(@user5, @project2, "Internet Explorer");
 
-INSERT INTO eventTypes(type, fileLogo) VALUES("Project", "project.svg");
-INSERT INTO eventTypes(type, fileLogo) VALUES("Tasks", "task.svg");
-INSERT INTO eventTypes(type, fileLogo) VALUES("Users", "user.svg");
+INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Project", "project.svg", 0);
+INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Tasks", "task.svg", 0);
+INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Users", "user.svg", 0);
+INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Info", "info.svg", 1);
+INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Warning", "warning.svg", 1);
+INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Error", "error.svg", 1);
 
 INSERT INTO events VALUES(1, NOW(), "<u>raphaelracine</u> created the project.", 1);
 INSERT INTO eventsOnProjects VALUES(1, @project1);

@@ -25,6 +25,7 @@ class User
       $this->filePhoto  = (!empty($data['filePhoto'])) ? $data['filePhoto'] : null;
       $this->wantTutorial  = (!empty($data['wantTutorial'])) ? $data['wantTutorial'] : null;
       $this->wantNotifications  = (!empty($data['wantNotifications'])) ? $data['wantNotifications'] : null;
-   }
+   	  $this->cookie  = (!empty($data['cookie'])) ? $data['cookie'] : null;
+   }	
 
 }

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--part of the matt icon theme by sixsixfive released under CC0 (https://creativecommons.org/publicdomain/zero/1.0/) on openclipart-->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 128 128"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r"
+   sodipodi:docname="error.svg">
+  <metadata
+     id="metadata30">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1028"
+     id="namedview28"
+     showgrid="false"
+     inkscape:zoom="1.84375"
+     inkscape:cx="65.084746"
+     inkscape:cy="64"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="1" />
+  <defs
+     id="0">
+    <linearGradient
+       id="2">
+      <stop
+         id="G"
+         stop-color="#eee" />
+      <stop
+         offset="1"
+         id="H"
+         stop-color="#eee"
+         stop-opacity="0" />
+    </linearGradient>
+    <linearGradient
+       id="3">
+      <stop
+         id="I" />
+      <stop
+         offset="1"
+         id="J"
+         stop-opacity="0" />
+    </linearGradient>
+    <linearGradient
+       id="4">
+      <stop
+         id="K"
+         stop-color="#eee" />
+      <stop
+         offset="1"
+         id="L"
+         stop-color="#dcdcdc" />
+    </linearGradient>
+    <linearGradient
+       id="5">
+      <stop
+         id="M"
+         stop-color="#e85752" />
+      <stop
+         offset="1"
+         id="N"
+         stop-color="#af0600" />
+    </linearGradient>
+    <radialGradient
+       xlink:href="#3"
+       id="6"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,0.08641975,0,107.20963)"
+       cx="63.894"
+       cy="117.35"
+       r="53.91" />
+    <radialGradient
+       xlink:href="#4"
+       id="7"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-1.404511,1.1888571,-0.99999995,-1.1813958,199.73811,11.750541)"
+       cx="60.05"
+       cy="51.39"
+       r="15.03" />
+    <radialGradient
+       xlink:href="#4"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.5353487,-0.71407287,0.76470596,0.98039217,-143.34962,-215.12271)"
+       r="38.946"
+       cy="148.57"
+       cx="-64"
+       id="8" />
+    <radialGradient
+       xlink:href="#2"
+       id="9"
+       cx="64.7"
+       cy="-15.174"
+       r="55.27"
+       gradientTransform="matrix(1.5513976,-3.2195338e-8,2.4336009e-8,1.1540365,-36.367026,-1.3322)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       xlink:href="#5"
+       id="A"
+       y1="8.707"
+       x2="0"
+       y2="120.54"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0119373,0,0,1.0266947,-2.1350421,-2.402974)" />
+  </defs>
+  <g
+     id="1">
+    <path
+       id="C"
+       d="m 121.41135,63.947759 a 57.41135,57.411348 0 0 1 -114.8226984,0 57.41135,57.411348 0 1 1 114.8226984,0 z"
+       style="fill:url(#A)"
+       inkscape:connector-curvature="0" />
+    <path
+       transform="matrix(1.0119373,0,0,1.0266947,-2.1350421,-4.4029736)"
+       d="m 122.08898,64.625572 a 56.734097,55.918617 0 1 1 -113.4681952,0 56.734097,55.918617 0 1 1 113.4681952,0 z"
+       id="D"
+       fill="none"
+       stroke="#9c0f0f"
+       stroke-width="3.924" />
+    <rect
+       id="E"
+       width="59.56"
+       height="14.13"
+       x="-93.78"
+       y="-69.01"
+       transform="scale(-1,-1)"
+       fill="url(#8)"
+       rx="3.364" />
+  </g>
+</svg>

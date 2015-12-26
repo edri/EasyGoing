@@ -1,12 +1,42 @@
+<?php
+   // Send Javascript variable with Zend.
+   echo $this->headScript()->appendScript('// Indicate that the user is currently in the task page. Used in the board.websocket.js script.
+                                           var isProjectPage = true;
+                                           var projectId = "' . $project->id . '";');
+   // Load websocket script.
+   echo $this->headScript()
+               ->prependFile($this->basePath() . '/js/board.websockets.js');
+
+   // Return an HTML code rendering an event div, using for code factoring.
+   function eventRendering($type, $event)
+   {
+      $eventContent =
+         '<div class="eventElem" name="eventIn' . $type . '">
+            <table class="eventTable">
+               <tr>
+                  <td rowspan=2><img class="eventImg" src="/img/events/' . $event->fileLogo . '" /></td>
+                  <td><b>[' . date('d.m.Y', strtotime($event->date)) . ']</b></td>
+               </tr>
+               <tr>
+                  <td><div class="eventMessage">' . $event->message . '</div></td>
+               </tr>
+            </table>
+         </div>';
+
+      return $eventContent;
+   }
+?>
+
+<div hidden id="hidden" is-manager="<?php echo $isManager; ?>"></div>
 <h1>Dashboard - <?php echo $project->name; ?></h1>
 <hr>
 <div class="projectHeader">
    <div class="leftPart">
       <p><u>Description</u> : <?php echo $this->escapeHtml($project->description); ?></p>
-      <p><u>Durée</u> : du <?php echo date('d.m.Y', strtotime($project->startDate)) . ' au ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
+      <p><u>Duration</u> : from <?php echo date('d.m.Y', strtotime($project->startDate)) . ' to ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
       <p>
-         <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Ajouter une tâche</a><br/>
-         <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Ajouter un membre</a>
+         <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Add a task</a><br/>
+         <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Add members</a>
       </p>
    </div>
 
@@ -19,21 +49,19 @@
                       All
                    </a>
                 </li>
-                <li role="presentation">
-                   <a href="#project" aria-controls="project" role="tab" data-toggle="tab" style="outline: 0 none;">
-                      Project
-                   </a>
-                </li>
-                <li role="presentation">
-                   <a href="#tasks" aria-controls="tasks" role="tab" data-toggle="tab" style="outline: 0 none;">
-                      Tasks
-                   </a>
-                </li>
-                <li role="presentation">
-                   <a href="#users" aria-controls="users" role="tab" data-toggle="tab" style="outline: 0 none;">
-                      Users
-                   </a>
-                </li>
+                <?php
+                  // Dynamically add each projects' events types to the tabs list.
+                  foreach ($eventsTypes as $type)
+                  {
+                ?>
+                     <li role="presentation">
+                        <a href="#<?php echo strtolower($type->type); ?>" aria-controls="<?php echo strtolower($type->type); ?>" role="tab" data-toggle="tab" style="outline: 0 none;">
+                           <?php echo $type->type; ?>
+                        </a>
+                     </li>
+                <?php
+                  }
+                ?>
                 <li class="historicalTitle">Historical</li>
             </ul>
 
@@ -43,63 +71,29 @@
                <?php
                   foreach ($events as $e)
                   {
-               ?>
-                     <div class="eventElem" name="eventInAll">
-                        <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
-                        <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
-                     </div>
-               <?php
+                     echo eventRendering("All", $e);
                   }
                 ?>
                 </div>
-                <div role="tabpanel" class="tab-pane fade" id="project">
-                   <?php
-                     foreach ($events as $e)
-                     {
-                        if ($e->type == "Project")
-                        {
-                  ?>
-                           <div class="eventElem" name="eventInProject">
-                              <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
-                              <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
-                           </div>
-                  <?php
-                        }
-                     }
-                   ?>
-                </div>
-                <div role="tabpanel" class="tab-pane fade" id="tasks">
-                   <?php
-                    foreach ($events as $e)
-                    {
-                       if ($e->type == "Tasks")
-                       {
-                 ?>
-                          <div class="eventElem" name="eventInTasks">
-                             <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
-                             <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
-                          </div>
-                 <?php
-                       }
-                    }
-                 ?>
-                </div>
-                <div role="tabpanel" class="tab-pane fade" id="users">
-                   <?php
-                    foreach ($events as $e)
-                    {
-                       if ($e->type == "Users")
-                       {
-                 ?>
-                          <div class="eventElem" name="eventInUsers">
-                             <img class="eventImg" src="<?php echo $this->basePath('img/events/' . $e->fileLogo); ?>" />
-                             <b>[<?php echo date('d.m.Y', strtotime($e->date)); ?>]</b> <div class="eventMessage"><?php echo $e->message; ?></div>
-                          </div>
-                 <?php
-                       }
-                    }
-                 ?>
-                </div>
+                <?php
+                  // Dynamically add each projects' events types content to the tabs list.
+                  foreach ($eventsTypes as $type)
+                  {
+                ?>
+                      <div role="tabpanel" class="tab-pane fade" id="<?php echo strtolower($type->type); ?>">
+                         <?php
+                           foreach ($events as $e)
+                           {
+                              if ($e->type == $type->type)
+                              {
+                                 echo eventRendering($e->type, $e);
+                              }
+                           }
+                         ?>
+                      </div>
+                <?php
+                   }
+                ?>
             </div>
         </div>
     </div>
@@ -118,6 +112,7 @@
    </div>
 </p>
 
+<div id="board-alert-container"></div>
 <div id="board-container"></div>
 
 <br><br><hr><br>

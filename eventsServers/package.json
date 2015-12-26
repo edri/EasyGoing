@@ -10,6 +10,7 @@
   "author": "Miguel Santamaria",
   "license": "ISC",
   "dependencies": {
+    "formidable": "^1.0.17",
     "nodejs-websocket": "^1.4.1"
   }
 }

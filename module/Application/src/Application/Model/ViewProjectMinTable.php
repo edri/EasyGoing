@@ -20,4 +20,14 @@ class ViewProjectMinTable
       $resultSet = $this->_tableGateway->select(array("userId" => $userId));
       return $resultSet;
    }
+   
+   public function userIsAdminOfProject($userId, $projectId)
+   {
+      $result = $this->_tableGateway->select(array(
+         'id'     => $projectId,
+         'userId' => $userId
+      ))->current();
+      
+      return $result->isAdmin ? true : false;
+   }
 }
