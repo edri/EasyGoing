@@ -202,32 +202,32 @@ class ProjectController extends AbstractActionController
          $details =
             "<table class='eventDetailsTable'>
                <tr>
-                  <th></th>
+                  <th class='eventDetailsTaskAttribute'></th>
                   <th>Old values</th>
                   <th>New values</th>
                </tr>
                <tr>
-                  <td>Name: </td>
+                  <td class='eventDetailsTaskAttribute'>Name: </td>
                   <td>" . $oldTaskData->name . "</td>
                   <td>" . $name . "</td>
                </tr>
                <tr>
-                  <td>Deadline: </td>
+                  <td class='eventDetailsTaskAttribute'>Deadline: </td>
                   <td>" . $oldTaskData->deadLineDate . "</td>
                   <td>" . $deadline . "</td>
                </tr>
                <tr>
-                  <td>Duration: </td>
+                  <td class='eventDetailsTaskAttribute'>Duration: </td>
                   <td>" . $oldTaskData->durationsInHours . "h</td>
                   <td>" . $duration . "h</td>
                </tr>
                <tr>
-                  <td>Priority: </td>
+                  <td class='eventDetailsTaskAttribute'>Priority: </td>
                   <td>" . $priorityArray[$oldTaskData->priorityLevel - 1] . "</td>
                   <td>" . $priorityArray[$priority - 1] . "</td>
                </tr>
                <tr>
-                  <td>Description: </td>
+                  <td class='eventDetailsTaskAttribute'>Description: </td>
                   <td>" . (empty($oldTaskData->description) ? "-" : $oldTaskData->description) . "</td>
                   <td>" . (empty($description) ? "-" : $description) . "</td>
                </tr>

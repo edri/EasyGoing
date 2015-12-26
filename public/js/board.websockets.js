@@ -72,19 +72,43 @@ $(document).ready(function() {
                   // The received event must not be a task event, but a project event.
                   // We also must ensure than the received event is for the current project.
                   if (!data.event.isTaskEvent && data.event.linkedEntityId == projectId) {
-                     var introAll = '<div class="eventElem" name="eventInAll" style="display: none;">';
-                     var introType = '<div class="eventElem" name="eventIn' + data.event.type + '" style="display: none;">';
+                     var introAll = '<div class="eventElem"' + (data.event.details ? 'onclick="expandEventDetails(' + data.event.id + ');"' : '') + ' name="eventInAll" style="display: none;">';
+                     var introType = '<div class="eventElem"' + (data.event.details ? 'onclick="expandEventDetails(' + data.event.id + ');"' : '') + ' name="eventIn' + data.event.type + '" style="display: none;">';
 
                      var newEventDiv =
                            '<table class="eventTable">\
                               <tr>\
-                                 <td rowspan=2><img class="eventImg" src="/img/events/' + data.event.fileLogo + '" /></td>\
-                                 <td><b>[' + formatDate(new Date(data.event.date)) + ']</b></td>\
+                                 <td class="eventImgTd" rowspan=2><img class="eventImg" src="/img/events/' + data.event.fileLogo + '" /></td>\
+                                 <td>\
+                                    <b class="eventDate">[' + formatDate(new Date(data.event.date)) + ']</b>';
+
+                     if (data.event.details) {
+                        newEventDiv +=
+                                    '<img class="expandEventImg" id="toggleEventDetails' +  data.event.id + '" src="/img/expand_event.svg" />';
+                     }
+
+                     newEventDiv +=
+                                 '</td>\
                               </tr>\
                               <tr>\
                                  <td><div class="eventMessage">' + data.event.message + '</div></td>\
-                              </tr>\
-                           </table>\
+                              </tr>';
+
+                     if (data.event.details) {
+                        newEventDiv +=
+                              '<tr id="eventDetails' + data.event.id + '" class="eventDetailsRow">\
+                                 <td></td>\
+                                 <td>\
+                                    <div class="eventDetails" id="divEventDetails' + data.event.id + '">\
+                                       <b>Details:</b>\
+                                       <br/>' + data.event.details +
+                                    '</div>\
+                                 </td>\
+                              </tr>';
+                     }
+
+                     newEventDiv +=
+                           '</table>\
                         </div>';
 
                      $("#all").prepend(introAll + newEventDiv);
