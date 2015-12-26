@@ -1,7 +1,7 @@
 <?php
 namespace Application\Model;
 
-// This class contains all data of an user's entity.
+// This class contains all of the data for tutorial
 class Tutorial
 {
    private function _generateData($div, $text) 
@@ -9,7 +9,7 @@ class Tutorial
       return array('div' => $div, 'text' => $text);
    }
 
-   public function projectsTutorial() 
+   public function getTutorialData() 
    {
       return array(
          $this->_generateData('salut', 'Salut les amis'),
