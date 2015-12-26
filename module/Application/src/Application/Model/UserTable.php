@@ -31,9 +31,6 @@ class UserTable
       else
          return null;
    }
-   public function dontWantTutorial(){
-     $this->_tableGateway->update(array('wantTutorial' => false));
-   }
 
    // Checks if the given e-mail address doesn't already exist in the DB.
    public function checkIfMailExists($email)
@@ -45,7 +42,7 @@ class UserTable
    }
 
    // add a new user
-   public function addUser($username, $password, $fname, $lname, $email, $picture)
+   public function addUser($username, $password, $fname, $lname, $email, $picture, $wantTutorial)
    {
       $this->_tableGateway->insert(array(
          'username'			=> $username,
@@ -53,7 +50,8 @@ class UserTable
          'firstName'			=> isset($fname) ? $fname : "-",
          'lastName'			=> isset($lname) ? $lname : "-",
          'email'				=> $email,
-         'filePhoto'			=> isset($picture) ? $picture : "-"
+         'filePhoto'			=> isset($picture) ? $picture : "-",
+         'wantTutorial'    => $wantTutorial
       ));
 
       return $this->_tableGateway->lastInsertValue;

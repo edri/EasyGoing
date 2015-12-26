@@ -132,7 +132,8 @@ class UserController extends AbstractActionController
             $password1 = $_POST["password1"];
             $password2 = $_POST["password2"];
             $email =  $_POST["email"];
-					  $tutorial =  $_POST["tutorial"];
+				$tutorial =  $_POST["tutorial"];
+
 	         // Will be used attribute a name to the uploaded file.
 				$filename;
             // Checks that the mandatory fields aren't empty and that the username doesn't
@@ -151,12 +152,7 @@ class UserController extends AbstractActionController
 	                     // The email must not already exist.
 	                     if(!$this->_getUserTable()->checkIfMailExists($email))
 	                     {
-												 // If the user dont check the tutorial, save it as he doesn't want
-												 if(!isset($tutorial))
-												 {
-													 $this->_getUserTable().dontWantTutorial();
-												 }
-	                        // Indicate if the prospective user's picture is valid or not.
+									// Indicate if the prospective user's picture is valid or not.
 	                        $fileValidated = true;
 	                        // If the user mentioned a picture, validate it.
 	                        if (!empty($_FILES["picture"]["name"]))
@@ -229,7 +225,15 @@ class UserController extends AbstractActionController
 				                  {
 			                        try
 			                        {
-			                           $userId = $this->_getUserTable()->addUser($username, $this->_hashPassword($password1), $fname, $lname, $email, isset($fileName) ? $fileName : "default.png");
+			                           $userId = $this->_getUserTable()->addUser(
+													$username,
+													$this->_hashPassword($password1),
+													$fname,
+													$lname,
+													$email,
+													isset($fileName) ? $fileName : "default.png",
+													isset($tutorial)
+												);
 			                        }
 			                        catch (\Exception $e)
 			                        {
