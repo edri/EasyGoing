@@ -42,8 +42,7 @@ class ProjectController extends AbstractActionController
    // and check if the accessed project/task exists.
    public function onDispatch( \Zend\Mvc\MvcEvent $e )
    {
-      $sessionUser = new container('user');
-
+      $sessionUser = new container('user');      
       if (!$sessionUser->connected)
       {
          $this->redirect()->toRoute('home');
