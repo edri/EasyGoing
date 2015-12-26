@@ -77,6 +77,7 @@ class UserController extends AbstractActionController
                $sessionUser->connected = true;
                $sessionUser->id = $user->id;
                $sessionUser->username = $user->username;
+					$sessionUser->wantTutorial = $user->wantTutorial;
                //go To projects
                $this->redirect()->toRoute();
                //Check if the user has ticked "Remember Me" button
