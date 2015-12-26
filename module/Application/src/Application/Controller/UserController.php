@@ -65,59 +65,108 @@ class UserController extends AbstractActionController
    // but here we are in the default controller so the page will be "easygoing/".
    public function indexAction()
    {
-      $sessionUser = new container('user');
-      // Checks if the user isn't already connected.
-      if ($sessionUser && $sessionUser->connected)
-      {
-         // Redirect the user if it is already connected.
-         $this->redirect()->toRoute("projects");
-      }
-      else
-      {
-         $request = $this->getRequest();
-         if ($request->isPost())
-         {
-            $username = $_POST["username"];
-            $password = $_POST["password"];
-            $hashPassword = $this->_hashPassword($password);
-            //Check if creditentials are correct
-            $user = $this->_getUserTable()->checkCreditentials($username,$hashPassword);
-            //If so, user is not null
-            if(!$user == null)
-            {
-               //add session attributes
-               $sessionUser->connected = true;
-               $sessionUser->id = $user->id;
-               $sessionUser->username = $user->username;
-               $sessionUser->wantTutorial = $user->wantTutorial;
-               //go To projects
-               $this->redirect()->toRoute();
-               //Check if the user has ticked "Remember Me" button
-               //If so, create a cookie
-               if (isset($_POST['checkbox']))
-               {
-                  //Set a secured cookieValue with username, password and random salt
-                  $salt = rand();
-                  $cookieValue = $this->_hashPassword($username . $password . $salt);
-                  // Set expiration time to 30 days
-                  $expirationTime = 60*60*24*30 ;
-                  setcookie('loginCookie', $cookieValue, time() + $expirationTime);
-                  // We can now retrieve this cookie using : $this->getRequest()->getCookie('loginCookie');
-               }
-               //go To projects
-               $this->redirect()->toRoute('projects');
-            }
-            else
-            {
-               // stay here and display log in error
-               $error = "loginFailed";
-               return new ViewModel(array(
-                  'error' => $error
-               ));
-            }
-         }
-      }
-      return new ViewModel();
+		$sessionUser = new container('user');
+
+		//checks if the user has a valid loginCookie:
+		if (isset($_COOKIE['loginCookie'])){
+			$loginCookie = $_COOKIE['loginCookie'];
+
+			$userUsingCookie = $this->_getUserTable()->getUser($loginCookie);
+			//the cookie is already in the db
+			if(!$userUsingCookie == null)
+			{
+				//add session attributes
+
+				$sessionUser->connected = true;
+				$sessionUser->id = $userUsingCookie->id;
+
+				$sessionUser->username = $userUsingCookie->username;
+				$this->redirect()->toRoute('projects');
+				return new ViewModel();
+			}
+
+		}
+
+		// Checks if the user isn't already connected.
+		if ($sessionUser && $sessionUser->connected)
+		{
+			// Redirect the user if he is already connected.
+			$this->redirect()->toRoute('projects');
+		}
+		else
+		{
+			$request = $this->getRequest();
+			if ($request->isPost())
+			{
+				$username = $_POST["username"];
+				$password = $_POST["password"];
+				$hashPassword = $this->_hashPassword($password);
+
+				//Check if creditentials are correct
+
+				$user = $this->_getUserTable()->checkCreditentials($username,$hashPassword);
+				//If so, user is not null
+				if(!$user == null)
+				{
+					//add session attributes
+					$sessionUser->connected = true;
+					$sessionUser->id = $user->id;
+
+					$sessionUser->username = $user->username;
+
+					//Check if the user has ticked "Remember Me" button
+					//If so, create a cookie
+					if (isset($_POST['checkbox']))
+					{
+						// Set cookie expiration time to 30 days
+						$expirationTime = 60*60*24*30 ;
+						// We first check if this user already has a cookie
+						if(!$user->cookie){
+						//If not, we set a secured cookieValue with username, password and random salt
+							$salt = rand();
+							$cookieValue = $this->_hashPassword($username . $password . $salt);
+
+							//store it in the db
+							$this->_getUserTable()->addCookie($cookieValue,$user->id);
+
+							setcookie('loginCookie', $cookieValue, time() + $expirationTime);
+						}
+						else
+						{
+							//If so, we retrieve the value of this cookie and store it on user's device
+							setcookie('loginCookie', $user->cookie, time() + $expirationTime);
+						}
+
+						// We can now retrieve this cookie using : $this->getRequest()->getCookie('loginCookie');
+					}
+					//go To projects
+
+					$this->redirect()->toRoute('projects');
+				}
+				else
+				{
+					// stay here and display log in error
+					$error = "loginFailed";
+					return new ViewModel(array(
+						'error' => $error
+					));
+				}
+		   }
+		}
+
+		$successfulRegistration = false;
+
+		// If there is a successful-registration variable in the URL (comming from
+		// the 'registration' action), we need to display a success message in the
+		// home page.
+		if (isset($_GET["successfulRegistration"]) && $_GET["successfulRegistration"])
+		{
+			$successfulRegistration = true;
+		}
+
+      return new ViewModel(array(
+			'successfulRegistration'	=> $successfulRegistration
+		));
    }
 
    public function registrationAction()
