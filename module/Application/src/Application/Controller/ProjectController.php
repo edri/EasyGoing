@@ -42,14 +42,7 @@ class ProjectController extends AbstractActionController
    // and check if the accessed project/task exists.
    public function onDispatch( \Zend\Mvc\MvcEvent $e )
    {
-      $loginCookie = $this->getRequest()->getCookie('loginCookie');
-      $idCookie = $this->getRequest()->getCookie('idCookie');
-      $sessionUser = new container('user');
-      if($idCookie == $sessionUser->id){
-         echo "OK !";
-      }else{
-         echo "Not OK"
-      }
+      $sessionUser = new container('user');      
       if (!$sessionUser->connected)
          $this->redirect()->toRoute('home');
 
