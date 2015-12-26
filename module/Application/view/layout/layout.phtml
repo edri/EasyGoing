@@ -61,13 +61,20 @@
         var tutoData = [];
         var current = 0;
 
+        var skipTutorial = function() {
+            $("div[role=tutorial]").fadeOut();
+        };
+        
         var nextTutorial = function() {
 
             if(tutoData.length != 0) { 
                 var d = tutoData[current];
 
                 $("div[role=tutorial][id = " + d.div + "]").html(
-                    "<img src=/img/tuto.png /> " + d.text + "<a href='#' onClick='nextTutorial()'>   Next</a>"
+                    "<img src=/img/tuto.png /> " + 
+                    d.text + 
+                    "<a href='#' onClick='nextTutorial()'>   <br>Next</a>" +
+                    "<a href='#' onClick='skipTutorial()'><br>Skip</a>"
                 ).fadeIn();
 
                 $("div[role=tutorial][id != " + d.div + "]").fadeOut();
