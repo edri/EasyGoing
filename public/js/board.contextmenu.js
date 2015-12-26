@@ -4,6 +4,7 @@ $(document).ready(function() {
       selector: '.board-task',
       callback: function(key, options) {
          var taskId = $(this).attr('task-id');
+         var userId = $(this).closest('[member-id]').attr('member-id');
 
          switch(key) {
             case 'delete':
@@ -31,6 +32,32 @@ $(document).ready(function() {
             case 'edit':
                window.location.href = window.location.href + '/editTask/' + taskId;
                break;
+               
+            case 'unassign':
+               bootbox.confirm("Are you sure you want to unassign this task ?", function(result) {
+                  if(result === true) {
+                     $.post("http://easygoing/project/" + projectId + "/unassignTask", {
+                        taskId: taskId,
+                        userId: userId
+                     })
+                     .done(function(data) {
+                        var data = JSON.parse(data);
+
+                        switch(data.message)
+                        {
+                           case 'Unassign success':
+                              addBootstrapAlert('board-alert-container', data.message, 'success');
+                              $('#board-container').load(window.location.href + '/boardViewMembers');
+                              break;
+
+                           default:
+                              addBootstrapAlert('board-alert-container', data.message, 'danger');
+                              break;
+                        }
+                     });
+                  }
+               });
+               break;
          }
       },
       items: {
@@ -39,6 +66,9 @@ $(document).ready(function() {
          },
          "delete": {
             name: "Delete"
+         },
+         "unassign": {
+            name: "Unassign"
          }
       }
    });
