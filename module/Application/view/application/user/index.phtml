@@ -3,7 +3,7 @@
 </br>
 
 <?php
-   if ($successfulRegistration)
+   if (isset($successfulRegistration) && $successfulRegistration)
    {
 ?>
       <div class="panel panel-success error">
@@ -13,6 +13,18 @@
       </div>
 <?php
    }
+?>
+<?php
+    if (isset($error))
+    {
+?>
+        <div class="panel panel-danger error">
+            <div class="panel-heading">
+                <p> Login failed </p>
+            </div>
+        </div>
+<?php
+    }
 ?>
 
 <form class="form-inline" method="POST">
@@ -35,18 +47,6 @@
 </form>
 
 </br>
-<?php
-    if (isset($error))
-    {
-?>
-        <div class="panel panel-danger error">
-            <div class="panel-heading">
-                <p> Login failed </p>
-            </div>
-        </div>
-<?php
-    }
-?>
 
 <p>
   <a type="button" class="btn btn-primary btn-lg btnEasygoing" href="/registration" >Subscribe</a>

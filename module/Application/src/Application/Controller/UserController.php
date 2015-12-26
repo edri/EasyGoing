@@ -6,30 +6,22 @@
  * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
-
 // The namespace is important. It avoids us from being forced to call the Zend's methods with
 // "Application\Controller" before.
 namespace Application\Controller;
-
 // Calling some useful Zend's libraries.
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
-
-
-
 // Default controller ; will be calling when the user access the "easygoing/" page.
-
 // Be careful about the class' name, which must be the same as the file's name.
 class UserController extends AbstractActionController
 {
-
 	// The user's model used to communicate with the database.
 	private $userTable;
 	// Will contain the Utility class.
 	private $_utilities;
-
 	// Get the user's table's entity, represented by the created model.
 	// Act as a singleton : we only can have one instance of the object.
 	private function _getUserTable()
@@ -42,51 +34,41 @@ class UserController extends AbstractActionController
 		}
 		return $this->userTable;
 	}
-
 	// Get utilities functions.
 	// Act as a singleton : we only can have one instance of the object.
 	private function _getUtilities()
 	{
-
 		if (!$this->_utilities) {
 			$sm = $this->getServiceLocator();
 			$this->_utilities = $sm->get('Application\Utility\Utilities');
 		}
 		return $this->_utilities;
 	}
-
    private function _hashPassword($password)
    {
       return hash ("sha256", $password, false);
    }
-
    // Default action of the controller.
    // In normal case, it will be calling when the user access the "easygoing/myController/" page,
    // but here we are in the default controller so the page will be "easygoing/".
    public function indexAction()
    {
 		$sessionUser = new container('user');
-
 		//checks if the user has a valid loginCookie:
 		if (isset($_COOKIE['loginCookie'])){
 			$loginCookie = $_COOKIE['loginCookie'];
-
 			$userUsingCookie = $this->_getUserTable()->getUser($loginCookie);
 			//the cookie is already in the db
 			if(!$userUsingCookie == null)
 			{
 				//add session attributes
-
 				$sessionUser->connected = true;
 				$sessionUser->id = $userUsingCookie->id;
-
 				$sessionUser->username = $userUsingCookie->username;
 				$this->redirect()->toRoute('projects');
 				return new ViewModel();
 			}
-
 		}
-
 		// Checks if the user isn't already connected.
 		if ($sessionUser && $sessionUser->connected)
 		{
@@ -101,9 +83,7 @@ class UserController extends AbstractActionController
 				$username = $_POST["username"];
 				$password = $_POST["password"];
 				$hashPassword = $this->_hashPassword($password);
-
 				//Check if creditentials are correct
-
 				$user = $this->_getUserTable()->checkCreditentials($username,$hashPassword);
 				//If so, user is not null
 				if(!$user == null)
@@ -111,9 +91,7 @@ class UserController extends AbstractActionController
 					//add session attributes
 					$sessionUser->connected = true;
 					$sessionUser->id = $user->id;
-
 					$sessionUser->username = $user->username;
-
 					//Check if the user has ticked "Remember Me" button
 					//If so, create a cookie
 					if (isset($_POST['checkbox']))
@@ -125,10 +103,8 @@ class UserController extends AbstractActionController
 						//If not, we set a secured cookieValue with username, password and random salt
 							$salt = rand();
 							$cookieValue = $this->_hashPassword($username . $password . $salt);
-
 							//store it in the db
 							$this->_getUserTable()->addCookie($cookieValue,$user->id);
-
 							setcookie('loginCookie', $cookieValue, time() + $expirationTime);
 						}
 						else
@@ -136,11 +112,9 @@ class UserController extends AbstractActionController
 							//If so, we retrieve the value of this cookie and store it on user's device
 							setcookie('loginCookie', $user->cookie, time() + $expirationTime);
 						}
-
 						// We can now retrieve this cookie using : $this->getRequest()->getCookie('loginCookie');
 					}
 					//go To projects
-
 					$this->redirect()->toRoute('projects');
 				}
 				else
@@ -153,9 +127,7 @@ class UserController extends AbstractActionController
 				}
 		   }
 		}
-
 		$successfulRegistration = false;
-
 		// If there is a successful-registration variable in the URL (comming from
 		// the 'registration' action), we need to display a success message in the
 		// home page.
@@ -163,12 +135,10 @@ class UserController extends AbstractActionController
 		{
 			$successfulRegistration = true;
 		}
-
       return new ViewModel(array(
 			'successfulRegistration'	=> $successfulRegistration
 		));
    }
-
    public function registrationAction()
    {
 		define("SUCCESS_MESSAGE", "ok");
@@ -345,7 +315,6 @@ class UserController extends AbstractActionController
 					// Deletes the thumbnail if it exists.
 					if (isset($fileName) && file_exists(getcwd() . "/public/img/users/" . $fileName))
 						unlink(getcwd() . "/public/img/users/" . $fileName);
-
 					return new ViewModel(array(
 						'error' 		=> $result,
 						'username'	=> $username,
@@ -358,43 +327,33 @@ class UserController extends AbstractActionController
          return new ViewModel();
       }
 	}
-
 	public function logoutAction()
 	{
 		$sessionUser = new container('user');
-
 		$sessionUser->offsetUnset("connected");
 		$sessionUser->offsetUnset("id");
 		$sessionUser->offsetUnset("username");
 		$this->redirect()->toRoute('user');
-
 		if (isset($_COOKIE['loginCookie']))
 		{
 		    unset($_COOKIE['loginCookie']);
 		    setcookie('loginCookie', null, -1, '/');;
 		}
-
 		return new ViewModel();
 	}
-
 	public function editAction()
 	{
 		// For linking the right action's view.
 		return new ViewModel();
 	}
-
 	public function validationAction()
 	{
 		$this->redirect()->toRoute();
-
 		return new ViewModel();
 	}
-
 	public function cancelAction()
 	{
 		$this->redirect()->toRoute();
-
 		return new ViewModel();
 	}
-
 }
