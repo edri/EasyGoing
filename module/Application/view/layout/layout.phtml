@@ -63,6 +63,27 @@
              // Indicate if the header is currently hidden (true) or not (false).
              var isHeaderHidden = false;
 
+             // Simulate a scroll on the main content's panel when the user move
+             // the mouse's wheel with the cursor out of the panel.
+             // First we need to detect a wheel's moving.
+             $(window).on('wheel mousewheel DOMMouseScroll', function (e) {
+                // Check if the main content's panel have a scroll bar ; in other
+                // words, check if the panel's scrolling's height is larger than
+                // the panel's height.
+                var isScrollBarExisting = (document.getElementById("mainContent").scrollHeight > $("#mainContainer").height());
+                // Simulate the scroll only if the user's cursor is out of the main
+                // content's panel and if there is a scrollbar.
+                if (!$("#mainContent").is(":hover") && isScrollBarExisting)
+                {
+                   // Get mouse wheel's delta (the amount of "strength").
+                   var oEvent = e.originalEvent, delta  = oEvent.deltaY || oEvent.wheelDelta;
+                   // If there is a delta, simulate the main content's panel's scrolling.
+                   if (delta) {
+                      $("#mainContent").scrollTop($("#mainContent").scrollTop() + 10 * delta);
+                   }
+                }
+             });
+
              // Occurs when the user scrolled the main content.
              $("#mainContent").on("scroll", function () {
                 // There is three cases:
