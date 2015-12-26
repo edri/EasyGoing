@@ -9,7 +9,7 @@ class Tutorial
       return array('div' => $div, 'text' => $text);
    }
 
-   public function projectsTutorial() 
+   public function getTutorialData() 
    {
       return array(
          $this->_generateData('salut', 'Salut les amis'),

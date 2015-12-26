@@ -1,8 +1,8 @@
-var Tutorial = function(tuto, callback) {
+var Tutorial = function(callback) {
 
     $.ajax({            
         type: 'GET',
-        url: '/tutorial/' + tuto,
+        url: '/tutorial/tutorial',
         dataType: 'json',
         success: callback
     });
