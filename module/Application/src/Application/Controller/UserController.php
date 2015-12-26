@@ -22,6 +22,7 @@ class UserController extends AbstractActionController
 	private $userTable;
 	// Will contain the Utility class.
 	private $_utilities;
+
 	// Get the user's table's entity, represented by the created model.
 	// Act as a singleton : we only can have one instance of the object.
 	private function _getUserTable()
@@ -34,6 +35,7 @@ class UserController extends AbstractActionController
 		}
 		return $this->userTable;
 	}
+
 	// Get utilities functions.
 	// Act as a singleton : we only can have one instance of the object.
 	private function _getUtilities()
@@ -44,16 +46,19 @@ class UserController extends AbstractActionController
 		}
 		return $this->_utilities;
 	}
+
    private function _hashPassword($password)
    {
       return hash ("sha256", $password, false);
    }
+
    // Default action of the controller.
    // In normal case, it will be calling when the user access the "easygoing/myController/" page,
    // but here we are in the default controller so the page will be "easygoing/".
    public function indexAction()
    {
 		$sessionUser = new container('user');
+
 		//checks if the user has a valid loginCookie:
 		if (isset($_COOKIE['loginCookie'])){
 			$loginCookie = $_COOKIE['loginCookie'];
@@ -69,6 +74,7 @@ class UserController extends AbstractActionController
 				return new ViewModel();
 			}
 		}
+
 		// Checks if the user isn't already connected.
 		if ($sessionUser && $sessionUser->connected)
 		{
@@ -92,6 +98,8 @@ class UserController extends AbstractActionController
 					$sessionUser->connected = true;
 					$sessionUser->id = $user->id;
 					$sessionUser->username = $user->username;
+					$sessionUser->wantTutorial = $user->wantTutorial;
+
 					//Check if the user has ticked "Remember Me" button
 					//If so, create a cookie
 					if (isset($_POST['checkbox']))
@@ -114,6 +122,7 @@ class UserController extends AbstractActionController
 						}
 						// We can now retrieve this cookie using : $this->getRequest()->getCookie('loginCookie');
 					}
+
 					//go To projects
 					$this->redirect()->toRoute('projects');
 				}
@@ -127,7 +136,9 @@ class UserController extends AbstractActionController
 				}
 		   }
 		}
+
 		$successfulRegistration = false;
+
 		// If there is a successful-registration variable in the URL (comming from
 		// the 'registration' action), we need to display a success message in the
 		// home page.
@@ -135,10 +146,12 @@ class UserController extends AbstractActionController
 		{
 			$successfulRegistration = true;
 		}
+
       return new ViewModel(array(
 			'successfulRegistration'	=> $successfulRegistration
 		));
    }
+
    public function registrationAction()
    {
 		define("SUCCESS_MESSAGE", "ok");
@@ -298,6 +311,7 @@ class UserController extends AbstractActionController
 				{
                $result = "errorFieldEmpty";
 				}
+
 				// Deletes the uploaded file if there was an error.
 				// If not, redirect the user.
 				if ($result == SUCCESS_MESSAGE)
@@ -315,6 +329,7 @@ class UserController extends AbstractActionController
 					// Deletes the thumbnail if it exists.
 					if (isset($fileName) && file_exists(getcwd() . "/public/img/users/" . $fileName))
 						unlink(getcwd() . "/public/img/users/" . $fileName);
+
 					return new ViewModel(array(
 						'error' 		=> $result,
 						'username'	=> $username,
@@ -324,9 +339,11 @@ class UserController extends AbstractActionController
 					));
 				}
          }
+
          return new ViewModel();
       }
 	}
+
 	public function logoutAction()
 	{
 		$sessionUser = new container('user');
@@ -341,16 +358,19 @@ class UserController extends AbstractActionController
 		}
 		return new ViewModel();
 	}
+
 	public function editAction()
 	{
 		// For linking the right action's view.
 		return new ViewModel();
 	}
+
 	public function validationAction()
 	{
 		$this->redirect()->toRoute();
 		return new ViewModel();
 	}
+	
 	public function cancelAction()
 	{
 		$this->redirect()->toRoute();

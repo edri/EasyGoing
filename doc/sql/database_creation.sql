@@ -623,4 +623,4 @@ INSERT INTO events VALUES(10, NOW(), "<u>raphaelracine</u> added user <u>vanessa
 INSERT INTO eventsOnProjects VALUES(10, @project2);
 INSERT INTO eventsUsers VALUES(@user1, 10);
 
-SET GLOBAL log_bin_trust_function_creators = 0; 
+SET GLOBAL log_bin_trust_function_creators = 0;

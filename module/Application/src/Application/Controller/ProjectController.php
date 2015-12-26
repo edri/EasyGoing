@@ -25,7 +25,7 @@ use Application\Utility\Priority;
 // Be careful about the class' name, which must be the same as the file's name.
 class ProjectController extends AbstractActionController
 {
-   
+
    // Get the given table's entity, represented by the created model.
    private function _getTable($tableName)
    {
@@ -42,7 +42,8 @@ class ProjectController extends AbstractActionController
    // and check if the accessed project/task exists.
    public function onDispatch( \Zend\Mvc\MvcEvent $e )
    {
-      $sessionUser = new container('user');      
+      $sessionUser = new container('user');
+
       if (!$sessionUser->connected)
       {
          $this->redirect()->toRoute('home');
@@ -58,7 +59,7 @@ class ProjectController extends AbstractActionController
          $this->redirect()->toRoute('projects');
       }
 
-      return parent::onDispatch( $e );
+      return parent::onDispatch($e);
    }
 
    public function indexAction()
@@ -647,7 +648,7 @@ class ProjectController extends AbstractActionController
       $sessionUser = new container('user');
       $projectId = $this->params('id');
       $memberId = $this->params('otherId');
-      
+
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
          if($memberId == $sessionUser->id)
@@ -667,23 +668,23 @@ class ProjectController extends AbstractActionController
                $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($memberId, $task->id);
             }
          }
-         
+
       }
       else
       {
          // TODO : Faire une redirection avec un message
       }
-      
+
       // TODO : Faire une redirection avec un message
       /*
-      
+
       $this->redirect()->toRoute('project', array(
           'id' => $projectId
       ), array('query' => array(
           'message' => 'bar'
       )));
       */
-      
+
       $this->redirect()->toRoute('project', array(
           'id' => $projectId
       ));
