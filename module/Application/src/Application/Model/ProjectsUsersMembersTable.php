@@ -22,4 +22,12 @@ class ProjectsUsersMembersTable
          "isAdmin"   => $isAdmin
       ));
    }
+   
+   public function removeMember($userId, $projectId)
+   {
+      $this->_tableGateway->delete(array(
+         "user"    => $userId,
+         "project" => $projectId
+      ));
+   }
 }
