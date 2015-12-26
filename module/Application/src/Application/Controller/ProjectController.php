@@ -74,7 +74,7 @@ class ProjectController extends AbstractActionController
          'members'      => $members,
          'eventsTypes'  => $eventsTypes,
          'events'       => $events,
-         'isManager'    => $isManager ? 'true' : 'false'
+         'isManager'    => $isManager ? true : false
       ));
    }
 
@@ -670,6 +670,15 @@ class ProjectController extends AbstractActionController
       }
       
       // TODO : Faire une redirection avec un message
+      /*
+      
+      $this->redirect()->toRoute('project', array(
+          'id' => $projectId
+      ), array('query' => array(
+          'message' => 'bar'
+      )));
+      */
+      
       $this->redirect()->toRoute('project', array(
           'id' => $projectId
       ));
