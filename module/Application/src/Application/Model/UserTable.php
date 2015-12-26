@@ -32,7 +32,7 @@ class UserTable
          return null;
    }
    public function dontWantTutorial(){
-     $this->_tableGateway->update(array('wantTutorial' => false))
+     $this->_tableGateway->update(array('wantTutorial' => false));
    }
 
    // Checks if the given e-mail address doesn't already exist in the DB.
