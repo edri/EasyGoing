@@ -26,7 +26,10 @@ a:focus {
 
 .header {
    background-color: #232323;
+   height: 86px;
    padding: 5px 0 11px;
+   position: absolute;
+   top: 0;
    width: 100%;
 }
 
@@ -107,10 +110,24 @@ title:focus,
 
 /* CONTENT */
 
+.mainContainer {
+   margin-top: 86px;
+   margin-bottom: 50px;
+   height: calc(100vh - 86px - 50px);
+   transition: margin-top 300ms, height 300ms;
+}
+
+.noMarginTop {
+   margin-top: 0;
+   height: calc(100vh - 50px);
+}
+
 .mainContent {
    background-color: #F0F0F0;
    border-left: 1px solid #5A2706;
    border-right: 1px solid #5A2706;
+   height: 100%;
+   overflow: auto;
    padding: 30px 30px 80px;
 }
 
@@ -121,9 +138,17 @@ title:focus,
 
 /* FOOTER */
 
+.footerWrapper {
+   bottom: 0;
+   height: 50px;
+   position: fixed;
+   width: 100%;
+}
+
 .footer {
    background-color: #212121;
    color: #fcd1b5;
+   height: 100%;
    padding: 15px;
 }
 

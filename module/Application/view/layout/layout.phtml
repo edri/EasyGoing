@@ -58,37 +58,67 @@
             if($sessionUser->wantTutorial)
                 echo $this->headScript()->prependFile($this->basePath() . '/js/loadTuto.js');
         ?>
+        <script>
+           $(document).ready(function() {
+             var isHeaderHidden = false;
+
+             $("#mainContent").on("scroll", function () {
+                console.log("SCROLL");
+                if ($(this).scrollTop() > 0) {
+                   if (!isHeaderHidden) {
+                      $("#header").slideUp(300, function() {
+                        isHeaderHidden = true;
+                      });
+                      $("#mainContainer").addClass("noMarginTop");
+                      $(this).scrollTop(1);
+                   }
+                }
+                else {
+                   if (isHeaderHidden) {
+                      if (!$("#header").is(":visible")) {
+                         $("#header").slideDown(300, function() {
+                            isHeaderHidden = false;
+                         });
+                         $("#mainContainer").removeClass("noMarginTop");
+                      }
+                   }
+                }
+             });
+           });
+        </script>
     </head>
 
     <body>
-	<div class="header">
-	   <div class="container">
-	      <a href="/" class="title"><img class="logo" src="<?php echo $this->basePath('img/title.svg'); ?>" height=70 /></a>
-		  <?php
-		  	if ($sessionUser && $sessionUser->connected)
-			{
-		  ?>
-			  <div class="headerLinks">
-			      <a href="<?php echo $this->basePath('projects'); ?>" class="btn btnHeaderSelected btn-link" type="button">Projects</a>
-               <a href="<?php echo $this->basePath('edit'); ?>" class="btn btnHeader btn-link" type="button">Account</a>
-               <a href="<?php echo $this->basePath('about/help'); ?>" class="btn btnHeader btn-link" type="button">Help</a>
-			  </div>
-		      <div class="headerRight">
-		         <span class="loginInformation">Logged in as <b> <?php echo $sessionUser->username; ?> </b></span>
-		         <a href="/logout" id="btnLogout" class="btn btnLogout btnEasygoing" type="button">Logout</a>
-		      </div>
-		 <?php } ?>
-	   </div>
-	</div>
-	<div class="container">
-		<div class="content mainContent">
-			<?php echo $this->content; ?>
-		</div>
-		<div class="footer">
-			EasyGoing! &copy; 2015
-			<a href="/about" class="about">About</a>
-		</div>
-      </div> <!-- /container -->
+   	<div class="header" id="header">
+   	   <div class="container">
+   	      <a href="/" class="title"><img class="logo" src="<?php echo $this->basePath('img/title.svg'); ?>" height=70 /></a>
+   		  <?php
+   		  	if ($sessionUser && $sessionUser->connected)
+   			{
+   		  ?>
+   			  <div class="headerLinks">
+   			      <a href="<?php echo $this->basePath('projects'); ?>" class="btn btnHeaderSelected btn-link" type="button">Projects</a>
+                  <a href="<?php echo $this->basePath('edit'); ?>" class="btn btnHeader btn-link" type="button">Account</a>
+                  <a href="<?php echo $this->basePath('about/help'); ?>" class="btn btnHeader btn-link" type="button">Help</a>
+   			  </div>
+   		      <div class="headerRight">
+   		         <span class="loginInformation">Logged in as <b> <?php echo $sessionUser->username; ?> </b></span>
+   		         <a href="/logout" id="btnLogout" class="btn btnLogout btnEasygoing" type="button">Logout</a>
+   		      </div>
+   		 <?php } ?>
+   	   </div>
+   	</div>
+      <div class="mainContainer" id="mainContainer">
+      	<div class="container content mainContent" id="mainContent">
+      		<?php echo $this->content; ?>
+         </div> <!-- /container -->
+      </div>
+      <div class="footerWrapper">
+   		<div class="container footer">
+   			EasyGoing! &copy; 2015
+   			<a href="/about" class="about">About</a>
+         </div>
+      </div>
       <?php echo $this->inlineScript() ?>
     </body>
 </html>
