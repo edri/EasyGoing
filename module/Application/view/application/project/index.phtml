@@ -1,3 +1,12 @@
+<script type="application/javascript">
+    try {
+        loadTutorial('project');
+    }
+    catch(err) {
+        // Catch to avoid undefined function if user dont want tutorial
+    }
+</script>
+
 <?php
    // Send Javascript variable with Zend.
    echo $this->headScript()->appendScript('// Indicate that the user is currently in the task page. Used in the board.websocket.js script.
@@ -60,12 +69,15 @@
    <div class="leftPart">
       <p><u>Description</u> : <?php echo $this->escapeHtml($project->description); ?></p>
       <p><u>Duration</u> : from <?php echo date('d.m.Y', strtotime($project->startDate)) . ' to ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
-      <p>
+       <p>
          <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Add a task</a><br/>
          <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Add members</a>
       </p>
    </div>
-
+    
+    <div id="addTask" role="tutorial"></div>   
+    <div id="addMember" role="tutorial"></div>
+    
     <div class="rightPart">
         <div>
             <!-- Nav tabs -->
