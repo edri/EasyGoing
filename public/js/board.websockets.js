@@ -137,7 +137,7 @@ $(document).ready(function() {
                      var newEventDiv =
                            '<table class="eventTable">\
                               <tr>\
-                                 <td rowspan=2><img class="eventImg" src="/img/events/' + data.event.fileLogo + '" /></td>\
+                                 <td class="eventImgTd" rowspan=2><img class="eventImg" src="/img/events/' + data.event.fileLogo + '" /></td>\
                                  <td><span class="newsFeedInfo">Posted on ' + formatDate(new Date(data.event.date)) + ' by <u>' + data.event.username + '</u></span></td>\
                               </tr>\
                               <tr>\
