@@ -24,16 +24,10 @@ use Application\Model\Tutorial;
 // Be careful about the class' name, which must be the same as the file's name.
 class TutorialController extends AbstractActionController
 {     
-   public function projectsAction()        
+   public function projectsIndexAction()        
    {        
       return new JsonModel(
-         (new Tutorial())->tutorialProjects()
+         (new Tutorial())->tutorialProjectsIndex()
       );
    }
-    
-    public function usersAction() {
-      return new JsonModel(
-         (new Tutorial())->tutorialUsers()
-      );
-    }
 }
