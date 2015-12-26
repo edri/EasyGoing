@@ -436,16 +436,46 @@ class ProjectController extends AbstractActionController
 
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
-         // Get the name of the task-do-delete.
-         $name = $this->_getTable('TaskTable')->getTaskById($taskId)->name;
+         // Get old task's data for the historical.
+         $oldTaskData = $this->_getTable('TaskTable')->getTaskById($taskId);
          $this->_getTable('TaskTable')->deleteTask($taskId);
 
          // If task was successfully deleted, add a task's deletion event.
          // First of all, get right event type.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
          // Then add the new event in the database.
-         $message = "<u>" . $sessionUser->username . "</u> deleted task <font color=\"#FF6600\">" . $name . "</font>.";
-         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         $message = "<u>" . $sessionUser->username . "</u> deleted task <font color=\"#FF6600\">" . $oldTaskData->name . "</font>.";
+         // This event have some details.
+         // TODO: use priority with BasicEnum.
+         $priorityArray = ['High', 'Medium', 'Low'];
+         $details =
+            "<table class='eventDetailsTable'>
+               <tr>
+                  <th class='eventDetailsTaskAttribute'></th>
+                  <th>Deleted task's values</th>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Name: </td>
+                  <td>" . $oldTaskData->name . "</td>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Deadline: </td>
+                  <td>" . $oldTaskData->deadLineDate . "</td>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Duration: </td>
+                  <td>" . $oldTaskData->durationsInHours . "h</td>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Priority: </td>
+                  <td>" . $priorityArray[$oldTaskData->priorityLevel - 1] . "</td>
+               </tr>
+               <tr>
+                  <td class='eventDetailsTaskAttribute'>Description: </td>
+                  <td>" . (empty($oldTaskData->description) ? "-" : $oldTaskData->description) . "</td>
+               </tr>
+            </table>";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId, $details);
          // Link the new event to the current project.
          $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
          // Finaly link the new event to the user who created it.
