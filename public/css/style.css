@@ -425,6 +425,11 @@ hr {
    width: 100%;
 }
 
+.eventDetailsTable th td {
+   border: 0 !important;
+   padding: 0 30px 0 0;
+}
+
 
 /** ====== BOARD ====== **/
 
