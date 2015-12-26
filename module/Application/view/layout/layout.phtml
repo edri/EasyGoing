@@ -58,7 +58,7 @@
 
     <script type="application/javascript">
 
-        var tutoData;
+        var tutoData = [];
         var current = 0;
 
         var nextTutorial = function() {
@@ -77,9 +77,9 @@
 
         };
 
-        (function loadTutorial() {
+        function loadTutorial(tuto) {
 
-            Tutorial(function(data) {
+            Tutorial(tuto, function(data) {
                 
                 var tutoDataFiltered = [];
                 
@@ -88,7 +88,7 @@
 
                         var div = $(this);
                         
-                        tutoDataFiltered.push({div: d.div, text: d.text});
+                        tutoData.push({div: d.div, text: d.text});
 
                         var position = div.position();
 
@@ -109,10 +109,9 @@
                     });
                 });
                 
-                tutoData = tutoDataFiltered;
                 nextTutorial();
             });
-        })();
+        };
         
     </script>
 
