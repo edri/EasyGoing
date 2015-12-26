@@ -345,7 +345,7 @@ class ProjectController extends AbstractActionController
 
       return $result;
    }
-
+   
    public function assignTaskAction()
    {
       $sessionUser = new container('user');
@@ -459,6 +459,25 @@ class ProjectController extends AbstractActionController
             'hasRightToMoveTask'  => false
          )));
       }
+   }
+   
+   public function unassignTaskAction()
+   {
+      $projectId = $this->params('id');
+      $sessionUser = new container('user');
+      $data = $this->getRequest()->getPost();
+      $resMessage = 'Unassign success';
+      
+      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
+      {
+         $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($data['userId'], $data['taskId']);
+      }
+      else
+         $resMessage = 'You do not have rights to unassign this task !';
+      
+      return $this->getResponse()->setContent(json_encode(array(
+         'message' => $resMessage
+      )));
    }
 
    public function deleteTaskAction()

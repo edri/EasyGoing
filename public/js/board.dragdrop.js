@@ -32,20 +32,15 @@ $(document).ready(function() {
          }
          // Save this to check in dragleave.
          lastEntered = e.target;
-
-         if(isAffectation) {
-            
-         }
-         else {
-            var section = closestWithClass(e.target, 'board-section');
-            if (section) {
-               section.classList.add('droppable');
-               
-            }
-         }
          
-         e.preventDefault(); // Not sure if these needs to be here. Maybe for IE?
-         return false;
+         var sectionName = isAffectation ? 'board' : 'board-section';
+         var section = closestWithClass(e.target, sectionName);
+
+         if(section) {
+            section.classList.add('droppable');
+            e.preventDefault(); // Not sure if these needs to be here. Maybe for IE?
+            return false;
+         }
          
       };
       board[i].ondragover = function(e) {
@@ -61,7 +56,8 @@ $(document).ready(function() {
             // dragleave for outer elements can trigger after dragenter for inner elements
             // so make sure we're really leaving by checking what we just entered.
             // relatedTarget is missing in WebKit: https://bugs.webkit.org/show_bug.cgi?id=66547
-            var section = closestWithClass(e.target, 'board-section');
+            var sectionName = isAffectation ? 'board' : 'board-section';
+            var section = closestWithClass(e.target, sectionName);
             section.classList.remove('droppable');
          }
          lastEntered = null; // No need to keep this around.

@@ -40,4 +40,12 @@ class UsersTasksAffectationsTable
 
       return $this->_tableGateway->lastInsertValue;   
    }
+   
+   public function deleteAffectation($userId, $taskId)
+   {
+      $this->_tableGateway->delete(array(
+         'user' => $userId,
+         'task' => $taskId
+      ));
+   }
 }
