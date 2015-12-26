@@ -105,7 +105,17 @@ class UserController extends AbstractActionController
             }
          }
       }
-      return new ViewModel();
+
+		$success = false;
+
+		if (isset($_GET["successfulRegistration"]) && $_GET["successfulRegistration"])
+		{
+
+		}
+
+      return new ViewModel(array(
+			
+		));
    }
    public function registrationAction()
    {
@@ -271,7 +281,13 @@ class UserController extends AbstractActionController
 				// If not, redirect the user.
 				if ($result == SUCCESS_MESSAGE)
 				{
-					$this->redirect()->toRoute();
+					$this->redirect()->toRoute(
+						"home",
+						array(),
+						array('query' => array(
+					   	'successfulRegistration'	=> true
+						))
+					);
 				}
 				else
 				{
