@@ -4,8 +4,8 @@ $(document).ready(function() {
    for (var i = 0, n = tasks.length; i < n; i++) {
       tasks[i].draggable = true;
    };
-
-   var board = document.getElementsByClassName('board');
+   
+   var board = [].concat(Array.prototype.slice.call(document.getElementsByClassName('board')), Array.prototype.slice.call(document.getElementsByClassName('listed-task')));
    var hideMe;
    var oldTarget;
    for (var i in board) {
@@ -13,9 +13,9 @@ $(document).ready(function() {
          e.preventDefault();
       }
       board[i].ondragstart = function(e) {
-         console.log('dragstart');
          hideMe = e.target;
          oldTarget = e.target.parentNode;
+         e.dataTransfer.setData('type', e.target.type);
          e.dataTransfer.setData('board-task', e.target.id);
          e.dataTransfer.effectAllowed = 'move';
       };
@@ -62,39 +62,67 @@ $(document).ready(function() {
       board[i].ondrop = function(e) {
          var section = closestWithClass(e.target, 'board-section');
          var id = e.dataTransfer.getData('board-task');
-         if (id) {
-            var task = document.getElementById(id);
-            // Might be a card from another window.
-            if (task) {
-               if (section !== task.parentNode) {
+         var type = e.dataTransfer.getData('type');
+         var task = document.getElementById(id);
+         
+         if(type === 'unassigned-task') {
+            var taskId = task.getAttribute('task-id');
+            var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
+            var targetSection = $(e.target).closest('[section]').attr('section');
+            
+            
+            $.post("http://easygoing/project/" + projectId + "/assignTask", {
+               taskId: taskId,
+               targetMemberId: targetMemberId,
+               targetSection: targetSection
+            })
+            .done(function(data) {
+               var data = JSON.parse(data);
 
-                  var taskId = task.getAttribute('task-id');
-                  var oldMemberId = oldTarget.parentNode.getAttribute('member-id');
-                  var oldSection = oldTarget.getAttribute('section');
-                  var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
-                  var targetSection = $(e.target).closest('[section]').attr('section');
-                  var isManager = $('#hidden').attr('is-manager');
-
-                  if(targetMemberId !== oldMemberId)
-                  {
-                     bootbox.confirm('Are sure you want to assign this task to another member ?', function(result) {
-                        if(result === true) {
-                           moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection, task);
-                           section.appendChild(task);
-                        }
-                     });
-                  }
-                  else
-                  {
-                     moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection, task);
-                     section.appendChild(task);
-                  }
-
+               if(!data.hasRightToAssignTask) {
+                  addBootstrapAlert('board-alert-container', 'You do not have the right to move this task because you are either not manager.', 'danger');
                }
-            } else {
-               alert('couldn\'t find task #' + id);
+               if(data.alreadyAssigned) {
+                  addBootstrapAlert('board-alert-container', 'Already assigned.', 'danger');
+               }
+               
+               $('#board-container').load(window.location.href + '/boardViewMembers');
+            });
+         }
+         else {
+            if (id) {
+               if (task) {
+                  if (section !== task.parentNode) {
+
+                     var taskId = task.getAttribute('task-id');
+                     var oldMemberId = oldTarget.parentNode.getAttribute('member-id');
+                     var oldSection = oldTarget.getAttribute('section');
+                     var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
+                     var targetSection = $(e.target).closest('[section]').attr('section');
+                     var isManager = $('#hidden').attr('is-manager');
+
+                     if(targetMemberId !== oldMemberId)
+                     {
+                        bootbox.confirm('Are sure you want to assign this task to another member ?', function(result) {
+                           if(result === true) {
+                              moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection, task);
+                              section.appendChild(task);
+                           }
+                        });
+                     }
+                     else
+                     {
+                        moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection, task);
+                        section.appendChild(task);
+                     }
+
+                  }
+               } else {
+                  alert('couldn\'t find task #' + id);
+               }
             }
          }
+         
          section.classList.remove('droppable');
          e.preventDefault();
       };

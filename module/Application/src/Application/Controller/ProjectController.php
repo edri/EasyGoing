@@ -67,7 +67,6 @@ class ProjectController extends AbstractActionController
       $events = $this->_getTable('ViewEventTable')->getEntityEvents($this->params('id'), false);
       $isManager = $this->_userIsAdminOfProject($sessionUser->id, $this->params('id'));
 
-
       return new ViewModel(array(
          'project'      => $project,
          'tasks'        => $tasks,
@@ -346,8 +345,44 @@ class ProjectController extends AbstractActionController
 
       return $result;
    }
+   
+   public function assignTaskAction() 
+   {
+      $sessionUser = new container('user');
+      $projectId = $this->params('id');
+      $data = $this->getRequest()->getPost();
+      
+      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
+      {
+         
+         if($this->_userIsAssignToTask($data['targetMemberId'], $data['taskId']))
+         {
+            return $this->getResponse()->setContent(json_encode(array(
+               'hasRightToAssignTask' => true,
+               'alreadyAssigned'      => true
+            )));
+         }
+         else
+         {
+            $this->_getTable('UsersTasksAffectationsTable')->addAffectation($data['targetMemberId'], $data['taskId']);
+            
+            return $this->getResponse()->setContent(json_encode(array(
+               'hasRightToAssignTask' => true,
+               'alreadyAssigned'      => false
+            )));
+         }
+      }
+      else
+      {
+         return $this->getResponse()->setContent(json_encode(array(
+            'hasRightToAssignTask' => false,
+            'alreadyAssigned'      => false
+         )));
+      }
+   }
 
-   public function moveTaskAction() {
+   public function moveTaskAction() 
+   {
       $sessionUser = new container('user');
       $projectId = $this->params('id');
       // Get POST data
@@ -666,6 +701,11 @@ class ProjectController extends AbstractActionController
       }
    }
 
+   private function _userIsAssignToTask($userId, $taskId)
+   {
+      return !empty($this->_getTable('UsersTasksAffectationsTable')->getAffectation($userId, $taskId));
+   }
+   
    private function _userIsAdminOfProject($userId, $projectId)
    {
       return $this->_getTable('ViewProjectMinTable')->userIsAdminOfProject($userId, $projectId);

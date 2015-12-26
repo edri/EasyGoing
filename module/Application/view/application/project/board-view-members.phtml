@@ -20,7 +20,7 @@
       }
 
       $taskContent =
-         '<div id='.$member->email.$task->id.'" task-id="'.$task->id.'" class="board-task '.$priorityClass.'">' .
+         '<div id='.$member->email.$task->id.' task-id="'.$task->id.'" class="board-task '.$priorityClass.'">' .
             $task->name .
             '<div class="task-details"><a href="/project/' . $task->project . '/taskDetails/' . $task->id . '">Details...</a></div>
          </div>';
