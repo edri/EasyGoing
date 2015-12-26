@@ -73,7 +73,7 @@ class ProjectController extends AbstractActionController
          'members'      => $members,
          'eventsTypes'  => $eventsTypes,
          'events'       => $events,
-         'isManager'    => $isManager ? 'true' : 'false'
+         'isManager'    => $isManager ? true : false
       ));
    }
 
@@ -644,16 +644,24 @@ class ProjectController extends AbstractActionController
       
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
-         // Remove from project
-         $this->_getTable('ProjectsUsersMembersTable')->removeMember($memberId, $projectId);
-         
-         // Remove all affectations in the project
-         // Foreach tasks in the project, if the user is assigned we delete it
-         $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($projectId);
-         foreach($tasks as $task)
+         if($memberId == $sessionUser->id)
          {
-            $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($memberId, $task->id);
+            // TODO : Faire une redirection avec un message
          }
+         else
+         {
+            // Remove from project
+            $this->_getTable('ProjectsUsersMembersTable')->removeMember($memberId, $projectId);
+
+            // Remove all affectations in the project
+            // Foreach tasks in the project, if the user is assigned we delete it
+            $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($projectId);
+            foreach($tasks as $task)
+            {
+               $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($memberId, $task->id);
+            }
+         }
+         
       }
       else
       {
@@ -661,6 +669,15 @@ class ProjectController extends AbstractActionController
       }
       
       // TODO : Faire une redirection avec un message
+      /*
+      
+      $this->redirect()->toRoute('project', array(
+          'id' => $projectId
+      ), array('query' => array(
+          'message' => 'bar'
+      )));
+      */
+      
       $this->redirect()->toRoute('project', array(
           'id' => $projectId
       ));
