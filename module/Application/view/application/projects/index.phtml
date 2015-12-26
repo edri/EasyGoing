@@ -1,5 +1,10 @@
 <script type="text/javascript">
-    loadTutorial("projects");
+    try {
+        loadTutorial("projects");
+    }
+    catch(err) {
+        // Catch to avoid undefined loadTutorial error if user doesn't want tutorial
+    }
 </script>
 
 <script type="text/javascript">
