@@ -625,8 +625,8 @@ class ProjectController extends AbstractActionController
          // First of all, get right event type, moved task's name and old/new task's user's name.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
          $name = $this->_getTable("TaskTable")->getTaskById($data['taskId'])->name;
-         $oldUsername = $this->_getTable("UserTable")->getUser($data['oldMemberId'])->username;
-         $newUsername = $this->_getTable("UserTable")->getUser($data['targetMemberId'])->username;
+         $oldUsername = $this->_getTable("UserTable")->getUserById($data['oldMemberId'])->username;
+         $newUsername = $this->_getTable("UserTable")->getUserById($data['targetMemberId'])->username;
          // Then add the new event in the database.
          $message = "<u>" . $sessionUser->username . "</u> moved task <font color=\"#FF6600\">" . $name . "</font> from <font color=\"#995527\">(" . $oldUsername . ", " . $data['oldSection'] . ")</font> to <font color=\"#995527\">(" . $newUsername . ", " . $data['targetSection'] . ")</font>.";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
@@ -819,7 +819,7 @@ class ProjectController extends AbstractActionController
                   $this->_getTable('ProjectsUsersMembersTable')->addMemberToProject($value, $this->params('id'), $isManager);
                   // If member was successfully added, add an event.
                   // Get new member's username.
-                  $addedMemberName = $this->_getTable("UserTable")->getUser($value)->username;
+                  $addedMemberName = $this->_getTable("UserTable")->getUserById($value)->username;
                   // Then add the new event in the database.
                   $message = "<u>" . $sessionUser->username . "</u> added user <u>" . $addedMemberName . "</u> in project.";
                   $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
@@ -854,8 +854,8 @@ class ProjectController extends AbstractActionController
             $this->redirect()->toRoute('project', array(
                 'id' => $projectId
             ));
-               
-            
+
+
          }
 
          $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
