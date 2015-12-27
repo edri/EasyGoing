@@ -124,6 +124,7 @@ class ProjectController extends AbstractActionController
             $deadline = date_parse($_POST["deadline"]);
             // Will be used attribute a name to the uploaded file.
             $fileName;
+
             // Checks that the mandatory fields aren't empty.
             if (!empty($name) && !empty($startDate) && !empty($deadline))
             {
@@ -212,85 +213,89 @@ class ProjectController extends AbstractActionController
                      // Edits the project in the database.
                      if ($result == SUCCESS_MESSAGE)
                      {
-                        try
+                        // Only upload the edition if some values changed.
+                        if (isset($fileName) || $name != $project->name || $description != $project->description || $_POST["startDate"] != $project->startDate || $_POST["deadline"] != $project->deadLineDate)
                         {
-                           $editedProject = array(
-                              'name'			=> $name,
-                              'description'	=> $description,
-                              'startDate'		=> $_POST["startDate"],
-                              'deadLineDate'	=> $_POST["deadline"],
-                              'fileLogo'		=> isset($fileName) ? $fileName : $project->fileLogo
-                           );
-                           $this->_getTable("ProjectTable")->editProject($projectId, $editedProject);
-
-                           // If project was successfully edited, add a project's edition event.
-                           // First of all, get right event type.
-                           $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Project")->id;
-                           // Then add the new creation event in the database.
-                           $message = "<u>" . $sessionUser->username . "</u> edited the project.";
-                           $details =
-                              "<table class='eventDetailsTable'>
-                                 <tr>
-                                    <th class='eventDetailsTaskAttribute'></th>
-                                    <th>Old values</th>
-                                    <th>New values</th>
-                                 </tr>
-                                 <tr>
-                                    <td class='eventDetailsTaskAttribute'>Name: </td>
-                                    <td>" . $project->name . "</td>
-                                    <td>" . $name . "</td>
-                                 </tr>
-                                 <tr>
-                                    <td class='eventDetailsTaskAttribute'>Description: </td>
-                                    <td>" . $project->description . "</td>
-                                    <td>" . $description . "</td>
-                                 </tr>
-                                 <tr>
-                                    <td class='eventDetailsTaskAttribute'>Startdate: </td>
-                                    <td>" . $project->startDate . "</td>
-                                    <td>" . $_POST["startDate"] . "</td>
-                                 </tr>
-                                 <tr>
-                                    <td class='eventDetailsTaskAttribute'>Deadline: </td>
-                                    <td>" . $project->deadLineDate . "</td>
-                                    <td>" . $_POST["deadline"] . "</td>
-                                 </tr>
-                                 <tr>
-                                    <td class='eventDetailsTaskAttribute'>Logo: </td>
-                                    <td></td>
-                                    <td>" . (isset($fileName) ? "Aw yeah! New logo!" : "No new logo :(") . "</td>
-                                 </tr>
-                              </table>";
-                           $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId, $details);
-                           // Link the new event to the new project.
-                           $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
-                           // Finaly link the new event to the user who created it.
-                           $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
-                           // Get event's data to send them to socket server.
-                           $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
-
                            try
                            {
-                              // Make an HTTP POST request to the event's server so he can broadcast a
-                              // new websocket related to the new event.
-                              $client = new Client('http://127.0.0.1:8002');
-                              $client->setMethod(Request::METHOD_POST);
-                              // Setting POST data.
-                              $client->setParameterPost(array(
-                                 "requestType"        => "newEvent",
-                                 "event"              => json_encode($event)
-                              ));
-                              // Send HTTP request to server.
-                              $response = $client->send();
-                           }
+                              $editedProject = array(
+                                 'name'			=> $name,
+                                 'description'	=> $description,
+                                 'startDate'		=> $_POST["startDate"],
+                                 'deadLineDate'	=> $_POST["deadline"],
+                                 'fileLogo'		=> isset($fileName) ? $fileName : $project->fileLogo
+                              );
+                              $this->_getTable("ProjectTable")->editProject($projectId, $editedProject);
+
+                              // If project was successfully edited, add a project's edition event.
+                              // First of all, get right event type.
+                              $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Project")->id;
+                              // Then add the new creation event in the database.
+                              $message = "<u>" . $sessionUser->username . "</u> edited the project.";
+                              $details =
+                                 "<table class='eventDetailsTable'>
+                                    <tr>
+                                       <th class='eventDetailsTaskAttribute'></th>
+                                       <th>Old values</th>
+                                       <th>New values</th>
+                                    </tr>
+                                    <tr>
+                                       <td class='eventDetailsTaskAttribute'>Name: </td>
+                                       <td>" . $project->name . "</td>
+                                       <td>" . $name . "</td>
+                                    </tr>
+                                    <tr>
+                                       <td class='eventDetailsTaskAttribute'>Description: </td>
+                                       <td>" . $project->description . "</td>
+                                       <td>" . $description . "</td>
+                                    </tr>
+                                    <tr>
+                                       <td class='eventDetailsTaskAttribute'>Startdate: </td>
+                                       <td>" . $project->startDate . "</td>
+                                       <td>" . $_POST["startDate"] . "</td>
+                                    </tr>
+                                    <tr>
+                                       <td class='eventDetailsTaskAttribute'>Deadline: </td>
+                                       <td>" . $project->deadLineDate . "</td>
+                                       <td>" . $_POST["deadline"] . "</td>
+                                    </tr>
+                                    <tr>
+                                       <td class='eventDetailsTaskAttribute'>Logo: </td>
+                                       <td></td>
+                                       <td>" . (isset($fileName) ? "Aw yeah, new logo!" : "No new logo :(") . "</td>
+                                    </tr>
+                                 </table>";
+                              $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId, $details);
+                              // Link the new event to the new project.
+                              $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+                              // Finaly link the new event to the user who created it.
+                              $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+                              // Get event's data to send them to socket server.
+                              $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+
+                              try
+                              {
+                                 // Make an HTTP POST request to the event's server so he can broadcast a
+                                 // new websocket related to the new event.
+                                 $client = new Client('http://127.0.0.1:8002');
+                                 $client->setMethod(Request::METHOD_POST);
+                                 // Setting POST data.
+                                 $client->setParameterPost(array(
+                                    "requestType"        => "newEvent",
+                                    "event"              => json_encode($event)
+                                 ));
+                                 // Send HTTP request to server.
+                                 $response = $client->send();
+                              }
+                              catch (\Exception $e)
+                              {
+                                 error_log("WARNING: could not connect to events servers. Maybe offline?");
+                              }
+      							}
                            catch (\Exception $e)
                            {
-                              error_log("WARNING: could not connect to events servers. Maybe offline?");
+                              $result = "errorDatabaseAdding";
                            }
-   							}
-                        catch (\Exception $e)
-                        {
-                           $result = "errorDatabaseAdding";
                         }
                      }
                   }

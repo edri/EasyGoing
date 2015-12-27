@@ -5,6 +5,7 @@
     catch(err) {
         // Catch to avoid undefined function if user dont want tutorial
     }
+});
 </script>
 
 <?php
@@ -31,7 +32,7 @@
       if (!empty($event->details))
       {
          $eventContent .=
-                     '<img class="expandEventImg" id="toggleEventDetails' .  $event->id . $type . '" src="/img/expand_event.svg" />';
+                     '<img class="expandEventImg" id="toggleEventDetails' .  $event->id . $type . '" src="/img/plus.svg" />';
       }
 
       $eventContent .=
@@ -229,14 +230,14 @@
    function expandEventDetails(eventId, type) {
       // Hide event's details if they was shown.
       if ($('#eventDetails' + eventId + type).is(":visible")) {
-         $('#toggleEventDetails' + eventId + type).attr("src", "/img/expand_event.svg");
+         $('#toggleEventDetails' + eventId + type).attr("src", "/img/plus.svg");
          $('#divEventDetails' + eventId + type).slideUp("fast", function() {
             $('#eventDetails' + eventId + type).hide();
          });
       }
       // Otherwise show them.
       else {
-         $('#toggleEventDetails' + eventId + type).attr("src", "/img/collapse_event.svg");
+         $('#toggleEventDetails' + eventId + type).attr("src", "/img/minus.svg");
          $('#eventDetails' + eventId + type).show();
          $('#divEventDetails' + eventId + type).slideDown("fast");
       }
@@ -244,6 +245,9 @@
 
    $(document).ready(function() {
      loadBoardViewMembers();
+
+     // Init Bootstrap's tooltip on project's buttons.
+     $('[data-toggle="tooltip"]').tooltip();
 
      // Enable tabbable tabs on the historical panel.
      $("#historicalTabs a").click(function(event) {

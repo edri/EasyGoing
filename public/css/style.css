@@ -180,6 +180,12 @@ title:focus,
    float: right;
 }
 
+.newProjectImg {
+   height: 30px;
+   margin-left: 10px;
+   width: 30px;
+}
+
 .projectsToolsTable {
    width: 100%;
 }
@@ -248,34 +254,26 @@ title:focus,
    display: none;
 }
 
-.managerTd {
+.rightProjectTd {
    text-align: right;
 }
 
-.editProjectLink:focus,
-.editProjectLink:active {
+.projectLink:focus,
+.projectLink:active {
    outline: 0 none;
 }
 
-.editProjectIcon {
+.editProjectIcon, .managerIcon, .gotoIcon {
    height: 40px;
    width: 40px;
    transition: height 200ms, width 200ms;
-}
-
-.editProjectIcon:hover {
-   height: 50px;
-   width: 50px;
 }
 
 .managerIcon {
    cursor: default;
-   height: 40px;
-   width: 40px;
-   transition: height 200ms, width 200ms;
 }
 
-.managerIcon:hover {
+.editProjectIcon:hover, .gotoIcon:hover, .managerIcon:hover {
    height: 50px;
    width: 50px;
 }
