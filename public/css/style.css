@@ -713,6 +713,14 @@ hr {
    font-size: 12px;
 }
 
+.add-user:hover {
+   cursor: pointer;
+}
+
+.add-user-selected {
+   background-color: #E5AC86;
+}
+
 /** ===== FIN BOARD ===== **/
 
 /* TASK DETAILS */

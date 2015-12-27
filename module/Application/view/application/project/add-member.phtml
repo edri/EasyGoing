@@ -17,13 +17,10 @@
                   alt="<?php echo $this->escapeHtml($user->username); ?>" height=50 width=50
                   class="imgProject" />
                   <?php echo $user->firstName . ' ' . $user->lastName . ' (' . $user->username . ')'; ?>
-                  <div class="checkbox">
-                     <label style="float: right;">
-                        <input check="add" name="input-<?php echo $user->username; ?>" value="<?php echo $user->id; ?>" id="add-<?php echo $user->id; ?>" type="checkbox" style="float: right;"> Add
-                     </label>
-                  </div>
-                  <div class="checkbox">
-                     <label style="float: right;">
+                  <input hidden check="add" name="input-<?php echo $user->username; ?>" value="<?php echo $user->id; ?>" id="add-<?php echo $user->id; ?>" type="checkbox" style="float: right;">
+
+                  <div class="checkbox" style="float: right;">
+                     <label>
                         <input name="is-manager-<?php echo $user->id; ?>" id="<?php echo $user->id; ?>" class="is-manager" value="isManager" type="checkbox" style="float: right;"> Is manager 
                      </label>
                   </div>
@@ -63,7 +60,13 @@ $('.is-manager').click(function (e) {
    
 // Check checkbox when click on user div
 $('.add-user').click(function (e) {
-   if(!$(e.target).is(':checkbox') && !$(e.target).is('label'))
+   if(!$(e.target).is(':checkbox') && !$(e.target).is('label')) {
+      if($(this).hasClass('add-user-selected'))
+         $(this).removeClass('add-user-selected');
+      else
+         $(this).addClass('add-user-selected');
+      
       $(this).find('input[check=add]').prop("checked", !$(this).find('input[check=add]').prop("checked"));
+   }
 });
 </script>
