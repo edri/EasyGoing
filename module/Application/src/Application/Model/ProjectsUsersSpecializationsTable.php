@@ -21,4 +21,12 @@ class ProjectsUsersSpecializationsTable
          "specialization"   => $specialization
       ));
    }
+   
+   public function deleteSpecialization($userId, $projectId)
+   {
+      $this->_tableGateway->delete(array(
+         "user"    => $userId,
+         "project" => $projectId
+      ));
+   }
 }

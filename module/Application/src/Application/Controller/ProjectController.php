@@ -946,6 +946,9 @@ class ProjectController extends AbstractActionController
          {
             // Remove from project
             $this->_getTable('ProjectsUsersMembersTable')->removeMember($memberId, $projectId);
+            
+            // Remove specializations
+            $this->_getTable('ProjectsUsersSpecializationsTable')->deleteSpecialization($memberId, $projectId);
 
             // Remove all affectations in the project
             // Foreach tasks in the project, if the user is assigned we delete it
