@@ -792,61 +792,69 @@ class ProjectController extends AbstractActionController
    {
       $sessionUser = new container('user');
       $projectId = $this->params('id');
-      $request = $this->getRequest();
-
-      if($request->isPost())
+      
+      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
-         // Get right event type.
-         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
+         $request = $this->getRequest();
 
-         foreach ($_POST as $value)
+         if($request->isPost())
          {
-            $this->_getTable('ProjectsUsersMembersTable')->addMemberToProject($value, $this->params('id'));
-            // If member was successfully added, add an event.
-            // Get new member's username.
-            $addedMemberName = $this->_getTable("UserTable")->getUser($value)->username;
-            // Then add the new event in the database.
-            $message = "<u>" . $sessionUser->username . "</u> added user <u>" . $addedMemberName . "</u> in project.";
-            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
-            // Link the new event to the current project.
-            $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
-            // Finaly link the new event to the user who created it.
-            $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
-            // Get event's data to send them to socket server.
-            $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+            // Get right event type.
+            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
 
-            try
+            foreach ($_POST as $value)
             {
-               // Make an HTTP POST request to the event's server so he can broadcast a
-               // new websocket related to the new event.
-               $client = new Client('http://127.0.0.1:8002');
-               $client->setMethod(Request::METHOD_POST);
-               // Setting POST data.
-               $client->setParameterPost(array(
-                  "requestType"  => "newEvent",
-                  "event"        => json_encode($event)
-               ));
-               // Send HTTP request to server.
-               $response = $client->send();
+               $this->_getTable('ProjectsUsersMembersTable')->addMemberToProject($value, $this->params('id'));
+               // If member was successfully added, add an event.
+               // Get new member's username.
+               $addedMemberName = $this->_getTable("UserTable")->getUser($value)->username;
+               // Then add the new event in the database.
+               $message = "<u>" . $sessionUser->username . "</u> added user <u>" . $addedMemberName . "</u> in project.";
+               $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+               // Link the new event to the current project.
+               $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+               // Finaly link the new event to the user who created it.
+               $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+               // Get event's data to send them to socket server.
+               $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+
+               try
+               {
+                  // Make an HTTP POST request to the event's server so he can broadcast a
+                  // new websocket related to the new event.
+                  $client = new Client('http://127.0.0.1:8002');
+                  $client->setMethod(Request::METHOD_POST);
+                  // Setting POST data.
+                  $client->setParameterPost(array(
+                     "requestType"  => "newEvent",
+                     "event"        => json_encode($event)
+                  ));
+                  // Send HTTP request to server.
+                  $response = $client->send();
+               }
+               catch (\Exception $e)
+               {
+                  error_log("WARNING: could not connect to events servers. Maybe offline?");
+               }
             }
-            catch (\Exception $e)
-            {
-               error_log("WARNING: could not connect to events servers. Maybe offline?");
-            }
+
+            $this->redirect()->toRoute('project', array(
+                'id' => $projectId
+            ));
          }
 
+         $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
+
+         return new ViewModel(array(
+            'users' => $usersNotMemberOfProject
+         ));
+      }
+      else
+      {
          $this->redirect()->toRoute('project', array(
              'id' => $projectId
          ));
       }
-
-      $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
-
-      //$usersNotMemberOfProject = $this->_getUserTable()->getUsersNotMembersOfProject($this->params('id'));
-
-      return new ViewModel(array(
-         'users' => $usersNotMemberOfProject
-      ));
    }
 
    public function removeMemberAction()
