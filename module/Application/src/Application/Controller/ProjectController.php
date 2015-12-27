@@ -266,6 +266,27 @@ class ProjectController extends AbstractActionController
                            $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
                            // Finaly link the new event to the user who created it.
                            $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+                           // Get event's data to send them to socket server.
+                           $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+
+                           try
+                           {
+                              // Make an HTTP POST request to the event's server so he can broadcast a
+                              // new websocket related to the new event.
+                              $client = new Client('http://127.0.0.1:8002');
+                              $client->setMethod(Request::METHOD_POST);
+                              // Setting POST data.
+                              $client->setParameterPost(array(
+                                 "requestType"        => "newEvent",
+                                 "event"              => json_encode($event)
+                              ));
+                              // Send HTTP request to server.
+                              $response = $client->send();
+                           }
+                           catch (\Exception $e)
+                           {
+                              error_log("WARNING: could not connect to events servers. Maybe offline?");
+                           }
    							}
                         catch (\Exception $e)
                         {
