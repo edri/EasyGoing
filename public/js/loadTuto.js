@@ -1,3 +1,25 @@
+$(window).load(function() {
+    
+    $("div[role=tutorial]").each(function() {
+
+        var div = $(this);
+
+        var position = div.position();
+
+        div.css({
+            position: 'absolute',
+            paddingLeft: 25,
+            paddingRight: 25,
+            paddingBottom: 10,
+            paddingTop: 10,
+            borderRadius: 10,
+            background: "lightyellow",
+            borderStyle: "solid"
+        });
+    });
+    
+});
+
 var tutoData = [];
 var current = 0;
 
@@ -34,35 +56,13 @@ var nextTutorial = function() {
 };
 
 function loadTutorial(tuto) {
-	
+    
     Tutorial(tuto, function(data) {
 
         var tutoDataFiltered = [];
 
-        data.forEach(function(d) {
-            $("div[role=tutorial][id=" + d.div + "]").each(function() {
-
-                var div = $(this);
-
-                tutoData.push(d);
-
-                var position = div.position();
-
-                div.css({
-                    position: 'absolute',
-                    top: position.top,
-                    left: position.left,
-                    width: position.width,
-                    height: position.heigth,
-                    paddingLeft: 25,
-                    paddingRight: 25,
-                    paddingBottom: 10,
-                    paddingTop: 10,
-                    borderRadius: 10,
-                    background: "lightyellow",
-                    borderStyle: "solid"
-                });
-            });
+        data.forEach(function(d) {             
+            tutoData.push(d);
         });
 
         nextTutorial();
