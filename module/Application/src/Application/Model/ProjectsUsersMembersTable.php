@@ -13,6 +13,15 @@ class ProjectsUsersMembersTable
       $this->_tableGateway = $tableGateway;
    }
 
+   public function getMemberRight($userId, $projectId)
+   {
+      $rowset = $this->_tableGateway->select(array(
+         'user'      => $userId,
+         'project'   => $projectId
+      ));
+      return $rowset->current();
+   }
+
    // Add the given member to the given project.
    public function addMemberToProject($userId, $projectId, $isAdmin = false)
    {
@@ -22,7 +31,7 @@ class ProjectsUsersMembersTable
          "isAdmin"   => $isAdmin
       ));
    }
-   
+
    public function removeMember($userId, $projectId)
    {
       $this->_tableGateway->delete(array(
