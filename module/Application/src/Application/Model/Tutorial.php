@@ -24,7 +24,9 @@ class Tutorial
             $this->_generateData('addTask', 'Here you can add a task in your project.'),
             $this->_generateData('addMember', 'Here you can add a member in your project.'),
             $this->_generateData('historical', 'This is the historical of the project'),
-            $this->_generateData('dashboardType', 'Here you can select the type of dashboard you want')
+            $this->_generateData('dashboardType', 'Here you can select the type of dashboard you want'),
+            $this->_generateData('listTasks', 'Here is the list of tasks of the project'),
+            $this->_generateData('listMembers', 'Here is the list of members of the project')
         );
     }
     
