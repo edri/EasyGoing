@@ -181,6 +181,7 @@ class UserController extends AbstractActionController
             $password2 = $_POST["password2"];
             $email =  $_POST["email"];
 				$tutorial =  (isset($_POST["tutorial"]) && $_POST["tutorial"]) ? true : false;
+				$notifications =  (isset($_POST["notifications"]) && $_POST["notifications"]) ? true : false;
 	         // Will be used attribute a name to the uploaded file.
 				$filename;
             // Checks that the mandatory fields aren't empty and that the username doesn't
@@ -279,7 +280,8 @@ class UserController extends AbstractActionController
 													$lname,
 													$email,
 													isset($fileName) ? $fileName : "default.png",
-													$tutorial
+													$tutorial,
+													$notifications
 												);
 			                        }
 			                        catch (\Exception $e)
@@ -373,9 +375,43 @@ class UserController extends AbstractActionController
 		else
 			//If so, we send user's information to edit view
 		{
-			$user = $this->_getUserTable()->getUserById($sessionUser->id);
-			if($user){				
+		$user = $this->_getUserTable()->getUserById($sessionUser->id);
+		$request = $this->getRequest();
+		define("SUCCESS_MESSAGE", "ok");
+        $result = SUCCESS_MESSAGE; 
+		if ($request->isPost())
+        {
+        	
+         	//the user has clicked on "Save changes"
+         	$sername = $_POST["username"];
+            $fName = $_POST["fName"];
+            $lName= $_POST["lName"];            
+            $email =  $_POST["email"];
+         	$wantTutorial = $_POST["tutorial"];
+         	$wantNotifications = $_POST["notifications"];
+         	
+         	$password1 = $_POST["password1"];
+            $password2 = $_POST["password2"];
+
+            if($password1 != $password2)
+            {
+            	$result = 'errorPasswordsDontMatch';	
+            }
+            else if ($password1 == "") { //password hasn't been changed
+            	$password = $user->$hashedPassword;
+            }
+            else//password has changed
+            {
+            	$password = $password1;
+            }
+         	
+            $picture = $_POST["picture"];
+         	//update user's information in DB
+         	$this->_getUserTable()->updataaeUser($username, $password, $fName, $lName, $email, $picture, $wantTutorial, $wantNotifications);
+        }
+
 				return new ViewModel(array(
+						'error' 			=> $result,
 						'username' 			=> $user->username,	
 						'email'				=> $user->email,						
 						'fName'				=> $user->firstName,
@@ -384,11 +420,7 @@ class UserController extends AbstractActionController
 						'wantTutorial'		=> $user->wantTutorial,
 						'picture'			=> isset($user->$filePhoto) ? $user->$filePhoto : "default.png"				
 					));
-			}
-			else
-			{
-				//we have a problem if we are here
-			}		
+					
 		}
 
 		
