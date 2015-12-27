@@ -21,9 +21,6 @@ var nextTutorial = function() {
                 "<a href='#' onClick='skipTutorial()'><br>Skip</a>"
             ).fadeIn();
             
-            var clientWidth = $('#mainContent').width();
-            var clientHeight = $('#mainContent').height();
-            
             // Hide all of other tutos
             $("div[role=tutorial][id != " + d.div + "]").fadeOut();
             current++;
