@@ -138,7 +138,7 @@ class ProjectsController extends AbstractActionController
                         // avoid some extensions issues with some OS.
                         move_uploaded_file($_FILES['logo']['tmp_name'], getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"]);
                         // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
-                        $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"], $extension, getcwd() . "/public/img/projects/" . $fileName, 50);
+                        $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"], $extension, getcwd() . "/public/img/projects/" . $fileName, 150);
                      }
                      catch (\Exception $e)
                      {
@@ -224,6 +224,10 @@ class ProjectsController extends AbstractActionController
             ));
          }
       }
-      return new ViewModel();
+      else
+      {
+         // No POST request ; just call the view.
+         return new ViewModel();
+      }
    }
 }

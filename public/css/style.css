@@ -252,6 +252,34 @@ title:focus,
    text-align: right;
 }
 
+.editProjectLink:focus,
+.editProjectLink:active {
+   outline: 0 none;
+}
+
+.editProjectIcon {
+   height: 40px;
+   width: 40px;
+   transition: height 200ms, width 200ms;
+}
+
+.editProjectIcon:hover {
+   height: 50px;
+   width: 50px;
+}
+
+.managerIcon {
+   cursor: default;
+   height: 40px;
+   width: 40px;
+   transition: height 200ms, width 200ms;
+}
+
+.managerIcon:hover {
+   height: 50px;
+   width: 50px;
+}
+
 .projectDetails,
 .divProjectDetails {
    display: none;
@@ -295,7 +323,7 @@ th {
 }
 
 
-/* ADD A PROJECT */
+/* ADD/EDIT A PROJECT */
 
 .error {
    margin-bottom: 50px;
@@ -323,6 +351,13 @@ th {
 
 .btnCancel {
    margin-right: 10px;
+}
+
+.projectLogo {
+   border: 1px solid #5a2706;
+   height: 150px;
+   margin-right: 75px;
+   width: 150px;
 }
 
 hr {
