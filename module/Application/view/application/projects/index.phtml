@@ -13,6 +13,16 @@
     var isSelectionChanging = false;
     var isAjaxRequestComplete = false;
 
+    $(document).ready(function() {
+      // When the "Edit project" button is clicked, we don't need to display task's
+      // details so we stop the propagation of the click event.
+      $("#editLink, #editImg").click(function(e) {
+         e.stopPropagation();
+         // For IE.
+         window.event.cancelBubble = true
+      })
+    })
+
     // Show the expand arrow image on an element identified by the given ID.
     function showExpandArrow(id)
     {
@@ -289,7 +299,17 @@
                          alt="Collapse project <?php echo $this->escapeHtml($p->name); ?>"
                             height=50 />
                 </td>
-                <td class="managerTd"><?php if ($p->isAdmin) echo "Manager"; ?></td>
+                <td class="managerTd">
+                  <?php
+                     if ($p->isAdmin)
+                     {
+                  ?>
+                        <a class="editProjectLink" href="/project/<?php echo $p->id; ?>/edit" id="editLink"><img class="editProjectIcon" data-toggle="tooltip" id="editImg" title="Edit the project..." src="/img/edit.svg" /></a>
+                        <img class="managerIcon" data-toggle="tooltip" title="You are manager of this project." src="/img/manager.svg" />
+                  <?php
+                     }
+                  ?>
+                </td>
             </tr>
     <?php
         endforeach;

@@ -21,7 +21,7 @@
                      echo "Please fill all mandatory fields.";
                      break;
                   case "errorDate":
-                     echo "Please enter a correct date format (YYYY-MM-DD).";
+                     echo "Please enter a correct date format (YYYY-MM-DD) and check that the <b>From</b> date is lesser than the <b>To</b> one.";
                      break;
                   case "errorLogoSize":
                      echo "The logo you're trying to upload is too large, please retry.";
@@ -101,7 +101,7 @@
         <div class="col-sm-10">
             <span class="mandatoryFields">* Mandatory fields</span>
             <input class="btnCreate btn btnEasygoing" id="addProject" name="submit" type="submit" value="Create!" />
-            <button class="btnCancel btn btnEasygoing" id="cancel" name="cancelButton" onClick="location.href='/projects';">Cancel</button>
+            <input class="btnCancel btn btnEasygoing" id="cancel" name="cancelButton" onClick="location.href='/projects';" type="button" value="Cancel" />
         </div>
     </div>
 </form>
