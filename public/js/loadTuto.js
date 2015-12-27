@@ -37,7 +37,7 @@ var nextTutorial = function() {
 };
 
 function loadTutorial(tuto) {
-	
+    
     Tutorial(tuto, function(data) {
 
         var tutoDataFiltered = [];
@@ -45,8 +45,7 @@ function loadTutorial(tuto) {
         data.forEach(function(d) {
             $("div[role=tutorial][id=" + d.div + "]").each(function() {
 
-                var div = $(this);
-
+                var div = $(this);                
                 tutoData.push(d);
 
                 var position = div.position();
