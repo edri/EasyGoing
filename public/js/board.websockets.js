@@ -34,7 +34,7 @@ function eventRendering(type, event)
 
    if (event.details) {
       newEventDiv +=
-                  '<img class="expandEventImg" id="toggleEventDetails' +  event.id + type + '" src="/img/expand_event.svg" />';
+                  '<img class="expandEventImg" id="toggleEventDetails' +  event.id + type + '" src="/img/plus.svg" />';
    }
 
    newEventDiv +=

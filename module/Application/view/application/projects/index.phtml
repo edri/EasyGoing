@@ -14,9 +14,12 @@
     var isAjaxRequestComplete = false;
 
     $(document).ready(function() {
+      // Init Bootstrap's tooltip on project's buttons.
+      $('[data-toggle="tooltip"]').tooltip();
+
       // When the "Edit project" button is clicked, we don't need to display task's
       // details so we stop the propagation of the click event.
-      $("#editLink, #editImg").click(function(e) {
+      $("#gotoLink, #gotoImg, #editLink, #editImg").click(function(e) {
          e.stopPropagation();
          // For IE.
          window.event.cancelBubble = true
@@ -255,7 +258,7 @@
 <table class="projectsHeaderTable">
     <tr>
         <td><h1 class="projectsTitle">Your projects</h1></td>
-        <td><a class="newProject" href="/projects/add"><b>Create a new project !</b></a>
+        <td><a class="newProject" href="/projects/add"><b>Create a new project !</b><img class="newProjectImg" src="/img/plus.svg" /></a>
             <div id="createProject" role="tutorial"></div>
         </td>
     </tr>
@@ -299,16 +302,17 @@
                          alt="Collapse project <?php echo $this->escapeHtml($p->name); ?>"
                             height=50 />
                 </td>
-                <td class="managerTd">
+                <td class="rightProjectTd">
                   <?php
                      if ($p->isAdmin)
                      {
                   ?>
-                        <a class="editProjectLink" href="/project/<?php echo $p->id; ?>/edit" id="editLink"><img class="editProjectIcon" data-toggle="tooltip" id="editImg" title="Edit the project..." src="/img/edit.svg" /></a>
                         <img class="managerIcon" data-toggle="tooltip" title="You are manager of this project." src="/img/manager.svg" />
+                        <a class="projectLink" href="/project/<?php echo $p->id; ?>/edit" id="editLink"><img class="editProjectIcon" data-toggle="tooltip" id="editImg" title="Edit the project..." src="/img/edit.svg" /></a>
                   <?php
                      }
                   ?>
+                  <a class="projectLink" href="/project/<?php echo $p->id; ?>" id="gotoLink"><img class="gotoIcon" data-toggle="tooltip" id="gotoImg" title="Click here to see your project's progression." src="/img/goto.svg" /></a>
                 </td>
             </tr>
     <?php
