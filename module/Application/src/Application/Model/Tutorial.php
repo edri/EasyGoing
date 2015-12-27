@@ -27,4 +27,10 @@ class Tutorial
             $this->_generateData('dashboardType', 'Here you can select the type of dashboard you want')
         );
     }
+    
+    public function taskDetails() {
+        return array(
+            $this->_generateData('news', 'Here you can see the news concerning this task')
+        );
+    }
 }

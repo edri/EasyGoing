@@ -37,4 +37,10 @@ class TutorialController extends AbstractActionController
          (new Tutorial())->project()
       );
     }
+    
+    public function taskDetailsAction() {
+      return new JsonModel(
+         (new Tutorial())->taskDetails()
+      );
+    }
 }

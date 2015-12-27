@@ -19,11 +19,12 @@ var nextTutorial = function() {
                 "<a href='#' onClick='nextTutorial()'>   <br>Next</a>" +
                 "<a href='#' onClick='skipTutorial()'><br>Skip</a>"
             ).fadeIn();
-
-            current = (current + 1) % tutoData.length;
+            $("div[role=tutorial][id != " + d.div + "]").fadeOut();
+            current++;
         }
-        
-        $("div[role=tutorial][id != " + d.div + "]").fadeOut();
+        else {
+            $("div[role=tutorial]").fadeOut();
+        }
 	}
 
 };
