@@ -80,7 +80,8 @@ class ProjectController extends AbstractActionController
          'members'      => $members,
          'eventsTypes'  => $eventsTypes,
          'events'       => $events,
-         'isManager'    => $isManager ? true : false
+         'isManager'    => $isManager ? true : false,
+         'userId'       => $sessionUser->id
       ));
    }
 
@@ -651,11 +652,7 @@ class ProjectController extends AbstractActionController
 
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
-         if($memberId == $sessionUser->id)
-         {
-            // TODO : Faire une redirection avec un message
-         }
-         else
+         if($memberId != $sessionUser->id)
          {
             // Remove from project
             $this->_getTable('ProjectsUsersMembersTable')->removeMember($memberId, $projectId);
@@ -668,31 +665,11 @@ class ProjectController extends AbstractActionController
                $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($memberId, $task->id);
             }
          }
-
       }
-      else
-      {
-         // TODO : Faire une redirection avec un message
-      }
-
-      // TODO : Faire une redirection avec un message
-      /*
-
-      $this->redirect()->toRoute('project', array(
-          'id' => $projectId
-      ), array('query' => array(
-          'message' => 'bar'
-      )));
-      */
 
       $this->redirect()->toRoute('project', array(
           'id' => $projectId
       ));
-   }
-
-   public function loadEventAction()
-   {
-
    }
 
    public function detailsAction()
