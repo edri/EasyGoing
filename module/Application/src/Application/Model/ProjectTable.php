@@ -26,4 +26,14 @@ class ProjectTable
       // Return new project's ID.
       return $this->_tableGateway->lastInsertValue;
    }
+
+   // Edit the given project's ID with the given data.
+   public function editProject($projectId, $data)
+   {
+      $this->_tableGateway->update(
+         $data,
+         array(
+            'id' => $projectId
+         ));
+   }
 }

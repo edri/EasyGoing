@@ -20,6 +20,7 @@ class ProjectsController extends AbstractActionController
 {
    // Will contain the Utility class.
    private $_utilities;
+
    // Get utilities functions.
    // Act as a singleton : we only can have one instance of the object.
    private function _getUtilities()
@@ -31,6 +32,7 @@ class ProjectsController extends AbstractActionController
       }
       return $this->_utilities;
    }
+
    // Get the given table's entity, represented by the created model.
    private function _getTable($tableName)
    {
@@ -39,6 +41,7 @@ class ProjectsController extends AbstractActionController
       $table = $sm->get('Application\Model\\'.$tableName);
       return $table;
    }
+
    // Acts like a filter : every request go through the dispatcher, in which we
    // can do some stuff.
    // In this case, we just prevent unconnected users to access this controller.
@@ -49,6 +52,7 @@ class ProjectsController extends AbstractActionController
          $this->redirect()->toRoute('home');
       return parent::onDispatch( $e );
    }
+
    // Default action of the controller.
    public function indexAction()
    {
@@ -60,11 +64,13 @@ class ProjectsController extends AbstractActionController
          'userProjects'	=> $userProjects
       ));
    }
+   
    public function addAction()
    {
       define("SUCCESS_MESSAGE", "ok");
       $sessionUser = new container('user');
       $request = $this->getRequest();
+
       if ($request->isPost())
       {
          // Operation's result message.
@@ -144,6 +150,7 @@ class ProjectsController extends AbstractActionController
                      {
                         $result = "errorFilesUpload";
                      }
+
                      // Delete the temporary file if it exists.
                      if (file_exists(getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"]))
                         unlink(getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"]);
@@ -165,8 +172,10 @@ class ProjectsController extends AbstractActionController
                            'deadLineDate'	=> $_POST["deadline"],
                            'fileLogo'		=> isset($fileName) ? $fileName : "default.png"
                         );
+
                         $projectId = $this->_getTable("ProjectTable")->saveProject($newProject);
                         $this->_getTable("ProjectsUsersMembersTable")->addMemberToProject($sessionUser->id, $projectId, true);
+
                         // If project was successfully added, add a project's creation event.
                         // First of all, get right event type.
                         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Project")->id;
@@ -204,6 +213,7 @@ class ProjectsController extends AbstractActionController
          {
             $result = "errorFieldEmpty";
          }
+
          // Deletes the uploaded file if there was an error.
          // If not, redirect the user.
          if ($result == SUCCESS_MESSAGE)
@@ -215,6 +225,7 @@ class ProjectsController extends AbstractActionController
             // Delete the tumbnail, if it exists.
             if (isset($fileName) && file_exists(getcwd() . "/public/img/projects/" . $fileName))
                unlink(getcwd() . "/public/img/projects/" . $fileName);
+
             return new ViewModel(array(
                'error'        => $result,
                'name'         => $name,

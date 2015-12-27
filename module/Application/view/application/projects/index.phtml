@@ -16,8 +16,10 @@
     $(document).ready(function() {
       // When the "Edit project" button is clicked, we don't need to display task's
       // details so we stop the propagation of the click event.
-      $("#editLink").click(function(e) {
+      $("#editLink, #editImg").click(function(e) {
          e.stopPropagation();
+         // For IE.
+         window.event.cancelBubble = true
       })
     })
 
@@ -302,7 +304,7 @@
                      if ($p->isAdmin)
                      {
                   ?>
-                        <a class="editProjectLink" href="/project/<?php echo $p->id; ?>/edit" id="editLink"><img class="editProjectIcon" data-toggle="tooltip" title="Edit the project..." src="/img/edit.svg" /></a>
+                        <a class="editProjectLink" href="/project/<?php echo $p->id; ?>/edit" id="editLink"><img class="editProjectIcon" data-toggle="tooltip" id="editImg" title="Edit the project..." src="/img/edit.svg" /></a>
                         <img class="managerIcon" data-toggle="tooltip" title="You are manager of this project." src="/img/manager.svg" />
                   <?php
                      }

@@ -25,6 +25,20 @@ use Application\Utility\Priority;
 // Be careful about the class' name, which must be the same as the file's name.
 class ProjectController extends AbstractActionController
 {
+   // Will contain the Utility class.
+   private $_utilities;
+
+   // Get utilities functions.
+   // Act as a singleton : we only can have one instance of the object.
+   private function _getUtilities()
+   {
+      if (!$this->_utilities)
+      {
+         $sm = $this->getServiceLocator();
+         $this->_utilities = $sm->get('Application\Utility\Utilities');
+      }
+      return $this->_utilities;
+   }
 
    // Get the given table's entity, represented by the created model.
    private function _getTable($tableName)
@@ -90,6 +104,11 @@ class ProjectController extends AbstractActionController
       define("SUCCESS_MESSAGE", "ok");
       $sessionUser = new container('user');
       $request = $this->getRequest();
+      $projectId = $this->params("id");
+
+      // Get project's data.
+      $project = $this->_getTable("ProjectTable")->getProject($projectId);
+
       if ($request->isPost())
       {
          // Operation's result message.
@@ -163,36 +182,44 @@ class ProjectController extends AbstractActionController
                         // avoid some extensions issues with some OS.
                         move_uploaded_file($_FILES['logo']['tmp_name'], getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"]);
                         // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
-                        $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"], $extension, getcwd() . "/public/img/projects/" . $fileName, 50);
+                        $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"], $extension, getcwd() . "/public/img/projects/" . $fileName, 150);
                      }
                      catch (\Exception $e)
                      {
                         $result = "errorFilesUpload";
                      }
+
                      // Delete the temporary file if it exists.
                      if (file_exists(getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"]))
                         unlink(getcwd() . "/public/img/projects/tmp/" . $_FILES["logo"]["name"]);
+
+                     // Delete old project's logo if it wasn't the default one.
+                     if ($project->fileLogo != "default.png")
+                     {
+                        if (file_exists(getcwd() . "/public/img/projects/" . $project->fileLogo))
+                           unlink(getcwd() . "/public/img/projects/" . $project->fileLogo);
+                     }
                   }
                }
-               // If there is no file or the file is valid, we can add the new
+               // If there is no file or the file is valid, we can edit the
                // project in the database.
                if ($fileValidated)
                {
-                  // Adds the new project in the database.
+                  // Edits the project in the database.
                   if ($result == SUCCESS_MESSAGE)
                   {
                      try
                      {
-                        $newProject = array(
+                        $editedProject = array(
                            'name'			=> $name,
                            'description'	=> $description,
                            'startDate'		=> $_POST["startDate"],
                            'deadLineDate'	=> $_POST["deadline"],
-                           'fileLogo'		=> isset($fileName) ? $fileName : "default.png"
+                           'fileLogo'		=> isset($fileName) ? $fileName : $project->fileLogo
                         );
-                        $projectId = $this->_getTable("ProjectTable")->saveProject($newProject);
-                        $this->_getTable("ProjectsUsersMembersTable")->addMemberToProject($sessionUser->id, $projectId, true);
-                        // If project was successfully added, add a project's creation event.
+                        $this->_getTable("ProjectTable")->editProject($projectId, $editedProject);
+
+                        /*// If project was successfully added, add a project's creation event.
                         // First of all, get right event type.
                         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Project")->id;
                         // Then add the new creation event in the database.
@@ -211,7 +238,7 @@ class ProjectController extends AbstractActionController
                         // Link the new event to the new project.
                         $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
                         // Finaly link the new event to the user who created it.
-                        $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+                        $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);*/
 							}
                      catch (\Exception $e)
                      {
@@ -229,30 +256,34 @@ class ProjectController extends AbstractActionController
          {
             $result = "errorFieldEmpty";
          }
+
          // Deletes the uploaded file if there was an error.
          // If not, redirect the user.
          if ($result == SUCCESS_MESSAGE)
          {
-            $this->redirect()->toRoute('projects');
+            $this->redirect()->toRoute('project', array(
+                'id' => $projectId
+            ));
          }
          else
          {
             // Delete the tumbnail, if it exists.
             if (isset($fileName) && file_exists(getcwd() . "/public/img/projects/" . $fileName))
                unlink(getcwd() . "/public/img/projects/" . $fileName);
+
             return new ViewModel(array(
                'error'        => $result,
                'name'         => $name,
                'description'  => $description,
                'startDate'    => $_POST["startDate"],
-               'deadline'     => $_POST["deadline"]
+               'deadline'     => $_POST["deadline"],
+               'logo'         => $project->fileLogo
             ));
          }
       }
       else
       {
-         // If there is no POST request, get project's data and send them to the view.
-         $project = $this->_getTable("ProjectTable")->getProject($this->params("id"));
+         // If there is no POST request, send project's data to the view.
          return new ViewModel(array(
             "project"   => $project
          ));

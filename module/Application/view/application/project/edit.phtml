@@ -1,0 +1,116 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#projectStartDate").datepicker({format: 'yyyy-mm-dd', autoclose:true});
+        $("#projectDeadline").datepicker({format: 'yyyy-mm-dd', autoclose:true});
+    })
+</script>
+
+<h1 class="pageTitle">Edit project</h1>
+
+<?php
+   // if there was an error when creating the posted project, display it.
+   if (isset($error))
+   {
+?>
+      <div class="panel panel-danger error">
+         <div class="panel-heading">
+            <?php
+               switch($error)
+               {
+                  case "errorFieldEmpty":
+                     echo "Please fill all mandatory fields.";
+                     break;
+                  case "errorDate":
+                     echo "Please enter a correct date format (YYYY-MM-DD) and check that the <b>From</b> date is lesser than the <b>To</b> one.";
+                     break;
+                  case "errorLogoSize":
+                     echo "The logo you're trying to upload is too large, please retry.";
+                     break;
+                  case "errorLogoType":
+                  case "errorLogoExtension":
+                     echo "Please upload a file, which extension is allowed.";
+                     break;
+                  case  "errorLogo":
+                     echo "Something is wrong with the file you're trying to upload, please retry.";
+                     break;
+                  case  "errorFilesUpload":
+                     echo "Something wrong happend when uploading the logo, please retry.";
+                     break;
+                  case  "errorDatabaseAdding":
+                     echo "Something wrong happend when creating the project, please retry.";
+                     break;
+                  default:
+                     echo "An error occured, please retry.";
+                     break;
+               }
+            ?>
+         </div>
+      </div>
+<?php
+   }
+?>
+
+<!-- 'enctype' attribut is used for posting pictures. -->
+<form action="/project/<?php echo $project->id; ?>/edit" class="form-horizontal" enctype="multipart/form-data" method="POST" role="form">
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="name">Name *</label>
+        <div class="col-sm-10">
+            <input class="form-control" id="projectName" placeholder="Enter name"
+                   name="name" required="required" type="text"
+                   value="<?php if (isset($name)) echo $this->escapeHtml($name); else echo $this->escapeHtml($project->name); ?>" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="description">Description</label>
+        <div class="col-sm-10">
+            <textarea class="form-control projectDescription" id="projectDescription" placeholder="Enter description"
+                      name="description" rows=6><?php if (isset($description)) echo $this->escapeHtml($description); else echo $this->escapeHtml($project->description); ?></textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="startDate">Duration *</label>
+        <div class="col-sm-10">
+            <p>
+                From
+                <input class="form-control" id="projectStartDate" placeholder="YYYY-MM-DD"
+                       name="startDate" required="required" type="date"
+                       value="<?php if (isset($startDate)) echo $this->escapeHtml($startDate); else echo $this->escapeHtml($project->startDate); ?>" />
+            </p>
+            <p>
+                To
+                <input class="form-control" id="projectDeadline" placeholder="YYYY-MM-DD"
+                       name="deadline" required="required" type="date"
+                       value="<?php if (isset($deadline)) echo $this->escapeHtml($deadline); else echo $this->escapeHtml($project->deadLineDate); ?>" />
+            </p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="logo">Logo</label>
+        <div class="col-sm-10">
+            <table>
+               <tr>
+                  <td>
+                     <img class="projectLogo" src="/img/projects/<?php if (isset($logo)) echo $logo; else echo $project->fileLogo; ?>" />
+                  </td>
+                  <td>
+                     <p class="logoInformation">Priorize a <b>squared</b> logo - Maximum size of <b>5 MB</b> - Allowed extensions: <b>"jpeg", "jpg" or "png"</b>.</p>
+                     <input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
+                     <input id="projectLogo" name="logo" type="file" />
+                  </td>
+               </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="form-group formSending">
+        <label class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+            <span class="mandatoryFields">* Mandatory fields</span>
+            <input class="btnCreate btn btnEasygoing" id="addProject" name="submit" type="submit" value="Edit" />
+            <a class="btnCancel btn btnEasygoing" id="cancel" name="cancelButton" href="<?php echo $_SERVER['HTTP_REFERER'] ?>">Cancel</a>
+        </div>
+    </div>
+</form>
