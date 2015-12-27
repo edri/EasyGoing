@@ -21,6 +21,49 @@ function formatDate(date) {
    return day + "." + month + "." + year;
 }
 
+// Return an HTML code rendering an event div, using for code factoring.
+function eventRendering(type, event)
+{
+   var newEventDiv =
+      '<div class="eventElem"' + (event.details ? 'onclick="expandEventDetails(' + event.id + ', \'' + type + '\');"' : '') + ' name="eventIn' + type + '" style="display: none;">\
+         <table class="eventTable">\
+            <tr>\
+               <td class="eventImgTd" rowspan=2><img class="eventImg" src="/img/events/' + event.fileLogo + '" /></td>\
+               <td>\
+                  <b class="eventDate">[' + formatDate(new Date(event.date)) + ']</b>';
+
+   if (event.details) {
+      newEventDiv +=
+                  '<img class="expandEventImg" id="toggleEventDetails' +  event.id + type + '" src="/img/expand_event.svg" />';
+   }
+
+   newEventDiv +=
+               '</td>\
+            </tr>\
+            <tr>\
+               <td><div class="eventMessage">' + event.message + '</div></td>\
+            </tr>';
+
+   if (event.details) {
+      newEventDiv +=
+            '<tr id="eventDetails' + event.id + type + '" class="eventDetailsRow">\
+               <td></td>\
+               <td>\
+                  <div class="eventDetails" id="divEventDetails' + event.id + type + '">\
+                     <b>Details:</b>\
+                     <br/>' + event.details +
+                  '</div>\
+               </td>\
+            </tr>';
+   }
+
+   newEventDiv +=
+         '</table>\
+      </div>';
+
+   return newEventDiv;
+}
+
 $(document).ready(function() {
    // Check if WebSocket is supported by the user's browser and if connection has not
    // been initialized already.
@@ -72,49 +115,10 @@ $(document).ready(function() {
                   // The received event must not be a task event, but a project event.
                   // We also must ensure than the received event is for the current project.
                   if (!data.event.isTaskEvent && data.event.linkedEntityId == projectId) {
-                     var introAll = '<div class="eventElem"' + (data.event.details ? 'onclick="expandEventDetails(' + data.event.id + ');"' : '') + ' name="eventInAll" style="display: none;">';
-                     var introType = '<div class="eventElem"' + (data.event.details ? 'onclick="expandEventDetails(' + data.event.id + ');"' : '') + ' name="eventIn' + data.event.type + '" style="display: none;">';
-
-                     var newEventDiv =
-                           '<table class="eventTable">\
-                              <tr>\
-                                 <td class="eventImgTd" rowspan=2><img class="eventImg" src="/img/events/' + data.event.fileLogo + '" /></td>\
-                                 <td>\
-                                    <b class="eventDate">[' + formatDate(new Date(data.event.date)) + ']</b>';
-
-                     if (data.event.details) {
-                        newEventDiv +=
-                                    '<img class="expandEventImg" id="toggleEventDetails' +  data.event.id + '" src="/img/expand_event.svg" />';
-                     }
-
-                     newEventDiv +=
-                                 '</td>\
-                              </tr>\
-                              <tr>\
-                                 <td><div class="eventMessage">' + data.event.message + '</div></td>\
-                              </tr>';
-
-                     if (data.event.details) {
-                        newEventDiv +=
-                              '<tr id="eventDetails' + data.event.id + '" class="eventDetailsRow">\
-                                 <td></td>\
-                                 <td>\
-                                    <div class="eventDetails" id="divEventDetails' + data.event.id + '">\
-                                       <b>Details:</b>\
-                                       <br/>' + data.event.details +
-                                    '</div>\
-                                 </td>\
-                              </tr>';
-                     }
-
-                     newEventDiv +=
-                           '</table>\
-                        </div>';
-
-                     $("#all").prepend(introAll + newEventDiv);
+                     $("#all").prepend(eventRendering("All", data.event));
                      $("#all > div[name='eventInAll']").first().show("fast");
 
-                     $("#" + data.event.type.toLowerCase()).prepend(introType + newEventDiv);
+                     $("#" + data.event.type.toLowerCase()).prepend(eventRendering(data.event.type, data.event));
                      $("#" + data.event.type.toLowerCase() + " > div[name='eventIn" + data.event.type + "']").first().show("fast");
 
                      $('#board-container').load(window.location.href + '/boardViewMembers');

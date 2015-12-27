@@ -1,5 +1,10 @@
-<script type="application/javascript">
-    loadTutorial("projectsIndex");
+<script type="text/javascript">
+    try {
+        loadTutorial("projects");
+    }
+    catch(err) {
+        // Catch to avoid undefined loadTutorial error if user doesn't want tutorial
+    }
 </script>
 
 <script type="text/javascript">
@@ -240,9 +245,9 @@
 <table class="projectsHeaderTable">
     <tr>
         <td><h1 class="projectsTitle">Your projects</h1></td>
-        
+
         <td><a class="newProject" href="/projects/add"><b>Create a new project !</b></a></td>
-        <td><div id="createProject" role="tutorial" /></td>
+        <td><div id="createProject" role="tutorial"></div></td>
     </tr>
 </table>
 
@@ -253,8 +258,8 @@
         <table class="projectsToolsTable">
             <tr>
                 <td>Click on a project to see details.</td>
-                <div id="listOfProjects" role="tutorial" />
-                <td><div id="searchProject" role="tutorial" /></td>
+                <div id="listOfProjects" role="tutorial"></div>
+                <td><div id="searchProject" role="tutorial"></div></td>
                 <td><input onkeyup="filterSearch();" type="text" id="search" class="form-control" placeholder="Search for..." /></td>
             </tr>
         </table>

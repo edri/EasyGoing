@@ -1,3 +1,9 @@
+<script type="text/javascript">
+    try {
+        loadTutorial("taskDetails");
+    } catch(err) {} // Catch to avoid errors of undefined function if the user doesn't want tutorial
+</script>
+
 <?php
    // Send Javascript variable with Zend.
    echo $this->headScript()->appendScript('// Indicate that the user is currently in the task page. Used in the board.websocket.js script.
@@ -90,6 +96,7 @@
 
               <!-- Tab panes -->
               <div class="tab-content newsFeedTab">
+                 <div id="news" role="tutorial"></div>
                  <div role="tabpanel" class="tab-pane fade in active" id="all">
                     <?php
                        foreach ($events as $e)

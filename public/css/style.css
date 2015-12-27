@@ -129,6 +129,7 @@ title:focus,
    height: 100%;
    overflow: auto;
    padding: 30px 30px 80px;
+   position: relative;
 }
 
 .pageTitle {

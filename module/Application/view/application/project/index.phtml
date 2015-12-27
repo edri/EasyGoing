@@ -1,4 +1,14 @@
+<script type="application/javascript">
+    try {
+        loadTutorial('project');
+    }
+    catch(err) {
+        // Catch to avoid undefined function if user dont want tutorial
+    }
+</script>
+
 <?php
+
    // Send Javascript variable with Zend.
    echo $this->headScript()->appendScript('// Indicate that the user is currently in the task page. Used in the board.websocket.js script.
                                            var isProjectPage = true;
@@ -60,12 +70,17 @@
    <div class="leftPart">
       <p><u>Description</u> : <?php echo $this->escapeHtml($project->description); ?></p>
       <p><u>Duration</u> : from <?php echo date('d.m.Y', strtotime($project->startDate)) . ' to ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
-      <p>
+       <p>
          <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Add a task</a><br/>
-         <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Add members</a>
+         <?php if($isManager): ?>
+            <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Add members</a>
+         <?php endif; ?>
       </p>
    </div>
-
+    
+    <div id="addTask" role="tutorial"></div>   
+    <div id="addMember" role="tutorial"></div>
+    
     <div class="rightPart">
         <div>
             <!-- Nav tabs -->
@@ -94,6 +109,7 @@
             <!-- Tab panes -->
             <div class="tab-content historicalTab">
                <div role="tabpanel" class="tab-pane fade in active" id="all">
+               <div role="tutorial" id="historical"></div>
                <?php
                   foreach ($events as $e)
                   {
@@ -126,6 +142,7 @@
 </div>
 
 <br/><hr/>
+<div role="tutorial" id="dashboardType"></div>
 <p id="result"></p>
 <p class="boardButtons">
    <div class="btn-group" data-toggle="buttons">
@@ -151,7 +168,7 @@
             <div class="panel-body listed-task">
                <?php foreach ($tasks as $task) : ?>
                <p>
-                  <a type="unassigned-task" id="<?php echo $task->id; ?>" task-id="<?php echo $task->id; ?>"  href="<?php echo $this->serverUrl(true)."/editTask/".$task->id; ?>"><?php echo $task->name; ?></a>
+                  <a type="unassigned-task" id="<?php echo $task->id; ?>" task-id="<?php echo $task->id; ?>" href="<?php echo $this->serverUrl(true)."/editTask/".$task->id; ?>"><?php echo $task->name; ?></a>
                <p>
                <?php endforeach; ?>
             </div>
@@ -164,7 +181,7 @@
                <?php foreach ($members as $member) : ?>
                <p>
                   <?php echo $member->username; ?>
-                  <?php if($isManager) : ?>
+                  <?php if($isManager && $member->id != $userId) : ?>
                      <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>">Remove</a>
                   <?php endif; ?>
                </p>

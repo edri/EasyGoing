@@ -25,7 +25,7 @@ use Application\Utility\Priority;
 // Be careful about the class' name, which must be the same as the file's name.
 class ProjectController extends AbstractActionController
 {
-   
+
    // Get the given table's entity, represented by the created model.
    private function _getTable($tableName)
    {
@@ -42,17 +42,24 @@ class ProjectController extends AbstractActionController
    // and check if the accessed project/task exists.
    public function onDispatch( \Zend\Mvc\MvcEvent $e )
    {
-      $sessionUser = new container('user');      
+      $sessionUser = new container('user');
+
       if (!$sessionUser->connected)
+      {
          $this->redirect()->toRoute('home');
+      }
 
       if (empty($this->_getTable('ProjectTable')->getProject($this->params('id'))))
+      {
          $this->redirect()->toRoute('projects');
+      }
 
       if ($this->params('otherId') != null && empty($this->_getTable('TaskTable')->getTaskById($this->params('otherId'))))
+      {
          $this->redirect()->toRoute('projects');
+      }
 
-      return parent::onDispatch( $e );
+      return parent::onDispatch($e);
    }
 
    public function indexAction()
@@ -73,7 +80,8 @@ class ProjectController extends AbstractActionController
          'members'      => $members,
          'eventsTypes'  => $eventsTypes,
          'events'       => $events,
-         'isManager'    => $isManager ? true : false
+         'isManager'    => $isManager ? true : false,
+         'userId'       => $sessionUser->id
       ));
    }
 
@@ -345,7 +353,7 @@ class ProjectController extends AbstractActionController
 
       return $result;
    }
-   
+
    public function assignTaskAction()
    {
       $sessionUser = new container('user');
@@ -460,21 +468,21 @@ class ProjectController extends AbstractActionController
          )));
       }
    }
-   
+
    public function unassignTaskAction()
    {
       $projectId = $this->params('id');
       $sessionUser = new container('user');
       $data = $this->getRequest()->getPost();
       $resMessage = 'Unassign success';
-      
+
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
          $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($data['userId'], $data['taskId']);
       }
       else
          $resMessage = 'You do not have rights to unassign this task !';
-      
+
       return $this->getResponse()->setContent(json_encode(array(
          'message' => $resMessage
       )));
@@ -579,61 +587,69 @@ class ProjectController extends AbstractActionController
    {
       $sessionUser = new container('user');
       $projectId = $this->params('id');
-      $request = $this->getRequest();
-
-      if($request->isPost())
+      
+      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
-         // Get right event type.
-         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
+         $request = $this->getRequest();
 
-         foreach ($_POST as $value)
+         if($request->isPost())
          {
-            $this->_getTable('ProjectsUsersMembersTable')->addMemberToProject($value, $this->params('id'));
-            // If member was successfully added, add an event.
-            // Get new member's username.
-            $addedMemberName = $this->_getTable("UserTable")->getUser($value)->username;
-            // Then add the new event in the database.
-            $message = "<u>" . $sessionUser->username . "</u> added user <u>" . $addedMemberName . "</u> in project.";
-            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
-            // Link the new event to the current project.
-            $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
-            // Finaly link the new event to the user who created it.
-            $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
-            // Get event's data to send them to socket server.
-            $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+            // Get right event type.
+            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
 
-            try
+            foreach ($_POST as $value)
             {
-               // Make an HTTP POST request to the event's server so he can broadcast a
-               // new websocket related to the new event.
-               $client = new Client('http://127.0.0.1:8002');
-               $client->setMethod(Request::METHOD_POST);
-               // Setting POST data.
-               $client->setParameterPost(array(
-                  "requestType"  => "newEvent",
-                  "event"        => json_encode($event)
-               ));
-               // Send HTTP request to server.
-               $response = $client->send();
+               $this->_getTable('ProjectsUsersMembersTable')->addMemberToProject($value, $this->params('id'));
+               // If member was successfully added, add an event.
+               // Get new member's username.
+               $addedMemberName = $this->_getTable("UserTable")->getUser($value)->username;
+               // Then add the new event in the database.
+               $message = "<u>" . $sessionUser->username . "</u> added user <u>" . $addedMemberName . "</u> in project.";
+               $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+               // Link the new event to the current project.
+               $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+               // Finaly link the new event to the user who created it.
+               $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+               // Get event's data to send them to socket server.
+               $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+
+               try
+               {
+                  // Make an HTTP POST request to the event's server so he can broadcast a
+                  // new websocket related to the new event.
+                  $client = new Client('http://127.0.0.1:8002');
+                  $client->setMethod(Request::METHOD_POST);
+                  // Setting POST data.
+                  $client->setParameterPost(array(
+                     "requestType"  => "newEvent",
+                     "event"        => json_encode($event)
+                  ));
+                  // Send HTTP request to server.
+                  $response = $client->send();
+               }
+               catch (\Exception $e)
+               {
+                  error_log("WARNING: could not connect to events servers. Maybe offline?");
+               }
             }
-            catch (\Exception $e)
-            {
-               error_log("WARNING: could not connect to events servers. Maybe offline?");
-            }
+
+            $this->redirect()->toRoute('project', array(
+                'id' => $projectId
+            ));
          }
 
+         $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
+
+         return new ViewModel(array(
+            'users' => $usersNotMemberOfProject
+         ));
+      }
+      else
+      {
          $this->redirect()->toRoute('project', array(
              'id' => $projectId
          ));
       }
-
-      $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
-
-      //$usersNotMemberOfProject = $this->_getUserTable()->getUsersNotMembersOfProject($this->params('id'));
-
-      return new ViewModel(array(
-         'users' => $usersNotMemberOfProject
-      ));
    }
 
    public function removeMemberAction()
@@ -641,14 +657,10 @@ class ProjectController extends AbstractActionController
       $sessionUser = new container('user');
       $projectId = $this->params('id');
       $memberId = $this->params('otherId');
-      
+
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
-         if($memberId == $sessionUser->id)
-         {
-            // TODO : Faire une redirection avec un message
-         }
-         else
+         if($memberId != $sessionUser->id)
          {
             // Remove from project
             $this->_getTable('ProjectsUsersMembersTable')->removeMember($memberId, $projectId);
@@ -661,31 +673,11 @@ class ProjectController extends AbstractActionController
                $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($memberId, $task->id);
             }
          }
-         
       }
-      else
-      {
-         // TODO : Faire une redirection avec un message
-      }
-      
-      // TODO : Faire une redirection avec un message
-      /*
-      
-      $this->redirect()->toRoute('project', array(
-          'id' => $projectId
-      ), array('query' => array(
-          'message' => 'bar'
-      )));
-      */
-      
+
       $this->redirect()->toRoute('project', array(
           'id' => $projectId
       ));
-   }
-
-   public function loadEventAction()
-   {
-
    }
 
    public function detailsAction()
