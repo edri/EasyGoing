@@ -48,12 +48,13 @@ function loadTutorial(tuto) {
 
                 var position = div.position();
 
+                var clientWidth = $('#mainContent').width();
+                var clientHeight = $('#mainContent').height();
+                
                 div.css({
                     position: 'absolute',
                     top: position.top,
                     left: position.left,
-                    width: position.width,
-                    height: position.heigth,
                     paddingLeft: 25,
                     paddingRight: 25,
                     paddingBottom: 10,
