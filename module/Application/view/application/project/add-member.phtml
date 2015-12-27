@@ -53,9 +53,15 @@ function filterSearch() {
 // Check if closest add checkbox is checked. If no we check it.
 $('.is-manager').click(function (e) {
    var closestAddCheckbox = $('#add-'+$(this).attr('id'));
+   var closestDiv = $(this).closest('.add-user');
    
-   if(!closestAddCheckbox.is(':checked'))
+   
+   
+   if(!closestAddCheckbox.is(':checked')) {
       closestAddCheckbox.prop('checked', true);
+      closestDiv.addClass('add-user-selected');
+   }
+
 });
    
 // Check checkbox when click on user div
