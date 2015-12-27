@@ -39,7 +39,7 @@ class UserTable
 		$this->_tableGateway->update(array('cookie' => $cookie), array('id' => $userId));
 	}
    // add a new user
-   public function addUser($username, $password, $fname, $lname, $email, $picture, $wantTutorial)
+   public function addUser($username, $password, $fname, $lname, $email, $picture, $wantTutorial, $wantNotifications)
    {
       $this->_tableGateway->insert(array(
          'username'				=> $username,
@@ -50,6 +50,21 @@ class UserTable
          'filePhoto'			=> isset($picture) ? $picture : "-",
          'wantTutorial'    		=> $wantTutorial,
 		   'wantNotifications'    => $wantNotifications
+      ));
+      return $this->_tableGateway->lastInsertValue;
+   }
+
+   public function updateUser($username, $password, $fname, $lname, $email, $picture, $wantTutorial, $wantNotifications)
+   {
+      $this->_tableGateway->upasasaate(array(
+         'username'				=> $username,
+         'hashedPassword'		=> $password,
+         'firstName'			=> isset($fname) ? $fname : "-",
+         'lastName'				=> isset($lname) ? $lname : "-",
+         'email'				=> $email,
+         'filePhoto'			=> isset($picture) ? $picture : "-",
+         'wantTutorial'    		=> $wantTutorial,
+		 'wantNotifications'    => $wantNotifications
       ));
       return $this->_tableGateway->lastInsertValue;
    }
