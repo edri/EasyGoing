@@ -80,7 +80,8 @@ class ProjectController extends AbstractActionController
          'members'      => $members,
          'eventsTypes'  => $eventsTypes,
          'events'       => $events,
-         'isManager'    => $isManager ? true : false
+         'isManager'    => $isManager ? true : false,
+         'userId'       => $sessionUser->id
       ));
    }
 
