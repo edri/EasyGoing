@@ -223,26 +223,70 @@ class ProjectController extends AbstractActionController
                            );
                            $this->_getTable("ProjectTable")->editProject($projectId, $editedProject);
 
-                           /*// If project was successfully added, add a project's creation event.
+                           // If project was successfully edited, add a project's edition event.
                            // First of all, get right event type.
                            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Project")->id;
                            // Then add the new creation event in the database.
-                           $message = "<u>" . $sessionUser->username . "</u> created the project.";
-                           $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+                           $message = "<u>" . $sessionUser->username . "</u> edited the project.";
+                           $details =
+                              "<table class='eventDetailsTable'>
+                                 <tr>
+                                    <th class='eventDetailsTaskAttribute'></th>
+                                    <th>Old values</th>
+                                    <th>New values</th>
+                                 </tr>
+                                 <tr>
+                                    <td class='eventDetailsTaskAttribute'>Name: </td>
+                                    <td>" . $project->name . "</td>
+                                    <td>" . $name . "</td>
+                                 </tr>
+                                 <tr>
+                                    <td class='eventDetailsTaskAttribute'>Description: </td>
+                                    <td>" . $project->description . "</td>
+                                    <td>" . $description . "</td>
+                                 </tr>
+                                 <tr>
+                                    <td class='eventDetailsTaskAttribute'>Startdate: </td>
+                                    <td>" . $project->startDate . "</td>
+                                    <td>" . $_POST["startDate"] . "</td>
+                                 </tr>
+                                 <tr>
+                                    <td class='eventDetailsTaskAttribute'>Deadline: </td>
+                                    <td>" . $project->deadLineDate . "</td>
+                                    <td>" . $_POST["deadline"] . "</td>
+                                 </tr>
+                                 <tr>
+                                    <td class='eventDetailsTaskAttribute'>Logo: </td>
+                                    <td></td>
+                                    <td>" . (isset($fileName) ? "Aw yeah! New logo!" : "No new logo :(") . "</td>
+                                 </tr>
+                              </table>";
+                           $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId, $details);
                            // Link the new event to the new project.
                            $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
                            // Finaly link the new event to the user who created it.
                            $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
-                           // We also have to add a "join" event to be coherent.
-                           // First of all, get right event type.
-                           $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
-                           // Then add the new creation event in the database.
-                           $message = "<u>" . $sessionUser->username . "</u> joined the project.";
-                           $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
-                           // Link the new event to the new project.
-                           $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
-                           // Finaly link the new event to the user who created it.
-                           $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);*/
+                           // Get event's data to send them to socket server.
+                           $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+
+                           try
+                           {
+                              // Make an HTTP POST request to the event's server so he can broadcast a
+                              // new websocket related to the new event.
+                              $client = new Client('http://127.0.0.1:8002');
+                              $client->setMethod(Request::METHOD_POST);
+                              // Setting POST data.
+                              $client->setParameterPost(array(
+                                 "requestType"        => "newEvent",
+                                 "event"              => json_encode($event)
+                              ));
+                              // Send HTTP request to server.
+                              $response = $client->send();
+                           }
+                           catch (\Exception $e)
+                           {
+                              error_log("WARNING: could not connect to events servers. Maybe offline?");
+                           }
    							}
                         catch (\Exception $e)
                         {
