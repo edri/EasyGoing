@@ -49,7 +49,7 @@ class UserTable
          'email'				=> $email,
          'filePhoto'			=> isset($picture) ? $picture : "-",
          'wantTutorial'    		=> $wantTutorial,
-		 'wantNotifications'    => $wantNotifications
+		   'wantNotifications'    => $wantNotifications
       ));
       return $this->_tableGateway->lastInsertValue;
    }
@@ -59,21 +59,21 @@ class UserTable
    }
 
 	public function getUserByCookie($cookie)
-	{		
-		$rowset = $this->_tableGateway->select(array(			
+	{
+		$rowset = $this->_tableGateway->select(array(
 			'cookie'    => $cookie
 		));
 		$row = $rowset->current();
 		return $row;
 	}
 	public function getUserById($id)
-	{		
-		$rowset = $this->_tableGateway->select(array(			
+	{
+		$rowset = $this->_tableGateway->select(array(
 			'id'    => $id
 		));
 		$row = $rowset->current();
 		return $row;
-	}  
+	}
 
 	// Get and return SYSTEM user, used for some automatic task's events.
    public function getSystemUser()
