@@ -53,6 +53,8 @@ use Application\Model\EventType;
 use Application\Model\EventTypeTable;
 use Application\Model\EventOnTask;
 use Application\Model\EventOnTaskTable;
+use Application\Model\ProjectsUsersSpecializations;
+use Application\Model\ProjectsUsersSpecializationsTable;
 
 
 @ini_set('zend_monitor.enable', 0);
@@ -323,6 +325,17 @@ class Module
                 'Application\Model\EventOnTaskTable' =>  function($sm) {
                     $tableGateway = $sm->get('EventOnTaskTableGateway');
                     $table = new EventOnTaskTable($tableGateway);
+                    return $table;
+                },
+                'ProjectsUsersSpecializationsTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ProjectsUsersSpecializations());
+                    return new TableGateway('projectsUsersSpecializations', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ProjectsUsersSpecializationsTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ProjectsUsersSpecializationsTableGateway');
+                    $table = new ProjectsUsersSpecializationsTable($tableGateway);
                     return $table;
                 },
 				// Configure the session service.

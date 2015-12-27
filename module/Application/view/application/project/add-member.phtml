@@ -12,7 +12,7 @@
       <div class="container-fluid">
          <div class="row">
             <?php foreach ($users as $user) : ?>
-               <div class="col-md-5 panel panel-default add-user" style="margin: 10px; padding: 10px;" firstname="<?php echo $user->firstName . ' ' . $user->lastName . ' ' . $user->username?>">
+               <div id="<?php echo $user->id; ?>" class="col-md-5 panel panel-default add-user" style="margin: 10px; padding: 10px;" firstname="<?php echo $user->firstName . ' ' . $user->lastName . ' ' . $user->username?>">
                   <img src="<?php echo $this->basePath('img/users/' . $user->filePhoto); ?>"
                   alt="<?php echo $this->escapeHtml($user->username); ?>" height=50 width=50
                   class="imgProject" />
@@ -52,27 +52,41 @@ function filterSearch() {
 
 // Check if closest add checkbox is checked. If no we check it.
 $('.is-manager').click(function (e) {
-   var closestAddCheckbox = $('#add-'+$(this).attr('id'));
-   var closestDiv = $(this).closest('.add-user');
+   var closestAddCheckbox = $('#add-' + $(this).attr('id'));
    
-   
-   
-   if(!closestAddCheckbox.is(':checked')) {
-      closestAddCheckbox.prop('checked', true);
-      closestDiv.addClass('add-user-selected');
-   }
+   if(!closestAddCheckbox.is(':checked'))
+      $(this).closest('.add-user').click();
 
 });
    
 // Check checkbox when click on user div
 $('.add-user').click(function (e) {
-   if(!$(e.target).is(':checkbox') && !$(e.target).is('label')) {
+   if(!$(e.target).is(':checkbox') && !$(e.target).is('label') && !$(e.target).is('a') && !$(e.target).is(':text') && !$(e.target).is('.spe')) {
+      
+      var userId = $(this).attr('id');
+      
       if($(this).hasClass('add-user-selected'))
+      {
          $(this).removeClass('add-user-selected');
+         $(this).find('.spe').remove();
+      }
       else
+      {
          $(this).addClass('add-user-selected');
+         
+         $(this).append('<div class="spe"><hr></div>')
+         $(this).find('.spe').append('<div class="spe-input" style="float: left;"><input name="spe'+ userId +'[]" type="text" placeholder="Specialization" /></div>');
+         $(this).find('.spe').append('<div style="float: right;"><a class="btn btnEasygoing add-spe">+</a></div>');
+      }
       
       $(this).find('input[check=add]').prop("checked", !$(this).find('input[check=add]').prop("checked"));
    }
+});
+   
+   
+$(document).on("click", ".add-spe", function() {
+   var divSpe = $(this).parent().parent().find('.spe-input');
+   var userId = $(this).parent().parent().parent().attr('id');
+   divSpe.append('<div style="margin-top: 5px"><input name="spe'+ userId +'[]" type="text" placeholder="Specialization" /></div>');
 });
 </script>

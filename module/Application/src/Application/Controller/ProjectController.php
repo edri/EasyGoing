@@ -857,10 +857,21 @@ class ProjectController extends AbstractActionController
 
             foreach ($_POST as $value)
             {
-               if($value != 'isManager')
+
+               if($value != 'isManager' && !is_array($value))
                {
                   $isManager = isset($_POST['is-manager-'.$value]) ? true : false;
                   $this->_getTable('ProjectsUsersMembersTable')->addMemberToProject($value, $this->params('id'), $isManager);
+                  
+                  $specializations = $_POST['spe'.$value];
+                  
+                  foreach($specializations as $spe)
+                  {
+                     if($spe != '')
+                        $this->_getTable('ProjectsUsersSpecializationsTable')->addSpecialization($value, $this->params('id'), $spe);
+                  }
+                  
+                  
                   // If member was successfully added, add an event.
                   // Get new member's username.
                   $addedMemberName = $this->_getTable("UserTable")->getUserById($value)->username;
@@ -893,7 +904,9 @@ class ProjectController extends AbstractActionController
                      error_log("WARNING: could not connect to events servers. Maybe offline?");
                   }
                }
+               
             }
+            
 
             $this->redirect()->toRoute('project', array(
                 'id' => $projectId
