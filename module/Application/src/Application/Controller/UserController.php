@@ -250,7 +250,7 @@ class UserController extends AbstractActionController
 				                        // avoid some extensions issues with some OS.
 				                        move_uploaded_file($_FILES['picture']['tmp_name'], getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
 	                                 // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
-	                                 $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 50);
+	                                 $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 150);
 	                              }
 	                              catch (\Exception $e)
 	                              {
