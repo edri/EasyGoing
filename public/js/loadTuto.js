@@ -8,18 +8,22 @@ var skipTutorial = function() {
 var nextTutorial = function() {
 
 	if(tutoData.length != 0) { 
-		var d = tutoData[current];
+		
+        var d = tutoData[current];
+        
+        if(current < tutoData.length) {
 
-		$("div[role=tutorial][id = " + d.div + "]").html(
-			"<img src=/img/tuto.png /> " + 
-			d.text + 
-			"<a href='#' onClick='nextTutorial()'>   <br>Next</a>" +
-			"<a href='#' onClick='skipTutorial()'><br>Skip</a>"
-		).fadeIn();
+            $("div[role=tutorial][id = " + d.div + "]").html(
+                "<img src=/img/tuto.png /> " + 
+                d.text + 
+                "<a href='#' onClick='nextTutorial()'>   <br>Next</a>" +
+                "<a href='#' onClick='skipTutorial()'><br>Skip</a>"
+            ).fadeIn();
 
-		$("div[role=tutorial][id != " + d.div + "]").fadeOut();
-
-		current = (current + 1) % tutoData.length;
+            current = (current + 1) % tutoData.length;
+        }
+        
+        $("div[role=tutorial][id != " + d.div + "]").fadeOut();
 	}
 
 };
@@ -54,7 +58,7 @@ function loadTutorial(tuto) {
 						paddingBottom: 10,
 						paddingTop: 10,
 						borderRadius: 10,
-						background: "lightblue",
+						background: "lightyellow",
 						borderStyle: "solid"
 					});
 				});
