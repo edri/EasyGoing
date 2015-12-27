@@ -523,6 +523,7 @@ hr {
 
 .editProjectDashboardIcon {
    margin-top: 20px;
+   margin-right: 10px;
 }
 
 .editProjectDashboardLink:focus,
@@ -532,6 +533,13 @@ hr {
 
 .editProjectDashboardIcon {
    height: 40px;
+   width: 40px;
+}
+
+.managerDashboardIcon {
+   float: right;
+   height: 40px;
+   margin-top: 20px;
    width: 40px;
 }
 
