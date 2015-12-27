@@ -72,7 +72,7 @@ class UserController extends AbstractActionController
 		if (isset($_COOKIE['loginCookie'])){
 			$loginCookie = $_COOKIE['loginCookie'];			
 		
-			$userUsingCookie = $this->_getUserTable()->getUser($loginCookie);
+			$userUsingCookie = $this->_getUserTable()->getUserByCookie($loginCookie);
 			//the cookie is already in the db
 			if(!$userUsingCookie == null)
 			{
@@ -358,8 +358,42 @@ class UserController extends AbstractActionController
 
 	public function editAction()
 	{
-		// For linking the right action's view.
-		return new ViewModel();
+		$sessionUser = new container('user');
+		//We first check that the user is connected
+		if(!$sessionUser->connected){
+			// If not, we redirect him to index
+			$this->redirect()->toRoute();
+			return new ViewModel();
+		}
+		else
+			//If so, we send user's information to edit view
+		{
+			$user = $this->_getUserTable()->getUserById($sessionUser->id);
+			if($user){				
+				return new ViewModel(array(
+						'username' 			=> $user->username,	
+						'email'				=> $user->email,						
+						'fName'				=> $user->firstName,
+						'lName'				=> $user->lastName,
+						'picture'			=> isset($user->$filePhoto) ? $user->$filePhoto : "default.png"				
+					));
+			}
+			else
+			{
+				//we have a problem if we are here
+			}
+			// return new ViewModel(array(
+
+			// 			'username' 		=> $user->$username,
+			// 			'email'				=> $user->$email,
+			// 			'password1' 	=>	$user->$password1,
+			// 			'fName'				=> $user->$fname,
+			// 			'lName'				=> $user->$lname,
+			// 			'picture'			=> isset($user->$fileName) ? $user->$fileName : "default.png"
+			// 		));
+		}
+
+		
 	}
 
 	public function validationAction()
