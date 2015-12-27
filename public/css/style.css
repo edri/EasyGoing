@@ -218,7 +218,7 @@ title:focus,
 }
 
 .imgProject {
-   border: 1px solid #e5b494;
+   border: 1px solid #5a2706;
    border-radius: 25px;
    margin-right: 15px;
 }
@@ -250,6 +250,34 @@ title:focus,
 
 .managerTd {
    text-align: right;
+}
+
+.editProjectLink:focus,
+.editProjectLink:active {
+   outline: 0 none;
+}
+
+.editProjectIcon {
+   height: 40px;
+   width: 40px;
+   transition: height 200ms, width 200ms;
+}
+
+.editProjectIcon:hover {
+   height: 50px;
+   width: 50px;
+}
+
+.managerIcon {
+   cursor: default;
+   height: 40px;
+   width: 40px;
+   transition: height 200ms, width 200ms;
+}
+
+.managerIcon:hover {
+   height: 50px;
+   width: 50px;
 }
 
 .projectDetails,
@@ -295,7 +323,7 @@ th {
 }
 
 
-/* ADD A PROJECT */
+/* ADD/EDIT A PROJECT */
 
 .error {
    margin-bottom: 50px;
@@ -323,6 +351,13 @@ th {
 
 .btnCancel {
    margin-right: 10px;
+}
+
+.projectLogo {
+   border: 1px solid #5a2706;
+   height: 150px;
+   margin-right: 75px;
+   width: 150px;
 }
 
 hr {
@@ -472,6 +507,33 @@ hr {
 
 
 /** ====== BOARD ====== **/
+
+.projectDashboardIntro {
+   height: 70px;
+   width: 100%;
+}
+
+.projectDashboardTitle {
+   float: left;
+}
+
+.editProjectDashboardLink {
+   float: right;
+}
+
+.editProjectDashboardIcon {
+   margin-top: 20px;
+}
+
+.editProjectDashboardLink:focus,
+.editProjectDashboardLink:active {
+   outline: 0 none;
+}
+
+.editProjectDashboardIcon {
+   height: 40px;
+   width: 40px;
+}
 
 .boardButtons {
    margin-top: 35px;

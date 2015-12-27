@@ -64,12 +64,26 @@
 ?>
 
 <div hidden id="hidden" is-manager="<?php echo $isManager; ?>"></div>
-<h1>Dashboard - <?php echo $project->name; ?></h1>
+
+<div class="projectDashboardIntro">
+   <h1 class="projectDashboardTitle">
+      <img src="<?php echo $this->basePath('img/projects/' . $project->fileLogo); ?>"
+        alt="<?php echo $this->escapeHtml($project->name); ?>" height=50 width=50
+        class="imgProject" />
+        Dashboard - <?php echo $project->name; ?>
+   </h1>
+   <a class="editProjectDashboardLink" href="/project/<?php echo $project->id; ?>/edit" id="editLink">
+      <img class="editProjectDashboardIcon" data-toggle="tooltip" id="editImg" title="Edit the project..." src="/img/edit.svg" />
+   </a>
+</div>
+
 <hr>
+
 <div class="projectHeader">
    <div class="leftPart">
       <p><u>Description</u> : <?php echo $this->escapeHtml($project->description); ?></p>
       <p><u>Duration</u> : from <?php echo date('d.m.Y', strtotime($project->startDate)) . ' to ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
+      <br/>
        <p>
          <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Add a task</a><br/>
          <?php if($isManager): ?>
@@ -77,10 +91,10 @@
          <?php endif; ?>
       </p>
    </div>
-    
-    <div id="addTask" role="tutorial"></div>   
+
+    <div id="addTask" role="tutorial"></div>
     <div id="addMember" role="tutorial"></div>
-    
+
     <div class="rightPart">
         <div>
             <!-- Nav tabs -->
