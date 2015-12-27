@@ -17,7 +17,16 @@
                   alt="<?php echo $this->escapeHtml($user->username); ?>" height=50 width=50
                   class="imgProject" />
                   <?php echo $user->firstName . ' ' . $user->lastName . ' (' . $user->username . ')'; ?>
-                  <input name="input-<?php echo $user->username; ?>" value="<?php echo $user->id; ?>" id="<?php echo $user->id; ?>" type="checkbox" style="float: right;">
+                  <div class="checkbox">
+                     <label style="float: right;">
+                        <input check="add" name="input-<?php echo $user->username; ?>" value="<?php echo $user->id; ?>" id="add-<?php echo $user->id; ?>" type="checkbox" style="float: right;"> Add
+                     </label>
+                  </div>
+                  <div class="checkbox">
+                     <label style="float: right;">
+                        <input name="is-manager-<?php echo $user->id; ?>" id="<?php echo $user->id; ?>" class="is-manager" value="isManager" type="checkbox" style="float: right;"> Is manager 
+                     </label>
+                  </div>
                </div>
             <?php endforeach; ?>
          </div>
@@ -44,9 +53,17 @@ function filterSearch() {
    })
 }
 
+// Check if closest add checkbox is checked. If no we check it.
+$('.is-manager').click(function (e) {
+   var closestAddCheckbox = $('#add-'+$(this).attr('id'));
+   
+   if(!closestAddCheckbox.is(':checked'))
+      closestAddCheckbox.prop('checked', true);
+});
+   
 // Check checkbox when click on user div
 $('.add-user').click(function (e) {
-   if(!$(e.target).is(':checkbox'))
-      $(this).find('input[type=checkbox]').prop("checked", !$(this).find('input[type=checkbox]').prop("checked"));
+   if(!$(e.target).is(':checkbox') && !$(e.target).is('label'))
+      $(this).find('input[check=add]').prop("checked", !$(this).find('input[check=add]').prop("checked"));
 });
 </script>
