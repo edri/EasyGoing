@@ -638,6 +638,53 @@ class ProjectController extends AbstractActionController
          {
             $this->_getTable('UsersTasksAffectationsTable')->addAffectation($data['targetMemberId'], $data['taskId']);
 
+            // Get task's new affectation and section before erasing them.
+            $newUsername = $this->_getTable("UserTable")->getUserById($this->_getTable('UsersTasksAffectationsTable')->getAffectationByTaskId($data['taskId'])->user)->username;
+            $task = $this->_getTable("TaskTable")->getTaskById($data['taskId']);
+
+            // If task was successfully assigned, add an event.
+            // Get right event type.
+            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
+            // Then add the new event in the database.
+            $message =
+               "<u>" . $sessionUser->username . "</u> moved task <font color=\"#FF6600\">" . $task->name .
+               "</font> from <font color=\"black\"><i>unassigned</i></font> to <font color=\"black\">(" . $newUsername . ", " . $task->state . ")</font>.";
+            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+            // Link the new event to the current project.
+            $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+            // Finaly link the new event to the user who created it.
+            $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+            // Get event's data to send them to socket server.
+            $event1 = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+            // For the task's news feed.
+            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
+            $message = "\"" . $sessionUser->username . "\" moved the task from \"unassigned\" to \"(" . $newUsername . ", " . $task->state . ")\".";
+            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+            $this->_getTable("EventOnTaskTable")->add($eventId, $data['taskId']);
+            // Get SYSTEM user's ID and link it to the new task's event.
+            $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
+            $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
+            $event2 = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
+
+            try
+            {
+               // Make an HTTP POST request to the event's server so he can broadcast a
+               // new websocket related to the new event.
+               $client = new Client('http://127.0.0.1:8002');
+               $client->setMethod(Request::METHOD_POST);
+               // Setting POST data.
+               $client->setParameterPost(array(
+                  "requestType"  => "newEvents",
+                  "events"       => array(json_encode($event1), json_encode($event2))
+               ));
+               // Send HTTP request to server.
+               $response = $client->send();
+            }
+            catch (\Exception $e)
+            {
+               error_log("WARNING: could not connect to events servers. Maybe offline?");
+            }
+
             return $this->getResponse()->setContent(json_encode(array(
                'hasRightToAssignTask' => true,
                'alreadyAssigned'      => false
@@ -754,7 +801,6 @@ class ProjectController extends AbstractActionController
          // If task was successfully unassigned, add an event.
          // Get right event type.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
-         // Then add the new event in the database.
          // Then add the new event in the database.
          $message =
             "<u>" . $sessionUser->username . "</u> moved task <font color=\"#FF6600\">" . $task->name .
