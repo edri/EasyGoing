@@ -870,8 +870,13 @@ class ProjectController extends AbstractActionController
                   
                   $specializations = $_POST['spe'.$value];
                   
+                  $MAX_SPEC_PER_USER = 5;
+                  $i = 0;
                   foreach($specializations as $spe)
                   {
+                     if($i++ >= $MAX_SPEC_PER_USER)
+                        break;
+                     
                      if($spe != '')
                         $this->_getTable('ProjectsUsersSpecializationsTable')->addSpecialization($value, $this->params('id'), $spe);
                   }
