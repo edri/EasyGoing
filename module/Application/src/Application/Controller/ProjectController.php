@@ -426,6 +426,7 @@ class ProjectController extends AbstractActionController
    {
       $taskId = $this->params('otherId');
       $projectId = $this->params('id');
+      $sessionUser = new container('user');
       $task = $this->_getTable('TaskTable')->getTaskById($taskId);
       // Get tasks' events types.
       $eventsTypes = $this->_getTable('EventTypeTable')->getTypes(true);
@@ -436,7 +437,8 @@ class ProjectController extends AbstractActionController
          'task'         => $task,
          'projectId'    => $projectId,
          'eventsTypes'  => $eventsTypes,
-         'events'       => $events
+         'events'       => $events,
+         'userId'       => $sessionUser->id
       ));
    }
 
@@ -821,6 +823,7 @@ class ProjectController extends AbstractActionController
             ));
             // Send HTTP request to server.
             $response = $client->send();
+
             // Send a delete request to inform users which are currently in the task page.
             $client->setParameterPost(array(
                "requestType"  => "taskDeleted",
@@ -894,7 +897,7 @@ class ProjectController extends AbstractActionController
 
 
                   // If member was successfully added, add an event.
-                  // Get new member's username.
+                  // Get new member's data.
                   $addedMember = $this->_getTable("UserTable")->getUserById($value);
                   // Then add the new event in the database.
                   $message =
@@ -975,6 +978,52 @@ class ProjectController extends AbstractActionController
             foreach($tasks as $task)
             {
                $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($memberId, $task->id);
+            }
+
+            // If member was successfully removed, add an event.
+            // Get removed member's data.
+            $removedMember = $this->_getTable("UserTable")->getUserById($memberId);
+            // Get right event type.
+            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
+            // Then add the new event in the database.
+            $message =
+               "<u>" . $sessionUser->username . "</u> removed user <u>" . $removedMember->username . "</u> from project, bye bye!";
+            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+            // Link the new event to the current project.
+            $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+            // Finaly link the new event to the user who created it.
+            $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+            // Get event's data to send them to socket server.
+            $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+
+            try
+            {
+               // Make an HTTP POST request to the event's server so he can broadcast a
+               // new websocket related to the new event.
+               $client = new Client('http://127.0.0.1:8002');
+               $client->setMethod(Request::METHOD_POST);
+               // Setting POST data.
+               $client->setParameterPost(array(
+                  "requestType"  => "newEvent",
+                  "event"        => json_encode($event)
+               ));
+               // Send HTTP request to server.
+               $response = $client->send();
+
+               // Send a remove request to redirect the the concerned user out
+               // of the project.
+               $client->setParameterPost(array(
+                  "requestType"  => "memberRemoved",
+                  "projectId"    => $projectId,
+                  "memberId"     => $memberId,
+                  "username"     => $sessionUser->username
+               ));
+               // Send HTTP request to server.
+               $response = $client->send();
+            }
+            catch (\Exception $e)
+            {
+               error_log("WARNING: could not connect to events servers. Maybe offline?");
             }
          }
       }
