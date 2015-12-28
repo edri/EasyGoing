@@ -380,7 +380,7 @@ class ProjectController extends AbstractActionController
          // First of all, get right event type.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
          // Then add the new event in the database.
-         $message = "<u>" . $sessionUser->username . "</u> created task <font color=\"#FF6600\">" . $name . "</font> and attributed it to himself.";
+         $message = "<u>" . $sessionUser->username . "</u> created task <font color=\"#FF6600\">" . $name . "</font> and assigned it to himself.";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          // Link the new event to the current project.
          $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
@@ -627,7 +627,6 @@ class ProjectController extends AbstractActionController
 
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
-
          if($this->_userIsAssignToTask($data['targetMemberId'], $data['taskId']))
          {
             return $this->getResponse()->setContent(json_encode(array(
@@ -679,7 +678,10 @@ class ProjectController extends AbstractActionController
          $oldUsername = $this->_getTable("UserTable")->getUserById($data['oldMemberId'])->username;
          $newUsername = $this->_getTable("UserTable")->getUserById($data['targetMemberId'])->username;
          // Then add the new event in the database.
-         $message = "<u>" . $sessionUser->username . "</u> moved task <font color=\"#FF6600\">" . $name . "</font> from <font color=\"#995527\">(" . $oldUsername . ", " . $data['oldSection'] . ")</font> to <font color=\"#995527\">(" . $newUsername . ", " . $data['targetSection'] . ")</font>.";
+         $message =
+            "<u>" . $sessionUser->username . "</u> moved task <font color=\"#FF6600\">" . $name .
+            "</font> from <font color=\"black\">(" . $oldUsername . ", " . $data['oldSection'] . ")</font>" .
+            " to <font color=\"black\">(" . $newUsername . ", " . $data['targetSection'] . ")</font>.";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          // Link the new event to the current project.
          $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
@@ -743,10 +745,60 @@ class ProjectController extends AbstractActionController
 
       if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
       {
+         // Get task's old affectation and section before erasing them.
+         $oldUsername = $this->_getTable("UserTable")->getUserById($this->_getTable('UsersTasksAffectationsTable')->getAffectationByTaskId($data['taskId'])->user)->username;
+         $task = $this->_getTable("TaskTable")->getTaskById($data['taskId']);
+
          $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($data['userId'], $data['taskId']);
+
+         // If task was successfully unassigned, add an event.
+         // Get right event type.
+         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
+         // Then add the new event in the database.
+         // Then add the new event in the database.
+         $message =
+            "<u>" . $sessionUser->username . "</u> moved task <font color=\"#FF6600\">" . $task->name .
+            "</font> from <font color=\"black\">(" . $oldUsername . ", " . $task->state . ")</font> to <font color=\"black\"><i>unassigned</i></font>.";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         // Link the new event to the current project.
+         $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+         // Finaly link the new event to the user who created it.
+         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get event's data to send them to socket server.
+         $event1 = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+         // For the task's news feed.
+         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
+         $message = "\"" . $sessionUser->username . "\" moved the task from \"(" . $oldUsername . ", " . $task->state . ")\" to \"unassigned\".";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         $this->_getTable("EventOnTaskTable")->add($eventId, $data['taskId']);
+         // Get SYSTEM user's ID and link it to the new task's event.
+         $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
+         $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
+         $event2 = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
+
+         try
+         {
+            // Make an HTTP POST request to the event's server so he can broadcast a
+            // new websocket related to the new event.
+            $client = new Client('http://127.0.0.1:8002');
+            $client->setMethod(Request::METHOD_POST);
+            // Setting POST data.
+            $client->setParameterPost(array(
+               "requestType"  => "newEvents",
+               "events"       => array(json_encode($event1), json_encode($event2))
+            ));
+            // Send HTTP request to server.
+            $response = $client->send();
+         }
+         catch (\Exception $e)
+         {
+            error_log("WARNING: could not connect to events servers. Maybe offline?");
+         }
       }
       else
+      {
          $resMessage = 'You do not have rights to unassign this task !';
+      }
 
       return $this->getResponse()->setContent(json_encode(array(
          'message' => $resMessage
@@ -986,8 +1038,7 @@ class ProjectController extends AbstractActionController
             // Get right event type.
             $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
             // Then add the new event in the database.
-            $message =
-               "<u>" . $sessionUser->username . "</u> removed user <u>" . $removedMember->username . "</u> from project, bye bye!";
+            $message = "<u>" . $sessionUser->username . "</u> removed user <u>" . $removedMember->username . "</u> from project, bye bye!";
             $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
             // Link the new event to the current project.
             $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
