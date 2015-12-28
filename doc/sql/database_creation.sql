@@ -592,35 +592,32 @@ INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Error", "error.svg", 1
 INSERT INTO events VALUES(1, NOW(), "<u>raphaelracine</u> created the project.", 1, NULL);
 INSERT INTO eventsOnProjects VALUES(1, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 1);
-INSERT INTO events VALUES(2, NOW(), "<u>raphaelracine</u> joined the project.", 3, NULL);
+INSERT INTO events VALUES(2, NOW(), "<u>raphaelracine</u> (<font color='green'>manager</font>) joined the project with specialization(s) \"<b>Base de données</b>\", \"<b>Programmation répartie</b>\".", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(2, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 2);
-INSERT INTO events VALUES(3, NOW(), "<u>raphaelracine</u> created the project.", 1, NULL);
+INSERT INTO events VALUES(3, NOW(), "<u>manamiz</u> created the project.", 1, NULL);
 INSERT INTO eventsOnProjects VALUES(3, @project2);
-INSERT INTO eventsUsers VALUES(@user1, 3);
-INSERT INTO events VALUES(4, NOW(), "<u>raphaelracine</u> joined the project.", 3, NULL);
+INSERT INTO eventsUsers VALUES(@user4, 3);
+INSERT INTO events VALUES(4, NOW(), "<u>manamiz</u> (<font color='green'>manager</font>) joined the project with specialization(s) \"<b>Node JS</b>\".", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(4, @project2);
-INSERT INTO eventsUsers VALUES(@user1, 4);
+INSERT INTO eventsUsers VALUES(@user4, 4);
 
 
-INSERT INTO events VALUES(5, NOW(), "<u>raphaelracine</u> added user <u>karimghozlani</u> in project.", 3, NULL);
+INSERT INTO events VALUES(5, NOW(), "<u>raphaelracine</u> added user <u>karimghozlani</u> with specialization(s) \"<b>Java 8</b>\".", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(5, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 5);
-INSERT INTO events VALUES(6, NOW(), "<u>raphaelracine</u> added user <u>edri</u> in project.", 3, NULL);
+INSERT INTO events VALUES(6, NOW(), "<u>raphaelracine</u> added user <u>edri</u> (<font color='green'>manager</font>) with specialization(s) \"<b>Programmation C++</b>\".", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(6, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 6);
-INSERT INTO events VALUES(7, NOW(), "<u>raphaelracine</u> added user <u>thibaudduchoud</u> in project.", 3, NULL);
+INSERT INTO events VALUES(7, NOW(), "<u>raphaelracine</u> added user <u>manamiz</u> with no specialization.", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(7, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 7);
 
-INSERT INTO events VALUES(8, NOW(), "<u>raphaelracine</u> added user <u>edri</u> in project.", 3, NULL);
+INSERT INTO events VALUES(8, NOW(), "<u>manamiz</u> added user <u>edri</u> with specialization(s) \"<b>Base de données</b>\", \"<b>Styles CSS</b>\".", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(8, @project2);
-INSERT INTO eventsUsers VALUES(@user1, 8);
-INSERT INTO events VALUES(9, NOW(), "<u>raphaelracine</u> added user <u>thibaudduchoud</u> in project.", 3, NULL);
-INSERT INTO eventsOnProjects VALUES(9, @project2);
-INSERT INTO eventsUsers VALUES(@user1, 9);
-INSERT INTO events VALUES(10, NOW(), "<u>raphaelracine</u> added user <u>vanessameguep</u> in project.", 3, NULL);
+INSERT INTO eventsUsers VALUES(@user4, 8);
+INSERT INTO events VALUES(10, NOW(), "<u>manamiz</u> added user <u>vanessameguep</u> with specialization(s) \"<b>Internet Explorer</b>\".", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(10, @project2);
-INSERT INTO eventsUsers VALUES(@user1, 10);
+INSERT INTO eventsUsers VALUES(@user4, 10);
 
 SET GLOBAL log_bin_trust_function_creators = 0;

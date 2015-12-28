@@ -177,12 +177,21 @@ class ProjectsController extends AbstractActionController
                         $this->_getTable("ProjectsUsersMembersTable")->addMemberToProject($sessionUser->id, $projectId, true);
 
                         $i = 1;
+                        // Will contain each specialization separated with a comma.
+                        $specializationsString = "";
                         // Add each user's specializations in the databse.
                         while (isset($_POST["specialization" . $i]))
                         {
                            if ($_POST["specialization" . $i] != '')
                            {
                               $this->_getTable('ProjectsUsersSpecializationsTable')->addSpecialization($sessionUser->id, $projectId, $_POST["specialization" . $i]);
+
+                              if ($i > 1)
+                              {
+                                 $specializationsString .= ", ";
+                              }
+
+                              $specializationsString .= "\"<b>" . $_POST["specialization" . $i] . "</b>\"";
                            }
 
                            ++$i;
@@ -202,7 +211,9 @@ class ProjectsController extends AbstractActionController
                         // First of all, get right event type.
                         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
                         // Then add the new creation event in the database.
-                        $message = "<u>" . $sessionUser->username . "</u> joined the project.";
+                        $message =
+                           "<u>" . $sessionUser->username . "</u> (<font color='green'>manager</font>) joined the project with " .
+                           ($specializationsString != "" ? ("specialization(s) " . $specializationsString) : "no specialization") . ".";
                         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
                         // Link the new event to the new project.
                         $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);

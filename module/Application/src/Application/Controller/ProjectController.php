@@ -380,7 +380,7 @@ class ProjectController extends AbstractActionController
          // First of all, get right event type.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
          // Then add the new event in the database.
-         $message = "<u>" . $sessionUser->username . "</u> created task <font color=\"#FF6600\">" . $name . "</font>.";
+         $message = "<u>" . $sessionUser->username . "</u> created task <font color=\"#FF6600\">" . $name . "</font> and attributed it to himself.";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          // Link the new event to the current project.
          $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
@@ -867,26 +867,40 @@ class ProjectController extends AbstractActionController
                {
                   $isManager = isset($_POST['is-manager-'.$value]) ? true : false;
                   $this->_getTable('ProjectsUsersMembersTable')->addMemberToProject($value, $this->params('id'), $isManager);
-                  
+
                   $specializations = $_POST['spe'.$value];
-                  
+
                   $MAX_SPEC_PER_USER = 5;
                   $i = 0;
+                  // Will contain each specialization separated with a comma.
+                  $specializationsString = "";
                   foreach($specializations as $spe)
                   {
                      if($i++ >= $MAX_SPEC_PER_USER)
                         break;
-                     
+
                      if($spe != '')
+                     {
                         $this->_getTable('ProjectsUsersSpecializationsTable')->addSpecialization($value, $this->params('id'), $spe);
+
+                        if ($i > 1)
+                        {
+                           $specializationsString .= ", ";
+                        }
+
+                        $specializationsString .= "\"<b>" . $spe . "</b>\"";
+                     }
                   }
-                  
-                  
+
+
                   // If member was successfully added, add an event.
                   // Get new member's username.
-                  $addedMemberName = $this->_getTable("UserTable")->getUserById($value)->username;
+                  $addedMember = $this->_getTable("UserTable")->getUserById($value);
                   // Then add the new event in the database.
-                  $message = "<u>" . $sessionUser->username . "</u> added user <u>" . $addedMemberName . "</u> in project.";
+                  $message =
+                     "<u>" . $sessionUser->username . "</u> added user <u>" . $addedMember->username .
+                     "</u>" . ($isManager ? " (<font color='green'>manager</font>)" : "") . " with " .
+                     ($specializationsString != "" ? ("specialization(s) " . $specializationsString) : "no specialization") . ".";
                   $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
                   // Link the new event to the current project.
                   $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
@@ -914,9 +928,9 @@ class ProjectController extends AbstractActionController
                      error_log("WARNING: could not connect to events servers. Maybe offline?");
                   }
                }
-               
+
             }
-            
+
 
             $this->redirect()->toRoute('project', array(
                 'id' => $projectId
@@ -951,7 +965,7 @@ class ProjectController extends AbstractActionController
          {
             // Remove from project
             $this->_getTable('ProjectsUsersMembersTable')->removeMember($memberId, $projectId);
-            
+
             // Remove specializations
             $this->_getTable('ProjectsUsersSpecializationsTable')->deleteSpecialization($memberId, $projectId);
 
