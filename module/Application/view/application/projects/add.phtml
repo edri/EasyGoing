@@ -67,6 +67,23 @@
          // Focus the new field.
          $("#txtSpecialization" + newId).focus();
       }
+      // If the current field is empty, indicate it to the user.
+      else if (!$("#txtSpecialization" + currentId).val()) {
+         // Hide other opened tooltips.
+         $("input[id^='txtSpecialization'").tooltip("hide");
+
+         // Add a tooltip on the field, and focus it.
+         $("#txtSpecialization" + currentId).attr("data-toggle", "tooltip");
+         $("#txtSpecialization" + currentId).attr("data-trigger", "manual");
+         $("#txtSpecialization" + currentId).attr("title", "You have to enter a specialization before adding another one, or press the 'Create!' button if you don't want to have specialization.");
+         $("#txtSpecialization" + currentId).tooltip("show");
+         $("#txtSpecialization" + currentId).focus();
+
+         // Hide specialization field's tooltip when the user unfocus it.
+         $("#txtSpecialization" + currentId).blur(function() {
+            $(this).tooltip("hide");
+         });
+      }
    }
 
    $(document).ready(function() {
