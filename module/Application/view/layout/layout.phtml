@@ -72,16 +72,28 @@
                 // words, check if the panel's scrolling's height is larger than
                 // the panel's height.
                 var isScrollBarExisting = (document.getElementById("mainContent").scrollHeight > $("#mainContainer").height());
+                // Get mouse wheel's delta (the amount of "strength" ; can be positive
+                // or negative).
+                var oEvent = e.originalEvent, delta  = oEvent.deltaY || oEvent.wheelDelta;
+
                 // Simulate the scroll only if the user's cursor is out of the main
                 // content's panel and if there is a scrollbar.
                 if (!$("#mainContent").is(":hover") && isScrollBarExisting)
                 {
-                   // Get mouse wheel's delta (the amount of "strength").
-                   var oEvent = e.originalEvent, delta  = oEvent.deltaY || oEvent.wheelDelta;
                    // If there is a delta, simulate the main content's panel's scrolling.
                    if (delta) {
                       $("#mainContent").scrollTop($("#mainContent").scrollTop() + 30 * (delta < 0 ? -1 : 1));
                    }
+                }
+                // If the header is hidden and there is no scrollbar (can occur when the
+                // scrollzone has exactly the same height as the header) and the user
+                // scrolled up, show it.
+                else if (delta < 0 && !isScrollBarExisting && isHeaderHidden)
+                {
+                   $("#header").slideDown(300, function() {
+                      isHeaderHidden = false;
+                   });
+                   $("#mainContainer").removeClass("noMarginTop");
                 }
              });
 

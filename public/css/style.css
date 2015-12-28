@@ -358,6 +358,19 @@ th {
    width: 150px;
 }
 
+.specTitle {
+   margin-bottom: 30px;
+}
+
+.newSpecButton {
+   cursor: pointer;
+}
+
+.newSpecImg {
+   height: 20px;
+   width: 20px;
+}
+
 hr {
    display: block;
    height: 1px;

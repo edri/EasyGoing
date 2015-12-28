@@ -1,8 +1,86 @@
 <script type="text/javascript">
-    $(document).ready(function() {
-        $("#projectStartDate").datepicker({format: 'yyyy-mm-dd', autoclose:true});
-        $("#projectDeadline").datepicker({format: 'yyyy-mm-dd', autoclose:true});
-    })
+   // Click on the right "Add Specialization" button when the user pressed the
+   // 'Enter' key.
+   // Parameters:
+   //    - event: the event object renerated by the JQuery 'keypress' function.
+   //    - context: represent the clicked text input.
+   function pressNewSpecButton(event, context) {
+      if (event.which == 13) {
+         // Prevent form sending.
+         event.preventDefault();
+         // Click on the right button.
+         $("#newSpecButton" + $(context).attr("id-spec")).click();
+         return false;
+      }
+   }
+
+   // Add a new specialization field right after the current one.
+   // Parameters:
+   //    - currentId: the current specialization field's ID.
+   function addNewSpec(currentId) {
+      // Maximum number of specializations.
+      const MAX_FIELDS = 5;
+      // Calculate new specialization field's ID.
+      var newId = currentId + 1;
+
+      // Check that there is not already 5 specialization (maximum), that the new
+      // specialization field is not already existing and that the user entered a
+      // value in the current specialization field.
+      if (currentId < MAX_FIELDS && !$("#specialization" + newId).length && $("#txtSpecialization" + currentId).val()) {
+         var newSpecDiv =
+            '<div class="form-group" id="specialization' + newId + '">\
+              <label class="control-label col-sm-2" for="name">Specialization ' + newId + '</label>\
+              <div class="col-sm-10">';
+
+         // Add a "New specialization" button only if thery is not the last possible specialization.
+         if (newId < MAX_FIELDS) {
+            newSpecDiv +=
+                  '<div class="input-group">\
+                    <input class="form-control" id="txtSpecialization' + newId + '" id-spec="' + newId + '" placeholder="Enter specialization"\
+                          name="specialization' + newId + '" type="text" />\
+                   <span class="input-group-addon newSpecButton" data-toggle="tooltip" id="newSpecButton' + newId + '" title="Add a new specialization..." onClick="addNewSpec(' + newId + ');">\
+                     <img class="newSpecImg" id="newSpecImg' +  newId + '" src="/img/plus.svg" />\
+                   </span>';
+         }
+         else {
+            newSpecDiv +=
+                  '<input class="form-control" id="txtSpecialization' + newId + '" id-spec="' + newId + '" placeholder="Enter specialization"\
+                       name="specialization' + newId + '" type="text" />';
+         }
+
+         newSpecDiv +=
+               '</div>\
+              </div>\
+            </div>';
+
+         // Insert the new specialization field right after the current one.
+         $("#specialization" + currentId).after(newSpecDiv);
+
+         // Add a keypress function on the new field (only if it is not the last).
+         if (newId < MAX_FIELDS) {
+            $('#txtSpecialization' + newId).keypress(function (event) {
+               pressNewSpecButton(event, this);
+            });
+            // Init Bootstrap's tooltip on 'Add specialization' buttons.
+            $('[data-toggle="tooltip"]').tooltip();
+         }
+         // Focus the new field.
+         $("#txtSpecialization" + newId).focus();
+      }
+   }
+
+   $(document).ready(function() {
+      $("#projectStartDate").datepicker({format: 'yyyy-mm-dd', autoclose:true});
+      $("#projectDeadline").datepicker({format: 'yyyy-mm-dd', autoclose:true});
+
+      // Init Bootstrap's tooltip on 'Add specialization' buttons.
+      $('[data-toggle="tooltip"]').tooltip();
+
+      // Click on the "Add Specialization" button when the user pressed the
+      $('#txtSpecialization1').keypress(function (event) {
+         pressNewSpecButton(event, this);
+      });
+   });
 </script>
 
 <h1 class="pageTitle">Create a new project</h1>
@@ -94,6 +172,23 @@
             <input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
             <input id="projectLogo" name="logo" type="file" />
         </div>
+    </div>
+
+    <hr/>
+
+    <h4 class="specTitle">Okay one more thing: what are your specializations in this project (maximum of <b>5</b>)?</h4>
+    <div class="form-group" id="specialization1">
+      <label class="control-label col-sm-2" for="name">Specialization 1</label>
+      <div class="col-sm-10">
+         <div class="input-group">
+           <input class="form-control" id="txtSpecialization1" id-spec="1" placeholder="Enter specialization"
+                  name="specialization1" type="text"
+                  value="<?php if (isset($specialization[0])) echo $this->escapeHtml($specialization[0]); ?>" />
+           <span class="input-group-addon newSpecButton" data-toggle="tooltip" id="newSpecButton1" title="Add a new specialization..." onClick="addNewSpec(1);">
+             <img class="newSpecImg" id="newSpecImg1" src="/img/plus.svg" />
+           </span>
+        </div>
+      </div>
     </div>
 
     <div class="form-group formSending">

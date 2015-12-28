@@ -64,7 +64,7 @@ class ProjectsController extends AbstractActionController
          'userProjects'	=> $userProjects
       ));
    }
-   
+
    public function addAction()
    {
       define("SUCCESS_MESSAGE", "ok");
@@ -175,6 +175,18 @@ class ProjectsController extends AbstractActionController
 
                         $projectId = $this->_getTable("ProjectTable")->saveProject($newProject);
                         $this->_getTable("ProjectsUsersMembersTable")->addMemberToProject($sessionUser->id, $projectId, true);
+
+                        $i = 1;
+                        // Add each user's specializations in the databse.
+                        while (isset($_POST["specialization" . $i]))
+                        {
+                           if ($_POST["specialization" . $i] != '')
+                           {
+                              $this->_getTable('ProjectsUsersSpecializationsTable')->addSpecialization($sessionUser->id, $projectId, $_POST["specialization" . $i]);
+                           }
+
+                           ++$i;
+                        }
 
                         // If project was successfully added, add a project's creation event.
                         // First of all, get right event type.
