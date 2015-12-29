@@ -139,14 +139,14 @@ class ProjectController extends AbstractActionController
       $showSpecializations = isset($_COOKIE["showMembersSpecializations"]) && $_COOKIE["showMembersSpecializations"];
 
       return new ViewModel(array(
-         'project'      => $project,
-         'tasks'        => $tasksInProject,
-         'members'      => $membersOfProject,
-         'eventsTypes'  => $eventsTypes,
-         'events'       => $events,
-         'isManager'    => $isManagerOfProject,
-         'userId'       => $sessionUser->id,
-         'isCreator'    => $isCreatorOfProject,
+         'project'               => $project,
+         'tasks'                 => $tasksInProject,
+         'members'               => $membersOfProject,
+         'eventsTypes'           => $eventsTypes,
+         'events'                => $events,
+         'isManager'             => $isManagerOfProject,
+         'userId'                => $sessionUser->id,
+         'isCreator'             => $isCreatorOfProject,
          'showSpecializations'   => $showSpecializations
       ));
    }
@@ -766,7 +766,7 @@ class ProjectController extends AbstractActionController
       // If he's super admin or he's manager and the other is not manager or he's assign to task and it's his assign to him
       if($this->_userIsCreatorOfProject($sessionUser->id, $projectId)
          || $this->_userIsAdminOfProject($sessionUser->id, $projectId) && !$this->_userIsAdminOfProject($data['oldMemberId'], $projectId)
-         || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['taskId']) 
+         || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['taskId'])
             && $sessionUser->id == $data['oldMemberId'])
       {
          $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
