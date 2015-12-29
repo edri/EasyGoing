@@ -177,8 +177,8 @@ CREATE VIEW view_projects_members_specializations AS
 			ON u.id = pus.user AND pus.project = pum.project
 );
 
+/* This view show all the members of a project (but without specializations) */
 DROP VIEW IF EXISTS view_users_projects;
-
 CREATE VIEW view_users_projects AS
 (
 	SELECT * 
@@ -186,6 +186,7 @@ CREATE VIEW view_users_projects AS
 	INNER JOIN projectsUsersMembers ON users.id = projectsUsersMembers.user
 );
 
+/* This view show all of the task for a user */
 DROP VIEW IF EXISTS view_users_tasks;
 CREATE VIEW view_users_tasks AS
 (
@@ -194,6 +195,7 @@ CREATE VIEW view_users_tasks AS
 		ON ut.task = t.id
 );
 
+/* This view show all of the task for a user */
 DROP VIEW IF EXISTS view_tasks_users;
 CREATE VIEW view_tasks_users AS
 (
@@ -202,6 +204,7 @@ CREATE VIEW view_tasks_users AS
       ON u.id = ut.user
 );
 
+/* This view show the projects with some details and the members of this project */
 DROP VIEW IF EXISTS view_projects_details;
 CREATE VIEW view_projects_details AS
 (
@@ -210,6 +213,7 @@ CREATE VIEW view_projects_details AS
 		ON p.id = pu.project
  );
 
+ /* This view show events for a project (task event or project event) */
 DROP VIEW IF EXISTS view_events;
 CREATE VIEW view_events AS
     (SELECT 
