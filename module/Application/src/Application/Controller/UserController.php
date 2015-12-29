@@ -62,8 +62,8 @@ class UserController extends AbstractActionController
 		//checks if the user has a valid loginCookie:
 		if (isset($_COOKIE['loginCookie'])){
 
-			$loginCookie = $_COOKIE['loginCookie'];			
-		
+			$loginCookie = $_COOKIE['loginCookie'];
+
 			$userUsingCookie = $this->_getUserTable()->getUserByCookie($loginCookie);
 			//the cookie is already in the db
 			if(!$userUsingCookie == null)
@@ -378,14 +378,16 @@ class UserController extends AbstractActionController
 		$user = $this->_getUserTable()->getUserById($sessionUser->id);
 		$request = $this->getRequest();
 		define("SUCCESS_MESSAGE", "ok");
-        $result = SUCCESS_MESSAGE; 
+      $result = SUCCESS_MESSAGE;
+		$successfulEdition = "";
+
 		if ($request->isPost())
         {
-        	
+
          	//the user has clicked on "Save changes"
          	$username = $_POST["username"];
             $fName = $_POST["fName"];
-            $lName= $_POST["lName"];            
+            $lName= $_POST["lName"];
             $email =  $_POST["email"];
             if(isset($_POST["wantTutorial"]))
             {
@@ -403,7 +405,7 @@ class UserController extends AbstractActionController
          	{
          		$wantNotifications = 0;
          	}
-         	
+
          	$password1 = $_POST["password1"];
             $password2 = $_POST["password2"];
             //by default, the password has not been changed
@@ -414,7 +416,7 @@ class UserController extends AbstractActionController
             	$result = 'errorPasswordsDontMatch';
             	return new ViewModel(array(
 						'error' 			=> $result
-				));	
+				));
             }
             else if ($password1 == "") { //password hasn't been changed
             	//nothing to do
@@ -424,7 +426,7 @@ class UserController extends AbstractActionController
             	$password = $password1;
             	$this->_getUserTable()->updateUserPassword($id, $this->_hashPassword($password));
             }
-         	
+
             $picture = $_POST["picture"];
          	//update user's information in DB
 
@@ -433,34 +435,34 @@ class UserController extends AbstractActionController
          		$result = 'errorEmailAlreadyExists';
             	return new ViewModel(array(
 						'error' 			=> $result
-				));	
+				));
          	}
-         	
+
          	$this->_getUserTable()->updateUser($id, $fName, $lName, $email, $picture, $wantTutorial, $wantNotifications);
-         	$successfulEdition = "successfulEdition";         	
+         	$successfulEdition = "successfulEdition";
         }
 
-				return new ViewModel(array(						
+				return new ViewModel(array(
 						'successfulEdition' => $successfulEdition,
-						'username' 			=> $user->username,	
-						'email'				=> $user->email,						
+						'username' 			=> $user->username,
+						'email'				=> $user->email,
 						'fName'				=> $user->firstName,
-						'lName'				=> $user->lastName,						
+						'lName'				=> $user->lastName,
 						'wantNotifications'	=> $user->wantNotifications,
 						'wantTutorial'		=> $user->wantTutorial,
 						'picture'			=> $user->filePhoto
 					));
-					
+
 		}
 
-		
+
 	}
 
 	public function passwordforgottenAction()
 	{
 		$request = $this->getRequest();
 		if ($request->isPost()){
-			$email =  $_POST["email"];			
+			$email =  $_POST["email"];
 			//check if email exists in DB
 			if(!$this->_getUserTable()->checkIfMailExists($email))
 				//If not, send an error
@@ -468,7 +470,7 @@ class UserController extends AbstractActionController
          		$result = 'errorEmailDoesNotExist';
             	return new ViewModel(array(
 						'error' 			=> $result
-				));	
+				));
          	}
          	else
          		//The given mail corresponds to a mail in DB
@@ -480,7 +482,7 @@ class UserController extends AbstractActionController
 				$this->_getUserTable()->updateUserPassword($user->id, $this->_hashPassword($newPassword));
 				//send mail
 				$subject = "Your new password with EasyGoing";
-				$msg = "Hello " . $user->username .",  
+				$msg = "Hello " . $user->username .",
 						/n
 						/n
 						Someone has reset your password in your EasyGoing account. If you are this person,
@@ -490,19 +492,19 @@ class UserController extends AbstractActionController
 						Anyway here is your new password: " . $newPassword ."/n
 
 						Feel free to change it when you come back on EasyGoing /n /n
-						
+
 						EasyGoing Team
 						";
 
 				mail($email,$subject,$msg);
 				$result = "success";
          	}
-			
+
 		}
 		return new ViewModel(array(
 						'successfulMail' 			=> $result,
 						'email'						=> $email
-				));	
+				));
 	}
 
 	public function validationAction()
