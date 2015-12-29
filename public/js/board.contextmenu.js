@@ -62,13 +62,21 @@ $(document).ready(function() {
       },
       items: {
          "edit": {
-            name: "Edit"
+            name: "Edit",
+            icon: "edit"
          },
          "delete": {
-            name: "Delete"
+            name: "Delete",
+            icon: "delete"
          },
          "unassign": {
-            name: "Unassign"
+            name: "Unassign",
+            icon: "cut"
+         },
+         "sep1": "---------",
+         "addSubTask": {
+            name: "Add sub-task",
+            icon: "paste"
          }
       }
    });
