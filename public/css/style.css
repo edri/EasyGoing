@@ -502,11 +502,9 @@ hr {
 
 .eventDetails {
    display: none;
-   padding-top: 10px;
 }
 
 .eventDetailsTable {
-   border: 1px solid #4e2e18;
    width: 100%;
 }
 

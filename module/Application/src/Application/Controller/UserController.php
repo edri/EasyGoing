@@ -512,10 +512,4 @@ class UserController extends AbstractActionController
 		$this->redirect()->toRoute();
 		return new ViewModel();
 	}
-
-	public function cancelAction()
-	{
-		$this->redirect()->toRoute();
-		return new ViewModel();
-	}
 }
