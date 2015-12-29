@@ -104,6 +104,8 @@
       <p><u>Description</u> : <?php echo $this->escapeHtml($project->description); ?></p>
       <p><u>Duration</u> : from <?php echo date('d.m.Y', strtotime($project->startDate)) . ' to ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
       <br/>
+        <div id="addTask" role="tutorial"></div>
+        <div id="addMember" role="tutorial"></div>
        <p>
          <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Add a task</a><br/>
          <?php if($isManager): ?>
@@ -111,9 +113,6 @@
          <?php endif; ?>
       </p>
    </div>
-
-    <div id="addTask" role="tutorial"></div>
-    <div id="addMember" role="tutorial"></div>
 
     <div class="rightPart">
         <div>
@@ -141,9 +140,10 @@
             </ul>
 
             <!-- Tab panes -->
+            <div role="tutorial" id="historical"></div>
+            
             <div class="tab-content historicalTab">
                <div role="tabpanel" class="tab-pane fade in active" id="all">
-               <div role="tutorial" id="historical"></div>
                <?php
                   foreach ($events as $e)
                   {
@@ -180,6 +180,7 @@
 
 <div class="boardButtons">
    <div class="btn-group dashboardViewType" data-toggle="buttons">
+    <div role="tutorial" id="dashboardType"></div>
       <label class="btn active btnEasygoing">
          <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
       </label>
@@ -191,7 +192,6 @@
       <div class="dashboardShowSpecializationsLabel">Show members' specializations:</div>
       <input id="showSpecializationsChk" data-on="success" type="checkbox" />
    </div>
-   <div role="tutorial" id="dashboardType"></div>
 </div>
 
 <div id="board-alert-container"></div>
