@@ -415,7 +415,7 @@ class ProjectController extends AbstractActionController
          $deadline = $_POST["deadline"];
          $duration = $_POST["duration"];
 
-         if(isset($_POST["name"]) && isset($_POST["priority"]) && isset($_POST["deadline"]) && isset($_POST["duration"]) && is_int($_POST["duration"]))
+         if(isset($_POST["name"]) && isset($_POST["priority"]) && isset($_POST["duration"]) && is_int($_POST["duration"]))
          {
             $taskId = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId);
             $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $taskId);
