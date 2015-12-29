@@ -52,10 +52,27 @@
 
 <?php foreach ($members as $member): ?>
 <div class="board" member-id="<?php echo $member->id; ?>">
-  <div class="board-first-column" section="board-user"<?php echo ($member->isAdmin ? "style='color: green; font-weight: bold;' data-toggle='tooltip' title='This user is manager so he has management rights on the project.'" : ""); ?>>
+  <div class="board-first-column" section="board-user"<?php echo ($member->isAdmin ? "style='color: #995527; font-weight: bold;' data-toggle='tooltip' title='This user is manager so he has management rights on the project.'" : ""); ?>>
     <img class="imgMember" draggable="false" src="<?php echo $this->basePath('img/users/'.$member->filePhoto); ?>">
        <h4 class="memberName"><?php echo $member->firstName . ' ' . $member->lastName; ?></h4>
        <span class="memberUsername"><?php echo $member->username; ?></span>
+       <!-- Show member's specializations only if cookie is set. -->
+       <div class="membersSpecializations"<?php echo ($showSpecializations ? "" : " style='display: none;'"); ?>>
+         <hr/>
+         <?php
+            // Display every current member's specializations.
+            foreach ($membersSpecializations as $memSpec)
+            {
+               if ($member->username == $memSpec["username"])
+               {
+                  foreach ($memSpec["specializations"] as $spec)
+                  {
+                     echo $spec . "<br/>";
+                  }
+               }
+            }
+         ?>
+      </div>
   </div>
   <div class="board-section" id="todo" section="TODO">
      <?php

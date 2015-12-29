@@ -13,10 +13,13 @@
    echo $this->headScript()->appendScript('// Indicate that the user is currently in the task page. Used in the board.websocket.js script.
                                            var isProjectPage = true;
                                            var projectId = "' . $project->id . '";
-                                           var userId = ' . $userId . ';');
-   // Load websocket script.
+                                           var userId = ' . $userId . ';
+                                           // Used to turn the "specializations" switch to on or off.
+                                           var showSpecializations = ' . ($showSpecializations ? "true" : "false") . ';');
+   // Load websocket and javascript's cookies scripts.
    echo $this->headScript()
-               ->prependFile($this->basePath() . '/js/board.websockets.js');
+               ->prependFile($this->basePath() . '/js/board.websockets.js')
+               ->prependFile($this->basePath() . '/js/libraries/js.cookie.js');
 
    // Return an HTML code rendering an event div, using for code factoring.
    function eventRendering($type, $event)
@@ -166,8 +169,8 @@
 
 <br/><hr/>
 <p id="result"></p>
-<p class="boardButtons">
-   <div class="btn-group" data-toggle="buttons">
+<div class="boardButtons">
+   <div class="btn-group dashboardViewType" data-toggle="buttons">
       <label class="btn active btnEasygoing">
          <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
       </label>
@@ -175,8 +178,12 @@
          <input type="radio" name="options" id="option2" autocomplete="off" onchange="loadBoardViewTasks();"> View per tasks
       </label>
    </div>
-    <div role="tutorial" id="dashboardType"></div>
-</p>
+   <div class="dashboardShowSpecializations">
+      <div class="dashboardShowSpecializationsLabel">Show members' specializations:</div>
+      <input id="showSpecializationsChk" data-on="success" type="checkbox" />
+   </div>
+   <div role="tutorial" id="dashboardType"></div>
+</div>
 
 <div id="board-alert-container"></div>
 <div id="board-container"></div>
@@ -207,7 +214,7 @@
                <p>
                   <?php echo $member->username; ?>
                   <?php if($isManager && $member->id != $userId) : ?>
-                     <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>">Remove</a>
+                      - <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>">Remove</a>
                   <?php endif; ?>
                </p>
                <?php endforeach; ?>
@@ -217,7 +224,7 @@
    </div>
 </div>
 
-<script>
+<script type="text/javascript">
    function loadBoardViewMembers() {
       $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewMembers"'; ?>);
    }
@@ -245,6 +252,25 @@
 
    $(document).ready(function() {
      loadBoardViewMembers();
+
+     // Init Bootrstap Switch on the "show specializations" button.
+     $("#showSpecializationsChk").bootstrapSwitch({onColor: 'easygoing-on', offColor: 'easygoing-off'});
+     $("#showSpecializationsChk").bootstrapSwitch('state', showSpecializations);//(Cookie.get('showMembersSpecializations') == 1));
+
+     // Show/Hide specializations when the user swapped the specializations button.
+     $("#showSpecializationsChk").on('switchChange.bootstrapSwitch', function(event, state) {
+        // If button is on the 'On' position.
+        if (state) {
+           $(".membersSpecializations").slideDown("fast");
+           // Create a cookie, which is used to keep in memory the user's choice.
+           // It expires after 30 days.
+           Cookies.set('showMembersSpecializations', '1', {expires: 30});
+        }
+        else {
+           $(".membersSpecializations").slideUp("fast");
+           Cookies.set('showMembersSpecializations', '0', {expires: 30});
+        }
+      });
 
      // Init Bootstrap's tooltip on project's buttons.
      $('[data-toggle="tooltip"]').tooltip();

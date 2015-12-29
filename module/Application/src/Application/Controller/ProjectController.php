@@ -50,6 +50,51 @@ class ProjectController extends AbstractActionController
       return $table;
    }
 
+   // Get a project's members and each of their specializations with no repetition.
+   // Parameters:
+   //    - projectId : the concerned project's ID.
+   private function getMembersSpecializations($projectId)
+   {
+      $tempMembers = $this->_getTable('ViewProjectsMembersSpecializationsTable')->getProjectMembers($projectId);
+      $members = array();
+      $i = 0;
+
+      // Struct the members array.
+      foreach ($tempMembers as $tmpM)
+      {
+         // Indicate whether the current member already exists in the members
+         // list or not.
+         // If yes, we just have to add the object's specialization to the
+         // existing specializations of the user.
+         $alreadyExisting = false;
+         $nbCurrentMembers = count($members);
+
+         // Check if the current member already exists.
+         for ($j = 0; $j < $nbCurrentMembers; ++$j)
+         {
+            // Add the specialization to the specializations list.
+            if ($tmpM->username == $members[$j]["username"])
+            {
+               $alreadyExisting = true;
+               $members[$j]["specializations"][] = (empty($tmpM->specialization) ? "-" : $tmpM->specialization);
+               break;
+            }
+         }
+
+         // If the current member is not already existing in the members list,
+         // add it.
+         if (!$alreadyExisting)
+         {
+            $members[$i]["username"] = $tmpM->username;
+            $members[$i]["specializations"][] = empty($tmpM->specialization) ? "-" : $tmpM->specialization;
+            $members[$i]["isAdmin"] = $tmpM->isAdmin;
+            ++$i;
+         }
+      }
+
+      return $members;
+   }
+
    // Acts like a filter : every request go through the dispatcher, in which we
    // can do some stuff.
    // In this case, we just prevent unconnected users to access this controller
@@ -87,15 +132,19 @@ class ProjectController extends AbstractActionController
       // Get project's events.
       $events = $this->_getTable('ViewEventTable')->getEntityEvents($this->params('id'), false);
       $isManager = $this->_userIsAdminOfProject($sessionUser->id, $this->params('id'));
+      // If the "showMembersSpecializations" cookie exists and is set to 1, the
+      // page will display the members' specializations.
+      $showSpecializations = isset($_COOKIE["showMembersSpecializations"]) && $_COOKIE["showMembersSpecializations"];
 
       return new ViewModel(array(
-         'project'      => $project,
-         'tasks'        => $tasks,
-         'members'      => $members,
-         'eventsTypes'  => $eventsTypes,
-         'events'       => $events,
-         'isManager'    => $isManager ? true : false,
-         'userId'       => $sessionUser->id
+         'project'               => $project,
+         'tasks'                 => $tasks,
+         'members'               => $members,
+         'eventsTypes'           => $eventsTypes,
+         'events'                => $events,
+         'isManager'             => $isManager ? true : false,
+         'userId'                => $sessionUser->id,
+         'showSpecializations'   => $showSpecializations
       ));
    }
 
@@ -380,7 +429,9 @@ class ProjectController extends AbstractActionController
          // First of all, get right event type.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
          // Then add the new event in the database.
-         $message = "<u>" . $sessionUser->username . "</u> created task <font color=\"#FF6600\">" . $name . "</font> and assigned it to himself.";
+         $message =
+            "<u>" . $sessionUser->username . "</u> created task <font color=\"#FF6600\">" .
+            $name . "</font> and assigned it to <font color=\"black\">(" . $sessionUser->username . ", TODO)</font>.";
          $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
          // Link the new event to the current project.
          $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
@@ -573,6 +624,11 @@ class ProjectController extends AbstractActionController
    {
       // Get members of a project
       $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
+      // Get members' specializations.
+      $membersSpecializations = $this->getMembersSpecializations($this->params('id'));
+      // If the "showMembersSpecializations" cookie exists and is set to 1, the
+      // page will display the members' specializations.
+      $showSpecializations = isset($_COOKIE["showMembersSpecializations"]) && $_COOKIE["showMembersSpecializations"];
 
       // Get tasks in a project for each member
       $arrayTasksForMember = array();
@@ -585,9 +641,11 @@ class ProjectController extends AbstractActionController
       }
 
       $result = new ViewModel(array(
-         'projectId'         => $this->params('id'),
-         'members'           => $members,
-         'tasksForMember'    => $arrayTasksForMember
+         'projectId'                => $this->params('id'),
+         'members'                  => $members,
+         'membersSpecializations'   => $membersSpecializations,
+         'tasksForMember'           => $arrayTasksForMember,
+         'showSpecializations'      => $showSpecializations
       ));
       $result->setTerminal(true);
 
@@ -1135,42 +1193,7 @@ class ProjectController extends AbstractActionController
       $sessionUser = new container('user');
       $id = (int)$this->params('id');
       $projectDetails = $this->_getTable('ViewProjectDetailsTable')->getProjectDetails($id, $sessionUser->id);
-      $tempMembers = $this->_getTable('ViewProjectsMembersSpecializationsTable')->getProjectMembers($id);
-      $members = array();
-      $i = 0;
-
-      // Struct the members array.
-      foreach ($tempMembers as $tmpM)
-      {
-         // Indicate whether the current member already exists in the members
-         // list or not.
-         // If yes, we just have to add the object's specialization to the
-         // existing specializations of the user.
-         $alreadyExisting = false;
-         $nbCurrentMembers = count($members);
-
-         // Check if the current member already exists.
-         for ($j = 0; $j < $nbCurrentMembers; ++$j)
-         {
-            // Add the specialization to the specializations list.
-            if ($tmpM->username == $members[$j]["username"])
-            {
-               $alreadyExisting = true;
-               $members[$j]["specializations"][] = (empty($tmpM->specialization) ? "-" : $tmpM->specialization);
-               break;
-            }
-         }
-
-         // If the current member is not already existing in the members list,
-         // add it.
-         if (!$alreadyExisting)
-         {
-            $members[$i]["username"] = $tmpM->username;
-            $members[$i]["specializations"][] = empty($tmpM->specialization) ? "-" : $tmpM->specialization;
-            $members[$i]["isAdmin"] = $tmpM->isAdmin;
-            ++$i;
-         }
-      }
+      $members = $this->getMembersSpecializations($id);
 
       // Send the success message back with JSON.
       return new JsonModel(array(

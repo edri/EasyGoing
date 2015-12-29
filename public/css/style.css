@@ -21,6 +21,11 @@ a:focus {
    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(153, 85, 39, 0.6);
 }
 
+.bootstrap-switch.bootstrap-switch-focused {
+   border-color: #995527;
+   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(153, 85, 39, 0.6);
+}
+
 
 /* HEADER BAR */
 
@@ -556,7 +561,35 @@ hr {
 }
 
 .boardButtons {
+   height: 35px;
+   margin-bottom: 20px;
    margin-top: 35px;
+   width: 100%;
+}
+
+.dashboardViewType {
+   float: left;
+}
+
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-easygoing-on {
+  color: #fff;
+  background: #995527;
+}
+
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-easygoing-off {
+   color: #5a2706;
+   background: #ffeadb;
+}
+
+.dashboardShowSpecializations {
+   float: right;
+   margin-right: 15px;
+}
+
+.dashboardShowSpecializationsLabel {
+   float: left;
+   margin-right: 10px;
+   margin-top: 6px;
 }
 
 .board,
@@ -718,11 +751,18 @@ hr {
 }
 
 .memberName {
+   font-size: 20px;
    margin-bottom: 0;
 }
 
 .memberUsername {
+   font-size: 14px;
+}
+
+.membersSpecializations {
    font-size: 12px;
+   font-style: italic;
+   margin-bottom: 10px;
 }
 
 .add-user:hover {
