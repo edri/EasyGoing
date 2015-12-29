@@ -1,17 +1,3 @@
-$(window).load(function() {    
-    $("div[role=tutorial]").each(function() {
-
-        var div = $(this);
-
-        var position = div.position();
-
-        div.css({
-            position: 'relative'
-        });
-    });
-    
-});
-
 var tutoData = [];
 var current = 0;
 
@@ -30,7 +16,8 @@ var nextTutorial = function() {
             // Template html for tutorial and show the current tuto
             $("div[role=tutorial][id = " + d.div + "]")
                 .attr("data-html", "true")
-                .attr("title", d.text + "<a href=# onClick=nextTutorial() >Next</a>")
+                .attr("title", d.text + "<a href=# onClick=nextTutorial() ><br>Next</a>"
+                     + "<a href=# onClick=skipTutorial() ><br>Skip</a>")
                 .tooltip('show');
             
             // Hide all of other tutos
