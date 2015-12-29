@@ -77,14 +77,22 @@
          class="imgProject" />
          Dashboard - <?php echo $project->name; ?>
    </h1>
+
 <?php
    if ($isManager)
    {
 ?>
-      <img class="managerDashboardIcon" data-toggle="tooltip" title="You are manager of this project." src="/img/manager.svg" />
       <a class="editProjectDashboardLink" href="/project/<?php echo $project->id; ?>/edit" id="editLink">
          <img class="editProjectDashboardIcon" data-toggle="tooltip" id="editImg" title="Edit the project..." src="/img/edit.svg" />
       </a>
+      <img class="dashboardButtonIcon" data-toggle="tooltip" title="You are manager of this project." src="/img/manager.svg" />
+<?php
+   }
+
+   if ($isCreator)
+   {
+?>
+      <img class="dashboardButtonIcon" data-toggle="tooltip" title="You are the creator and super administrator of this project." src="/img/creator.svg" />
 <?php
    }
 ?>
