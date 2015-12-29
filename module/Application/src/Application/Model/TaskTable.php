@@ -34,7 +34,7 @@ class TaskTable
    }
 
 
-   public function addTask($name, $description, $deadlineDate, $durationsInHours, $priorityLevel, $projectId)
+   public function addTask($name, $description, $deadlineDate, $durationsInHours, $priorityLevel, $projectId, $parentTask = null)
    {
       $this->_tableGateway->insert(array(
          'name'               => $name,
@@ -42,7 +42,8 @@ class TaskTable
          'deadLineDate'       => $deadlineDate,
          'durationsInHours'   => $durationsInHours,
          'priorityLevel'      => $priorityLevel,
-         'project'            => $projectId
+         'project'            => $projectId,
+         'parentTask'         => $parentTask
       ));
 
       return $this->_tableGateway->lastInsertValue;
