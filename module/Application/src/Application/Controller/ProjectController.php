@@ -1056,12 +1056,15 @@ class ProjectController extends AbstractActionController
    {
       $sessionUser = new container('user');
       $projectId = $this->params('id');
+
       $memberId = $this->params('otherId');
 
-      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
+      if($memberId != $sessionUser->id)
       {
-         if($memberId != $sessionUser->id)
+         if($this->_userIsCreatorOfProject($sessionUser->id, $projectId) || 
+            $this->_userIsAdminOfProject($sessionUser->id, $projectId) && !$this->_userIsAdminOfProject($memberId, $projectId))
          {
+            
             // Remove from project
             $this->_getTable('ProjectsUsersMembersTable')->removeMember($memberId, $projectId);
 
