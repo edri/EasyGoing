@@ -266,9 +266,11 @@
 <table class="projectsHeaderTable">
     <tr>
         <td><h1 class="projectsTitle">Your projects</h1></td>
-        <td><a class="newProject" href="/projects/add"><b>Create a new project !</b><img class="newProjectImg" src="/img/plus.svg" /></a>
-            <div id="createProject" role="tutorial"></div>
+        <td>
+             <a class="newProject" href="/projects/add">
+             <b>Create a new project !</b><img class="newProjectImg" src="/img/plus.svg" /></a>
         </td>
+        <td><div id="createProject" role="tutorial" data-placement="bottom"></div></td>
     </tr>
 </table>
 
@@ -279,11 +281,12 @@
         <table class="projectsToolsTable">
             <tr>
                 <td>Click on a project to see details.</td>
-                <div id="listOfProjects" role="tutorial"></div>
-                <td><div id="searchProject" role="tutorial"></div></td>
+                <div id="searchProject" role="tutorial"></div>
                 <td><input onkeyup="filterSearch();" type="text" id="search" class="form-control" placeholder="Search for..." /></td>
             </tr>
         </table>
+
+        <div id="listOfProjects" role="tutorial"></div>
 
         <table id="tableListProjects" class="tableListProjects">
     <?php
