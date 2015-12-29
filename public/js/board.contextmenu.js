@@ -58,6 +58,10 @@ $(document).ready(function() {
                   }
                });
                break;
+
+            case 'addSubTask':
+               window.location.href = window.location.href + '/addTask/' + taskId;
+               break;
          }
       },
       items: {
@@ -75,7 +79,7 @@ $(document).ready(function() {
          },
          "sep1": "---------",
          "addSubTask": {
-            name: "Add sub-task",
+            name: "Add sub task",
             icon: "paste"
          }
       }

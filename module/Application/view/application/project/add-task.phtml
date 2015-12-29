@@ -1,6 +1,6 @@
 <?php use Application\Utility\Priority; ?>
 
-<h1>Create a task</h1>
+<h1><?php echo $isSubTask ? "Create a sub task" : "Create a task"; ?></h1>
 <br>
 <form method="POST" action="<?php echo $this->serverUrl(true); ?>" role="form" class="form-horizontal">
    <div class="form-group">

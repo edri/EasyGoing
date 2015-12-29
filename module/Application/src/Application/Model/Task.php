@@ -12,6 +12,7 @@ class Task
    public $priorityLevel;
    public $state;
    public $project;
+   public $parentTask;
 
    public function exchangeArray($data)
    {
@@ -23,5 +24,6 @@ class Task
       $this->priorityLevel  = (!empty($data['priorityLevel'])) ? $data['priorityLevel'] : null;
       $this->state  = (!empty($data['state'])) ? $data['state'] : null;
       $this->project  = (!empty($data['project'])) ? $data['project'] : null;
+      $this->parentTask  = (!empty($data['parentTask'])) ? $data['parentTask'] : null;
    }
 }
