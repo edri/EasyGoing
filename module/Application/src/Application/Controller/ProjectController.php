@@ -414,53 +414,55 @@ class ProjectController extends AbstractActionController
          $priority = $_POST["priority"];
          $deadline = $_POST["deadline"];
          $duration = $_POST["duration"];
-         $sessionUser = new container('user');
 
-         $taskId = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId);
-         $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $taskId);
-
-         // If task was successfully added, add two task's creation events: one for
-         // the project's history, and another for the new task's news feed.
-         // For the project's history.
-         // First of all, get right event type.
-         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
-         // Then add the new event in the database.
-         $message =
-            "<u>" . $sessionUser->username . "</u> created task <font color=\"#FF6600\">" .
-            $name . "</font> and assigned it to <font color=\"black\">(" . $sessionUser->username . ", TODO)</font>.";
-         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
-         // Link the new event to the current project.
-         $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
-         // Finaly link the new event to the user who created it.
-         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
-         // Get event's data to send them to socket server.
-         $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
-         // For the task's news feed.
-         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
-         $message = "\"" . $sessionUser->username . "\" created the task.";
-         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
-         $this->_getTable("EventOnTaskTable")->add($eventId, $taskId);
-         // Get SYSTEM user's ID and link it to the new task's event.
-         $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
-         $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
-
-         try
+         if(isset($_POST["name"]) && isset($_POST["priority"]) && isset($_POST["deadline"]) && isset($_POST["duration"]) && is_int($_POST["duration"]))
          {
-            // Make an HTTP POST request to the event's server so he can broadcast a
-            // new websocket related to the new event.
-            $client = new Client('http://127.0.0.1:8002');
-            $client->setMethod(Request::METHOD_POST);
-            // Setting POST data.
-            $client->setParameterPost(array(
-               "requestType"        => "newEvent",
-               "event"              => json_encode($event)
-            ));
-            // Send HTTP request to server.
-            $response = $client->send();
-         }
-         catch (\Exception $e)
-         {
-            error_log("WARNING: could not connect to events servers. Maybe offline?");
+            $taskId = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId);
+            $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $taskId);
+
+            // If task was successfully added, add two task's creation events: one for
+            // the project's history, and another for the new task's news feed.
+            // For the project's history.
+            // First of all, get right event type.
+            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
+            // Then add the new event in the database.
+            $message =
+               "<u>" . $sessionUser->username . "</u> created task <font color=\"#FF6600\">" .
+               $name . "</font> and assigned it to <font color=\"black\">(" . $sessionUser->username . ", TODO)</font>.";
+            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+            // Link the new event to the current project.
+            $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+            // Finaly link the new event to the user who created it.
+            $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+            // Get event's data to send them to socket server.
+            $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+            // For the task's news feed.
+            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
+            $message = "\"" . $sessionUser->username . "\" created the task.";
+            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+            $this->_getTable("EventOnTaskTable")->add($eventId, $taskId);
+            // Get SYSTEM user's ID and link it to the new task's event.
+            $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
+            $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
+
+            try
+            {
+               // Make an HTTP POST request to the event's server so he can broadcast a
+               // new websocket related to the new event.
+               $client = new Client('http://127.0.0.1:8002');
+               $client->setMethod(Request::METHOD_POST);
+               // Setting POST data.
+               $client->setParameterPost(array(
+                  "requestType"        => "newEvent",
+                  "event"              => json_encode($event)
+               ));
+               // Send HTTP request to server.
+               $response = $client->send();
+            }
+            catch (\Exception $e)
+            {
+               error_log("WARNING: could not connect to events servers. Maybe offline?");
+            }
          }
 
          $this->redirect()->toRoute('project', array(
