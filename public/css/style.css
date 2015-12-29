@@ -116,14 +116,14 @@ title:focus,
 /* CONTENT */
 
 .mainContainer {
-   margin-top: 86px;
+   padding-top: 86px;
    margin-bottom: 50px;
-   height: calc(100vh - 86px - 50px);
-   transition: margin-top 300ms, height 300ms;
+   height: calc(100vh - 50px);
+   transition: padding-top 300ms, height 300ms;
 }
 
-.noMarginTop {
-   margin-top: 0;
+.noPaddingTop {
+   padding-top: 0;
    height: calc(100vh - 50px);
 }
 
@@ -196,6 +196,7 @@ title:focus,
 }
 
 .tableListProjects {
+   margin-bottom: 30px;
    margin-top: 15px;
    width: 100%;
 }
@@ -502,11 +503,9 @@ hr {
 
 .eventDetails {
    display: none;
-   padding-top: 10px;
 }
 
 .eventDetailsTable {
-   border: 1px solid #4e2e18;
    width: 100%;
 }
 
