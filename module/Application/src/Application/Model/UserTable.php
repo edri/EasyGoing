@@ -49,23 +49,44 @@ class UserTable
          'email'				=> $email,
          'filePhoto'			=> isset($picture) ? $picture : "-",
          'wantTutorial'    		=> $wantTutorial,
-		   'wantNotifications'    => $wantNotifications
+		 'wantNotifications'    => $wantNotifications
       ));
       return $this->_tableGateway->lastInsertValue;
    }
 
-   public function updateUser($username, $password, $fname, $lname, $email, $picture, $wantTutorial, $wantNotifications)
+   public function updateUser($id, $fname, $lname, $email, $picture, $wantTutorial, $wantNotifications)
    {
-      $this->_tableGateway->upasasaate(array(
-         'username'				=> $username,
-         'hashedPassword'		=> $password,
-         'firstName'			=> isset($fname) ? $fname : "-",
-         'lastName'				=> isset($lname) ? $lname : "-",
-         'email'				=> $email,
-         'filePhoto'			=> isset($picture) ? $picture : "-",
+   	//mail must be unique in DB
+      if($this->checkIfMailExists($email))
+      {
+      	$this->_tableGateway->update(array(                 
+         'firstName'			=> $fname,
+         'lastName'				=> $lname,
+         'filePhoto'			=> $picture,
          'wantTutorial'    		=> $wantTutorial,
 		 'wantNotifications'    => $wantNotifications
-      ));
+        ),array('id' => $id));
+      }
+      else 
+      {
+      	$this->_tableGateway->update(array(                  
+         'firstName'			=> $fname,
+         'lastName'				=> $lname,
+         'email'				=> $email,
+         'filePhoto'			=> $picture,
+         'wantTutorial'    		=> $wantTutorial,
+		 'wantNotifications'    => $wantNotifications
+      	),array('id' => $id));      	
+      }
+      
+      return $this->_tableGateway->lastInsertValue;
+   }
+   public function updateUserPassword($id, $pass)
+   {
+	  $this->_tableGateway->update(array(         
+	    'hashedPassword'		=> $pass
+	   ),array('id' => $id));      	
+      
       return $this->_tableGateway->lastInsertValue;
    }
    public function getAllUsers()
@@ -85,6 +106,14 @@ class UserTable
 	{
 		$rowset = $this->_tableGateway->select(array(
 			'id'    => $id
+		));
+		$row = $rowset->current();
+		return $row;
+	}
+	public function getUserByMail($email)
+	{
+		$rowset = $this->_tableGateway->select(array(
+			'email'    => $email
 		));
 		$row = $rowset->current();
 		return $row;

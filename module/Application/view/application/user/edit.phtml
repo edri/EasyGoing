@@ -1,4 +1,63 @@
-<form action="/registration" class="form-horizontal" method="POST" role="form">
+<?php
+   if (isset($successfulEdition) && $successfulEdition)
+   {
+?>
+      <div class="panel panel-success error">
+         <div class="panel-heading">
+            Yay, your account has been successfully edited! 
+         </div>
+      </div>
+<?php
+   }
+?>
+
+<?php
+   // if there was an error when creating the posted account, display it.
+   if (isset($error))
+   {
+?>
+        <div class="panel panel-danger error">
+           <div class="panel-heading">
+           <?php
+                 switch($error)
+                 {              
+            case  "errorPasswordsDontMatch":
+              echo "The passwords you entered don't match, please retry.";
+              break;
+            case  "errorEmailInvalid":
+              echo "Please use a valid email format.";
+              break;
+                  case "errorEmailAlreadyExists":
+                     echo "The email address you entered already exists, please retry.";
+                     break;
+                  case "errorPictureSize":
+              echo "The picture you're trying to upload is too large, please retry.";
+              break;
+                  case "errorPictureType":
+                  case "errorPictureExtension":
+              echo "Please upload a file, which extension is allowed.";
+              break;
+                  case  "errorPicture":
+              echo "Something is wrong with the file you're trying to upload, please retry.";
+              break;
+                  case  "errorFilesUpload":
+              echo "Something wrong happend when uploading the picture, please retry.";
+              break;
+                  case  "errorDatabaseAdding":
+              echo "Something wrong happend when creating the account, please retry.";
+              break;
+                  default:
+               echo "An error occured, please retry.";
+                     break;
+            }
+            ?>
+         </div>
+      </div>
+<?php
+   }
+?>
+
+<form action="/edit" class="form-horizontal" method="POST" role="form">
 	<div class="form-group">
         <label class="control-label col-sm-2" for="username">Username *</label>
         <div class="col-sm-10">
@@ -68,10 +127,10 @@
        </div>
   </div>
   <div class="form-group" >
-     <label class="checkbox-inline col-sm-2"><input type="checkbox" name="tutorial" value="<?php if (isset($wantTutorial)) echo $this->escapeHtml($wantTutorial); ?>">Tutorial</label>
+     <label class="checkbox-inline col-sm-2"><input for="wantTutorial" type="checkbox" name="wantTutorial" value="<?php if (isset($wantTutorial)) echo $this->escapeHtml($wantTutorial); ?>">Tutorial</label>
   </div>
   <div class="form-group">
-     <label class="checkbox-inline col-sm-2"><input type="checkbox" name="notifications" value="<?php if (isset($wantNotifications)) echo $this->escapeHtml($wantNotifications); ?>">Notifications</label>
+     <label class="checkbox-inline col-sm-2"><input type="checkbox" name="wantNotifications" value="<?php if (isset($wantNotifications)) echo $this->escapeHtml($wantNotifications); ?>">Notifications</label>
   </div>
 	 <div class="form-group formSending" >
 		<label class="control-label col-sm-2" for="update"></label>
@@ -82,3 +141,4 @@
 		</div>
 </div>
 </form>
+

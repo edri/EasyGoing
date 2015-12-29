@@ -383,47 +383,126 @@ class UserController extends AbstractActionController
         {
         	
          	//the user has clicked on "Save changes"
-         	$sername = $_POST["username"];
+         	$username = $_POST["username"];
             $fName = $_POST["fName"];
             $lName= $_POST["lName"];            
             $email =  $_POST["email"];
-         	$wantTutorial = $_POST["tutorial"];
-         	$wantNotifications = $_POST["notifications"];
+            if(isset($_POST["wantTutorial"]))
+            {
+            	$wantTutorial = $_POST["wantTutorial"];
+            }
+         	else
+         	{
+         		$wantTutorial = 0;
+         	}
+			if(isset($_POST["wantNotifications"]))
+            {
+            	$wantNotifications = $_POST["wantNotifications"];
+            }
+         	else
+         	{
+         		$wantNotifications = 0;
+         	}
          	
          	$password1 = $_POST["password1"];
             $password2 = $_POST["password2"];
-
+            //by default, the password has not been changed
+			$password = $user->hashedPassword;
+			$id = $user->id;
             if($password1 != $password2)
             {
-            	$result = 'errorPasswordsDontMatch';	
+            	$result = 'errorPasswordsDontMatch';
+            	return new ViewModel(array(
+						'error' 			=> $result
+				));	
             }
             else if ($password1 == "") { //password hasn't been changed
-            	$password = $user->$hashedPassword;
+            	//nothing to do
             }
             else//password has changed
             {
             	$password = $password1;
+            	$this->_getUserTable()->updateUserPassword($id, $this->_hashPassword($password));
             }
          	
             $picture = $_POST["picture"];
          	//update user's information in DB
-         	$this->_getUserTable()->updataaeUser($username, $password, $fName, $lName, $email, $picture, $wantTutorial, $wantNotifications);
+
+         	if($this->_getUserTable()->checkIfMailExists($email))
+         	{
+         		$result = 'errorEmailAlreadyExists';
+            	return new ViewModel(array(
+						'error' 			=> $result
+				));	
+         	}
+         	
+         	$this->_getUserTable()->updateUser($id, $fName, $lName, $email, $picture, $wantTutorial, $wantNotifications);
+         	$successfulEdition = "successfulEdition";         	
         }
 
-				return new ViewModel(array(
-						'error' 			=> $result,
+				return new ViewModel(array(						
+						'successfulEdition' => $successfulEdition,
 						'username' 			=> $user->username,	
 						'email'				=> $user->email,						
 						'fName'				=> $user->firstName,
 						'lName'				=> $user->lastName,						
 						'wantNotifications'	=> $user->wantNotifications,
 						'wantTutorial'		=> $user->wantTutorial,
-						'picture'			=> isset($user->$filePhoto) ? $user->$filePhoto : "default.png"				
+						'picture'			=> $user->filePhoto
 					));
 					
 		}
 
 		
+	}
+
+	public function passwordforgottenAction()
+	{
+		$request = $this->getRequest();
+		if ($request->isPost()){
+			$email =  $_POST["email"];			
+			//check if email exists in DB
+			if(!$this->_getUserTable()->checkIfMailExists($email))
+				//If not, send an error
+         	{
+         		$result = 'errorEmailDoesNotExist';
+            	return new ViewModel(array(
+						'error' 			=> $result
+				));	
+         	}
+         	else
+         		//The given mail corresponds to a mail in DB
+         	{
+         		//create a random password of length 4*2
+         		$newPassword = bin2hex(openssl_random_pseudo_bytes(4));
+         		//update user's password
+         		$user = $this->_getUserTable()->getUserByMail($email);
+				$this->_getUserTable()->updateUserPassword($user->id, $this->_hashPassword($newPassword));
+				//send mail
+				$subject = "Your new password with EasyGoing";
+				$msg = "Hello " . $user->username .",  
+						/n
+						/n
+						Someone has reset your password in your EasyGoing account. If you are this person,
+						no problem. If you are not, you may asked yourself why someone has wanted to reset
+						your password. /n
+
+						Anyway here is your new password: " . $newPassword ."/n
+
+						Feel free to change it when you come back on EasyGoing /n /n
+						
+						EasyGoing Team
+						";
+
+				mail($email,$subject,$msg);
+				$result = "success";
+         	}
+			
+		}
+		return new ViewModel(array(
+						'successfulMail' 			=> $result,
+						'email'						=> $email
+				));	
 	}
 
 	public function validationAction()
