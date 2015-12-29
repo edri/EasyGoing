@@ -61,7 +61,8 @@ class ProjectsController extends AbstractActionController
       $userProjects = $this->_getTable('ViewProjectMinTable')->getUserProjects($sessionUser->id);
       // For linking the right action's view.
       return new ViewModel(array(
-         'userProjects'	=> $userProjects
+         'userProjects'	=> $userProjects,
+         'userId'       => $sessionUser->id
       ));
    }
 
@@ -170,7 +171,8 @@ class ProjectsController extends AbstractActionController
                            'description'	=> $description,
                            'startDate'		=> $_POST["startDate"],
                            'deadLineDate'	=> $_POST["deadline"],
-                           'fileLogo'		=> isset($fileName) ? $fileName : "default.png"
+                           'fileLogo'		=> isset($fileName) ? $fileName : "default.png",
+                           'creator'      => $sessionUser->id
                         );
 
                         $projectId = $this->_getTable("ProjectTable")->saveProject($newProject);

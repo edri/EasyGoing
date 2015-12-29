@@ -40,7 +40,12 @@ CREATE TABLE projects
     startDate DATE NOT NULL,
     deadLineDate DATE,
     fileLogo VARCHAR(50),
-    PRIMARY KEY(id)
+
+    creator INT,
+
+    PRIMARY KEY(id),
+
+    FOREIGN KEY(creator) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE tasks
@@ -158,7 +163,7 @@ DROP VIEW IF EXISTS view_projects_min;
 
 CREATE VIEW view_projects_min AS
 (
-	SELECT p.id, p.name, p.fileLogo, pu.user AS userId, pu.isAdmin
+	SELECT p.id, p.name, p.fileLogo, pu.user AS userId, pu.isAdmin, p.creator
 	FROM projectsUsersMembers as pu
 		INNER JOIN projects AS p ON p.id = pu.project
 	ORDER BY p.name	 
@@ -496,7 +501,7 @@ VALUES(
 	"Thibault",
 	"Duchoud",
 	"default.png",
-	true, false, null
+	false, false, null
 );
 
 INSERT INTO users
@@ -544,21 +549,23 @@ FROM users
 WHERE username = 'vanessameguep';
 
 /* Create some projects */
-INSERT INTO projects(name, description, startDate, deadLineDate, fileLogo) VALUES
+INSERT INTO projects(name, description, startDate, deadLineDate, fileLogo, creator) VALUES
 (
 	"Travail de Bachelor",	
 	"Un projet difficile... Mais intéressant !", 
 	"2015-01-26", 
 	"2016-10-04",
-	"default.png"
+	"default.png",
+   5
 );
 
-INSERT INTO projects(name, description, startDate, fileLogo) VALUES
+INSERT INTO projects(name, description, startDate, fileLogo, creator) VALUES
 (
 	"TWEB Liechti Moustache Project",
 	"Description is too long and unuseful...",
 	"2015-03-06",
-	"default.png"
+	"default.png",
+   4
 );
 
 SELECT id INTO @project1

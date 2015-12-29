@@ -12,6 +12,7 @@ class ViewProjectMin
    public $fileLogo;
    public $userId;
    public $isAdmin;
+   public $creator;
 
    public function exchangeArray($data)
    {
@@ -20,5 +21,6 @@ class ViewProjectMin
       $this->fileLogo  = (!empty($data['fileLogo'])) ? $data['fileLogo'] : null;
       $this->userId  = (!empty($data['userId'])) ? $data['userId'] : null;
       $this->isAdmin  = (!empty($data['isAdmin'])) ? $data['isAdmin'] : null;
+      $this->creator  = (!empty($data['creator'])) ? $data['creator'] : null; 
    }
 }

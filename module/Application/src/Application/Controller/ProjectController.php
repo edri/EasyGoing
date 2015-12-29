@@ -567,6 +567,7 @@ class ProjectController extends AbstractActionController
    {
       // Get members of a project
       $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
+      $creatorId = $this->_getTable('ProjectTable')->getProject($this->params('id'))->creator;
 
       // Get tasks in a project for each member
       $arrayTasksForMember = array();
@@ -580,6 +581,7 @@ class ProjectController extends AbstractActionController
 
       $result = new ViewModel(array(
          'projectId'         => $this->params('id'),
+         'creatorId'         => $creatorId,
          'members'           => $members,
          'tasksForMember'    => $arrayTasksForMember
       ));

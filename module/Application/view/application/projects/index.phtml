@@ -303,6 +303,10 @@
                             height=50 />
                 </td>
                 <td class="rightProjectTd">
+                  <?php if($p->creator == $userId) : ?>
+                     <img class="managerIcon" data-toggle="tooltip" title="You are the creator of this project and the super administrator." src="/img/creator.svg" />
+                  <?php endif; ?>
+
                   <?php
                      if ($p->isAdmin)
                      {

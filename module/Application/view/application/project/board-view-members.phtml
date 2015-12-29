@@ -52,10 +52,14 @@
 
 <?php foreach ($members as $member): ?>
 <div class="board" member-id="<?php echo $member->id; ?>">
-  <div class="board-first-column" section="board-user"<?php echo ($member->isAdmin ? "style='color: green; font-weight: bold;' data-toggle='tooltip' title='This user is manager so he has management rights on the project.'" : ""); ?>>
-    <img class="imgMember" draggable="false" src="<?php echo $this->basePath('img/users/'.$member->filePhoto); ?>">
-       <h4 class="memberName"><?php echo $member->firstName . ' ' . $member->lastName; ?></h4>
-       <span class="memberUsername"><?php echo $member->username; ?></span>
+  <div class="board-first-column" section="board-user"<?php echo ($creatorId == $member->id ? "style='color: green; font-weight: bold;' data-toggle='tooltip' title='This user is the creator of this project and the super administrator.'" : ($member->isAdmin ? "style='color: green; font-weight: bold;' data-toggle='tooltip' title='This user is manager so he has management rights on the project.'" : "")); ?>>
+      <?php if($creatorId == $member->id): ?>
+         <img style="float: left; margin-right: -58px;"width="40px" height="40px" draggable="false" src="/img/crown.svg" >
+      <?php endif; ?>
+
+      <img class="imgMember" draggable="false" src="<?php echo $this->basePath('img/users/'.$member->filePhoto); ?>">
+      <h4 class="memberName"><?php echo $member->firstName . ' ' . $member->lastName; ?></h4>
+      <span class="memberUsername"><?php echo $member->username; ?></span>
   </div>
   <div class="board-section" id="todo" section="TODO">
      <?php
