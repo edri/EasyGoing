@@ -57,15 +57,23 @@
             var tableContent =
                 "<tr>\
                     <td>" + m.username + "</td>\
-                    <td>";
+                    <td>\
+                       <ul class='specializationsList'>";
 
             // Add each member's specialization in the table's cell.
             m.specializations.forEach(function(s) {
-                tableContent += s + "<br/>";
+               if (s != "-") {
+                  tableContent += "<li>" + s + "</li>";
+               }
+               // If there is no specialization, don't display a list.
+               else {
+                  tableContent += s;
+               }
             });
 
             tableContent +=
-                    "</td>\
+                      "</ul>\
+                    </td>\
                     <td class='checkboxManager'>\
                         <input " + (m.isAdmin ? "checked " : "") + "type='checkbox' name='chkManager' value='Manager' disabled='disabled'>\
                     </td>\
@@ -304,7 +312,7 @@
                 </td>
                 <td class="rightProjectTd">
                   <?php if($p->creator == $userId) : ?>
-                     <img class="managerIcon" data-toggle="tooltip" title="You are the creator of this project and the super administrator." src="/img/creator.svg" />
+                     <img class="managerIcon" data-toggle="tooltip" title="You are the creator and super administrator of this project." src="/img/creator.svg" />
                   <?php endif; ?>
 
                   <?php

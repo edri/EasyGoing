@@ -214,7 +214,7 @@ class ProjectsController extends AbstractActionController
                         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
                         // Then add the new creation event in the database.
                         $message =
-                           "<u>" . $sessionUser->username . "</u> (<font color='green'>manager</font>) joined the project with " .
+                           "<u>" . $sessionUser->username . "</u> (<b>creator</b>) joined the project with " .
                            ($specializationsString != "" ? ("specialization(s) " . $specializationsString) : "no specialization") . ".";
                         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
                         // Link the new event to the new project.

@@ -316,6 +316,11 @@ th {
    background-color: #E2E2E2;
 }
 
+.specializationsList {
+   margin: 0;
+   padding-left: 20px;
+}
+
 .checkboxManager {
    text-align: center;
 }
