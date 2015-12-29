@@ -217,7 +217,7 @@
                   <?php echo $member->username; ?>
                   <?php if($member->id != $userId) : ?>
                      <?php if($isCreator || ($isManager && !$member->isAdmin)) : ?>
-                         - <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>">Remove</a>
+                         - <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>" class="confirmation">Remove</a>
                      <?php endif; ?>
                   <?php endif; ?>
                </p>
@@ -256,6 +256,14 @@
 
    $(document).ready(function() {
       loadBoardViewMembers();
+
+      $('.confirmation').on('click', function (e) {
+         e.preventDefault();
+         var href = $(this).attr('href');
+         bootbox.confirm('Are you sure to remove this member ? All tasks will be removed too !', function(result) {
+            if(result) window.location = href;
+         });
+      });
 
       // Init Bootrstap Switch on the "show specializations" button.
       $("#showSpecializationsChk").bootstrapSwitch({onColor: 'easygoing-on', offColor: 'easygoing-off'});
