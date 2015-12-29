@@ -5,6 +5,7 @@
     catch(err) {
         // Catch to avoid undefined function if user dont want tutorial
     }
+   $('[data-toggle="tooltip"]').tooltip();
 </script>
 
 <?php
@@ -69,9 +70,9 @@
 <div class="projectDashboardIntro">
    <h1 class="projectDashboardTitle">
       <img src="<?php echo $this->basePath('img/projects/' . $project->fileLogo); ?>"
-        alt="<?php echo $this->escapeHtml($project->name); ?>" height=50 width=50
-        class="imgProject" />
-        Dashboard - <?php echo $project->name; ?>
+         alt="<?php echo $this->escapeHtml($project->name); ?>" height=50 width=50
+         class="imgProject" />
+         Dashboard - <?php echo $project->name; ?>
    </h1>
 <?php
    if ($isManager)
@@ -110,7 +111,7 @@
             <ul class="nav nav-tabs tabsMain" id="historicalTabs" role="tablist">
                 <li role="presentation" class="active firstTab">
                    <a href="#all" aria-controls="all" role="tab" data-toggle="tab" style="outline: 0 none;">
-                      All
+                     All
                    </a>
                 </li>
                 <?php
@@ -168,8 +169,8 @@
 <p id="result"></p>
 <p class="boardButtons">
    <div class="btn-group" data-toggle="buttons">
-      <label class="btn active btnEasygoing">
-         <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
+      <label class="btn active btnEasygoing" >
+         <input type="radio" name="options"  id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
       </label>
       <label class="btn btnEasygoing">
          <input type="radio" name="options" id="option2" autocomplete="off" onchange="loadBoardViewTasks();"> View per tasks
@@ -244,15 +245,15 @@
    }
 
    $(document).ready(function() {
-     loadBoardViewMembers();
+      loadBoardViewMembers();
 
-     // Init Bootstrap's tooltip on project's buttons.
-     $('[data-toggle="tooltip"]').tooltip();
+      // Init Bootstrap's tooltip on project's buttons.
+      $('[data-toggle="tooltip"]').tooltip();
 
-     // Enable tabbable tabs on the historical panel.
-     $("#historicalTabs a").click(function(event) {
-         event.preventDefault();
+      // Enable tabbable tabs on the historical panel.
+      $("#historicalTabs a").click(function(e) {
+         e.preventDefault();
          $(this).tab("show");
-     });
+      });
    });
 </script>

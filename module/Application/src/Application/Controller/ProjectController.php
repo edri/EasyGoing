@@ -72,29 +72,30 @@ class ProjectController extends AbstractActionController
       {
          $this->redirect()->toRoute('projects');
       }
-
+      
       return parent::onDispatch($e);
    }
 
    public function indexAction()
    {
       $sessionUser = new container('user');
-      $project = $this->_getTable('ProjectTable')->getProject($this->params('id'));
-      $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
-      $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
+      $projectId = $this->params('id');
+      $project = $this->_getTable('ProjectTable')->getProject($projectId);
+      $tasksInProject = $this->_getTable('TaskTable')->getAllTasksInProject($projectId);
+      $membersOfProject = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($projectId);
       // Get projects' events types.
       $eventsTypes = $this->_getTable('EventTypeTable')->getTypes(false);
       // Get project's events.
-      $events = $this->_getTable('ViewEventTable')->getEntityEvents($this->params('id'), false);
-      $isManager = $this->_userIsAdminOfProject($sessionUser->id, $this->params('id'));
+      $events = $this->_getTable('ViewEventTable')->getEntityEvents($projectId, false);
+      $isManagerOfProject = $this->_userIsAdminOfProject($sessionUser->id, $projectId) ? true : false;
 
       return new ViewModel(array(
          'project'      => $project,
-         'tasks'        => $tasks,
-         'members'      => $members,
+         'tasks'        => $tasksInProject,
+         'members'      => $membersOfProject,
          'eventsTypes'  => $eventsTypes,
          'events'       => $events,
-         'isManager'    => $isManager ? true : false,
+         'isManager'    => $isManagerOfProject,
          'userId'       => $sessionUser->id
       ));
    }
@@ -346,13 +347,6 @@ class ProjectController extends AbstractActionController
       {
          $this->redirect()->toRoute('projects');
       }
-   }
-
-   public function taskAction()
-   {
-      return new ViewModel(array(
-         'id' => $this->params('id')
-      ));
    }
 
    public function addTaskAction()
