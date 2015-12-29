@@ -88,6 +88,7 @@ class ProjectController extends AbstractActionController
       // Get project's events.
       $events = $this->_getTable('ViewEventTable')->getEntityEvents($projectId, false);
       $isManagerOfProject = $this->_userIsAdminOfProject($sessionUser->id, $projectId) ? true : false;
+      $isCreatorOfProject = $this->_userIsCreatorOfProject($sessionUser->id, $projectId) ? true : false;
 
       return new ViewModel(array(
          'project'      => $project,
@@ -96,7 +97,8 @@ class ProjectController extends AbstractActionController
          'eventsTypes'  => $eventsTypes,
          'events'       => $events,
          'isManager'    => $isManagerOfProject,
-         'userId'       => $sessionUser->id
+         'userId'       => $sessionUser->id,
+         'isCreator'    => $isCreatorOfProject
       ));
    }
 
@@ -1230,9 +1232,15 @@ class ProjectController extends AbstractActionController
       }
    }
 
+
    private function _userIsAssignToTask($userId, $taskId)
    {
       return !empty($this->_getTable('UsersTasksAffectationsTable')->getAffectation($userId, $taskId));
+   }
+
+   private function _userIsCreatorOfProject($userId, $projectId)
+   {
+      return $this->_getTable('ProjectTable')->getProject($projectId)->creator == $userId;
    }
 
    private function _userIsAdminOfProject($userId, $projectId)
