@@ -1062,7 +1062,7 @@ class ProjectController extends AbstractActionController
                   // Then add the new event in the database.
                   $message =
                      "<u>" . $sessionUser->username . "</u> added user <u>" . $addedMember->username .
-                     "</u>" . ($isManager ? " (<font color='green'>manager</font>)" : "") . " with " .
+                     "</u>" . ($isManager ? " (<b>manager</b>)" : "") . " with " .
                      ($specializationsString != "" ? ("specialization(s) " . $specializationsString) : "no specialization") . ".";
                   $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
                   // Link the new event to the current project.
