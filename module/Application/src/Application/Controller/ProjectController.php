@@ -124,26 +124,29 @@ class ProjectController extends AbstractActionController
    public function indexAction()
    {
       $sessionUser = new container('user');
-      $project = $this->_getTable('ProjectTable')->getProject($this->params('id'));
-      $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
-      $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($this->params('id'));
+      $projectId = $this->params('id');
+      $project = $this->_getTable('ProjectTable')->getProject($projectId);
+      $tasksInProject = $this->_getTable('TaskTable')->getAllTasksInProject($projectId);
+      $membersOfProject = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($projectId);
       // Get projects' events types.
       $eventsTypes = $this->_getTable('EventTypeTable')->getTypes(false);
       // Get project's events.
-      $events = $this->_getTable('ViewEventTable')->getEntityEvents($this->params('id'), false);
-      $isManager = $this->_userIsAdminOfProject($sessionUser->id, $this->params('id'));
+      $events = $this->_getTable('ViewEventTable')->getEntityEvents($projectId, false);
+      $isManagerOfProject = $this->_userIsAdminOfProject($sessionUser->id, $projectId) ? true : false;
+      $isCreatorOfProject = $this->_userIsCreatorOfProject($sessionUser->id, $projectId) ? true : false;
       // If the "showMembersSpecializations" cookie exists and is set to 1, the
       // page will display the members' specializations.
       $showSpecializations = isset($_COOKIE["showMembersSpecializations"]) && $_COOKIE["showMembersSpecializations"];
 
       return new ViewModel(array(
-         'project'               => $project,
-         'tasks'                 => $tasks,
-         'members'               => $members,
-         'eventsTypes'           => $eventsTypes,
-         'events'                => $events,
-         'isManager'             => $isManager ? true : false,
-         'userId'                => $sessionUser->id,
+         'project'      => $project,
+         'tasks'        => $tasksInProject,
+         'members'      => $membersOfProject,
+         'eventsTypes'  => $eventsTypes,
+         'events'       => $events,
+         'isManager'    => $isManagerOfProject,
+         'userId'       => $sessionUser->id,
+         'isCreator'    => $isCreatorOfProject,
          'showSpecializations'   => $showSpecializations
       ));
    }
@@ -397,13 +400,6 @@ class ProjectController extends AbstractActionController
       }
    }
 
-   public function taskAction()
-   {
-      return new ViewModel(array(
-         'id' => $this->params('id')
-      ));
-   }
-
    public function addTaskAction()
    {
       $request = $this->getRequest();
@@ -629,6 +625,7 @@ class ProjectController extends AbstractActionController
       // If the "showMembersSpecializations" cookie exists and is set to 1, the
       // page will display the members' specializations.
       $showSpecializations = isset($_COOKIE["showMembersSpecializations"]) && $_COOKIE["showMembersSpecializations"];
+      $creatorId = $this->_getTable('ProjectTable')->getProject($this->params('id'))->creator;
 
       // Get tasks in a project for each member
       $arrayTasksForMember = array();
@@ -642,6 +639,7 @@ class ProjectController extends AbstractActionController
 
       $result = new ViewModel(array(
          'projectId'                => $this->params('id'),
+         'creatorId'         => $creatorId,
          'members'                  => $members,
          'membersSpecializations'   => $membersSpecializations,
          'tasksForMember'           => $arrayTasksForMember,
@@ -1116,12 +1114,15 @@ class ProjectController extends AbstractActionController
    {
       $sessionUser = new container('user');
       $projectId = $this->params('id');
+
       $memberId = $this->params('otherId');
 
-      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
+      if($memberId != $sessionUser->id)
       {
-         if($memberId != $sessionUser->id)
+         if($this->_userIsCreatorOfProject($sessionUser->id, $projectId) ||
+            $this->_userIsAdminOfProject($sessionUser->id, $projectId) && !$this->_userIsAdminOfProject($memberId, $projectId))
          {
+
             // Remove from project
             $this->_getTable('ProjectsUsersMembersTable')->removeMember($memberId, $projectId);
 
@@ -1257,9 +1258,15 @@ class ProjectController extends AbstractActionController
       }
    }
 
+
    private function _userIsAssignToTask($userId, $taskId)
    {
       return !empty($this->_getTable('UsersTasksAffectationsTable')->getAffectation($userId, $taskId));
+   }
+
+   private function _userIsCreatorOfProject($userId, $projectId)
+   {
+      return $this->_getTable('ProjectTable')->getProject($projectId)->creator == $userId;
    }
 
    private function _userIsAdminOfProject($userId, $projectId)

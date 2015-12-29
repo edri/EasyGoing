@@ -43,9 +43,11 @@ var MAX_SPEC_PER_USER = 5;
 function filterSearch() {
    var text = $('#search').val();
 
+   console.log(text);
+
    // For each divs in row
    $.each($('.row'), function(i, left) {
-      $('div', left).each(function(i, div) {
+      $('.add-user', left).each(function(i, div) {
          if($(div).attr('firstname').indexOf(text) > -1)
             $(div).show("fast");
          else

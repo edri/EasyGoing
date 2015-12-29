@@ -5,6 +5,7 @@
     catch(err) {
         // Catch to avoid undefined function if user dont want tutorial
     }
+   $('[data-toggle="tooltip"]').tooltip();
 </script>
 
 <?php
@@ -72,9 +73,9 @@
 <div class="projectDashboardIntro">
    <h1 class="projectDashboardTitle">
       <img src="<?php echo $this->basePath('img/projects/' . $project->fileLogo); ?>"
-        alt="<?php echo $this->escapeHtml($project->name); ?>" height=50 width=50
-        class="imgProject" />
-        Dashboard - <?php echo $project->name; ?>
+         alt="<?php echo $this->escapeHtml($project->name); ?>" height=50 width=50
+         class="imgProject" />
+         Dashboard - <?php echo $project->name; ?>
    </h1>
 <?php
    if ($isManager)
@@ -113,7 +114,7 @@
             <ul class="nav nav-tabs tabsMain" id="historicalTabs" role="tablist">
                 <li role="presentation" class="active firstTab">
                    <a href="#all" aria-controls="all" role="tab" data-toggle="tab" style="outline: 0 none;">
-                      All
+                     All
                    </a>
                 </li>
                 <?php
@@ -169,6 +170,7 @@
 
 <br/><hr/>
 <p id="result"></p>
+
 <div class="boardButtons">
    <div class="btn-group dashboardViewType" data-toggle="buttons">
       <label class="btn active btnEasygoing">
@@ -213,8 +215,10 @@
                <?php foreach ($members as $member) : ?>
                <p>
                   <?php echo $member->username; ?>
-                  <?php if($isManager && $member->id != $userId) : ?>
-                      - <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>">Remove</a>
+                  <?php if($member->id != $userId) : ?>
+                     <?php if($isCreator || ($isManager && !$member->isAdmin)) : ?>
+                         - <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>">Remove</a>
+                     <?php endif; ?>
                   <?php endif; ?>
                </p>
                <?php endforeach; ?>
@@ -251,14 +255,14 @@
    }
 
    $(document).ready(function() {
-     loadBoardViewMembers();
+      loadBoardViewMembers();
 
-     // Init Bootrstap Switch on the "show specializations" button.
-     $("#showSpecializationsChk").bootstrapSwitch({onColor: 'easygoing-on', offColor: 'easygoing-off'});
-     $("#showSpecializationsChk").bootstrapSwitch('state', showSpecializations);//(Cookie.get('showMembersSpecializations') == 1));
+      // Init Bootrstap Switch on the "show specializations" button.
+      $("#showSpecializationsChk").bootstrapSwitch({onColor: 'easygoing-on', offColor: 'easygoing-off'});
+      $("#showSpecializationsChk").bootstrapSwitch('state', showSpecializations);//(Cookie.get('showMembersSpecializations') == 1));
 
-     // Show/Hide specializations when the user swapped the specializations button.
-     $("#showSpecializationsChk").on('switchChange.bootstrapSwitch', function(event, state) {
+      // Show/Hide specializations when the user swapped the specializations button.
+      $("#showSpecializationsChk").on('switchChange.bootstrapSwitch', function(event, state) {
         // If button is on the 'On' position.
         if (state) {
            $(".membersSpecializations").slideDown("fast");
@@ -275,10 +279,10 @@
      // Init Bootstrap's tooltip on project's buttons.
      $('[data-toggle="tooltip"]').tooltip();
 
-     // Enable tabbable tabs on the historical panel.
-     $("#historicalTabs a").click(function(event) {
-         event.preventDefault();
+      // Enable tabbable tabs on the historical panel.
+      $("#historicalTabs a").click(function(e) {
+         e.preventDefault();
          $(this).tab("show");
-     });
+      });
    });
 </script>
