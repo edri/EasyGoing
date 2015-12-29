@@ -1,5 +1,4 @@
-$(window).load(function() {
-    
+$(window).load(function() {    
     $("div[role=tutorial]").each(function() {
 
         var div = $(this);
@@ -7,14 +6,7 @@ $(window).load(function() {
         var position = div.position();
 
         div.css({
-            position: 'absolute',
-            paddingLeft: 25,
-            paddingRight: 25,
-            paddingBottom: 10,
-            paddingTop: 10,
-            borderRadius: 10,
-            background: "lightyellow",
-            borderStyle: "solid"
+            position: 'relative'
         });
     });
     
@@ -24,7 +16,7 @@ var tutoData = [];
 var current = 0;
 
 var skipTutorial = function() {
-	$("div[role=tutorial]").fadeOut();
+	$("div[role=tutorial]").tooltip('hide');
 };
 
 var nextTutorial = function() {
@@ -36,20 +28,18 @@ var nextTutorial = function() {
         if(current < tutoData.length) {
             
             // Template html for tutorial and show the current tuto
-            $("div[role=tutorial][id = " + d.div + "]").html(
-                "<img src=/img/tuto.png /> " + 
-                d.text + 
-                "<a href='#' onClick='nextTutorial()'>   <br>Next</a>" +
-                "<a href='#' onClick='skipTutorial()'><br>Skip</a>"
-            ).fadeIn();
+            $("div[role=tutorial][id = " + d.div + "]")
+                .attr("data-html", "true")
+                .attr("title", d.text + "<a href=# onClick=nextTutorial() >Next</a>")
+                .tooltip('show');
             
             // Hide all of other tutos
-            $("div[role=tutorial][id != " + d.div + "]").fadeOut();
+            $("div[role=tutorial][id != " + d.div + "]").tooltip('hide');
             current++;
         }
         else {
             // Hide all of the tutos
-            $("div[role=tutorial]").fadeOut();
+            skipTutorial();
         }
 	}
 
@@ -69,3 +59,16 @@ function loadTutorial(tuto) {
     });
 
 };
+
+/*
+$("#txtSpecialization" + currentId).attr("data-toggle", "tooltip");
+         $("#txtSpecialization" + currentId).attr("data-trigger", "manual");
+         $("#txtSpecialization" + currentId).attr("title", "You have to enter a specialization before adding another one, or press the 'Create!' button if you don't want to have specialization.");
+         $("#txtSpecialization" + currentId).tooltip("show");
+         $("#txtSpecialization" + currentId).focus();
+
+         // Hide specialization field's tooltip when the user unfocus it.
+         $("#txtSpecialization" + currentId).blur(function() {
+            $(this).tooltip("hide");
+         });
+         */
