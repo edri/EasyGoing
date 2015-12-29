@@ -467,10 +467,6 @@ class ProjectController extends AbstractActionController
              'id' => $projectId
          ));
       }
-
-      return new ViewModel(array(
-         'isSubTask' => $this->params('otherId') ? true : false
-      ));
    }
 
    public function taskDetailsAction()
