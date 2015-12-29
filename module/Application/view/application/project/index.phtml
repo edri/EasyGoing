@@ -5,6 +5,7 @@
     catch(err) {
         // Catch to avoid undefined function if user dont want tutorial
     }
+   $('[data-toggle="tooltip"]').tooltip();
 </script>
 
 <?php
@@ -12,10 +13,14 @@
    // Send Javascript variable with Zend.
    echo $this->headScript()->appendScript('// Indicate that the user is currently in the task page. Used in the board.websocket.js script.
                                            var isProjectPage = true;
-                                           var projectId = "' . $project->id . '";');
-   // Load websocket script.
+                                           var projectId = "' . $project->id . '";
+                                           var userId = ' . $userId . ';
+                                           // Used to turn the "specializations" switch to on or off.
+                                           var showSpecializations = ' . ($showSpecializations ? "true" : "false") . ';');
+   // Load websocket and javascript's cookies scripts.
    echo $this->headScript()
-               ->prependFile($this->basePath() . '/js/board.websockets.js');
+               ->prependFile($this->basePath() . '/js/board.websockets.js')
+               ->prependFile($this->basePath() . '/js/libraries/js.cookie.js');
 
    // Return an HTML code rendering an event div, using for code factoring.
    function eventRendering($type, $event)
@@ -31,7 +36,7 @@
       if (!empty($event->details))
       {
          $eventContent .=
-                     '<img class="expandEventImg" id="toggleEventDetails' .  $event->id . $type . '" src="/img/expand_event.svg" />';
+                     '<img class="expandEventImg" id="toggleEventDetails' .  $event->id . $type . '" src="/img/plus.svg" />';
       }
 
       $eventContent .=
@@ -68,9 +73,9 @@
 <div class="projectDashboardIntro">
    <h1 class="projectDashboardTitle">
       <img src="<?php echo $this->basePath('img/projects/' . $project->fileLogo); ?>"
-        alt="<?php echo $this->escapeHtml($project->name); ?>" height=50 width=50
-        class="imgProject" />
-        Dashboard - <?php echo $project->name; ?>
+         alt="<?php echo $this->escapeHtml($project->name); ?>" height=50 width=50
+         class="imgProject" />
+         Dashboard - <?php echo $project->name; ?>
    </h1>
 <?php
    if ($isManager)
@@ -109,7 +114,7 @@
             <ul class="nav nav-tabs tabsMain" id="historicalTabs" role="tablist">
                 <li role="presentation" class="active firstTab">
                    <a href="#all" aria-controls="all" role="tab" data-toggle="tab" style="outline: 0 none;">
-                      All
+                     All
                    </a>
                 </li>
                 <?php
@@ -165,8 +170,9 @@
 
 <br/><hr/>
 <p id="result"></p>
-<p class="boardButtons">
-   <div class="btn-group" data-toggle="buttons">
+
+<div class="boardButtons">
+   <div class="btn-group dashboardViewType" data-toggle="buttons">
       <label class="btn active btnEasygoing">
          <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
       </label>
@@ -174,8 +180,12 @@
          <input type="radio" name="options" id="option2" autocomplete="off" onchange="loadBoardViewTasks();"> View per tasks
       </label>
    </div>
-    <div role="tutorial" id="dashboardType"></div>
-</p>
+   <div class="dashboardShowSpecializations">
+      <div class="dashboardShowSpecializationsLabel">Show members' specializations:</div>
+      <input id="showSpecializationsChk" data-on="success" type="checkbox" />
+   </div>
+   <div role="tutorial" id="dashboardType"></div>
+</div>
 
 <div id="board-alert-container"></div>
 <div id="board-container"></div>
@@ -191,7 +201,7 @@
             <div class="panel-body listed-task">
                <?php foreach ($tasks as $task) : ?>
                <p>
-                  <a type="unassigned-task" id="<?php echo $task->id; ?>" task-id="<?php echo $task->id; ?>" href="<?php echo $this->serverUrl(true)."/editTask/".$task->id; ?>"><?php echo $task->name; ?></a>
+                  <a type="unassigned-task" id="<?php echo $task->id; ?>" task-id="<?php echo $task->id; ?>" href="<?php echo $this->serverUrl(true)."/taskDetails/".$task->id; ?>"><?php echo $task->name; ?></a>
                <p>
                <?php endforeach; ?>
             </div>
@@ -205,8 +215,10 @@
                <?php foreach ($members as $member) : ?>
                <p>
                   <?php echo $member->username; ?>
-                  <?php if($isManager && $member->id != $userId) : ?>
-                     <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>">Remove</a>
+                  <?php if($member->id != $userId) : ?>
+                     <?php if($isCreator || ($isManager && !$member->isAdmin)) : ?>
+                         - <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>">Remove</a>
+                     <?php endif; ?>
                   <?php endif; ?>
                </p>
                <?php endforeach; ?>
@@ -216,7 +228,7 @@
    </div>
 </div>
 
-<script>
+<script type="text/javascript">
    function loadBoardViewMembers() {
       $('#board-container').load(<?php echo '"'.$this->serverUrl(true) . '/boardViewMembers"'; ?>);
    }
@@ -229,26 +241,48 @@
    function expandEventDetails(eventId, type) {
       // Hide event's details if they was shown.
       if ($('#eventDetails' + eventId + type).is(":visible")) {
-         $('#toggleEventDetails' + eventId + type).attr("src", "/img/expand_event.svg");
+         $('#toggleEventDetails' + eventId + type).attr("src", "/img/plus.svg");
          $('#divEventDetails' + eventId + type).slideUp("fast", function() {
             $('#eventDetails' + eventId + type).hide();
          });
       }
       // Otherwise show them.
       else {
-         $('#toggleEventDetails' + eventId + type).attr("src", "/img/collapse_event.svg");
+         $('#toggleEventDetails' + eventId + type).attr("src", "/img/minus.svg");
          $('#eventDetails' + eventId + type).show();
          $('#divEventDetails' + eventId + type).slideDown("fast");
       }
    }
 
    $(document).ready(function() {
-     loadBoardViewMembers();
+      loadBoardViewMembers();
 
-     // Enable tabbable tabs on the historical panel.
-     $("#historicalTabs a").click(function(event) {
-         event.preventDefault();
+      // Init Bootrstap Switch on the "show specializations" button.
+      $("#showSpecializationsChk").bootstrapSwitch({onColor: 'easygoing-on', offColor: 'easygoing-off'});
+      $("#showSpecializationsChk").bootstrapSwitch('state', showSpecializations);//(Cookie.get('showMembersSpecializations') == 1));
+
+      // Show/Hide specializations when the user swapped the specializations button.
+      $("#showSpecializationsChk").on('switchChange.bootstrapSwitch', function(event, state) {
+        // If button is on the 'On' position.
+        if (state) {
+           $(".membersSpecializations").slideDown("fast");
+           // Create a cookie, which is used to keep in memory the user's choice.
+           // It expires after 30 days.
+           Cookies.set('showMembersSpecializations', '1', {expires: 30});
+        }
+        else {
+           $(".membersSpecializations").slideUp("fast");
+           Cookies.set('showMembersSpecializations', '0', {expires: 30});
+        }
+      });
+
+     // Init Bootstrap's tooltip on project's buttons.
+     $('[data-toggle="tooltip"]').tooltip();
+
+      // Enable tabbable tabs on the historical panel.
+      $("#historicalTabs a").click(function(e) {
+         e.preventDefault();
          $(this).tab("show");
-     });
+      });
    });
 </script>

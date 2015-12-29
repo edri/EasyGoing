@@ -10,6 +10,7 @@ class Project
    public $startDate;
    public $deadLineDate;
    public $fileLogo;
+   public $creator;
 
    public function exchangeArray($data)
    {		
@@ -19,5 +20,6 @@ class Project
       $this->startDate  = (!empty($data['startDate'])) ? $data['startDate'] : null;
       $this->deadLineDate  = (!empty($data['deadLineDate'])) ? $data['deadLineDate'] : null;
       $this->fileLogo  = (!empty($data['fileLogo'])) ? $data['fileLogo'] : null;
+      $this->creator  = (!empty($data['creator'])) ? $data['creator'] : null;
    }
 }

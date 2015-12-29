@@ -7,6 +7,7 @@
    use Zend\Session\Container;
 
    $sessionUser = new container('user');
+	$controller = $this->controllerName();
 ?>
 
 <html lang="en">
@@ -19,31 +20,16 @@
          ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
       ?>
 
-        <!-- Styles -->
       <?php
-      	if ($_SERVER['APPLICATION_ENV'] == 'development')
-      	{
-      		echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
+         // Styles
+      	echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
                      ->prependStylesheet($this->basePath() . '/css/style.css')
                      ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datepicker.css')
                      ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datetimepicker.min.css')
                      ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap.min.css')
+                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-switch.min.css')
                      ->prependStylesheet($this->basePath() . '/css/libraries/contextmenu.css');
-
-      	}
-      	else
-      	{
-      		echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/logo.png'))
-                     ->prependStylesheet($this->basePath() . '/css/style.css')
-                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datepicker.css')
-                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap-datetimepicker.min.css')
-                     ->prependStylesheet($this->basePath() . '/css/libraries/bootstrap.min.css')
-                     ->prependStylesheet($this->basePath() . '/css/libraries/contextmenu.css');
-      	}
-      ?>
-
-        <!-- Scripts -->
-		<?php
+         // Scripts
 			echo $this->headScript()
                      ->prependFile($this->basePath() . '/js/utilities.js')
                      ->prependFile($this->basePath() . '/js/libraries/bootbox.js')
@@ -51,6 +37,7 @@
                      ->prependFile($this->basePath() . '/js/libraries/jquery.contextmenu.js')
                      ->prependFile($this->basePath() . '/js/libraries/bootstrap-datepicker.js')
                      ->prependFile($this->basePath() . '/js/libraries/bootstrap.min.js')
+                     ->prependFile($this->basePath() . '/js/libraries/bootstrap-switch.min.js')
                      ->prependFile($this->basePath() . '/js/libraries/jquery.min.js')
                      ->prependFile($this->basePath() . '/js/tuto.js');
 
@@ -71,16 +58,28 @@
                 // words, check if the panel's scrolling's height is larger than
                 // the panel's height.
                 var isScrollBarExisting = (document.getElementById("mainContent").scrollHeight > $("#mainContainer").height());
+                // Get mouse wheel's delta (the amount of "strength" ; can be positive
+                // or negative).
+                var oEvent = e.originalEvent, delta  = oEvent.deltaY || oEvent.wheelDelta;
+
                 // Simulate the scroll only if the user's cursor is out of the main
                 // content's panel and if there is a scrollbar.
                 if (!$("#mainContent").is(":hover") && isScrollBarExisting)
                 {
-                   // Get mouse wheel's delta (the amount of "strength").
-                   var oEvent = e.originalEvent, delta  = oEvent.deltaY || oEvent.wheelDelta;
                    // If there is a delta, simulate the main content's panel's scrolling.
                    if (delta) {
                       $("#mainContent").scrollTop($("#mainContent").scrollTop() + 30 * (delta < 0 ? -1 : 1));
                    }
+                }
+                // If the header is hidden and there is no scrollbar (can occur when the
+                // scrollzone has exactly the same height as the header) and the user
+                // scrolled up, show it.
+                else if (delta < 0 && !isScrollBarExisting && isHeaderHidden)
+                {
+                   $("#header").slideDown(300, function() {
+                      isHeaderHidden = false;
+                   });
+                   $("#mainContainer").removeClass("noMarginTop");
                 }
              });
 
@@ -124,18 +123,18 @@
     <body>
    	<div class="header" id="header">
    	   <div class="container">
-   	      <a href="/" class="title"><img class="logo" src="<?php echo $this->basePath('img/title.svg'); ?>" height=70 /></a>
+   	      <a href="/" class="title" style="outline: 0 none;"><img class="logo" src="<?php echo $this->basePath('img/title.svg'); ?>" height=70 /></a>
             <div class="headerLinks">
    		  <?php
    		  	if ($sessionUser && $sessionUser->connected)
    			{
    		  ?>
-   			   <a href="<?php echo $this->basePath('projects'); ?>" class="btn btnHeaderSelected btn-link" type="button">Projects</a>
-               <a href="<?php echo $this->basePath('edit'); ?>" class="btn btnHeader btn-link" type="button">Account</a>
+   			   <a href="<?php echo $this->basePath('projects'); ?>" class="btn btnHeader<?php if ($controller == "Application\Controller\Project" || $controller == "Application\Controller\Projects") echo "Selected" ?> btn-link" type="button">Projects</a>
+               <a href="<?php echo $this->basePath('edit'); ?>" class="btn btnHeader<?php if ($controller == "Application\Controller\User") echo "Selected" ?> btn-link" type="button">Account</a>
            <?php
             }
            ?>
-               <a href="<?php echo $this->basePath('about/help'); ?>" class="btn btnHeader btn-link" type="button">Help</a>
+               <a href="<?php echo $this->basePath('about/help'); ?>" class="btn btnHeader<?php if ($controller == "Application\Controller\About") echo "Selected" ?> btn-link" type="button">Help</a>
             </div>
            <?php
     		  	if ($sessionUser && $sessionUser->connected)

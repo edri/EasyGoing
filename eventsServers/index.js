@@ -29,9 +29,10 @@ var socketServer = ws.createServer(function(connection) {
 			switch (data.messageType) {
 				// When an user accessed a project page.
 				case "projectListeningRequest":
-					console.log("WEBSOCKET: adding current connection to project #" + data.projectId + "...");
-					// Set current connection's project.
+					console.log("WEBSOCKET: user #" + data.userId + " joined project #" + data.projectId + "...");
+					// Set current connection's project and user's ID.
 					connection.projectId = data.projectId;
+					connection.userId = data.userId;
 					// Indicate that the connection is a project one.
 					connection.connectionType = PROJECT_CONNECTION;
 					break;
@@ -42,9 +43,10 @@ var socketServer = ws.createServer(function(connection) {
 					break;
 				// When the user accessed a task's details page.
 				case "taskListeningRequest":
-					console.log("WEBSOCKET: adding current connection to task #" + data.taskId + " of project #" + data.projectId + "...");
-					// Set current connection's task.
+					console.log("WEBSOCKET: user #" + data.userId + " joined task #" + data.taskId + " of project #" + data.projectId + "...");
+					// Set current connection's task and user's ID.
 					connection.taskId = data.taskId;
+					connection.userId = data.userId;
 					// Indicate that the connection is a project one.
 					connection.connectionType = TASK_CONNECTION;
 					break;
@@ -57,7 +59,12 @@ var socketServer = ws.createServer(function(connection) {
 	});
 
 	connection.on("close", function(code, reason) {
-		console.log("WEBSOCKET: a client left the server.");
+		if (this.userId) {
+			console.log("WEBSOCKET: user #" + this.userId + " left the server.");
+		}
+		else {
+			console.log("WEBSOCKET: somebody left the server.")
+		}
 	});
 }).listen(SOCKET_PORT);
 
@@ -146,6 +153,30 @@ function sendTaskEdition(taskId, taskData) {
 	})
 }
 
+// Send a websocket to every users that currently are in the project in which a
+// member has been removed so the removed one will be redirected out of the project.
+// Parameters:
+//		- projectId: the project's ID in which the member has been removed.
+//		- memberId: the removed member's ID.
+//		- username: the name of the user who removed the member.
+function sendMemberRemove(projectId, memberId, username) {
+	var data = {
+		"messageType": "memberRemoved",
+		"projectId": projectId,
+		"memberId": memberId,
+		"username": username
+	};
+
+	console.log("WEBSOCKET: send member #" + memberId + "'s remove message to every concerned clients...");
+
+	socketServer.connections.forEach(function(connection) {
+		// Check every connection's project's ID and send message to the right ones.
+		if (connection.connectionType === PROJECT_CONNECTION && connection.projectId === projectId) {
+			connection.sendText(JSON.stringify(data));
+		}
+	})
+}
+
 /*****************************************************************************************/
 
 // Handle HTTP server requests.
@@ -193,6 +224,11 @@ function handleRequest(req, res) {
 						console.log("HTTP: received a task's edition message.");
 						var taskData = JSON.parse(fields.data);
 						sendTaskEdition(fields.taskId, taskData);
+						break;
+					// Occurs when a manager removed a member from a project.
+					case "memberRemoved":
+						console.log("HTTP: received a member's remove message.");
+						sendMemberRemove(fields.projectId, fields.memberId, fields.username);
 						break;
 				}
 

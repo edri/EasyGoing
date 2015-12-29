@@ -21,6 +21,11 @@ a:focus {
    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(153, 85, 39, 0.6);
 }
 
+.bootstrap-switch.bootstrap-switch-focused {
+   border-color: #995527;
+   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(153, 85, 39, 0.6);
+}
+
 
 /* HEADER BAR */
 
@@ -180,6 +185,12 @@ title:focus,
    float: right;
 }
 
+.newProjectImg {
+   height: 30px;
+   margin-left: 10px;
+   width: 30px;
+}
+
 .projectsToolsTable {
    width: 100%;
 }
@@ -248,34 +259,26 @@ title:focus,
    display: none;
 }
 
-.managerTd {
+.rightProjectTd {
    text-align: right;
 }
 
-.editProjectLink:focus,
-.editProjectLink:active {
+.projectLink:focus,
+.projectLink:active {
    outline: 0 none;
 }
 
-.editProjectIcon {
+.editProjectIcon, .managerIcon, .gotoIcon {
    height: 40px;
    width: 40px;
    transition: height 200ms, width 200ms;
-}
-
-.editProjectIcon:hover {
-   height: 50px;
-   width: 50px;
 }
 
 .managerIcon {
    cursor: default;
-   height: 40px;
-   width: 40px;
-   transition: height 200ms, width 200ms;
 }
 
-.managerIcon:hover {
+.editProjectIcon:hover, .gotoIcon:hover, .managerIcon:hover {
    height: 50px;
    width: 50px;
 }
@@ -358,6 +361,20 @@ th {
    height: 150px;
    margin-right: 75px;
    width: 150px;
+}
+
+.specTitle {
+   margin-bottom: 30px;
+   margin-top: 20px;
+}
+
+.newSpecButton {
+   cursor: pointer;
+}
+
+.newSpecImg {
+   height: 20px;
+   width: 20px;
 }
 
 hr {
@@ -544,7 +561,35 @@ hr {
 }
 
 .boardButtons {
+   height: 35px;
+   margin-bottom: 20px;
    margin-top: 35px;
+   width: 100%;
+}
+
+.dashboardViewType {
+   float: left;
+}
+
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-easygoing-on {
+  color: #fff;
+  background: #995527;
+}
+
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-easygoing-off {
+   color: #5a2706;
+   background: #ffeadb;
+}
+
+.dashboardShowSpecializations {
+   float: right;
+   margin-right: 15px;
+}
+
+.dashboardShowSpecializationsLabel {
+   float: left;
+   margin-right: 10px;
+   margin-top: 6px;
 }
 
 .board,
@@ -562,6 +607,7 @@ hr {
    margin: 0;
    border: 1px solid #666;
    padding: 5px;
+   vertical-align: middle;
    width: 270px;
 }
 
@@ -706,11 +752,30 @@ hr {
 }
 
 .memberName {
+   font-size: 20px;
    margin-bottom: 0;
 }
 
 .memberUsername {
+   font-size: 14px;
+}
+
+.membersSpecializations {
    font-size: 12px;
+   font-style: italic;
+   margin-bottom: 10px;
+}
+
+.add-user:hover {
+   cursor: pointer;
+}
+
+.add-user-selected {
+   background-color: #E5AC86;
+}
+
+.spe {
+   margin: 10px;
 }
 
 /** ===== FIN BOARD ===== **/

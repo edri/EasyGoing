@@ -40,7 +40,12 @@ CREATE TABLE projects
     startDate DATE NOT NULL,
     deadLineDate DATE,
     fileLogo VARCHAR(50),
-    PRIMARY KEY(id)
+
+    creator INT,
+
+    PRIMARY KEY(id),
+
+    FOREIGN KEY(creator) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE tasks
@@ -158,7 +163,7 @@ DROP VIEW IF EXISTS view_projects_min;
 
 CREATE VIEW view_projects_min AS
 (
-	SELECT p.id, p.name, p.fileLogo, pu.user AS userId, pu.isAdmin
+	SELECT p.id, p.name, p.fileLogo, pu.user AS userId, pu.isAdmin, p.creator
 	FROM projectsUsersMembers as pu
 		INNER JOIN projects AS p ON p.id = pu.project
 	ORDER BY p.name	 
@@ -177,8 +182,8 @@ CREATE VIEW view_projects_members_specializations AS
 			ON u.id = pus.user AND pus.project = pum.project
 );
 
+/* This view show all the members of a project (but without specializations) */
 DROP VIEW IF EXISTS view_users_projects;
-
 CREATE VIEW view_users_projects AS
 (
 	SELECT * 
@@ -186,6 +191,7 @@ CREATE VIEW view_users_projects AS
 	INNER JOIN projectsUsersMembers ON users.id = projectsUsersMembers.user
 );
 
+/* This view show all of the task for a user */
 DROP VIEW IF EXISTS view_users_tasks;
 CREATE VIEW view_users_tasks AS
 (
@@ -194,6 +200,7 @@ CREATE VIEW view_users_tasks AS
 		ON ut.task = t.id
 );
 
+/* This view show all of the task for a user */
 DROP VIEW IF EXISTS view_tasks_users;
 CREATE VIEW view_tasks_users AS
 (
@@ -202,6 +209,7 @@ CREATE VIEW view_tasks_users AS
       ON u.id = ut.user
 );
 
+/* This view show the projects with some details and the members of this project */
 DROP VIEW IF EXISTS view_projects_details;
 CREATE VIEW view_projects_details AS
 (
@@ -210,6 +218,7 @@ CREATE VIEW view_projects_details AS
 		ON p.id = pu.project
  );
 
+ /* This view show events for a project (task event or project event) */
 DROP VIEW IF EXISTS view_events;
 CREATE VIEW view_events AS
     (SELECT 
@@ -492,7 +501,7 @@ VALUES(
 	"Thibault",
 	"Duchoud",
 	"default.png",
-	true, false, null
+	false, false, null
 );
 
 INSERT INTO users
@@ -540,21 +549,23 @@ FROM users
 WHERE username = 'vanessameguep';
 
 /* Create some projects */
-INSERT INTO projects(name, description, startDate, deadLineDate, fileLogo) VALUES
+INSERT INTO projects(name, description, startDate, deadLineDate, fileLogo, creator) VALUES
 (
 	"Travail de Bachelor",	
 	"Un projet difficile... Mais intéressant !", 
 	"2015-01-26", 
 	"2016-10-04",
-	"default.png"
+	"default.png",
+   5
 );
 
-INSERT INTO projects(name, description, startDate, fileLogo) VALUES
+INSERT INTO projects(name, description, startDate, fileLogo, creator) VALUES
 (
 	"TWEB Liechti Moustache Project",
 	"Description is too long and unuseful...",
 	"2015-03-06",
-	"default.png"
+	"default.png",
+   4
 );
 
 SELECT id INTO @project1
@@ -592,35 +603,32 @@ INSERT INTO eventTypes(type, fileLogo, isTaskTag) VALUES("Error", "error.svg", 1
 INSERT INTO events VALUES(1, NOW(), "<u>raphaelracine</u> created the project.", 1, NULL);
 INSERT INTO eventsOnProjects VALUES(1, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 1);
-INSERT INTO events VALUES(2, NOW(), "<u>raphaelracine</u> joined the project.", 3, NULL);
+INSERT INTO events VALUES(2, NOW(), "<u>raphaelracine</u> (<font color='green'>manager</font>) joined the project with specialization(s) \"<b>Base de données</b>\", \"<b>Programmation répartie</b>\".", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(2, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 2);
-INSERT INTO events VALUES(3, NOW(), "<u>raphaelracine</u> created the project.", 1, NULL);
+INSERT INTO events VALUES(3, NOW(), "<u>manamiz</u> created the project.", 1, NULL);
 INSERT INTO eventsOnProjects VALUES(3, @project2);
-INSERT INTO eventsUsers VALUES(@user1, 3);
-INSERT INTO events VALUES(4, NOW(), "<u>raphaelracine</u> joined the project.", 3, NULL);
+INSERT INTO eventsUsers VALUES(@user4, 3);
+INSERT INTO events VALUES(4, NOW(), "<u>manamiz</u> (<font color='green'>manager</font>) joined the project with specialization(s) \"<b>Node JS</b>\".", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(4, @project2);
-INSERT INTO eventsUsers VALUES(@user1, 4);
+INSERT INTO eventsUsers VALUES(@user4, 4);
 
 
-INSERT INTO events VALUES(5, NOW(), "<u>raphaelracine</u> added user <u>karimghozlani</u> in project.", 3, NULL);
+INSERT INTO events VALUES(5, NOW(), "<u>raphaelracine</u> added user <u>karimghozlani</u> with specialization(s) \"<b>Java 8</b>\".", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(5, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 5);
-INSERT INTO events VALUES(6, NOW(), "<u>raphaelracine</u> added user <u>edri</u> in project.", 3, NULL);
+INSERT INTO events VALUES(6, NOW(), "<u>raphaelracine</u> added user <u>edri</u> (<font color='green'>manager</font>) with specialization(s) \"<b>Programmation C++</b>\".", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(6, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 6);
-INSERT INTO events VALUES(7, NOW(), "<u>raphaelracine</u> added user <u>thibaudduchoud</u> in project.", 3, NULL);
+INSERT INTO events VALUES(7, NOW(), "<u>raphaelracine</u> added user <u>manamiz</u> with no specialization.", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(7, @project1);
 INSERT INTO eventsUsers VALUES(@user1, 7);
 
-INSERT INTO events VALUES(8, NOW(), "<u>raphaelracine</u> added user <u>edri</u> in project.", 3, NULL);
+INSERT INTO events VALUES(8, NOW(), "<u>manamiz</u> added user <u>edri</u> with specialization(s) \"<b>Base de données</b>\", \"<b>Styles CSS</b>\".", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(8, @project2);
-INSERT INTO eventsUsers VALUES(@user1, 8);
-INSERT INTO events VALUES(9, NOW(), "<u>raphaelracine</u> added user <u>thibaudduchoud</u> in project.", 3, NULL);
-INSERT INTO eventsOnProjects VALUES(9, @project2);
-INSERT INTO eventsUsers VALUES(@user1, 9);
-INSERT INTO events VALUES(10, NOW(), "<u>raphaelracine</u> added user <u>vanessameguep</u> in project.", 3, NULL);
+INSERT INTO eventsUsers VALUES(@user4, 8);
+INSERT INTO events VALUES(10, NOW(), "<u>manamiz</u> added user <u>vanessameguep</u> with specialization(s) \"<b>Internet Explorer</b>\".", 3, NULL);
 INSERT INTO eventsOnProjects VALUES(10, @project2);
-INSERT INTO eventsUsers VALUES(@user1, 10);
+INSERT INTO eventsUsers VALUES(@user4, 10);
 
 SET GLOBAL log_bin_trust_function_creators = 0;
