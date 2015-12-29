@@ -141,6 +141,7 @@ $(document).ready(function() {
       .done(function(data) {
          var data = JSON.parse(data);
 
+
          if(!data.hasRightToMoveTask) {
             addBootstrapAlert('board-alert-container', 'You do not have the right to move this task because you are either not manager or this task is not assigned to you.', 'danger');
             

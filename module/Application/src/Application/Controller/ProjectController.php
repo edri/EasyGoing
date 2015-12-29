@@ -763,9 +763,11 @@ class ProjectController extends AbstractActionController
       // Get POST data
       $data = $this->getRequest()->getPost();
 
-      // Check if current user has rights to move the task
-      if($this->_userIsAdminOfProject($sessionUser->id, $projectId)
-        || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['taskId']))
+      // If he's super admin or he's manager and the other is not manager or he's assign to task and it's his assign to him
+      if($this->_userIsCreatorOfProject($sessionUser->id, $projectId)
+         || $this->_userIsAdminOfProject($sessionUser->id, $projectId) && !$this->_userIsAdminOfProject($data['oldMemberId'], $projectId)
+         || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['taskId']) 
+            && $sessionUser->id == $data['oldMemberId'])
       {
          $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
 
@@ -846,7 +848,9 @@ class ProjectController extends AbstractActionController
       $data = $this->getRequest()->getPost();
       $resMessage = 'Unassign success';
 
-      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
+      if($this->_userIsCreatorOfProject($sessionUser->id, $projectId)
+         || $this->_userIsAdminOfProject($sessionUser->id, $projectId) && !$this->_userIsAdminOfProject($data['oldMemberId'], $projectId)
+         || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['userId']))
       {
          // Get task's old affectation and section before erasing them.
          $oldUsername = $this->_getTable("UserTable")->getUserById($this->_getTable('UsersTasksAffectationsTable')->getAffectationByTaskId($data['taskId'])->user)->username;
