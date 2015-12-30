@@ -105,26 +105,12 @@
         </div>
   </div>
   <div class="form-group">
-       <label class="control-label col-sm-2" for="picture">Picture </label>
-       <div>
-        <input id="input-21" type="file" accept="image/*" class="file-loading" name="picture" value="10485760" >
-          <script>
-          $(document).on('ready', function() {
-              $("#input-21").fileinput({
-                  previewFileType: "image",
-                  browseClass: "btn btn-success",
-                  browseLabel: "Pick Image",
-                  browseIcon: "<i class=\"glyphicon glyphicon-picture\"></i> ",
-                  removeClass: "btn btn-danger",
-                  removeLabel: "Delete",
-                  removeIcon: "<i class=\"glyphicon glyphicon-trash\"></i> ",
-                  uploadClass: "btn btn-info",
-                  uploadLabel: "Upload",
-                  uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i> "
-              });
-          });
-          </script>
-       </div>
+  <label class="control-label col-sm-2" for="picture">Picture</label>
+    <div class="col-sm-10">
+       <p class="logoInformation">Priorize a <b>squared</b> picture - Maximum size of <b>5 MB</b> - Allowed extensions: <b>"jpeg", "jpg" or "png"</b>.</p>
+    <input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
+    <input id="picture" name="picture" type="file" />
+    </div> 
   </div>
   <div class="form-group" >
      <label class="checkbox-inline col-sm-2"><input for="wantTutorial" type="checkbox" name="wantTutorial" value="<?php if (isset($wantTutorial)) echo $this->escapeHtml($wantTutorial); ?>">Tutorial</label>

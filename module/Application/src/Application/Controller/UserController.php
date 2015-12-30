@@ -378,7 +378,7 @@ class UserController extends AbstractActionController
 		$user = $this->_getUserTable()->getUserById($sessionUser->id);
 		$request = $this->getRequest();
 		define("SUCCESS_MESSAGE", "ok");
-      $result = SUCCESS_MESSAGE;
+      	$result = SUCCESS_MESSAGE;
 		$successfulEdition = "";
 
 		if ($request->isPost())
@@ -389,9 +389,16 @@ class UserController extends AbstractActionController
             $fName = $_POST["fName"];
             $lName= $_POST["lName"];
             $email =  $_POST["email"];
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+            {
+            	$result = 'errorEmailInvalid';
+            	return new ViewModel(array(
+						'error' 			=> $result
+				));
+            }
             if(isset($_POST["wantTutorial"]))
             {
-            	$wantTutorial = $_POST["wantTutorial"];
+            	$wantTutorial = 1;
             }
          	else
          	{
@@ -399,7 +406,7 @@ class UserController extends AbstractActionController
          	}
 			if(isset($_POST["wantNotifications"]))
             {
-            	$wantNotifications = $_POST["wantNotifications"];
+            	$wantNotifications = 1;
             }
          	else
          	{
@@ -427,18 +434,90 @@ class UserController extends AbstractActionController
             	$this->_getUserTable()->updateUserPassword($id, $this->_hashPassword($password));
             }
 
-            $picture = $_POST["picture"];
-         	//update user's information in DB
+            $picture = $_POST["picture"];            
+            // If the user mentioned a picture, validate it.
+            if (empty($_FILES["picture"]["name"]))
+            {
+               // Allowed file's extensions.
+               $allowedExts = array("jpeg", "JPEG", "jpg", "JPG", "png", "PNG");
+               // Get the file's extension.
+               $temp = explode(".", $_FILES["picture"]["name"]);
+               $extension = end($temp);
+               // Validates the file's size.
+               if ($_FILES["picture"]["size"] > 5 * 1024 * 1024 || !$_FILES["picture"]["size"])
+               {
+                  	$result = 'errorPictureSize';
+            		return new ViewModel(array(
+						'error' 			=> $result
+					));
+               }
+                  // Validates the file's type.
+               else if (($_FILES["picture"]["type"] != "image/jpeg") &&
+                  ($_FILES["picture"]["type"] != "image/jpg") &&
+                  ($_FILES["picture"]["type"] != "image/pjpeg") &&
+                  ($_FILES["picture"]["type"] != "image/x-png") &&
+                  ($_FILES["picture"]["type"] != "image/png"))
+               {
+                  $result = "errorPictureType";
+            	  return new ViewModel(array(
+						'error' 			=> $result
+				  ));
+               }
+               // Validates the file's extension.
+               else if (!in_array($extension, $allowedExts))
+               {
+                  $result = "errorPictureExtension";
+              		return new ViewModel(array(
+						'error' 			=> $result
+					));
+               }
+               // Check that there is no error in the file.
+               else if ($_FILES["picture"]["error"] > 0)
+               {
+                  $result = "errorPicture";
+            	  return new ViewModel(array(
+						'error' 			=> $result
+				  ));
+               }
+                  // If the file is valid, upload the picture.
+               else
+               {
+                  try
+                  {
+                     // Generate a time-based unique ID, and check that this file's name doesn't exist yet.
+                     do
+                     {
+                        $fileName = uniqid() . ".png";
+                     }
+                     while (file_exists(getcwd() . "/public/img/users/" . $fileName));
+								// First move the temporary uploaded file in the server's directory to
+                        // avoid some extensions issues with some OS.
+                        move_uploaded_file($_FILES['picture']['tmp_name'], getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
+                     // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
+                     $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 150);
+                  }
+                  catch (\Exception $e)
+                  {
+                     $result = "errorFilesUpload";
+             		 return new ViewModel(array(
+						'error' 			=> $result
+					 ));
+                  }
+							// Delete the temporary file if it exists.
+							if (file_exists(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]))
+								unlink(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
+               }
+            }
 
-         	if($this->_getUserTable()->checkIfMailExists($email))
+         	if($this->_getUserTable()->checkIfMailExists($email)&& $email != $user->email)
          	{
          		$result = 'errorEmailAlreadyExists';
             	return new ViewModel(array(
 						'error' 			=> $result
 				));
          	}
-
-         	$this->_getUserTable()->updateUser($id, $fName, $lName, $email, $picture, $wantTutorial, $wantNotifications);
+			//update user's information in DB
+         	$this->_getUserTable()->updateUser($id, $fName, $lName, $email, isset($fileName) ? $fileName : "default.png", $wantTutorial, $wantNotifications);
          	$successfulEdition = "successfulEdition";
         }
 
