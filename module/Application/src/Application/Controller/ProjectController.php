@@ -410,12 +410,20 @@ class ProjectController extends AbstractActionController
    public function addTaskAction()
    {
       $request = $this->getRequest();
+      
+      $projectId = $this->params('id');
+
+      if($this->params('otherId'))
+      {
+         if($this->_getTable('TaskTable')->getTaskById($this->params('otherId'))->parentTask)
+            $this->redirect()->toRoute('project', array(
+               'id' => $projectId
+            ));
+      }
 
       if($request->isPost())
       {
          $sessionUser = new container('user');
-
-         $projectId = $this->params('id');
          $name = $_POST["name"];
          $description = $_POST["description"];
          $priority = $_POST["priority"];
@@ -478,6 +486,8 @@ class ProjectController extends AbstractActionController
              'id' => $projectId
          ));
       }
+
+
 
       return new ViewModel(array(
          'isSubTask' => $this->params('otherId') ? true : false
