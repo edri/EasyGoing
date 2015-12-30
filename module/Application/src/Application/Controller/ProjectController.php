@@ -126,7 +126,13 @@ class ProjectController extends AbstractActionController
       $sessionUser = new container('user');
       $projectId = $this->params('id');
       $project = $this->_getTable('ProjectTable')->getProject($projectId);
-      $tasksInProject = $this->_getTable('TaskTable')->getAllTasksInProject($projectId);
+      $parentTasksInProject = $this->_getTable('TaskTable')->getAllParentTasksInProject($projectId);
+      $subTasks = array();
+      foreach($parentTasksInProject as $parentTask)
+      {
+         $subTasks[$parentTask->id] = $this->_getTable('TaskTable')->getSubTasks($parentTask->id);
+      }
+
       $membersOfProject = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($projectId);
       // Get projects' events types.
       $eventsTypes = $this->_getTable('EventTypeTable')->getTypes(false);
@@ -140,7 +146,8 @@ class ProjectController extends AbstractActionController
 
       return new ViewModel(array(
          'project'               => $project,
-         'tasks'                 => $tasksInProject,
+         'tasks'                 => $parentTasksInProject,
+         'subTasks'              => $subTasks,
          'members'               => $membersOfProject,
          'eventsTypes'           => $eventsTypes,
          'events'                => $events,
@@ -415,10 +422,12 @@ class ProjectController extends AbstractActionController
          $deadline = $_POST["deadline"];
          $duration = $_POST["duration"];
 
-         if(isset($_POST["name"]) && isset($_POST["priority"]) && isset($_POST["duration"]) && is_int($_POST["duration"]))
+         if(isset($_POST["name"]) && isset($_POST["priority"]) && isset($_POST["duration"]))
          {
-            $taskId = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId);
-            $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $taskId);
+            $taskId = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId, $this->params('otherId') ? $this->params('otherId') : null);
+            
+            if(!$this->params('otherId'))
+               $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $taskId);
 
             // If task was successfully added, add two task's creation events: one for
             // the project's history, and another for the new task's news feed.

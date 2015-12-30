@@ -20,6 +20,13 @@ class TaskTable
       ))->current();
    }
 
+   public function getSubtasks($parentId)
+   {
+      return $this->_tableGateway->select(array(
+         'parentTask' => $parentId
+      ))->buffer();
+   }
+
    public function updateTask($name, $description, $deadlineDate, $durationsInHours, $priorityLevel, $taskId)
    {
       $this->_tableGateway->update(array(
@@ -53,6 +60,14 @@ class TaskTable
    {
       return $this->_tableGateway->select(array(
          'project' => $projectId
+      ))->buffer();
+   }
+
+   public function getAllParentTasksInProject($projectId)
+   {
+      return $this->_tableGateway->select(array(
+         'project'    => $projectId,
+         'parentTask' => null
       ))->buffer();
    }
 

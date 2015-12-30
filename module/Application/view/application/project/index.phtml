@@ -209,6 +209,9 @@
                <?php foreach ($tasks as $task) : ?>
                <p>
                   <a type="unassigned-task" id="<?php echo $task->id; ?>" task-id="<?php echo $task->id; ?>" href="<?php echo $this->serverUrl(true)."/taskDetails/".$task->id; ?>"><?php echo $task->name; ?></a>
+                  <?php foreach ($subTasks[$task->id] as $subTask) : ?>
+                     <p style="margin-left: 10px;"><?php echo $subTask->name; ?></p>
+                  <?php endforeach; ?>
                <p>
                <?php endforeach; ?>
             </div>
@@ -224,7 +227,7 @@
                   <?php echo $member->username; ?>
                   <?php if($member->id != $userId) : ?>
                      <?php if($isCreator || ($isManager && !$member->isAdmin)) : ?>
-                         - <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>" class="confirmation">Remove</a>
+                        - <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>" class="confirmation">remove</a>
                      <?php endif; ?>
                   <?php endif; ?>
                </p>
