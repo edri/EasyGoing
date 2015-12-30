@@ -9,7 +9,7 @@ TODO : COMPOSER
 4. 	Ajouter un vhost dans httpd-vhosts.conf
 		<VirtualHost *:80>
 			ServerName easygoing
-			DocumentRoot "REPERTOIRE_DE_WAMP/www/EasyGoing/public" # ATTENTION A METTRE DES "/" ET NON DES "\" !
+			DocumentRoot "REPERTOIRE_DE_WAMP/www/EasyGoing/public" # ATTENTION A METTRE DES "/" ET NON DES "\" ; ne pas oublier de changer REPERTOIRE_DE_WAMP !
 			SetEnv APPLICATION_ENV "development"
 			<Directory "REPERTOIRE_DE_WAMP/www/EasyGoing/public">
 				DirectoryIndex index.php
