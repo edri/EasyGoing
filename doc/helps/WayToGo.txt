@@ -19,6 +19,7 @@ TODO : COMPOSER
 				Require all granted
 			</Directory>
 		</VirtualHost>
+5. 	Configurer la DB (cf. premier paragraphe de "ComminicateWithDatabase.txt").
 
 5.	Linux :  
 		cd /opt/lampp
