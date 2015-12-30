@@ -668,7 +668,7 @@ class ProjectController extends AbstractActionController
    public function boardViewTasksAction()
    {
       // Get tasks in a project
-      $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
+      $tasks = $this->_getTable('TaskTable')->getAllParentTasksInProject($this->params('id'));
 
       // Get user(s) doing a task
       $arrayMembersForTask = array();
