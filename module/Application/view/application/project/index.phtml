@@ -210,7 +210,11 @@
                <p>
                   <a type="unassigned-task" id="<?php echo $task->id; ?>" task-id="<?php echo $task->id; ?>" href="<?php echo $this->serverUrl(true)."/taskDetails/".$task->id; ?>"><?php echo $task->name; ?></a>
                   <?php foreach ($subTasks[$task->id] as $subTask) : ?>
-                     <p style="margin-left: 10px;"><?php echo $subTask->name; ?></p>
+                     <p style="margin-left: 10px;">
+                        <?php echo $subTask->name; ?>
+                        - <a href="<?php echo $this->serverUrl(true)."/editTask/".$subTask->id; ?>">edit</a>
+                        - <a onclick="deleteTask(<?php echo $subTask->id; ?>)" style="cursor: pointer;">delete</a>
+                     </p>
                   <?php endforeach; ?>
                <p>
                <?php endforeach; ?>
@@ -262,6 +266,18 @@
          $('#eventDetails' + eventId + type).show();
          $('#divEventDetails' + eventId + type).slideDown("fast");
       }
+   }
+
+   function deleteTask(taskId) {
+      bootbox.confirm("Are you sure you want to delete this task ?", function(result) {
+         if(result === true) {
+            var previousLocation = window.location.href;
+
+            $.get(window.location.href + '/deleteTask/' + taskId, function(data) {
+               window.location.href = previousLocation;
+            });
+         }
+      });
    }
 
    $(document).ready(function() {
