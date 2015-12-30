@@ -55,8 +55,7 @@ function eventRendering(type, event)
                <td></td>\
                <td>\
                   <div class="eventDetails" id="divEventDetails' + event.id + type + '">\
-                     <b>Details:</b>\
-                     <br/>' + event.details +
+                     <hr/>' + event.details +
                   '</div>\
                </td>\
             </tr>';

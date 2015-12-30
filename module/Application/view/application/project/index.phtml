@@ -53,8 +53,7 @@
                   <td></td>
                   <td>
                      <div class="eventDetails" id="divEventDetails' . $event->id . $type . '">
-                        <b>Details:</b>
-                        <br/>' . $event->details .
+                        <hr/>' . $event->details .
                      '</div>
                   </td>
                </tr>';
@@ -77,14 +76,22 @@
          class="imgProject" />
          Dashboard - <?php echo $project->name; ?>
    </h1>
+
 <?php
    if ($isManager)
    {
 ?>
-      <img class="managerDashboardIcon" data-toggle="tooltip" title="You are manager of this project." src="/img/manager.svg" />
       <a class="editProjectDashboardLink" href="/project/<?php echo $project->id; ?>/edit" id="editLink">
          <img class="editProjectDashboardIcon" data-toggle="tooltip" id="editImg" title="Edit the project..." src="/img/edit.svg" />
       </a>
+      <img class="dashboardButtonIcon" data-toggle="tooltip" title="You are manager of this project." src="/img/manager.svg" />
+<?php
+   }
+
+   if ($isCreator)
+   {
+?>
+      <img class="dashboardButtonIcon" data-toggle="tooltip" title="You are the creator and super administrator of this project." src="/img/creator.svg" />
 <?php
    }
 ?>
@@ -97,6 +104,8 @@
       <p><u>Description</u> : <?php echo $this->escapeHtml($project->description); ?></p>
       <p><u>Duration</u> : from <?php echo date('d.m.Y', strtotime($project->startDate)) . ' to ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
       <br/>
+        <div id="addTask" role="tutorial"></div>
+        <div id="addMember" role="tutorial"></div>
        <p>
          <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Add a task</a><br/>
          <?php if($isManager): ?>
@@ -104,9 +113,6 @@
          <?php endif; ?>
       </p>
    </div>
-
-    <div id="addTask" role="tutorial"></div>
-    <div id="addMember" role="tutorial"></div>
 
     <div class="rightPart">
         <div>
@@ -134,9 +140,10 @@
             </ul>
 
             <!-- Tab panes -->
+            <div role="tutorial" id="historical"></div>
+            
             <div class="tab-content historicalTab">
                <div role="tabpanel" class="tab-pane fade in active" id="all">
-               <div role="tutorial" id="historical"></div>
                <?php
                   foreach ($events as $e)
                   {
@@ -173,6 +180,7 @@
 
 <div class="boardButtons">
    <div class="btn-group dashboardViewType" data-toggle="buttons">
+    <div role="tutorial" id="dashboardType"></div>
       <label class="btn active btnEasygoing">
          <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
       </label>
@@ -184,7 +192,6 @@
       <div class="dashboardShowSpecializationsLabel">Show members' specializations:</div>
       <input id="showSpecializationsChk" data-on="success" type="checkbox" />
    </div>
-   <div role="tutorial" id="dashboardType"></div>
 </div>
 
 <div id="board-alert-container"></div>
@@ -202,6 +209,13 @@
                <?php foreach ($tasks as $task) : ?>
                <p>
                   <a type="unassigned-task" id="<?php echo $task->id; ?>" task-id="<?php echo $task->id; ?>" href="<?php echo $this->serverUrl(true)."/taskDetails/".$task->id; ?>"><?php echo $task->name; ?></a>
+                  <?php foreach ($subTasks[$task->id] as $subTask) : ?>
+                     <p style="margin-left: 10px;">
+                        <?php echo $subTask->name; ?>
+                        - <a href="<?php echo $this->serverUrl(true)."/editTask/".$subTask->id; ?>">edit</a>
+                        - <a onclick="deleteTask(<?php echo $subTask->id; ?>)" style="cursor: pointer;">delete</a>
+                     </p>
+                  <?php endforeach; ?>
                <p>
                <?php endforeach; ?>
             </div>
@@ -217,7 +231,7 @@
                   <?php echo $member->username; ?>
                   <?php if($member->id != $userId) : ?>
                      <?php if($isCreator || ($isManager && !$member->isAdmin)) : ?>
-                         - <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>">Remove</a>
+                        - <a href="<?php echo $this->serverUrl(true)."/removeMember/".$member->id; ?>" class="confirmation">remove</a>
                      <?php endif; ?>
                   <?php endif; ?>
                </p>
@@ -254,8 +268,28 @@
       }
    }
 
+   function deleteTask(taskId) {
+      bootbox.confirm("Are you sure you want to delete this task ?", function(result) {
+         if(result === true) {
+            var previousLocation = window.location.href;
+
+            $.get(window.location.href + '/deleteTask/' + taskId, function(data) {
+               window.location.href = previousLocation;
+            });
+         }
+      });
+   }
+
    $(document).ready(function() {
       loadBoardViewMembers();
+
+      $('.confirmation').on('click', function (e) {
+         e.preventDefault();
+         var href = $(this).attr('href');
+         bootbox.confirm('Are you sure to remove this member ? All tasks will be removed too !', function(result) {
+            if(result) window.location = href;
+         });
+      });
 
       // Init Bootrstap Switch on the "show specializations" button.
       $("#showSpecializationsChk").bootstrapSwitch({onColor: 'easygoing-on', offColor: 'easygoing-off'});

@@ -126,7 +126,13 @@ class ProjectController extends AbstractActionController
       $sessionUser = new container('user');
       $projectId = $this->params('id');
       $project = $this->_getTable('ProjectTable')->getProject($projectId);
-      $tasksInProject = $this->_getTable('TaskTable')->getAllTasksInProject($projectId);
+      $parentTasksInProject = $this->_getTable('TaskTable')->getAllParentTasksInProject($projectId);
+      $subTasks = array();
+      foreach($parentTasksInProject as $parentTask)
+      {
+         $subTasks[$parentTask->id] = $this->_getTable('TaskTable')->getSubTasks($parentTask->id);
+      }
+
       $membersOfProject = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($projectId);
       // Get projects' events types.
       $eventsTypes = $this->_getTable('EventTypeTable')->getTypes(false);
@@ -139,14 +145,15 @@ class ProjectController extends AbstractActionController
       $showSpecializations = isset($_COOKIE["showMembersSpecializations"]) && $_COOKIE["showMembersSpecializations"];
 
       return new ViewModel(array(
-         'project'      => $project,
-         'tasks'        => $tasksInProject,
-         'members'      => $membersOfProject,
-         'eventsTypes'  => $eventsTypes,
-         'events'       => $events,
-         'isManager'    => $isManagerOfProject,
-         'userId'       => $sessionUser->id,
-         'isCreator'    => $isCreatorOfProject,
+         'project'               => $project,
+         'tasks'                 => $parentTasksInProject,
+         'subTasks'              => $subTasks,
+         'members'               => $membersOfProject,
+         'eventsTypes'           => $eventsTypes,
+         'events'                => $events,
+         'isManager'             => $isManagerOfProject,
+         'userId'                => $sessionUser->id,
+         'isCreator'             => $isCreatorOfProject,
          'showSpecializations'   => $showSpecializations
       ));
    }
@@ -403,70 +410,88 @@ class ProjectController extends AbstractActionController
    public function addTaskAction()
    {
       $request = $this->getRequest();
+      
+      $projectId = $this->params('id');
+
+      if($this->params('otherId'))
+      {
+         if($this->_getTable('TaskTable')->getTaskById($this->params('otherId'))->parentTask)
+            $this->redirect()->toRoute('project', array(
+               'id' => $projectId
+            ));
+      }
 
       if($request->isPost())
       {
          $sessionUser = new container('user');
-
-         $projectId = $this->params('id');
          $name = $_POST["name"];
          $description = $_POST["description"];
          $priority = $_POST["priority"];
          $deadline = $_POST["deadline"];
          $duration = $_POST["duration"];
-         $sessionUser = new container('user');
 
-         $taskId = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId);
-         $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $taskId);
-
-         // If task was successfully added, add two task's creation events: one for
-         // the project's history, and another for the new task's news feed.
-         // For the project's history.
-         // First of all, get right event type.
-         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
-         // Then add the new event in the database.
-         $message =
-            "<u>" . $sessionUser->username . "</u> created task <font color=\"#FF6600\">" .
-            $name . "</font> and assigned it to <font color=\"black\">(" . $sessionUser->username . ", TODO)</font>.";
-         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
-         // Link the new event to the current project.
-         $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
-         // Finaly link the new event to the user who created it.
-         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
-         // Get event's data to send them to socket server.
-         $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
-         // For the task's news feed.
-         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
-         $message = "\"" . $sessionUser->username . "\" created the task.";
-         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
-         $this->_getTable("EventOnTaskTable")->add($eventId, $taskId);
-         // Get SYSTEM user's ID and link it to the new task's event.
-         $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
-         $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
-
-         try
+         if(isset($_POST["name"]) && isset($_POST["priority"]) && isset($_POST["duration"]))
          {
-            // Make an HTTP POST request to the event's server so he can broadcast a
-            // new websocket related to the new event.
-            $client = new Client('http://127.0.0.1:8002');
-            $client->setMethod(Request::METHOD_POST);
-            // Setting POST data.
-            $client->setParameterPost(array(
-               "requestType"        => "newEvent",
-               "event"              => json_encode($event)
-            ));
-            // Send HTTP request to server.
-            $response = $client->send();
-         }
-         catch (\Exception $e)
-         {
-            error_log("WARNING: could not connect to events servers. Maybe offline?");
+            $taskId = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId, $this->params('otherId') ? $this->params('otherId') : null);
+            
+            if(!$this->params('otherId'))
+               $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $taskId);
+
+            // If task was successfully added, add two task's creation events: one for
+            // the project's history, and another for the new task's news feed.
+            // For the project's history.
+            // First of all, get right event type.
+            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
+            // Then add the new event in the database.
+            $message =
+               "<u>" . $sessionUser->username . "</u> created task <font color=\"#FF6600\">" .
+               $name . "</font> and assigned it to <font color=\"black\">(" . $sessionUser->username . ", TODO)</font>.";
+            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+            // Link the new event to the current project.
+            $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+            // Finaly link the new event to the user who created it.
+            $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+            // Get event's data to send them to socket server.
+            $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+            // For the task's news feed.
+            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
+            $message = "\"" . $sessionUser->username . "\" created the task.";
+            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+            $this->_getTable("EventOnTaskTable")->add($eventId, $taskId);
+            // Get SYSTEM user's ID and link it to the new task's event.
+            $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
+            $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
+
+            try
+            {
+               // Make an HTTP POST request to the event's server so he can broadcast a
+               // new websocket related to the new event.
+               $client = new Client('http://127.0.0.1:8002');
+               $client->setMethod(Request::METHOD_POST);
+               // Setting POST data.
+               $client->setParameterPost(array(
+                  "requestType"        => "newEvent",
+                  "event"              => json_encode($event)
+               ));
+               // Send HTTP request to server.
+               $response = $client->send();
+            }
+            catch (\Exception $e)
+            {
+               error_log("WARNING: could not connect to events servers. Maybe offline?");
+            }
          }
 
          $this->redirect()->toRoute('project', array(
              'id' => $projectId
          ));
       }
+
+
+
+      return new ViewModel(array(
+         'isSubTask' => $this->params('otherId') ? true : false
+      ));
    }
 
    public function taskDetailsAction()
@@ -653,7 +678,7 @@ class ProjectController extends AbstractActionController
    public function boardViewTasksAction()
    {
       // Get tasks in a project
-      $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($this->params('id'));
+      $tasks = $this->_getTable('TaskTable')->getAllParentTasksInProject($this->params('id'));
 
       // Get user(s) doing a task
       $arrayMembersForTask = array();
@@ -763,9 +788,11 @@ class ProjectController extends AbstractActionController
       // Get POST data
       $data = $this->getRequest()->getPost();
 
-      // Check if current user has rights to move the task
-      if($this->_userIsAdminOfProject($sessionUser->id, $projectId)
-        || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['taskId']))
+      // If he's super admin or he's manager and the other is not manager or he's assign to task and it's his assign to him
+      if($this->_userIsCreatorOfProject($sessionUser->id, $projectId)
+         || $this->_userIsAdminOfProject($sessionUser->id, $projectId) && !$this->_userIsAdminOfProject($data['oldMemberId'], $projectId)
+         || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['taskId'])
+            && $sessionUser->id == $data['oldMemberId'])
       {
          $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
 
@@ -846,7 +873,11 @@ class ProjectController extends AbstractActionController
       $data = $this->getRequest()->getPost();
       $resMessage = 'Unassign success';
 
-      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
+      // If he's super admin or he's manager and the other is not manager or he's assign to task and it's his assign to him
+      if($this->_userIsCreatorOfProject($sessionUser->id, $projectId)
+         || $this->_userIsAdminOfProject($sessionUser->id, $projectId) && !$this->_userIsAdminOfProject($data['oldMemberId'], $projectId)
+         || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['userId'])
+            && $sessionUser->id == $data['userId'])
       {
          // Get task's old affectation and section before erasing them.
          $oldUsername = $this->_getTable("UserTable")->getUserById($this->_getTable('UsersTasksAffectationsTable')->getAffectationByTaskId($data['taskId'])->user)->username;
@@ -915,7 +946,7 @@ class ProjectController extends AbstractActionController
       $resMessage = 'Delete success';
 
 
-      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
+      if($this->_userIsCreatorOfProject($sessionUser->id, $projectId))
       {
          // Get old task's data for the historical.
          $oldTaskData = $this->_getTable('TaskTable')->getTaskById($taskId);
@@ -1056,7 +1087,7 @@ class ProjectController extends AbstractActionController
                   // Then add the new event in the database.
                   $message =
                      "<u>" . $sessionUser->username . "</u> added user <u>" . $addedMember->username .
-                     "</u>" . ($isManager ? " (<font color='green'>manager</font>)" : "") . " with " .
+                     "</u>" . ($isManager ? " (<b>manager</b>)" : "") . " with " .
                      ($specializationsString != "" ? ("specialization(s) " . $specializationsString) : "no specialization") . ".";
                   $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
                   // Link the new event to the current project.

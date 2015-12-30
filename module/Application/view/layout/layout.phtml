@@ -79,7 +79,7 @@
                    $("#header").slideDown(300, function() {
                       isHeaderHidden = false;
                    });
-                   $("#mainContainer").removeClass("noMarginTop");
+                   $("#mainContainer").removeClass("noPaddingTop");
                 }
              });
 
@@ -98,7 +98,7 @@
                       $("#header").slideUp(300, function() {
                         isHeaderHidden = true;
                       });
-                      $("#mainContainer").addClass("noMarginTop");
+                      $("#mainContainer").addClass("noPaddingTop");
                       // The first scroll doesn't really scroll the content, because
                       // of the header's hidding.
                       $(this).scrollTop(1);
@@ -111,7 +111,7 @@
                          $("#header").slideDown(300, function() {
                             isHeaderHidden = false;
                          });
-                         $("#mainContainer").removeClass("noMarginTop");
+                         $("#mainContainer").removeClass("noPaddingTop");
                       }
                    }
                 }

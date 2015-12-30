@@ -20,6 +20,13 @@ class TaskTable
       ))->current();
    }
 
+   public function getSubtasks($parentId)
+   {
+      return $this->_tableGateway->select(array(
+         'parentTask' => $parentId
+      ))->buffer();
+   }
+
    public function updateTask($name, $description, $deadlineDate, $durationsInHours, $priorityLevel, $taskId)
    {
       $this->_tableGateway->update(array(
@@ -34,7 +41,7 @@ class TaskTable
    }
 
 
-   public function addTask($name, $description, $deadlineDate, $durationsInHours, $priorityLevel, $projectId)
+   public function addTask($name, $description, $deadlineDate, $durationsInHours, $priorityLevel, $projectId, $parentTask = null)
    {
       $this->_tableGateway->insert(array(
          'name'               => $name,
@@ -42,7 +49,8 @@ class TaskTable
          'deadLineDate'       => $deadlineDate,
          'durationsInHours'   => $durationsInHours,
          'priorityLevel'      => $priorityLevel,
-         'project'            => $projectId
+         'project'            => $projectId,
+         'parentTask'         => $parentTask
       ));
 
       return $this->_tableGateway->lastInsertValue;
@@ -52,6 +60,14 @@ class TaskTable
    {
       return $this->_tableGateway->select(array(
          'project' => $projectId
+      ))->buffer();
+   }
+
+   public function getAllParentTasksInProject($projectId)
+   {
+      return $this->_tableGateway->select(array(
+         'project'    => $projectId,
+         'parentTask' => null
       ))->buffer();
    }
 

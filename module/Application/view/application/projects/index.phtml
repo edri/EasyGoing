@@ -57,15 +57,23 @@
             var tableContent =
                 "<tr>\
                     <td>" + m.username + "</td>\
-                    <td>";
+                    <td>\
+                       <ul class='specializationsList'>";
 
             // Add each member's specialization in the table's cell.
             m.specializations.forEach(function(s) {
-                tableContent += s + "<br/>";
+               if (s != "-") {
+                  tableContent += "<li>" + s + "</li>";
+               }
+               // If there is no specialization, don't display a list.
+               else {
+                  tableContent += s;
+               }
             });
 
             tableContent +=
-                    "</td>\
+                      "</ul>\
+                    </td>\
                     <td class='checkboxManager'>\
                         <input " + (m.isAdmin ? "checked " : "") + "type='checkbox' name='chkManager' value='Manager' disabled='disabled'>\
                     </td>\
@@ -258,9 +266,11 @@
 <table class="projectsHeaderTable">
     <tr>
         <td><h1 class="projectsTitle">Your projects</h1></td>
-        <td><a class="newProject" href="/projects/add"><b>Create a new project !</b><img class="newProjectImg" src="/img/plus.svg" /></a>
-            <div id="createProject" role="tutorial"></div>
+        <td>
+             <a class="newProject" href="/projects/add">
+             <b>Create a new project !</b><img class="newProjectImg" src="/img/plus.svg" /></a>
         </td>
+        <td><div id="createProject" role="tutorial" data-placement="bottom"></div></td>
     </tr>
 </table>
 
@@ -271,11 +281,12 @@
         <table class="projectsToolsTable">
             <tr>
                 <td>Click on a project to see details.</td>
-                <div id="listOfProjects" role="tutorial"></div>
-                <td><div id="searchProject" role="tutorial"></div></td>
+                <div id="searchProject" role="tutorial"></div>
                 <td><input onkeyup="filterSearch();" type="text" id="search" class="form-control" placeholder="Search for..." /></td>
             </tr>
         </table>
+
+        <div id="listOfProjects" role="tutorial"></div>
 
         <table id="tableListProjects" class="tableListProjects">
     <?php
@@ -304,7 +315,7 @@
                 </td>
                 <td class="rightProjectTd">
                   <?php if($p->creator == $userId) : ?>
-                     <img class="managerIcon" data-toggle="tooltip" title="You are the creator of this project and the super administrator." src="/img/creator.svg" />
+                     <img class="managerIcon" data-toggle="tooltip" title="You are the creator and super administrator of this project." src="/img/creator.svg" />
                   <?php endif; ?>
 
                   <?php
