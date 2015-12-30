@@ -500,11 +500,12 @@ class UserController extends AbstractActionController
 				$result = "success";
          	}
 
+				return new ViewModel(array(
+								'successfulMail' 			=> $result
+						));
 		}
-		return new ViewModel(array(
-						'successfulMail' 			=> $result,
-						'email'						=> $email
-				));
+
+		return new ViewModel();
 	}
 
 	public function validationAction()
