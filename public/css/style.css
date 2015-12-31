@@ -169,6 +169,17 @@ title:focus,
 }
 
 
+/* ABOUT PAGE */
+.aboutUser {
+   height: 280px;
+   margin-bottom: 20px;
+}
+
+.aboutUser h3 {
+   font-size: 22px;
+}
+
+
 /* PROJECTS LIST */
 
 .projectsHeaderTable {
