@@ -4,7 +4,7 @@ $(document).ready(function() {
    for (var i = 0, n = tasks.length; i < n; i++) {
       tasks[i].draggable = true;
    };
-   
+
    var board = [].concat(Array.prototype.slice.call(document.getElementsByClassName('board')), Array.prototype.slice.call(document.getElementsByClassName('listed-task')));
    var hideMe;
    var oldTarget;
@@ -25,14 +25,14 @@ $(document).ready(function() {
       };
       var lastEneterd;
       board[i].ondragenter = function(e) {
-         
+
          if (hideMe) {
             hideMe.style.visibility = 'hidden';
             hideMe = null;
          }
          // Save this to check in dragleave.
          lastEntered = e.target;
-         
+
          var sectionName = isAffectation ? 'board' : 'board-section';
          var section = closestWithClass(e.target, sectionName);
 
@@ -41,7 +41,7 @@ $(document).ready(function() {
             e.preventDefault(); // Not sure if these needs to be here. Maybe for IE?
             return false;
          }
-         
+
       };
       board[i].ondragover = function(e) {
          // TODO: Check data type.
@@ -66,13 +66,13 @@ $(document).ready(function() {
          var section = closestWithClass(e.target, 'board-section');
          var id = e.dataTransfer.getData('board-task');
          var task = document.getElementById(id);
-         
+
          if(isAffectation) {
             var taskId = task.getAttribute('task-id');
             var targetMemberId = $(e.target.parentNode).closest('[member-id]').attr('member-id');
             var targetSection = $(e.target).closest('[section]').attr('section');
-            
-            
+
+
             $.post("http://easygoing/project/" + projectId + "/assignTask", {
                taskId: taskId,
                targetMemberId: targetMemberId,
@@ -87,7 +87,7 @@ $(document).ready(function() {
                if(data.alreadyAssigned) {
                   addBootstrapAlert('board-alert-container', 'Already assigned.', 'danger');
                }
-               
+
                $('#board-container').load(window.location.href + '/boardViewMembers');
             });
          }
@@ -124,7 +124,7 @@ $(document).ready(function() {
                }
             }
          }
-         
+
          section.classList.remove('droppable');
          e.preventDefault();
       };
@@ -143,19 +143,9 @@ $(document).ready(function() {
 
          if(!data.hasRightToMoveTask) {
             addBootstrapAlert('board-alert-container', 'You do not have the right to move this task because you are either not manager or this task is not assigned to you.', 'danger');
-         }
 
-         var eventData = data.event;
-         console.log("Sending task-moving socket...")
-         // Send task-moving socket to the server so it can advertise other clients.
-         connection.send(JSON.stringify({
-            "messageType": "taskMoving",
-            "projectId": projectId,
-            "taskId": taskId,
-            "targetMemberId": targetMemberId,
-            "targetSection": targetSection,
-            "event": eventData
-         }));
+            $('#board-container').load(window.location.href + '/boardViewMembers');
+         }
       });
 
 

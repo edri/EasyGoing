@@ -14,6 +14,7 @@ class ViewUsersProjects
    public $lastName;
    public $filePhoto;
    public $projectId;
+   public $isAdmin;
 
    public function exchangeArray($data)
    {
@@ -24,5 +25,6 @@ class ViewUsersProjects
       $this->lastName  = (!empty($data['lastName'])) ? $data['lastName'] : null;
       $this->filePhoto  = (!empty($data['filePhoto'])) ? $data['filePhoto'] : null;
       $this->projectId  = (!empty($data['projectId'])) ? $data['projectId'] : null;
+      $this->isAdmin  = (!empty($data['isAdmin'])) ? $data['isAdmin'] : null;
    }
 }

@@ -1,82 +1,130 @@
-<form action="/registration" class="form-horizontal" method="POST" role="form">
+<?php
+   if (isset($successfulEdition) && $successfulEdition)
+   {
+?>
+      <div class="panel panel-success error">
+         <div class="panel-heading">
+            Yay, your account has been successfully edited! 
+         </div>
+      </div>
+<?php
+   }
+?>
+
+<?php
+   // if there was an error when creating the posted account, display it.
+   if (isset($error))
+   {
+?>
+        <div class="panel panel-danger error">
+           <div class="panel-heading">
+           <?php
+                 switch($error)
+                 {              
+            case  "errorPasswordsDontMatch":
+              echo "The passwords you entered don't match, please retry.";
+              break;
+            case  "errorEmailInvalid":
+              echo "Please use a valid email format.";
+              break;
+                  case "errorEmailAlreadyExists":
+                     echo "The email address you entered already exists, please retry.";
+                     break;
+                  case "errorPictureSize":
+              echo "The picture you're trying to upload is too large, please retry.";
+              break;
+                  case "errorPictureType":
+                  case "errorPictureExtension":
+              echo "Please upload a file, which extension is allowed.";
+              break;
+                  case  "errorPicture":
+              echo "Something is wrong with the file you're trying to upload, please retry.";
+              break;
+                  case  "errorFilesUpload":
+              echo "Something wrong happend when uploading the picture, please retry.";
+              break;
+                  case  "errorDatabaseAdding":
+              echo "Something wrong happend when creating the account, please retry.";
+              break;
+                  default:
+               echo "An error occured, please retry.";
+                     break;
+            }
+            ?>
+         </div>
+      </div>
+<?php
+   }
+?>
+
+<form action="/edit" class="form-horizontal" enctype="multipart/form-data" method="POST" role="form">
 	<div class="form-group">
         <label class="control-label col-sm-2" for="username">Username *</label>
         <div class="col-sm-10">
            <input type="text" name="username" class="form-control"  required="required"
-					 placeholder="Enter username" value="<?php if (isset($username)) echo $this->escapeHtml($username); ?>
-					 "/>
+					 placeholder="Enter username" value="<?php if (isset($username)) echo $this->escapeHtml($username); ?>" readonly/>
         </div>
-     </div>
+  </div>
 
-     <div class="form-group">
+  <div class="form-group">
         <label class="control-label col-sm-2" for="lastname">Last name </label>
         <div class="col-sm-10">
-           <input type="text" name="lname" class="form-control"
-					 placeholder="last name"  value="<?php if (isset($lname)) echo $this->escapeHtml($lname); ?>" />
+           <input type="text" name="lName" class="form-control"
+					 placeholder="last name"  value="<?php if (isset($lName)) echo $this->escapeHtml($lName); ?>" />
 
         </div>
-     </div>
+  </div>
 
-     <div class="form-group">
+  <div class="form-group">
         <label class="control-label col-sm-2" for="firstname">First name </label>
         <div class="col-sm-10">
-           <input type="text" name="fname" class="form-control"
-					 placeholder="firstname"  value="<?php if (isset($fname)) echo $this->escapeHtml($fname); ?>" />
+           <input type="text" name="fName" class="form-control"
+					 placeholder="firstname"  value="<?php if (isset($fName)) echo $this->escapeHtml($fName); ?>" />
         </div>
-     </div>
+  </div>
 
-     <div class="form-group">
-        <label class="control-label col-sm-2" for="password1">Password *</label>
+  <div class="form-group">
+        <label class="control-label col-sm-2" for="password1">New password *</label>
         <div class="col-sm-10">
-           <input type="password" name="password1" class="form-control" required="required" value="<?php if (isset($password1)) echo $this->escapeHtml($password1); ?>"/>
+           <input type="password" name="password1" class="form-control" />
         </div>
-     </div>
+  </div>
 
-     <div class="form-group">
-        <label class="control-label col-sm-2" for="password2">Repeat Password *</label>
+  <div class="form-group">
+        <label class="control-label col-sm-2" for="password2">Repeat new password *</label>
         <div class="col-sm-10">
-           <input type="password" name="password2" class="form-control" required="required" value="<?php if (isset($password2)) echo $this->escapeHtml($password2); ?>"/>
+           <input type="password" name="password2" class="form-control" />
         </div>
-     </div>
+  </div>
 
-     <div class="form-group">
+  <div class="form-group">
         <label class="control-label col-sm-2" for="email">Email* </label>
         <div class="col-sm-10">
            <input type="email" name="email" class="form-control" required="required"
 					 placeholder="Enter valid email"   value="<?php if (isset($email)) echo $this->escapeHtml($email); ?>"/>
         </div>
-     </div>
-     <div>
-       <label class="control-label col-sm-2" for="picture">Picture </label>
-       <div>
-        <input id="input-21" type="file" accept="image/*" class="file-loading" name="picture" value="10485760" >
-          <script>
-          $(document).on('ready', function() {
-              $("#input-21").fileinput({
-                  previewFileType: "image",
-                  browseClass: "btn btn-success",
-                  browseLabel: "Pick Image",
-                  browseIcon: "<i class=\"glyphicon glyphicon-picture\"></i> ",
-                  removeClass: "btn btn-danger",
-                  removeLabel: "Delete",
-                  removeIcon: "<i class=\"glyphicon glyphicon-trash\"></i> ",
-                  uploadClass: "btn btn-info",
-                  uploadLabel: "Upload",
-                  uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i> "
-              });
-          });
-          </script>
-       </div>
-   </div>
-   <div>
-     <label class="checkbox-inline"><input type="checkbox" value="">Tutorial</label>
-   </div>
-
+  </div>
+  <div class="form-group">
+  <label class="control-label col-sm-2" for="picture">Picture</label>
+    <div class="col-sm-10">
+       <p class="logoInformation">Priorize a <b>squared</b> picture - Maximum size of <b>5 MB</b> - Allowed extensions: <b>"jpeg", "jpg" or "png"</b>.</p>
+    <input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
+    <input id="picture" name="picture" type="file" />
+    </div> 
+  </div>
+  <div class="form-group" >
+     <label class="checkbox-inline col-sm-2"><input for="wantTutorial" type="checkbox" name="wantTutorial" value="<?php if (isset($wantTutorial)) echo $this->escapeHtml($wantTutorial); ?>">Tutorial</label>
+  </div>
+  <div class="form-group">
+     <label class="checkbox-inline col-sm-2"><input type="checkbox" name="wantNotifications" value="<?php if (isset($wantNotifications)) echo $this->escapeHtml($wantNotifications); ?>">Notifications</label>
+  </div>
 	 <div class="form-group formSending" >
-		<label class="control-label col-sm-2" for="create"></label>
+		<label class="control-label col-sm-2" for="update"></label>
 		<div class="col-sm-10">
 				<span class="mandatoryFields">* Mandatory fields</span>
-				<button class="btnCreate btn btnEasygoing" id="create" name="create" onClick="location.href='/projects/add';">create</button>
+				<input class="btnCreate btn btnEasygoing" id="update" name="update" type="submit" value="Save changes">
+        <button class="btnCancel btn btnEasygoing" id="cancel" name="cancelButton" onClick="location.href='/';">Cancel</button>
 		</div>
 </div>
 </form>
+

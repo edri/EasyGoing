@@ -2,69 +2,60 @@ var tutoData = [];
 var current = 0;
 
 var skipTutorial = function() {
-	$("div[role=tutorial]").fadeOut();
+	$("div[role=tutorial]").tooltip('hide');
 };
 
 var nextTutorial = function() {
 
-	if(tutoData.length != 0) { 
-		var d = tutoData[current];
-
-		$("div[role=tutorial][id = " + d.div + "]").html(
-			"<img src=/img/tuto.png /> " + 
-			d.text + 
-			"<a href='#' onClick='nextTutorial()'>   <br>Next</a>" +
-			"<a href='#' onClick='skipTutorial()'><br>Skip</a>"
-		).fadeIn();
-
-		$("div[role=tutorial][id != " + d.div + "]").fadeOut();
-
-		current = (current + 1) % tutoData.length;
+	if(tutoData.length != 0) { // To avoid overflow... else we have first : d = tutoData[0] and overflow
+		
+        var d = tutoData[current];
+        
+        if(current < tutoData.length) {
+            
+            // Template html for tutorial and show the current tuto
+            $("div[role=tutorial][id = " + d.div + "]")
+                .attr("data-html", "true")
+                .attr("title", d.text + "<a href=# onClick=nextTutorial() ><br>Next</a>"
+                     + "<a href=# onClick=skipTutorial() ><br>Skip</a>")
+                .tooltip('show');
+            
+            // Hide all of other tutos
+            $("div[role=tutorial][id != " + d.div + "]").tooltip('hide');
+            current++;
+        }
+        else {
+            // Hide all of the tutos
+            skipTutorial();
+        }
 	}
 
 };
 
 function loadTutorial(tuto) {
-	
-	/*<?php
-		if($sessionUser->wantTutorial) {
-	?>*/
-	
-		Tutorial(tuto, function(data) {
-		
-			var tutoDataFiltered = [];
-		
-			data.forEach(function(d) {
-				$("div[role=tutorial][id=" + d.div + "]").each(function() {
+    
+    Tutorial(tuto, function(data) {
 
-					var div = $(this);
+        var tutoDataFiltered = [];
 
-					tutoData.push(d);
+        data.forEach(function(d) {             
+            tutoData.push(d);
+        });
 
-					var position = div.position();
+        nextTutorial();
+    });
 
-					div.css({
-						position: 'absolute',
-						top: position.top,
-						left: position.left,
-						width: position.width,
-						height: position.heigth,
-						paddingLeft: 25,
-						paddingRight: 25,
-						paddingBottom: 10,
-						paddingTop: 10,
-						borderRadius: 10,
-						background: "lightblue",
-						borderStyle: "solid"
-					});
-				});
-			});
-
-			nextTutorial();
-		});
-	
-	
-	/*<?php
-		}
-	?>*/
 };
+
+/*
+$("#txtSpecialization" + currentId).attr("data-toggle", "tooltip");
+         $("#txtSpecialization" + currentId).attr("data-trigger", "manual");
+         $("#txtSpecialization" + currentId).attr("title", "You have to enter a specialization before adding another one, or press the 'Create!' button if you don't want to have specialization.");
+         $("#txtSpecialization" + currentId).tooltip("show");
+         $("#txtSpecialization" + currentId).focus();
+
+         // Hide specialization field's tooltip when the user unfocus it.
+         $("#txtSpecialization" + currentId).blur(function() {
+            $(this).tooltip("hide");
+         });
+         */

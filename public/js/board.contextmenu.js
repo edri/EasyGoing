@@ -58,17 +58,29 @@ $(document).ready(function() {
                   }
                });
                break;
+
+            case 'addSubTask':
+               window.location.href = window.location.href + '/addTask/' + taskId;
+               break;
          }
       },
       items: {
          "edit": {
-            name: "Edit"
+            name: "Edit",
+            icon: "edit"
          },
          "delete": {
-            name: "Delete"
+            name: "Delete",
+            icon: "delete"
          },
          "unassign": {
-            name: "Unassign"
+            name: "Unassign",
+            icon: "cut"
+         },
+         "sep1": "---------",
+         "addSubTask": {
+            name: "Add sub task",
+            icon: "paste"
          }
       }
    });

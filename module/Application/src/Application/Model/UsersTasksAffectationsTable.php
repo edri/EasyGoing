@@ -12,7 +12,7 @@ class UsersTasksAffectationsTable
    {
       $this->_tableGateway = $tableGateway;
    }
-   
+
    public function getAffectation($userId, $taskId)
    {
       return $this->_tableGateway->select(array(
@@ -21,7 +21,15 @@ class UsersTasksAffectationsTable
       ))->current();
    }
 
-   public function updateTaskAffectation($userId, $taskId, $newUserId) 
+   // Get an affectation by its task's ID.
+   public function getAffectationByTaskId($taskId)
+   {
+      return $this->_tableGateway->select(array(
+         'task' => $taskId
+      ))->current();
+   }
+
+   public function updateTaskAffectation($userId, $taskId, $newUserId)
    {
       $this->_tableGateway->update(array(
          'user' => $newUserId
@@ -38,9 +46,9 @@ class UsersTasksAffectationsTable
          'task' => $taskId
       ));
 
-      return $this->_tableGateway->lastInsertValue;   
+      return $this->_tableGateway->lastInsertValue;
    }
-   
+
    public function deleteAffectation($userId, $taskId)
    {
       $this->_tableGateway->delete(array(

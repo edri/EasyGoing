@@ -1,31 +1,29 @@
 <?php use Application\Utility\Priority; ?>
 
-<h1>Create a task</h1>
+<h1><?php echo $isSubTask ? "Create a sub task" : "Create a task"; ?></h1>
 <br>
 <form method="POST" action="<?php echo $this->serverUrl(true); ?>" role="form" class="form-horizontal">
    <div class="form-group">
-      <label class="control-label col-sm-2" for="name">Name</label>
+      <label class="control-label col-sm-2" for="name">Name *</label>
       <div class="col-sm-10">
          <input type="text" name="name" class="form-control" placeholder="Name..." required="required" />
       </div>
    </div>
    <div class="form-group">
       <label class="control-label col-sm-2" for="deadline">Deadline</label>
-      <div class="col-sm-3">
-         <div class="input-daterange">
-            <input type="text" required="required" name="deadline" class="form-control" value="<?php echo date("Y-m-d"); ?>">
-         </div>
+      <div class="col-sm-10">
+         <input id="txtDeadline" type="text" name="deadline" class="form-control" placeholder="YYYY-MM-DD">
       </div>
    </div>
    <div class="form-group">
-      <label class="control-label col-sm-2" for="duration">Duration in hours</label>
+      <label class="control-label col-sm-2" for="duration">Duration in hours *</label>
       <div class="col-sm-10">
-         <input type="text" name="duration" class="form-control" placeholder="Duration..." required="required" />
+         <input type="number" name="duration" class="form-control" placeholder="Duration..." required="required" />
       </div>
    </div>
 
    <div class="form-group">
-      <label class="control-label col-sm-2">Priority level</label>
+      <label class="control-label col-sm-2">Priority level *</label>
       <div class="col-sm-10">
          <select class="form-control" name="priority">
             <?php
@@ -43,17 +41,20 @@
          <textarea name="description" class="form-control" placeholder="Description..."></textarea>
       </div>
    </div>
-   <div class="text-right">
-      <a class="btn btnEasygoing" href="<?php echo $_SERVER['HTTP_REFERER'] ?>">Back</a>
-      <button type="submit" class="btn btnEasygoing">Create</button>
+
+   <div class="form-group formSending">
+      <label class="control-label col-sm-2" for="logo"></label>
+      <div class="col-sm-10">
+           <span class="mandatoryFields">* Mandatory fields</span>
+           <input class="btnCreate btn btnEasygoing" id="addTask" name="submit" type="submit" value="Create!" />
+           <input class="btnCancel btn btnEasygoing" id="cancel" name="cancelButton" onClick="location.href='<?php echo $_SERVER['HTTP_REFERER'] ?>';" type="button" value="Cancel" />
+      </div>
    </div>
 </form>
 
 
 <script type="text/javascript">
    $(function() {
-      $('.input-daterange input').each(function() {
-          $(this).datepicker({format: 'yyyy-mm-dd', autoclose:true});
-      });
+      $("#txtDeadline").datepicker({format: 'yyyy-mm-dd', autoclose:true});
    });
 </script>

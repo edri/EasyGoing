@@ -1,9 +1,16 @@
+<script type="text/javascript">
+    try {
+        loadTutorial("taskDetails");
+    } catch(err) {} // Catch to avoid errors of undefined function if the user doesn't want tutorial
+</script>
+
 <?php
    // Send Javascript variable with Zend.
    echo $this->headScript()->appendScript('// Indicate that the user is currently in the task page. Used in the board.websocket.js script.
                                            var isProjectPage = false;
                                            var taskId = "' . $task->id . '";
-                                           var projectId = "' . $projectId . '";');
+                                           var projectId = "' . $projectId . '";
+                                           var userId = ' . $userId . ';');
    // Load websocket script.
    echo $this->headScript()
              ->prependFile($this->basePath() . '/js/board.websockets.js');
@@ -89,6 +96,8 @@
               </ul>
 
               <!-- Tab panes -->
+              <div id="news" role="tutorial"></div>
+              
               <div class="tab-content newsFeedTab">
                  <div role="tabpanel" class="tab-pane fade in active" id="all">
                     <?php

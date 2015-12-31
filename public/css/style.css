@@ -21,6 +21,11 @@ a:focus {
    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(153, 85, 39, 0.6);
 }
 
+.bootstrap-switch.bootstrap-switch-focused {
+   border-color: #995527;
+   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(153, 85, 39, 0.6);
+}
+
 
 /* HEADER BAR */
 
@@ -111,14 +116,14 @@ title:focus,
 /* CONTENT */
 
 .mainContainer {
-   margin-top: 86px;
+   padding-top: 86px;
    margin-bottom: 50px;
-   height: calc(100vh - 86px - 50px);
-   transition: margin-top 300ms, height 300ms;
+   height: calc(100vh - 50px);
+   transition: padding-top 300ms, height 300ms;
 }
 
-.noMarginTop {
-   margin-top: 0;
+.noPaddingTop {
+   padding-top: 0;
    height: calc(100vh - 50px);
 }
 
@@ -129,6 +134,7 @@ title:focus,
    height: 100%;
    overflow: auto;
    padding: 30px 30px 80px;
+   position: relative;
 }
 
 .pageTitle {
@@ -179,11 +185,18 @@ title:focus,
    float: right;
 }
 
+.newProjectImg {
+   height: 30px;
+   margin-left: 10px;
+   width: 30px;
+}
+
 .projectsToolsTable {
    width: 100%;
 }
 
 .tableListProjects {
+   margin-bottom: 30px;
    margin-top: 15px;
    width: 100%;
 }
@@ -217,7 +230,7 @@ title:focus,
 }
 
 .imgProject {
-   border: 1px solid #e5b494;
+   border: 1px solid #5a2706;
    border-radius: 25px;
    margin-right: 15px;
 }
@@ -247,8 +260,28 @@ title:focus,
    display: none;
 }
 
-.managerTd {
+.rightProjectTd {
    text-align: right;
+}
+
+.projectLink:focus,
+.projectLink:active {
+   outline: 0 none;
+}
+
+.editProjectIcon, .managerIcon, .gotoIcon {
+   height: 40px;
+   width: 40px;
+   transition: height 200ms, width 200ms;
+}
+
+.managerIcon {
+   cursor: default;
+}
+
+.editProjectIcon:hover, .gotoIcon:hover, .managerIcon:hover {
+   height: 50px;
+   width: 50px;
 }
 
 .projectDetails,
@@ -284,6 +317,11 @@ th {
    background-color: #E2E2E2;
 }
 
+.specializationsList {
+   margin: 0;
+   padding-left: 20px;
+}
+
 .checkboxManager {
    text-align: center;
 }
@@ -294,7 +332,7 @@ th {
 }
 
 
-/* ADD A PROJECT */
+/* ADD/EDIT A PROJECT */
 
 .error {
    margin-bottom: 50px;
@@ -322,6 +360,27 @@ th {
 
 .btnCancel {
    margin-right: 10px;
+}
+
+.projectLogo {
+   border: 1px solid #5a2706;
+   height: 150px;
+   margin-right: 75px;
+   width: 150px;
+}
+
+.specTitle {
+   margin-bottom: 30px;
+   margin-top: 20px;
+}
+
+.newSpecButton {
+   cursor: pointer;
+}
+
+.newSpecImg {
+   height: 20px;
+   width: 20px;
 }
 
 hr {
@@ -444,11 +503,9 @@ hr {
 
 .eventDetails {
    display: none;
-   padding-top: 10px;
 }
 
 .eventDetailsTable {
-   border: 1px solid #4e2e18;
    width: 100%;
 }
 
@@ -472,8 +529,68 @@ hr {
 
 /** ====== BOARD ====== **/
 
+.projectDashboardIntro {
+   height: 70px;
+   width: 100%;
+}
+
+.projectDashboardTitle {
+   float: left;
+}
+
+.editProjectDashboardLink {
+   float: right;
+}
+
+.editProjectDashboardIcon {
+   height: 40px;
+   width: 40px;
+   margin-top: 20px;
+}
+
+.editProjectDashboardLink:focus,
+.editProjectDashboardLink:active {
+   outline: 0 none;
+}
+
+.dashboardButtonIcon {
+   float: right;
+   height: 40px;
+   margin-right: 10px;
+   margin-top: 20px;
+   width: 40px;
+}
+
 .boardButtons {
+   height: 35px;
+   margin-bottom: 20px;
    margin-top: 35px;
+   width: 100%;
+}
+
+.dashboardViewType {
+   float: left;
+}
+
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-easygoing-on {
+  color: #fff;
+  background: #995527;
+}
+
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-easygoing-off {
+   color: #5a2706;
+   background: #ffeadb;
+}
+
+.dashboardShowSpecializations {
+   float: right;
+   margin-right: 15px;
+}
+
+.dashboardShowSpecializationsLabel {
+   float: left;
+   margin-right: 10px;
+   margin-top: 6px;
 }
 
 .board,
@@ -491,6 +608,7 @@ hr {
    margin: 0;
    border: 1px solid #666;
    padding: 5px;
+   vertical-align: middle;
    width: 270px;
 }
 
@@ -635,11 +753,30 @@ hr {
 }
 
 .memberName {
+   font-size: 20px;
    margin-bottom: 0;
 }
 
 .memberUsername {
+   font-size: 14px;
+}
+
+.membersSpecializations {
    font-size: 12px;
+   font-style: italic;
+   margin-bottom: 10px;
+}
+
+.add-user:hover {
+   cursor: pointer;
+}
+
+.add-user-selected {
+   background-color: #E5AC86;
+}
+
+.spe {
+   margin: 10px;
 }
 
 /** ===== FIN BOARD ===== **/
