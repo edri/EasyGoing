@@ -170,6 +170,10 @@ title:focus,
 
 
 /* ABOUT PAGE */
+.aboutTitle {
+   padding: 0 !important;
+}
+
 .aboutUsersWrapper {
    text-align: center;
 }
