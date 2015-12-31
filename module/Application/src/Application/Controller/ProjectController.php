@@ -410,7 +410,7 @@ class ProjectController extends AbstractActionController
    public function addTaskAction()
    {
       $request = $this->getRequest();
-      
+
       $projectId = $this->params('id');
 
       if($this->params('otherId'))
@@ -433,7 +433,7 @@ class ProjectController extends AbstractActionController
          if(isset($_POST["name"]) && isset($_POST["priority"]) && isset($_POST["duration"]))
          {
             $taskId = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId, $this->params('otherId') ? $this->params('otherId') : null);
-            
+
             if(!$this->params('otherId'))
                $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $taskId);
 
@@ -838,8 +838,22 @@ class ProjectController extends AbstractActionController
             $client->setMethod(Request::METHOD_POST);
             // Setting POST data.
             $client->setParameterPost(array(
-               "requestType"  => "newEvent",
-               "event"       => json_encode($event2)
+               "requestType"  => "newEvents",
+               "events"       => array(json_encode($event1), json_encode($event2))
+            ));
+            // Send HTTP request to server.
+            $response = $client->send();
+
+            // Send a task's moving event so the users which currently are in the
+            // project can see the task dynamically moves.
+            // Setting POST data.
+            $client->setParameterPost(array(
+               "requestType"     => "taskMoving",
+               "projectId"       => $projectId,
+               "taskId"          => $data['taskId'],
+               "targetMemberId"  => $data['targetMemberId'],
+               "targetSection"   => $data['targetSection'],
+               "userId"          => $sessionUser->id
             ));
             // Send HTTP request to server.
             $response = $client->send();

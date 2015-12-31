@@ -36,11 +36,6 @@ var socketServer = ws.createServer(function(connection) {
 					// Indicate that the connection is a project one.
 					connection.connectionType = PROJECT_CONNECTION;
 					break;
-				// When an user moved a task inside a project.
-				case "taskMoving":
-					sendTaskMovingSocket(data, connection);
-					sendEventSocket(data.event, PROJECT_CONNECTION);
-					break;
 				// When the user accessed a task's details page.
 				case "taskListeningRequest":
 					console.log("WEBSOCKET: user #" + data.userId + " joined task #" + data.taskId + " of project #" + data.projectId + "...");
@@ -93,17 +88,19 @@ function sendEventSocket(eventData, sendTo) {
 }
 
 // Send a message to every connected users that currently are in the project in which
-// the task was moved so they can dynamically move it.
-function sendTaskMovingSocket(data, fromConnection) {
+// the task was moved (unless the one who moved the task) so they can dynamically move it.
+// Parameters:
+//		- data: the HTTP POST request's fields sent from the ProjectController/moveTask
+//				  action.
+function sendTaskMovingSocket(data) {
 	console.log("WEBSOCKET: send task-moving socket to every concerned clients...");
 	data.messageType = "taskMovingEvent";
 
 	socketServer.connections.forEach(function(connection) {
 		// Check every connection's project's ID and send message to the right ones.
 		if (connection.connectionType === PROJECT_CONNECTION &&
-			!data.isTaskEvent &&
-			connection.projectId === data.linkedEntityId &&
-			connection != fromConnection) {
+			connection.projectId === data.projectId &&
+			connection.userId != data.userId) {
 				connection.sendText(JSON.stringify(data));
 		}
 	})
@@ -213,6 +210,11 @@ function handleRequest(req, res) {
 							// Send the received event to all concerned clients.
 							sendEventSocket(event, (event.isTaskEvent ? TASK_CONNECTION : PROJECT_CONNECTION));
 						}
+						break;
+					// Occurs when an user moved a task inside a project.
+					case "taskMoving":
+						console.log("HTTP: received a task's moving event.");
+						sendTaskMovingSocket(fields);
 						break;
 					// Occurs when a task has been deleted.
 					case "taskDeleted":

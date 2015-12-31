@@ -212,7 +212,6 @@ $(document).ready(function() {
                }
             } catch (e) {
                console.log(e);
-               console.log("Invalid data format, please send JSON.");
             }
          }
       };
