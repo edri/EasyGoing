@@ -170,9 +170,16 @@ title:focus,
 
 
 /* ABOUT PAGE */
+.aboutUsersWrapper {
+   text-align: center;
+}
+
 .aboutUser {
-   height: 280px;
+   float: none;
+   display: inline-block;
+   height: 250px;
    margin-bottom: 20px;
+   width: 360px;
 }
 
 .aboutUser h3 {
