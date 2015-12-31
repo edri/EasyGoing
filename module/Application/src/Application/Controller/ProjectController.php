@@ -113,6 +113,12 @@ class ProjectController extends AbstractActionController
          $this->redirect()->toRoute('projects');
       }
 
+      if(!$this->_getTable('ProjectsUsersMembersTable')->getMemberRight($sessionUser->id, $this->params('id')))
+      {
+         $this->redirect()->toRoute('projects');
+         return;
+      }
+
       if ($this->params('otherId') != null && empty($this->_getTable('TaskTable')->getTaskById($this->params('otherId'))))
       {
          $this->redirect()->toRoute('projects');
@@ -682,7 +688,7 @@ class ProjectController extends AbstractActionController
 
       $result = new ViewModel(array(
          'projectId'                => $this->params('id'),
-         'creatorId'         => $creatorId,
+         'creatorId'                => $creatorId,
          'members'                  => $members,
          'membersSpecializations'   => $membersSpecializations,
          'tasksForMember'           => $arrayTasksForMember,
@@ -1265,6 +1271,11 @@ class ProjectController extends AbstractActionController
       }
    }
 
+   /**
+   * Send a POST request to the event's server
+   * 
+   * @param array postParams : params want to send by post request
+   */
    private function _sendRequest($postParams)
    {
       // Make an HTTP POST request to the event's server so he can broadcast a
