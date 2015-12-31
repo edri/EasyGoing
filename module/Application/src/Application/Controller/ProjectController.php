@@ -334,17 +334,10 @@ class ProjectController extends AbstractActionController
 
                               try
                               {
-                                 // Make an HTTP POST request to the event's server so he can broadcast a
-                                 // new websocket related to the new event.
-                                 $client = new Client('http://127.0.0.1:8002');
-                                 $client->setMethod(Request::METHOD_POST);
-                                 // Setting POST data.
-                                 $client->setParameterPost(array(
+                                 $this->_sendRequest(array(
                                     "requestType"        => "newEvent",
                                     "event"              => json_encode($event)
                                  ));
-                                 // Send HTTP request to server.
-                                 $response = $client->send();
                               }
                               catch (\Exception $e)
                               {
@@ -407,13 +400,14 @@ class ProjectController extends AbstractActionController
       }
    }
 
+
    public function addTaskAction()
    {
       $request = $this->getRequest();
-
       $projectId = $this->params('id');
+      $isSubTask = $this->params('otherId') ? true : false;
 
-      if($this->params('otherId'))
+      if($isSubTask)
       {
          if($this->_getTable('TaskTable')->getTaskById($this->params('otherId'))->parentTask)
             $this->redirect()->toRoute('project', array(
@@ -434,7 +428,7 @@ class ProjectController extends AbstractActionController
          {
             $taskId = $this->_getTable('TaskTable')->addTask($name, $description, $deadline, $duration, $priority, $projectId, $this->params('otherId') ? $this->params('otherId') : null);
 
-            if(!$this->params('otherId'))
+            if(!$isSubTask)
                $this->_getTable('UsersTasksAffectationsTable')->addAffectation($sessionUser->id, $taskId);
 
             // If task was successfully added, add two task's creation events: one for
@@ -464,17 +458,10 @@ class ProjectController extends AbstractActionController
 
             try
             {
-               // Make an HTTP POST request to the event's server so he can broadcast a
-               // new websocket related to the new event.
-               $client = new Client('http://127.0.0.1:8002');
-               $client->setMethod(Request::METHOD_POST);
-               // Setting POST data.
-               $client->setParameterPost(array(
+               $this->_sendRequest(array(
                   "requestType"        => "newEvent",
                   "event"              => json_encode($event)
                ));
-               // Send HTTP request to server.
-               $response = $client->send();
             }
             catch (\Exception $e)
             {
@@ -487,10 +474,8 @@ class ProjectController extends AbstractActionController
          ));
       }
 
-
-
       return new ViewModel(array(
-         'isSubTask' => $this->params('otherId') ? true : false
+         'isSubTask' => $isSubTask
       ));
    }
 
@@ -595,19 +580,13 @@ class ProjectController extends AbstractActionController
 
          try
          {
-            // Make an HTTP POST request to the event's server so he can broadcast a
-            // new websocket related to the new event.
-            $client = new Client('http://127.0.0.1:8002');
-            $client->setMethod(Request::METHOD_POST);
-            // Setting POST data.
-            $client->setParameterPost(array(
+            $this->_sendRequest(array(
                "requestType"  => "newEvents",
                "events"       => array(json_encode($event1), json_encode($event2))
             ));
-            // Send HTTP request to server.
-            $response = $client->send();
+
             // Send a edit request to inform users which are currently in the task page.
-            $client->setParameterPost(array(
+            $this->_sendRequest(array(
                "requestType"  => "taskEdited",
                "taskId"       => $id,
                "data"         => json_encode(array(
@@ -618,8 +597,6 @@ class ProjectController extends AbstractActionController
                                     "description"  => $description
                                  ))
             ));
-            // Send HTTP request to server.
-            $response = $client->send();
          }
          catch (\Exception $e)
          {
@@ -749,17 +726,10 @@ class ProjectController extends AbstractActionController
 
             try
             {
-               // Make an HTTP POST request to the event's server so he can broadcast a
-               // new websocket related to the new event.
-               $client = new Client('http://127.0.0.1:8002');
-               $client->setMethod(Request::METHOD_POST);
-               // Setting POST data.
-               $client->setParameterPost(array(
+               $this->_sendRequest(array(
                   "requestType"  => "newEvents",
                   "events"       => array(json_encode($event1), json_encode($event2))
                ));
-               // Send HTTP request to server.
-               $response = $client->send();
             }
             catch (\Exception $e)
             {
@@ -832,22 +802,15 @@ class ProjectController extends AbstractActionController
          // Send task's event socket.
          try
          {
-            // Make an HTTP POST request to the event's server so he can broadcast a
-            // new websocket related to the new event.
-            $client = new Client('http://127.0.0.1:8002');
-            $client->setMethod(Request::METHOD_POST);
-            // Setting POST data.
-            $client->setParameterPost(array(
+            $this->_sendRequest(array(
                "requestType"  => "newEvents",
                "events"       => array(json_encode($event1), json_encode($event2))
             ));
-            // Send HTTP request to server.
-            $response = $client->send();
 
             // Send a task's moving event so the users which currently are in the
             // project can see the task dynamically moves.
             // Setting POST data.
-            $client->setParameterPost(array(
+            $this->_sendRequest(array(
                "requestType"     => "taskMoving",
                "projectId"       => $projectId,
                "taskId"          => $data['taskId'],
@@ -855,8 +818,6 @@ class ProjectController extends AbstractActionController
                "targetSection"   => $data['targetSection'],
                "userId"          => $sessionUser->id
             ));
-            // Send HTTP request to server.
-            $response = $client->send();
          }
          catch (\Exception $e)
          {
@@ -925,17 +886,10 @@ class ProjectController extends AbstractActionController
 
          try
          {
-            // Make an HTTP POST request to the event's server so he can broadcast a
-            // new websocket related to the new event.
-            $client = new Client('http://127.0.0.1:8002');
-            $client->setMethod(Request::METHOD_POST);
-            // Setting POST data.
-            $client->setParameterPost(array(
+            $this->_sendRequest(array(
                "requestType"  => "newEvents",
                "events"       => array(json_encode($event1), json_encode($event2))
             ));
-            // Send HTTP request to server.
-            $response = $client->send();
          }
          catch (\Exception $e)
          {
@@ -1011,26 +965,17 @@ class ProjectController extends AbstractActionController
 
          try
          {
-            // Make an HTTP POST request to the event's server so he can broadcast a
-            // new websocket related to the new event.
-            $client = new Client('http://127.0.0.1:8002');
-            $client->setMethod(Request::METHOD_POST);
-            // Setting POST data for the project page.
-            $client->setParameterPost(array(
+            $this->_sendRequest(array(
                "requestType"  => "newEvent",
                "event"        => json_encode($event)
             ));
-            // Send HTTP request to server.
-            $response = $client->send();
 
             // Send a delete request to inform users which are currently in the task page.
-            $client->setParameterPost(array(
+            $this->_sendRequest(array(
                "requestType"  => "taskDeleted",
                "taskId"       => $taskId,
                "username"     => $sessionUser->username
             ));
-            // Send HTTP request to server.
-            $response = $client->send();
          }
          catch (\Exception $e)
          {
@@ -1113,17 +1058,10 @@ class ProjectController extends AbstractActionController
 
                   try
                   {
-                     // Make an HTTP POST request to the event's server so he can broadcast a
-                     // new websocket related to the new event.
-                     $client = new Client('http://127.0.0.1:8002');
-                     $client->setMethod(Request::METHOD_POST);
-                     // Setting POST data.
-                     $client->setParameterPost(array(
+                     $this->_sendRequest(array(
                         "requestType"  => "newEvent",
                         "event"        => json_encode($event)
                      ));
-                     // Send HTTP request to server.
-                     $response = $client->send();
                   }
                   catch (\Exception $e)
                   {
@@ -1199,28 +1137,18 @@ class ProjectController extends AbstractActionController
 
             try
             {
-               // Make an HTTP POST request to the event's server so he can broadcast a
-               // new websocket related to the new event.
-               $client = new Client('http://127.0.0.1:8002');
-               $client->setMethod(Request::METHOD_POST);
-               // Setting POST data.
-               $client->setParameterPost(array(
+               $this->_sendRequest(array(
                   "requestType"  => "newEvent",
                   "event"        => json_encode($event)
                ));
-               // Send HTTP request to server.
-               $response = $client->send();
 
-               // Send a remove request to redirect the the concerned user out
-               // of the project.
-               $client->setParameterPost(array(
+               // Send a remove request to redirect the the concerned user out of the project.
+               $this->_sendRequest(array(
                   "requestType"  => "memberRemoved",
                   "projectId"    => $projectId,
                   "memberId"     => $memberId,
                   "username"     => $sessionUser->username
                ));
-               // Send HTTP request to server.
-               $response = $client->send();
             }
             catch (\Exception $e)
             {
@@ -1243,9 +1171,9 @@ class ProjectController extends AbstractActionController
 
       // Send the success message back with JSON.
       return new JsonModel(array(
-         'success' => true,
+         'success'        => true,
          'projectDetails' => $projectDetails,
-         'members'   => $members
+         'members'        => $members
       ));
    }
 
@@ -1272,17 +1200,10 @@ class ProjectController extends AbstractActionController
 
          try
          {
-            // Make an HTTP POST request to the event's server so he can broadcast a
-            // new websocket related to the new event.
-            $client = new Client('http://127.0.0.1:8002');
-            $client->setMethod(Request::METHOD_POST);
-            // Setting POST data.
-            $client->setParameterPost(array(
+            $this->_sendRequest(array(
                "requestType"  => "newEvent",
                "event"        => json_encode($event)
             ));
-            // Send HTTP request to server.
-            $response = $client->send();
          }
          catch (\Exception $e)
          {
@@ -1303,27 +1224,67 @@ class ProjectController extends AbstractActionController
       }
    }
 
+   private function _sendRequest($postParams)
+   {
+      // Make an HTTP POST request to the event's server so he can broadcast a
+      // new websocket related to the new event.
+      $client = new Client('http://127.0.0.1:8002');
+      $client->setMethod(Request::METHOD_POST);
+      // Setting POST data.
+      $client->setParameterPost($postParams);
+      // Send HTTP request to server.
+      $response = $client->send();
+   }
 
+   /**
+   * Check if the user is assigned to the task passed in params.
+   * 
+   * @param int userId : id of the user
+   * @param int taskId : id of the task
+   * @return true if the user is assigned to the task, false otherwise
+   */
    private function _userIsAssignToTask($userId, $taskId)
    {
       return !empty($this->_getTable('UsersTasksAffectationsTable')->getAffectation($userId, $taskId));
    }
 
+   /**
+   * Check if the user is creator of the project passed in params.
+   * 
+   * @param int userId : id of the user
+   * @param int projectId : id of the project
+   * @return true if the user is creator of the project, false otherwise
+   */
    private function _userIsCreatorOfProject($userId, $projectId)
    {
       return $this->_getTable('ProjectTable')->getProject($projectId)->creator == $userId;
    }
 
+   /**
+   * Check if the user is administrator of the project passed in params.
+   * 
+   * @param int userId : id of the user
+   * @param int projectId : id of the project
+   * @return true if the user is administrator of the project, false otherwise
+   */
    private function _userIsAdminOfProject($userId, $projectId)
    {
       return $this->_getTable('ViewProjectMinTable')->userIsAdminOfProject($userId, $projectId);
    }
 
+   /**
+   * Returns users that are not member of the project passed in params.
+   * 
+   * @param int projectId : id of the project
+   * @return members of the project
+   */
    private function _getUsersNotMemberOfProject($projectId)
    {
+      // Get members of project and all users
       $members = $this->_getTable('ViewUsersProjectsTable')->getUsersInProject($projectId)->buffer();
       $users = $this->_getTable('UserTable')->getAllUsers()->buffer();
 
+      // We put all users that not in the members array -> it's the members of the project
       $notMembersArray = array();
       foreach($users as $user)
       {
