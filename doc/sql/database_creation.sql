@@ -40,7 +40,7 @@ CREATE TABLE projects
     startDate DATE NOT NULL,
     deadLineDate DATE,
     fileLogo VARCHAR(50),
-    creator INT,
+    creator INT NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY(creator) REFERENCES users(id) ON DELETE CASCADE
 );

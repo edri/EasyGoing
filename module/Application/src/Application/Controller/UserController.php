@@ -288,8 +288,8 @@ class UserController extends AbstractActionController
 			                        {
 			                           $result = 'errorDatabaseAdding';
 			                        }
-										}
-									}
+								  }
+								}
 	                     }
 	                     else
 								{
@@ -375,166 +375,221 @@ class UserController extends AbstractActionController
 		else
 			//If so, we send user's information to edit view
 		{
-		$user = $this->_getUserTable()->getUserById($sessionUser->id);
-		$request = $this->getRequest();
-		define("SUCCESS_MESSAGE", "ok");
-      	$result = SUCCESS_MESSAGE;
-		$successfulEdition = "";
+			$user = $this->_getUserTable()->getUserById($sessionUser->id);
+			$request = $this->getRequest();
+			define("SUCCESS_MESSAGE", "ok");
+	      	$result = SUCCESS_MESSAGE;
+			$successfulEdition = "";
+			if ($request->isPost())
+	        {
 
-		if ($request->isPost())
-        {
+	         	//the user has clicked on "Save changes"
+	         	$username = $_POST["username"];
+	            $fName = $_POST["fName"];
+	            $lName= $_POST["lName"];
+	            $email =  $_POST["email"];
 
-         	//the user has clicked on "Save changes"
-         	$username = $_POST["username"];
-            $fName = $_POST["fName"];
-            $lName= $_POST["lName"];
-            $email =  $_POST["email"];
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL))
-            {
-            	$result = 'errorEmailInvalid';
-            	return new ViewModel(array(
-						'error' 			=> $result
-				));
-            }
-            if(isset($_POST["wantTutorial"]))
-            {
-            	$wantTutorial = 1;
-            }
-         	else
-         	{
-         		$wantTutorial = 0;
-         	}
-			if(isset($_POST["wantNotifications"]))
-            {
-            	$wantNotifications = 1;
-            }
-         	else
-         	{
-         		$wantNotifications = 0;
-         	}
+	            $user->firstName = $fName;
+	            $user->lastName = $lName;
+	            $user->email = $email;
 
-         	$password1 = $_POST["password1"];
-            $password2 = $_POST["password2"];
-            //by default, the password has not been changed
-			$password = $user->hashedPassword;
-			$id = $user->id;
-            if($password1 != $password2)
-            {
-            	$result = 'errorPasswordsDontMatch';
-            	return new ViewModel(array(
-						'error' 			=> $result
-				));
-            }
-            else if ($password1 == "") { //password hasn't been changed
-            	//nothing to do
-            }
-            else//password has changed
-            {
-            	$password = $password1;
-            	$this->_getUserTable()->updateUserPassword($id, $this->_hashPassword($password));
-            }
+	            if(isset($_POST["wantTutorial"]))
+	            {
+	            	$wantTutorial = 1;
+	            	$user->wantTutorial = 1;
+	            }
+	         	else
+	         	{
+	         		$wantTutorial = 0;
+	         	}
+				if(isset($_POST["wantNotifications"]))
+	            {
+	            	$wantNotifications = 1;
+	            	$user->$wantNotifications = $wantNotifications;
+	            }
+	         	else
+	         	{
+	         		$wantNotifications = 0;
+	         	}
 
-            $picture = $_POST["picture"];            
-            // If the user mentioned a picture, validate it.
-            if (empty($_FILES["picture"]["name"]))
-            {
-               // Allowed file's extensions.
-               $allowedExts = array("jpeg", "JPEG", "jpg", "JPG", "png", "PNG");
-               // Get the file's extension.
-               $temp = explode(".", $_FILES["picture"]["name"]);
-               $extension = end($temp);
-               // Validates the file's size.
-               if ($_FILES["picture"]["size"] > 5 * 1024 * 1024 || !$_FILES["picture"]["size"])
-               {
-                  	$result = 'errorPictureSize';
-            		return new ViewModel(array(
-						'error' 			=> $result
+	         	$password1 = $_POST["password1"];
+	            $password2 = $_POST["password2"];
+	            //by default, the password has not been changed
+				$password = $user->hashedPassword;
+				$id = $user->id;
+
+	            if($password1 == $password2)
+	            {	//check if passwords are equal
+	            	if(filter_var($email, FILTER_VALIDATE_EMAIL))
+	            	{	
+	            		if(!($this->_getUserTable()->checkIfMailExists($email)&& $email != $user->email))
+			         	{        		 	
+	            		//password has changed
+		            		if($this->_hashPassword($password1) != $password && $password != "")
+		            		{
+		            			$password = $password1;
+			            		$this->_getUserTable()->updateUserPassword($id, $this->_hashPassword($password));
+		            		}
+		    										// Indicate if the prospective user's picture is valid or not.
+		                    $fileValidated = true;
+		                    // If the user mentioned a picture, validate it.
+		                    if (!empty($_FILES["picture"]["name"]))
+		                    {
+		                       // Allowed file's extensions.
+		                       $allowedExts = array("jpeg", "JPEG", "jpg", "JPG", "png", "PNG");
+		                       // Get the file's extension.
+		                       $temp = explode(".", $_FILES["picture"]["name"]);
+		                       $extension = end($temp);
+		                       // Validates the file's size.
+		                       if ($_FILES["picture"]["size"] > 5 * 1024 * 1024 || !$_FILES["picture"]["size"])
+		                       {
+		                          $result = "errorPictureSize";
+		                          $fileValidated = false;
+		                       }
+				                  // Validates the file's type.
+		                       else if (($_FILES["picture"]["type"] != "image/jpeg") &&
+		                          ($_FILES["picture"]["type"] != "image/jpg") &&
+		                          ($_FILES["picture"]["type"] != "image/pjpeg") &&
+		                          ($_FILES["picture"]["type"] != "image/x-png") &&
+		                          ($_FILES["picture"]["type"] != "image/png"))
+		                       {
+		                          $result = "errorPictureType";
+		                          $fileValidated = false;
+		                       }
+		                       // Validates the file's extension.
+		                       else if (!in_array($extension, $allowedExts))
+		                       {
+		                          $result = "errorPictureExtension";
+		                          $fileValidated = false;
+		                       }
+		                       // Check that there is no error in the file.
+		                       else if ($_FILES["picture"]["error"] > 0)
+		                       {
+		                          $result = "errorPicture";
+		                          $fileValidated = false;
+		                       }
+				                  // If the file is valid, upload the picture.
+		                       else
+		                       {
+		                          try
+		                          {
+		                             // Generate a time-based unique ID, and check that this file's name doesn't exist yet.
+		                             do
+		                             {
+		                                $fileName = uniqid() . ".png";
+		                             }
+		                             while (file_exists(getcwd() . "/public/img/users/" . $fileName));
+												// First move the temporary uploaded file in the server's directory to
+				                        // avoid some extensions issues with some OS.
+				                        move_uploaded_file($_FILES['picture']['tmp_name'], getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
+		                             // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
+		                             $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 150);
+		                          }
+		                          catch (\Exception $e)
+		                          {
+		                             $result = "errorFilesUpload";
+		                          }
+									// Delete the temporary file if it exists.
+									if (file_exists(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]))
+										unlink(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
+		                       }
+		                    }
+							if($result == SUCCESS_MESSAGE)
+							{
+								if(isset($fileName))
+					         	{
+					         		$user->filePhoto = $fileName;
+					         	}
+								//update user's information in DB
+					         	$this->_getUserTable()->updateUser($id, $fName, $lName, $email, isset($fileName) ? $fileName : "default.png", $wantTutorial, $wantNotifications);
+					         	$successfulEdition = "successfulEdition";
+
+								return new ViewModel(array(
+										'successfulEdition' => $successfulEdition,
+										'username' 			=> $user->username,
+										'email'				=> $user->email,
+										'fName'				=> $user->firstName,
+										'lName'				=> $user->lastName,
+										'wantNotifications'	=> $user->wantNotifications,
+										'wantTutorial'		=> $user->wantTutorial,
+										'picture'			=> $user->filePhoto
+								));
+
+					        }
+					        else
+					        {            	       	
+			            		return new ViewModel(array(
+									'error' 			=> $result,
+									'username' 			=> $user->username,
+									'email'				=> $user->email,
+									'fName'				=> $user->firstName,
+									'lName'				=> $user->lastName,
+									'wantNotifications'	=> $user->wantNotifications,
+									'wantTutorial'		=> $user->wantTutorial,
+									'picture'			=> $user->filePhoto
+
+								));	
+					        }
+			            }
+			            else
+			            {
+		        	       	$result = 'errorEmailAlreadyExists';
+			            	return new ViewModel(array(
+									'error' 			=> $result,									
+									'username' 			=> $user->username,
+									'email'				=> $user->email,
+									'fName'				=> $user->firstName,
+									'lName'				=> $user->lastName,
+									'wantNotifications'	=> $user->wantNotifications,
+									'wantTutorial'		=> $user->wantTutorial,
+									'picture'			=> $user->filePhoto
+
+							));	
+			            }
+		            }
+		            else
+		            {
+		            	$result = 'errorEmailInvalid';
+		            	return new ViewModel(array(
+								'error' 			=> $result,
+								'username' 			=> $user->username,
+								'email'				=> $user->email,
+								'fName'				=> $user->firstName,
+								'lName'				=> $user->lastName,
+								'wantNotifications'	=> $user->wantNotifications,
+								'wantTutorial'		=> $user->wantTutorial,
+								'picture'			=> $user->filePhoto
+
+						));
+		            } 
+		        }    
+		        else
+		        {
+		     		$result = 'errorPasswordsDontMatch';
+		        	return new ViewModel(array(
+							'error' 			=> $result,
+							'username' 			=> $user->username,
+							'email'				=> $user->email,
+							'fName'				=> $user->firstName,
+							'lName'				=> $user->lastName,
+							'wantNotifications'	=> $user->wantNotifications,
+							'wantTutorial'		=> $user->wantTutorial,
+							'picture'			=> $user->filePhoto
+
 					));
-               }
-                  // Validates the file's type.
-               else if (($_FILES["picture"]["type"] != "image/jpeg") &&
-                  ($_FILES["picture"]["type"] != "image/jpg") &&
-                  ($_FILES["picture"]["type"] != "image/pjpeg") &&
-                  ($_FILES["picture"]["type"] != "image/x-png") &&
-                  ($_FILES["picture"]["type"] != "image/png"))
-               {
-                  $result = "errorPictureType";
-            	  return new ViewModel(array(
-						'error' 			=> $result
-				  ));
-               }
-               // Validates the file's extension.
-               else if (!in_array($extension, $allowedExts))
-               {
-                  $result = "errorPictureExtension";
-              		return new ViewModel(array(
-						'error' 			=> $result
-					));
-               }
-               // Check that there is no error in the file.
-               else if ($_FILES["picture"]["error"] > 0)
-               {
-                  $result = "errorPicture";
-            	  return new ViewModel(array(
-						'error' 			=> $result
-				  ));
-               }
-                  // If the file is valid, upload the picture.
-               else
-               {
-                  try
-                  {
-                     // Generate a time-based unique ID, and check that this file's name doesn't exist yet.
-                     do
-                     {
-                        $fileName = uniqid() . ".png";
-                     }
-                     while (file_exists(getcwd() . "/public/img/users/" . $fileName));
-								// First move the temporary uploaded file in the server's directory to
-                        // avoid some extensions issues with some OS.
-                        move_uploaded_file($_FILES['picture']['tmp_name'], getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
-                     // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
-                     $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 150);
-                  }
-                  catch (\Exception $e)
-                  {
-                     $result = "errorFilesUpload";
-             		 return new ViewModel(array(
-						'error' 			=> $result
-					 ));
-                  }
-							// Delete the temporary file if it exists.
-							if (file_exists(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]))
-								unlink(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
-               }
-            }
-
-         	if($this->_getUserTable()->checkIfMailExists($email)&& $email != $user->email)
-         	{
-         		$result = 'errorEmailAlreadyExists';
-            	return new ViewModel(array(
-						'error' 			=> $result
-				));
-         	}
-			//update user's information in DB
-         	$this->_getUserTable()->updateUser($id, $fName, $lName, $email, isset($fileName) ? $fileName : "default.png", $wantTutorial, $wantNotifications);
-         	$successfulEdition = "successfulEdition";
-        }
-
-				return new ViewModel(array(
-						'successfulEdition' => $successfulEdition,
-						'username' 			=> $user->username,
-						'email'				=> $user->email,
-						'fName'				=> $user->firstName,
-						'lName'				=> $user->lastName,
-						'wantNotifications'	=> $user->wantNotifications,
-						'wantTutorial'		=> $user->wantTutorial,
-						'picture'			=> $user->filePhoto
-					));
-
+		        }		    	
+	        }                        	
 		}
-
-
+		return new ViewModel(array(
+			'successfulEdition' => $successfulEdition,
+			'username' 			=> $user->username,
+			'email'				=> $user->email,
+			'fName'				=> $user->firstName,
+			'lName'				=> $user->lastName,
+			'wantNotifications'	=> $user->wantNotifications,
+			'wantTutorial'		=> $user->wantTutorial,
+			'picture'			=> $user->filePhoto
+		));
 	}
 
 	public function passwordforgottenAction()
