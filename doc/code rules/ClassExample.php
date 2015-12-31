@@ -40,6 +40,11 @@ class ClassExample
    */
    function setName($value)
    {
+      if($value < 0)
+      {
+         // Do something
+      }
+
       $this->_name = $value;
    }
 }
