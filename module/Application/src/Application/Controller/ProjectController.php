@@ -113,6 +113,12 @@ class ProjectController extends AbstractActionController
          $this->redirect()->toRoute('projects');
       }
 
+      if(!$this->_getTable('ProjectsUsersMembersTable')->getMemberRight($sessionUser->id, $this->params('id')))
+      {
+         $this->redirect()->toRoute('projects');
+         return;
+      }
+
       if ($this->params('otherId') != null && empty($this->_getTable('TaskTable')->getTaskById($this->params('otherId'))))
       {
          $this->redirect()->toRoute('projects');
