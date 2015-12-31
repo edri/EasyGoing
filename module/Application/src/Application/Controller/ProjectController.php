@@ -641,7 +641,7 @@ class ProjectController extends AbstractActionController
 
       $result = new ViewModel(array(
          'projectId'                => $this->params('id'),
-         'creatorId'         => $creatorId,
+         'creatorId'                => $creatorId,
          'members'                  => $members,
          'membersSpecializations'   => $membersSpecializations,
          'tasksForMember'           => $arrayTasksForMember,
