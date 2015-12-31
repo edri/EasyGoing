@@ -1224,6 +1224,11 @@ class ProjectController extends AbstractActionController
       }
    }
 
+   /**
+   * Send a POST request to the event's server
+   * 
+   * @param array postParams : params want to send by post request
+   */
    private function _sendRequest($postParams)
    {
       // Make an HTTP POST request to the event's server so he can broadcast a
