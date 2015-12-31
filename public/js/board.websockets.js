@@ -80,8 +80,8 @@ $(document).ready(function() {
       connection.onopen = function() {
          console.log("Socket connection successfully opened!");
 
-         // Send a request to the server, depending on the user's location on the
-         // website : project's page or task's page.
+         // Send a request confirmation to the server, depending on the user's
+         // location on the website : project's page or task's page.
          if (isProjectPage) {
             connection.send(JSON.stringify({
                "messageType": "projectListeningRequest",

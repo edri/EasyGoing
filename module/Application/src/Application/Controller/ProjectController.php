@@ -144,6 +144,26 @@ class ProjectController extends AbstractActionController
       // page will display the members' specializations.
       $showSpecializations = isset($_COOKIE["showMembersSpecializations"]) && $_COOKIE["showMembersSpecializations"];
 
+      // Send a HTTP POST request to the HTTP server to indicate we want to join
+      // the current project's websockets flow.
+      // An user can only join the project's flow if it made a "joinProjectRequest"
+      // HTTP request and then send a confirmation with JavaScript to suscribe to
+      // the flow.
+      // This was done because of the JavaScript's security issues (as it is a
+      // client side).
+      try
+      {
+         $this->_sendRequest(array(
+            "requestType"  => "joinProjectRequest",
+            "userId"       => $sessionUser->id,
+            "projectId"    => $projectId
+         ));
+      }
+      catch (\Exception $e)
+      {
+         error_log("WARNING: could not connect to events servers. Maybe offline?");
+      }
+
       return new ViewModel(array(
          'project'               => $project,
          'tasks'                 => $parentTasksInProject,
@@ -489,6 +509,27 @@ class ProjectController extends AbstractActionController
       $eventsTypes = $this->_getTable('EventTypeTable')->getTypes(true);
       // Get task's events.
       $events = $this->_getTable('ViewEventTable')->getEntityEvents($taskId, true);
+
+      // Send a HTTP POST request to the HTTP server to indicate we want to join
+      // the current task's websockets flow.
+      // An user can only join the task's flow if it made a "joinTaskRequest"
+      // HTTP request and then send a confirmation with JavaScript to suscribe to
+      // the flow.
+      // This was done because of the JavaScript's security issues (as it is a
+      // client side).
+      try
+      {
+         $this->_sendRequest(array(
+            "requestType"  => "joinTaskRequest",
+            "userId"       => $sessionUser->id,
+            "projectId"    => $projectId,
+            "taskId"       => $taskId
+         ));
+      }
+      catch (\Exception $e)
+      {
+         error_log("WARNING: could not connect to events servers. Maybe offline?");
+      }
 
       return new ViewModel(array(
          'task'         => $task,
@@ -1238,7 +1279,7 @@ class ProjectController extends AbstractActionController
 
    /**
    * Check if the user is assigned to the task passed in params.
-   * 
+   *
    * @param int userId : id of the user
    * @param int taskId : id of the task
    * @return true if the user is assigned to the task, false otherwise
@@ -1250,7 +1291,7 @@ class ProjectController extends AbstractActionController
 
    /**
    * Check if the user is creator of the project passed in params.
-   * 
+   *
    * @param int userId : id of the user
    * @param int projectId : id of the project
    * @return true if the user is creator of the project, false otherwise
@@ -1262,7 +1303,7 @@ class ProjectController extends AbstractActionController
 
    /**
    * Check if the user is administrator of the project passed in params.
-   * 
+   *
    * @param int userId : id of the user
    * @param int projectId : id of the project
    * @return true if the user is administrator of the project, false otherwise
@@ -1274,7 +1315,7 @@ class ProjectController extends AbstractActionController
 
    /**
    * Returns users that are not member of the project passed in params.
-   * 
+   *
    * @param int projectId : id of the project
    * @return members of the project
    */
