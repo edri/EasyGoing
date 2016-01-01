@@ -90,6 +90,7 @@ class ProjectController extends AbstractActionController
             $members[$i]["isAdmin"] = $tmpM->isAdmin;
             ++$i;
          }
+      }
       
 
       return $members;
@@ -802,6 +803,7 @@ class ProjectController extends AbstractActionController
          || $this->_getTable('UsersTasksAffectationsTable')->getAffectation($sessionUser->id, $data['taskId'])
             && $sessionUser->id == $data['oldMemberId'])
       {
+
          $this->_getTable('TaskTable')->updateStateOfTask($data['taskId'], $data['targetSection']);
 
          if($data['oldMemberId'] != $data['targetMemberId'])
