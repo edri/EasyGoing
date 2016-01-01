@@ -987,8 +987,6 @@ class ProjectController extends AbstractActionController
          // Then add the new event in the database.
          $message = "<u>" . $sessionUser->username . "</u> deleted task <font color=\"#FF6600\">" . $oldTaskData->name . "</font>.";
          // This event have some details.
-         // TODO: use priority with BasicEnum.
-         $priorityArray = ['High', 'Medium', 'Low'];
          $details =
             "<table class='eventDetailsTable'>
                <tr>
