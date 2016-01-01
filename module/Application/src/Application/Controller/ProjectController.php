@@ -689,6 +689,15 @@ class ProjectController extends AbstractActionController
       $showSpecializations = isset($_COOKIE["showMembersSpecializations"]) && $_COOKIE["showMembersSpecializations"];
       $creatorId = $this->_getTable('ProjectTable')->getProject($this->params('id'))->creator;
 
+
+      $parentTasksInProject = $this->_getTable('TaskTable')->getAllParentTasksInProject($this->params('id'));
+      $subTasks = array();
+      foreach($parentTasksInProject as $parentTask)
+      {
+         $subTasks[$parentTask->id] = $this->_getTable('TaskTable')->getSubTasks($parentTask->id);
+      }
+
+
       // Get tasks in a project for each member
       $arrayTasksForMember = array();
       foreach($members as $member)
@@ -699,13 +708,16 @@ class ProjectController extends AbstractActionController
             array_push($arrayTasksForMember[$member->id], $task);
       }
 
+
+
       $result = new ViewModel(array(
          'projectId'                => $this->params('id'),
          'creatorId'                => $creatorId,
          'members'                  => $members,
          'membersSpecializations'   => $membersSpecializations,
          'tasksForMember'           => $arrayTasksForMember,
-         'showSpecializations'      => $showSpecializations
+         'showSpecializations'      => $showSpecializations,
+         'subTasks'                 => $subTasks
       ));
       $result->setTerminal(true);
 
