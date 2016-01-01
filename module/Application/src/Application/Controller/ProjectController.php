@@ -90,7 +90,7 @@ class ProjectController extends AbstractActionController
             $members[$i]["isAdmin"] = $tmpM->isAdmin;
             ++$i;
          }
-      
+      }
 
       return $members;
    }
