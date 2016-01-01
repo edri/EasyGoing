@@ -567,14 +567,27 @@ class ProjectController extends AbstractActionController
          // Upload task's data.
          $this->_getTable('TaskTable')->updateTask($name, $description, $deadline, $duration, $priority, $id);
 
+         // Get priorites' texts.
+         $oldPriorityText = "";
+         $newPriorityText = "";
+         foreach(Priority::getConstants() as $value)
+         {
+            if ($oldTaskData->priorityLevel == $value)
+            {
+               $oldPriorityText = Priority::toString($value);
+            }
+            if ($priority == $value)
+            {
+               $newPriorityText = Priority::toString($value);
+            }
+         }
+
          // If task was successfully edited, add a task's edition event.
          // First of all, get right event type.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
          // Then add the new event in the database.
          $message = "<u>" . $sessionUser->username . "</u> updated task <font color=\"#FF6600\">" . $name . "</font>.";
          // This event have some details.
-         // TODO: use priority with BasicEnum.
-         $priorityArray = ['High', 'Medium', 'Low'];
          $details =
             "<table class='eventDetailsTable'>
                <tr>
@@ -599,8 +612,8 @@ class ProjectController extends AbstractActionController
                </tr>
                <tr>
                   <td class='eventDetailsTaskAttribute'>Priority: </td>
-                  <td>" . $priorityArray[$oldTaskData->priorityLevel - 1] . "</td>
-                  <td>" . $priorityArray[$priority - 1] . "</td>
+                  <td>" . $oldPriorityText . "</td>
+                  <td>" . $newPriorityText . "</td>
                </tr>
                <tr>
                   <td class='eventDetailsTaskAttribute'>Description: </td>
@@ -958,6 +971,16 @@ class ProjectController extends AbstractActionController
          $oldTaskData = $this->_getTable('TaskTable')->getTaskById($taskId);
          $this->_getTable('TaskTable')->deleteTask($taskId);
 
+         // Get old task's priority's text.
+         $priorityText = "";
+         foreach(Priority::getConstants() as $value)
+         {
+            if ($oldTaskData->priorityLevel == $value)
+            {
+               $priorityText = Priority::toString($value);
+            }
+         }
+
          // If task was successfully deleted, add a task's deletion event.
          // First of all, get right event type.
          $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
@@ -986,7 +1009,7 @@ class ProjectController extends AbstractActionController
                </tr>
                <tr>
                   <td class='eventDetailsTaskAttribute'>Priority: </td>
-                  <td>" . $priorityArray[$oldTaskData->priorityLevel - 1] . "</td>
+                  <td>" . $priorityText . "</td>
                </tr>
                <tr>
                   <td class='eventDetailsTaskAttribute'>Description: </td>
@@ -1263,7 +1286,7 @@ class ProjectController extends AbstractActionController
 
    /**
    * Send a POST request to the event's server
-   * 
+   *
    * @param array postParams : params want to send by post request
    */
    private function _sendRequest($postParams)
