@@ -730,69 +730,60 @@ class ProjectController extends AbstractActionController
       $projectId = $this->params('id');
       $data = $this->getRequest()->getPost();
 
-      if($this->_userIsAdminOfProject($sessionUser->id, $projectId))
+
+      if($this->_userIsAssignToTask($data['targetMemberId'], $data['taskId']))
       {
-         if($this->_userIsAssignToTask($data['targetMemberId'], $data['taskId']))
-         {
-            return $this->getResponse()->setContent(json_encode(array(
-               'hasRightToAssignTask' => true,
-               'alreadyAssigned'      => true
-            )));
-         }
-         else
-         {
-            $this->_getTable('UsersTasksAffectationsTable')->addAffectation($data['targetMemberId'], $data['taskId']);
-
-            // Get task's new affectation and section before erasing them.
-            $newUsername = $this->_getTable("UserTable")->getUserById($this->_getTable('UsersTasksAffectationsTable')->getAffectationByTaskId($data['taskId'])->user)->username;
-            $task = $this->_getTable("TaskTable")->getTaskById($data['taskId']);
-
-            // If task was successfully assigned, add an event.
-            // Get right event type.
-            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
-            // Then add the new event in the database.
-            $message =
-               "<u>" . $sessionUser->username . "</u> moved task <font color=\"#FF6600\">" . $task->name .
-               "</font> from <font color=\"black\"><i>unassigned</i></font> to <font color=\"black\">(" . $newUsername . ", " . $task->state . ")</font>.";
-            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
-            // Link the new event to the current project.
-            $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
-            // Finaly link the new event to the user who created it.
-            $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
-            // Get event's data to send them to socket server.
-            $event1 = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
-            // For the task's news feed.
-            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
-            $message = "\"" . $sessionUser->username . "\" moved the task from \"unassigned\" to \"(" . $newUsername . ", " . $task->state . ")\".";
-            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
-            $this->_getTable("EventOnTaskTable")->add($eventId, $data['taskId']);
-            // Get SYSTEM user's ID and link it to the new task's event.
-            $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
-            $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
-            $event2 = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
-
-            try
-            {
-               $this->_sendRequest(array(
-                  "requestType"  => "newEvents",
-                  "events"       => array(json_encode($event1), json_encode($event2))
-               ));
-            }
-            catch (\Exception $e)
-            {
-               error_log("WARNING: could not connect to events servers. Maybe offline?");
-            }
-
-            return $this->getResponse()->setContent(json_encode(array(
-               'hasRightToAssignTask' => true,
-               'alreadyAssigned'      => false
-            )));
-         }
+         return $this->getResponse()->setContent(json_encode(array(
+            'hasRightToAssignTask' => true,
+            'alreadyAssigned'      => true
+         )));
       }
       else
       {
+         $this->_getTable('UsersTasksAffectationsTable')->addAffectation($data['targetMemberId'], $data['taskId']);
+
+         // Get task's new affectation and section before erasing them.
+         $newUsername = $this->_getTable("UserTable")->getUserById($this->_getTable('UsersTasksAffectationsTable')->getAffectationByTaskId($data['taskId'])->user)->username;
+         $task = $this->_getTable("TaskTable")->getTaskById($data['taskId']);
+
+         // If task was successfully assigned, add an event.
+         // Get right event type.
+         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Tasks")->id;
+         // Then add the new event in the database.
+         $message =
+            "<u>" . $sessionUser->username . "</u> moved task <font color=\"#FF6600\">" . $task->name .
+            "</font> from <font color=\"black\"><i>unassigned</i></font> to <font color=\"black\">(" . $newUsername . ", " . $task->state . ")</font>.";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         // Link the new event to the current project.
+         $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+         // Finaly link the new event to the user who created it.
+         $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+         // Get event's data to send them to socket server.
+         $event1 = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+         // For the task's news feed.
+         $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Info")->id;
+         $message = "\"" . $sessionUser->username . "\" moved the task from \"unassigned\" to \"(" . $newUsername . ", " . $task->state . ")\".";
+         $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+         $this->_getTable("EventOnTaskTable")->add($eventId, $data['taskId']);
+         // Get SYSTEM user's ID and link it to the new task's event.
+         $systemUserId = $this->_getTable("UserTable")->getSystemUser()->id;
+         $this->_getTable("EventUserTable")->add(($systemUserId ? $systemUserId : $sessionUser->id), $eventId);
+         $event2 = $this->_getTable("ViewEventTable")->getEvent($eventId, true);
+
+         try
+         {
+            $this->_sendRequest(array(
+               "requestType"  => "newEvents",
+               "events"       => array(json_encode($event1), json_encode($event2))
+            ));
+         }
+         catch (\Exception $e)
+         {
+            error_log("WARNING: could not connect to events servers. Maybe offline?");
+         }
+
          return $this->getResponse()->setContent(json_encode(array(
-            'hasRightToAssignTask' => false,
+            'hasRightToAssignTask' => true,
             'alreadyAssigned'      => false
          )));
       }
@@ -1033,7 +1024,6 @@ class ProjectController extends AbstractActionController
       {
          $resMessage = 'You do not have rights to delete this task !';
       }
-
 
       return $this->getResponse()->setContent(json_encode(array(
          'message' => $resMessage
