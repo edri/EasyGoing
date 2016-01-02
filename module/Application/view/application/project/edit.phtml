@@ -55,7 +55,7 @@
     <div class="form-group">
         <label class="control-label col-sm-2" for="name">Name *</label>
         <div class="col-sm-10">
-            <input class="form-control" id="projectName" placeholder="Enter name"
+            <input class="form-control" id="projectName" maxlength=50 placeholder="Enter name"
                    name="name" required="required" type="text"
                    value="<?php if (isset($name)) echo $this->escapeHtml($name); else echo $this->escapeHtml($project->name); ?>" />
         </div>

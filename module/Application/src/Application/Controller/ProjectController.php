@@ -1096,7 +1096,8 @@ class ProjectController extends AbstractActionController
                      if($i++ >= $MAX_SPEC_PER_USER)
                         break;
 
-                     if($spe != '')
+                     // The specialization must not already exists.
+                     if($spe != '' && strpos($specializationsString, $spe) == false)
                      {
                         $this->_getTable('ProjectsUsersSpecializationsTable')->addSpecialization($value, $this->params('id'), $spe);
 

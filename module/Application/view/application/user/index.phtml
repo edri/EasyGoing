@@ -69,7 +69,7 @@
 
         <div class="formInput loginUsername">
           <label for="username">Username</label>
-          <input type="text" name="username" class="form-control" id="username" required="required"
+          <input type="text" name="username" class="form-control" id="username" maxlength=30 required="required"
      			 placeholder="Enter username" value="<?php if (isset($username)) echo $this->escapeHtml($username); ?>"/>
         </div>
 

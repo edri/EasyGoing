@@ -84,7 +84,7 @@ $('.add-user').click(function (e) {
          nbSpecArray[userId] = 1;
 
          $(this).append('<div class="spe"><hr></div>')
-         $(this).find('.spe').append('<div class="spe-input" style="float: left;"><input name="spe'+ userId +'[]" type="text" placeholder="Specialization" /></div>');
+         $(this).find('.spe').append('<div class="spe-input" style="float: left;"><input name="spe'+ userId +'[]" type="text" maxlength=50 placeholder="Specialization" /></div>');
          $(this).find('.spe').append('<div style="float: right;"><img class="newSpecImg" id="addSpec' + nbSpecArray[userId] + '" src="/img/plus.svg" /></div>');
 
          // Add
@@ -110,6 +110,6 @@ function addSpec(context, event) {
    if(nbSpecArray[userId]++ >= MAX_SPEC_PER_USER)
       bootbox.alert('The max number of specializations for a user is ' + MAX_SPEC_PER_USER);
    else
-      divSpe.append('<div style="margin-top: 5px"><input name="spe'+ userId +'[]" type="text" placeholder="Specialization" /></div>');
+      divSpe.append('<div style="margin-top: 5px"><input name="spe'+ userId +'[]" type="text" maxlength=50 placeholder="Specialization" /></div>');
 };
 </script>

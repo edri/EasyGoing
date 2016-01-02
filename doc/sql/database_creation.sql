@@ -18,7 +18,7 @@ SET GLOBAL log_bin_trust_function_creators = 1;
 CREATE TABLE users
 (
     id INT NOT NULL AUTO_INCREMENT,
-    email VARCHAR(50) NOT NULL,
+    email VARCHAR(64) NOT NULL,
     username VARCHAR(30) NOT NULL,
     hashedPassword VARCHAR(64) NOT NULL, /* Algorithm SHA-256 */
     firstName VARCHAR(30) NOT NULL,

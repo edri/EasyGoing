@@ -184,7 +184,8 @@ class ProjectsController extends AbstractActionController
                         // Add each user's specializations in the databse.
                         while (isset($_POST["specialization" . $i]))
                         {
-                           if ($_POST["specialization" . $i] != '')
+                           // The specialization must not already exists.
+                           if ($_POST["specialization" . $i] != '' && strpos($specializationsString, $_POST["specialization" . $i]) == false)
                            {
                               $this->_getTable('ProjectsUsersSpecializationsTable')->addSpecialization($sessionUser->id, $projectId, $_POST["specialization" . $i]);
 

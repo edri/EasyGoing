@@ -801,6 +801,8 @@ hr {
    display: table-cell;
    margin: 0;
    border: 1px solid #666;
+   max-width: 270px;
+   overflow: auto;
    padding: 5px;
    vertical-align: middle;
    width: 270px;
@@ -961,6 +963,7 @@ hr {
    font-size: 12px;
    font-style: italic;
    margin-bottom: 10px;
+   overflow: auto;
 }
 
 .add-user:hover {

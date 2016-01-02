@@ -64,19 +64,19 @@
 
      <div class="input-group">
         <span class="input-group-addon"><span class="glyphicon glyphicon-tag"></span></span>
-        <input type="text" name="fname" class="form-control" required="required"
+        <input type="text" name="fname" class="form-control" required="required" maxlength=30
            placeholder="Your First Name" value="<?php if (isset($fname)) echo $this->escapeHtml($fname); ?>" />
      </div>
 
      <div class="input-group">
         <span class="input-group-addon"><span class="glyphicon glyphicon-tag"></span></span>
-        <input type="text" name="lname" class="form-control" required="required"
+        <input type="text" name="lname" class="form-control" required="required" maxlength=30
           placeholder="Your Last Name" value="<?php if (isset($lname)) echo $this->escapeHtml($lname); ?>" />
      </div>
 
      <div class="input-group">
         <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-        <input type="text" name="username" class="form-control"  required="required"
+        <input type="text" name="username" class="form-control"  required="required" maxlength=30
           placeholder="Desired Username" value="<?php if (isset($username)) echo $this->escapeHtml($username); ?>"/>
      </div>
 
@@ -94,7 +94,7 @@
 
      <div class="input-group">
        <span class="input-group-addon">@</span>
-       <input type="email" name="email" class="form-control" required="required"
+       <input type="email" name="email" class="form-control" required="required" maxlength=64
   			 placeholder="Enter valid email address"   value="<?php if (isset($email)) echo $this->escapeHtml($email); ?>"/>
      </div>
 
