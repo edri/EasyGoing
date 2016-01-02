@@ -108,7 +108,7 @@ class ProjectController extends AbstractActionController
          $this->redirect()->toRoute('home');
       }
 
-      if (empty($this->_getTable('ProjectTable')->getProject($this->params('id'))))
+      if (!$this->_getTable('ProjectTable')->getProject($this->params('id')))
       {
          $this->redirect()->toRoute('projects');
       }
@@ -119,7 +119,7 @@ class ProjectController extends AbstractActionController
          return;
       }
 
-      if ($this->params('otherId') != null && empty($this->_getTable('TaskTable')->getTaskById($this->params('otherId'))))
+      if ($this->params('otherId') != null && !$this->_getTable('TaskTable')->getTaskById($this->params('otherId')))
       {
          $this->redirect()->toRoute('projects');
       }
@@ -1320,7 +1320,8 @@ class ProjectController extends AbstractActionController
    */
    private function _userIsAssignToTask($userId, $taskId)
    {
-      return !empty($this->_getTable('UsersTasksAffectationsTable')->getAffectation($userId, $taskId));
+      $userTaskAffectation = $this->_getTable('UsersTasksAffectationsTable')->getAffectation($userId, $taskId);
+      return !empty($userTaskAffectation);
    }
 
    /**
