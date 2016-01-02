@@ -133,7 +133,8 @@ class UserController extends AbstractActionController
 					// stay here and display log in error
 					$error = "loginFailed";
 					return new ViewModel(array(
-						'error' => $error
+						'username'			=> $username,
+						'error' 				=> $error
 					));
 				}
 		   }
@@ -421,9 +422,9 @@ class UserController extends AbstractActionController
 	            if($password1 == $password2)
 	            {	//check if passwords are equal
 	            	if(filter_var($email, FILTER_VALIDATE_EMAIL))
-	            	{	
+	            	{
 	            		if(!($this->_getUserTable()->checkIfMailExists($email)&& $email != $user->email))
-			         	{        		 	
+			         	{
 	            		//password has changed
 		            		if($this->_hashPassword($password1) != $password && $password != "")
 		            		{
@@ -517,7 +518,7 @@ class UserController extends AbstractActionController
 
 					        }
 					        else
-					        {            	       	
+					        {
 			            		return new ViewModel(array(
 									'error' 			=> $result,
 									'username' 			=> $user->username,
@@ -528,14 +529,14 @@ class UserController extends AbstractActionController
 									'wantTutorial'		=> $user->wantTutorial,
 									'picture'			=> $user->filePhoto
 
-								));	
+								));
 					        }
 			            }
 			            else
 			            {
 		        	       	$result = 'errorEmailAlreadyExists';
 			            	return new ViewModel(array(
-									'error' 			=> $result,									
+									'error' 			=> $result,
 									'username' 			=> $user->username,
 									'email'				=> $user->email,
 									'fName'				=> $user->firstName,
@@ -544,7 +545,7 @@ class UserController extends AbstractActionController
 									'wantTutorial'		=> $user->wantTutorial,
 									'picture'			=> $user->filePhoto
 
-							));	
+							));
 			            }
 		            }
 		            else
@@ -561,8 +562,8 @@ class UserController extends AbstractActionController
 								'picture'			=> $user->filePhoto
 
 						));
-		            } 
-		        }    
+		            }
+		        }
 		        else
 		        {
 		     		$result = 'errorPasswordsDontMatch';
@@ -577,8 +578,8 @@ class UserController extends AbstractActionController
 							'picture'			=> $user->filePhoto
 
 					));
-		        }		    	
-	        }                        	
+		        }
+	        }
 		}
 		return new ViewModel(array(
 			'successfulEdition' => $successfulEdition,
