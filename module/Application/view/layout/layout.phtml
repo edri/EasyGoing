@@ -171,8 +171,8 @@
       <div class="footerWrapper">
    		<div class="container footer">
    			EasyGoing! &copy; 2015
-   			<a href="/about" class="about">About</a>
-            <a href="/help" class="help">Help</a>
+   			<a href="/about" class="about<?php if ($this->controller == "Application\Controller\About" && $this->action == "index") echo " footerLinkSelected" ?>">About</a>
+            <a href="/about/help" class="help<?php if ($this->controller == "Application\Controller\About" && $this->action == "help") echo " footerLinkSelected" ?>">Help</a>
          </div>
       </div>
       <?php echo $this->inlineScript() ?>

@@ -166,7 +166,7 @@ a:focus {
    margin-right: 30px;
 }
 
-.about:hover, .help:hover {
+.footerLinkSelected, .about:hover, .help:hover {
    color: #995527;
 }
 
@@ -338,6 +338,23 @@ a:focus {
 
 .aboutUser h3 {
    font-size: 22px;
+}
+
+
+/* HELP */
+.helpExplanations {
+   background-color: #f5f5f5;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   color: #333;
+   display: block;
+   font-size: 14px;
+   margin: 0 0 30px;
+   padding: 20px;
+}
+
+.helpExplanations li:not(:first-child) {
+   margin-top: 10px;
 }
 
 
