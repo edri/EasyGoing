@@ -1,7 +1,8 @@
-var tutoData = [];
-var current = 0;
+var tutoData = []; // Contains data for loaded tutorial(s)
+var current = 0; // The current tuto which is shown
 
 function skipTutorial() {
+    // We have just to hide all of tutorial divs
 	$("div[role=tutorial]").tooltip('hide');
 }
 
@@ -34,18 +35,20 @@ function nextTutorial() {
 
 function loadTutorial(tuto) {
     
+    // Ajax request to load requested tutorial
     $.ajax({            
         type: 'GET',
         url: '/tutorial/' +  tuto,
         dataType: 'json',
         success: function(data) {
-        var tutoDataFiltered = [];
 
+            // Adding received informations to global variable called tutoData
             data.forEach(function(d) {             
                 tutoData.push(d);
             });
 
-            nextTutorial();
+            // Loading next tutorial
+            nextTutorial();            
         }
     });
 }
