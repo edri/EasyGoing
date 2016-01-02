@@ -260,6 +260,65 @@ a:focus {
 }
 
 
+/* REGISTRATION */
+.registrationDiv {
+   margin: 0 auto 50px;
+   padding: 0 20px 20px;
+   text-align: left;
+   width: 800px;
+}
+
+.registrationPicture {
+   margin-bottom: 30px;
+   margin-top: 30px;
+}
+
+.registrationParameters {
+   margin-bottom: 40px;
+}
+
+.registrationDiv .input-group {
+   margin-top: 20px;
+}
+
+.registrationChk {
+   margin-top: 8px !important;;
+}
+
+.btnCancelRegistration {
+   float: left;
+}
+
+
+/* FORGOT PASSWORD */
+.passwordForgottenDiv {
+   margin: 50px auto;
+   padding: 0 20px 20px;
+   text-align: left;
+   width: 800px;
+}
+
+.passForgHr {
+   margin-bottom: 50px;
+}
+
+.passwordForgottenDiv .input-group {
+   margin-bottom: 50px;
+}
+
+.btnCancelForgPass, .btnSendForgPass {
+   width: 170px;
+}
+
+.btnCancelForgPass {
+   float: left;
+}
+
+.btnSendForgPass {
+   float: right;
+}
+
+
 /* ABOUT PAGE */
 .aboutTitle {
    padding: 0 !important;
@@ -462,7 +521,7 @@ th {
 }
 
 .mandatoryFields {
-   font-weight: bold;
+   font-size: 13px;
 }
 
 .btnCreate,

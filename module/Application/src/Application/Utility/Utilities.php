@@ -4,9 +4,30 @@ namespace Application\Utility;
 // Contains function used in multiple controllers.
 class Utilities
 {
-   // Function inspired from www.thewebhelp.com.
+   // Inspired by https://github.com/PHPMailer/PHPMailer.
+	public function sendMail($mailAddress, $subject, $message)
+   {
+		$mail = new PHPMailer;
+		// Headers
+		$mail->From = 'noreply@easygoing.com';
+		$mail->FromName = 'Easygoing!';
+		$mail->addAddress($mailAddress);
+		$mail->addReplyTo('noreply@easygoing.com', 'No reply');
+		$mail->CharSet = 'UTF-8';
+
+		// Content.
+		// Set email format to HTML
+		$mail->isHTML(true);
+		$mail->Subject = 'Easygoing! - ' . $subject;
+		$mail->Body    = $message;
+
+		// Send the mail ans return the state as a boolean value (true => OK ; false => error).
+		return $mail->send();
+	}
+
+   // Function inspired by www.thewebhelp.com.
    // Used for create the images thumbnail.
-   public function createSquareImage($original_file, $original_extension, $destination_file = NULL, $square_size = 96) 
+   public function createSquareImage($original_file, $original_extension, $destination_file = NULL, $square_size = 96)
    {
       // Get width and height of original image.
       $imagedata = getimagesize($original_file);

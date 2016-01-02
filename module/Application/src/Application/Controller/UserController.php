@@ -192,119 +192,127 @@ class UserController extends AbstractActionController
 					// The username cannot be a reserved one.
 					if (strtolower($username) != "system")
 					{
-	               // The two passwords must match.
-	               if ($password1 == $password2)
-	               {
-	                  // The mail address must be valid.
-	                  if (filter_var($email, FILTER_VALIDATE_EMAIL))
-	                  {
-	                     // The email must not already exist.
-	                     if(!$this->_getUserTable()->checkIfMailExists($email))
-	                     {
-									// Indicate if the prospective user's picture is valid or not.
-	                        $fileValidated = true;
-	                        // If the user mentioned a picture, validate it.
-	                        if (!empty($_FILES["picture"]["name"]))
-	                        {
-	                           // Allowed file's extensions.
-	                           $allowedExts = array("jpeg", "JPEG", "jpg", "JPG", "png", "PNG");
-	                           // Get the file's extension.
-	                           $temp = explode(".", $_FILES["picture"]["name"]);
-	                           $extension = end($temp);
-	                           // Validates the file's size.
-	                           if ($_FILES["picture"]["size"] > 5 * 1024 * 1024 || !$_FILES["picture"]["size"])
-	                           {
-	                              $result = "errorPictureSize";
-	                              $fileValidated = false;
-	                           }
-				                  // Validates the file's type.
-	                           else if (($_FILES["picture"]["type"] != "image/jpeg") &&
-	                              ($_FILES["picture"]["type"] != "image/jpg") &&
-	                              ($_FILES["picture"]["type"] != "image/pjpeg") &&
-	                              ($_FILES["picture"]["type"] != "image/x-png") &&
-	                              ($_FILES["picture"]["type"] != "image/png"))
-	                           {
-	                              $result = "errorPictureType";
-	                              $fileValidated = false;
-	                           }
-	                           // Validates the file's extension.
-	                           else if (!in_array($extension, $allowedExts))
-	                           {
-	                              $result = "errorPictureExtension";
-	                              $fileValidated = false;
-	                           }
-	                           // Check that there is no error in the file.
-	                           else if ($_FILES["picture"]["error"] > 0)
-	                           {
-	                              $result = "errorPicture";
-	                              $fileValidated = false;
-	                           }
-				                  // If the file is valid, upload the picture.
-	                           else
-	                           {
-	                              try
-	                              {
-	                                 // Generate a time-based unique ID, and check that this file's name doesn't exist yet.
-	                                 do
-	                                 {
-	                                    $fileName = uniqid() . ".png";
-	                                 }
-	                                 while (file_exists(getcwd() . "/public/img/users/" . $fileName));
-												// First move the temporary uploaded file in the server's directory to
-				                        // avoid some extensions issues with some OS.
-				                        move_uploaded_file($_FILES['picture']['tmp_name'], getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
-	                                 // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
-	                                 $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 150);
-	                              }
-	                              catch (\Exception $e)
-	                              {
-	                                 $result = "errorFilesUpload";
-	                              }
-											// Delete the temporary file if it exists.
-											if (file_exists(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]))
-												unlink(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
-	                           }
-	                        }
-									// If there is no file or the file is valid, we can add the new
-				               // user in the database.
-				               if ($fileValidated)
-				               {
-				                  // Adds the new user in the database.
-				                  if ($result == SUCCESS_MESSAGE)
-				                  {
-			                        try
-			                        {
-			                           $userId = $this->_getUserTable()->addUser(
-													$username,
-													$this->_hashPassword($password1),
-													$fname,
-													$lname,
-													$email,
-													isset($fileName) ? $fileName : "default.png",
-													$tutorial,
-													$notifications
-												);
-			                        }
-			                        catch (\Exception $e)
-			                        {
-			                           $result = 'errorDatabaseAdding';
-			                        }
-								  }
-								}
-	                     }
-	                     else
-								{
-	                        $result = 'errorEmailAlreadyExists';
-								}
-	                  }
-	                  else
-							{
-	                     $result = 'errorEmailInvalid';
-							}
-	               }
-	               else
+						// The email must not already exist.
+						if(!$this->_getUserTable()->checkIfUsernameExists($username))
 						{
-	                  $result = 'errorPasswordsDontMatch';
+		               // The two passwords must match.
+		               if ($password1 == $password2)
+		               {
+		                  // The mail address must be valid.
+		                  if (filter_var($email, FILTER_VALIDATE_EMAIL))
+		                  {
+		                     // The email must not already exist.
+		                     if(!$this->_getUserTable()->checkIfMailExists($email))
+		                     {
+										// Indicate if the prospective user's picture is valid or not.
+		                        $fileValidated = true;
+		                        // If the user mentioned a picture, validate it.
+		                        if (!empty($_FILES["picture"]["name"]))
+		                        {
+		                           // Allowed file's extensions.
+		                           $allowedExts = array("jpeg", "JPEG", "jpg", "JPG", "png", "PNG");
+		                           // Get the file's extension.
+		                           $temp = explode(".", $_FILES["picture"]["name"]);
+		                           $extension = end($temp);
+		                           // Validates the file's size.
+		                           if ($_FILES["picture"]["size"] > 5 * 1024 * 1024 || !$_FILES["picture"]["size"])
+		                           {
+		                              $result = "errorPictureSize";
+		                              $fileValidated = false;
+		                           }
+					                  // Validates the file's type.
+		                           else if (($_FILES["picture"]["type"] != "image/jpeg") &&
+		                              ($_FILES["picture"]["type"] != "image/jpg") &&
+		                              ($_FILES["picture"]["type"] != "image/pjpeg") &&
+		                              ($_FILES["picture"]["type"] != "image/x-png") &&
+		                              ($_FILES["picture"]["type"] != "image/png"))
+		                           {
+		                              $result = "errorPictureType";
+		                              $fileValidated = false;
+		                           }
+		                           // Validates the file's extension.
+		                           else if (!in_array($extension, $allowedExts))
+		                           {
+		                              $result = "errorPictureExtension";
+		                              $fileValidated = false;
+		                           }
+		                           // Check that there is no error in the file.
+		                           else if ($_FILES["picture"]["error"] > 0)
+		                           {
+		                              $result = "errorPicture";
+		                              $fileValidated = false;
+		                           }
+					                  // If the file is valid, upload the picture.
+		                           else
+		                           {
+		                              try
+		                              {
+		                                 // Generate a time-based unique ID, and check that this file's name doesn't exist yet.
+		                                 do
+		                                 {
+		                                    $fileName = uniqid() . ".png";
+		                                 }
+		                                 while (file_exists(getcwd() . "/public/img/users/" . $fileName));
+													// First move the temporary uploaded file in the server's directory to
+					                        // avoid some extensions issues with some OS.
+					                        move_uploaded_file($_FILES['picture']['tmp_name'], getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
+		                                 // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
+		                                 $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 150);
+		                              }
+		                              catch (\Exception $e)
+		                              {
+		                                 $result = "errorFilesUpload";
+		                              }
+												// Delete the temporary file if it exists.
+												if (file_exists(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]))
+													unlink(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
+		                           }
+		                        }
+										// If there is no file or the file is valid, we can add the new
+					               // user in the database.
+					               if ($fileValidated)
+					               {
+					                  // Adds the new user in the database.
+					                  if ($result == SUCCESS_MESSAGE)
+					                  {
+				                        try
+				                        {
+				                           $userId = $this->_getUserTable()->addUser(
+														$username,
+														$this->_hashPassword($password1),
+														$fname,
+														$lname,
+														$email,
+														isset($fileName) ? $fileName : "default.png",
+														$tutorial,
+														$notifications
+													);
+				                        }
+				                        catch (\Exception $e)
+				                        {
+				                           $result = 'errorDatabaseAdding';
+				                        }
+									  }
+									}
+		                     }
+		                     else
+									{
+		                        $result = 'errorEmailAlreadyExists';
+									}
+		                  }
+		                  else
+								{
+		                     $result = 'errorEmailInvalid';
+								}
+		               }
+		               else
+							{
+		                  $result = "errorPasswordsDontMatch";
+							}
+						}
+						else
+						{
+							$result = "errorUsernameAlreadyExists";
 						}
 					}
 					else
@@ -595,52 +603,68 @@ class UserController extends AbstractActionController
 
 	public function passwordforgottenAction()
 	{
+		define("SUCCESS_MESSAGE", "ok");
 		$request = $this->getRequest();
-		if ($request->isPost()){
+
+		if ($request->isPost())
+		{
 			$email =  $_POST["email"];
+			$result = SUCCESS_MESSAGE;
+
 			//check if email exists in DB
+			//If not, send an error
 			if(!$this->_getUserTable()->checkIfMailExists($email))
-				//If not, send an error
-         	{
-         		$result = 'errorEmailDoesNotExist';
-            	return new ViewModel(array(
-						'error' 			=> $result
-				));
-         	}
-         	else
-         		//The given mail corresponds to a mail in DB
-         	{
-         		//create a random password of length 4*2
-         		$newPassword = bin2hex(openssl_random_pseudo_bytes(4));
-         		//update user's password
-         		$user = $this->_getUserTable()->getUserByMail($email);
+      	{
+      		$result = 'errorEmailDoesNotExist';
+      	}
+      	//The given mail corresponds to a mail in DB
+      	else
+      	{
+      		//create a random password of length 4*2
+      		$newPassword = bin2hex(openssl_random_pseudo_bytes(4));
+
+      		//update user's password
+      		$user = $this->_getUserTable()->getUserByMail($email);
+				$oldPassword = $user->hashedPassword;
 				$this->_getUserTable()->updateUserPassword($user->id, $this->_hashPassword($newPassword));
-				//send mail
-				$subject = "Your new password with EasyGoing";
-				$msg = "Hello " . $user->username .",
-						/n
-						/n
-						Someone has reset your password in your EasyGoing account. If you are this person,
-						no problem. If you are not, you may asked yourself why someone has wanted to reset
-						your password. /n
 
-						Anyway here is your new password: " . $newPassword ."/n
+				// Send mail.
+				$subject = "Password reset request";
+				// Message.
+				$message =
+					"<html>
+						<body style='font-family: Helvetica, Arial;'>
+							<font size='2'>This email address was automatically generated, please do not answer.</font><br/><br/>
+							<hr/><br/>
+							Hello " . $user->username .",
+							<br/><br/>
+							We received a password reset request because it seems you forgot your EasyGoing! password... Don't worry here is a new one:<br/>
+							<b>" . $newPassword . "<br/>
+							We advise you to change it as soon as possible from our website so your account's security will be totally sure!<br/><br/><br/>
+							<font size='2'><i>You did not make this request? We sent this new password only to this email address, but please change your password as soon as possible...</i></font><br/><br/>
 
-						Feel free to change it when you come back on EasyGoing /n /n
+							<hr/><br/>
+																		 
+							We're looking forward to seeing you on Easygoing!
+						</body>
+					</html>";
 
-						EasyGoing Team
-						";
-
-				mail($email,$subject,$msg);
-				$result = "success";
-         	}
+				if (!$this->_getUtilities()->sendMail($email, $subject, $message))
+				{
+					$result = "errorMailNotSent";
+					// Put back old user's password if an error occured.
+					$this->_getUserTable()->updateUserPassword($user->id, $oldPassword);
+				}
 
 				return new ViewModel(array(
-								'successfulMail' 			=> $result
-						));
+					'result'	=> $result
+				));
+			}
 		}
-
-		return new ViewModel();
+		else
+		{
+			return new ViewModel();
+		}
 	}
 
 	public function validationAction()
