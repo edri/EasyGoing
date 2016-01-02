@@ -1,11 +1,26 @@
 <script>
    $(document).ready(function() {
-      $("#homePageTitle").fadeIn("slow", function() {
-         $("#homePageLogIn ").fadeIn("slow", function() {
-            $("#homePageLogo").addClass("homePageLogoMoved");
+   <?php
+      if (!isset($error) && (!isset($successfulRegistration) || !$successfulRegistration))
+      {
+   ?>
+         $("#homePageTitle").fadeIn("slow", function() {
+            $("#homePageLogIn").fadeIn("slow", function() {
+               $("#homePageLogo").addClass("homePageLogoMoved");
+            });
          });
+   <?php
+      }
+      else
+      {
+   ?>
+         $("#homePageTitle").show();
+         $("#homePageLogIn").show();
+         $("#homePageLogo").css("transition", "none").addClass("homePageLogoMoved");
+   <?php
+      }
+   ?>
       });
-   });
 </script>
 
 <div class="homePage">
@@ -15,31 +30,6 @@
    </div>
 
    <div class="homePageLogIn" id="homePageLogIn">
-      <?php
-         if (isset($successfulRegistration) && $successfulRegistration)
-         {
-      ?>
-            <div class="panel panel-success error">
-               <div class="panel-heading">
-                  Yay, you successfully registered! You can now sign in.
-               </div>
-            </div>
-      <?php
-         }
-      ?>
-      <?php
-          if (isset($error))
-          {
-      ?>
-              <div class="panel panel-danger error">
-                  <div class="panel-heading">
-                      <p> Login failed </p>
-                  </div>
-              </div>
-      <?php
-          }
-      ?>
-
       <form action="/" class="form-horizontal" method="POST" role="form">
        <h2>
           <img class="loginImg" src="/img/users/default.png" />
@@ -56,21 +46,46 @@
 
         <div class="formInput">
           <label for="password1">Password</label>
-          <a class="passwordForgotten" href="/passwordforgotten"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Forgot Password?</a>
-          <input type="password" name="password" class="form-control" placeholder="Type password" required="required" value="<?php if (isset($password1)) echo $this->escapeHtml($password1); ?>"/>
+          <a class="passwordForgotten" href="/passwordforgotten" tabindex="-1"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Forgot Password?</a>
+          <input type="password" name="password" class="form-control" placeholder="Type password" required="required" />
         </div>
 
         <div class="loginParameters">
            <div class="checkbox rememberMe">
               <label><input class="rememberMeChk" name="checkbox" type="checkbox" value ="1" />Remember me</label>
            </div>
-           <input class="btn btnEasygoing btnSignIn" type="submit" value="Sign In" />
+           <input class="btn btnEasygoing btnSignIn" type="submit" value="Log In" />
         </div>
+
+        <?php
+          if (isset($successfulRegistration) && $successfulRegistration)
+          {
+        ?>
+             <div class="panel panel-success">
+                 <div class="panel-heading">
+                    Yay, you successfully registered! You can now log in.
+                 </div>
+             </div>
+        <?php
+          }
+        ?>
+        <?php
+            if (isset($error))
+            {
+        ?>
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                       Login failed, please retry.
+                    </div>
+                </div>
+        <?php
+            }
+        ?>
 
         <hr/>
 
         <div class="register">
-           Don't have an account? No worry just <a href="/registration"><b>click here</b></a> to register!
+           Oh you don't have an account? Don't be sad and just <a href="/registration"><b>click here</b></a> to register!
         </div>
       </form>
    </div>
