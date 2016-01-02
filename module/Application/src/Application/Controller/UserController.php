@@ -635,7 +635,8 @@ class UserController extends AbstractActionController
          	}
 
 				return new ViewModel(array(
-								'successfulMail' 			=> $result
+								'successfulMail' 			=> $result,
+								'email'						=> $email
 						));
 		}
 
