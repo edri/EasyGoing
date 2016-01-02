@@ -73,16 +73,22 @@ if(isset($_GET['debugger_connect']) && $_GET['debugger_connect'] == 1) {
 
 class Module
 {
-    public function onBootstrap(MvcEvent $e)
-    {
-		$e->getApplication()->getServiceManager()->get('viewhelpermanager')->setFactory('controllerName', function($sm) use ($e) {
-			$viewHelper = new View\Helper\ControllerName($e->getRouteMatch());
-			return $viewHelper;
-		});
-
-		$eventManager        = $e->getApplication()->getEventManager();
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
+   public function onBootstrap(MvcEvent $e)
+   {
+      // Useful for getting the current controller and action's names in views.
+		$eventManager = $e->getApplication()->getEventManager();
+      $eventManager->attach(
+         'dispatch',
+         function($e) {
+            $routeMatch = $e->getRouteMatch();
+            $viewModel = $e->getViewModel();
+            $viewModel->setVariable('controller', $routeMatch->getParam('controller'));
+            $viewModel->setVariable('action', $routeMatch->getParam('action'));
+         }
+      );
+      // Initialize route listener.
+      $moduleRouteListener = new ModuleRouteListener();
+      $moduleRouteListener->attach($eventManager);
 
 		// Calls the bootstrap used for the session management.
 		$this->initSession(array(
@@ -90,7 +96,7 @@ class Module
 			'use_cookies' => true,
 			'cookie_httponly' => true,
 		));
-    }
+   }
 
 	// Session management.
 	public function initSession($config)
