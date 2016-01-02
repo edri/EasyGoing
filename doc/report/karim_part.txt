@@ -1,0 +1,85 @@
+. Karim : 
+        - Détails sur les sessions PHP dans Zend + sur les cookies.
+        - Mise à jour du schéma UML initial.
+        - Rôle du contrôleur "User" et de ses différentes actions (à quoi est-ce qu'il sert, quand est-ce qu'il est utilisé, etc.).
+
+
+
+User Controller
+
+	
+	Rôle 
+
+		Ce contrôleur sert à gérer toutes les actions propres à l'utilisateur directement, à savoir:
+
+		- l'inscription d'un utilisateur au site
+		- la connexion/déconnexion d'un utilisateur sur le site
+		- l'édition du compte d'un utilisateur préalablement inscrit
+		- la possibilité d'envoyer un mail à un utilisateur ayant oublié ou perdu son mot de passe.
+
+	Usage
+
+		Il est utilisé dans plusieurs vues:
+
+		- page d'accueil (connexion)
+		- page d'inscription
+		- page d'édition
+		- page d'envoi d'un nouveau mot de passe
+		- sur toutes les pages, le bouton "Log out" situé dans l'en-tête
+
+
+	Page d'accueil:
+
+	C'est le point d'entrée de notre application. L'utilisateur peut s'inscrire, entrer ses identifiants ou demander un mot de passe.Chacune de ses actions va le rediriger vers une page dédiée. Si la session de l'utilisateur est active ou qu'il a préablement cliqué sur le bouton "Remember Me" lorsqu'il s'est connecté, l'utilisateur est alors redirigé sur la page "Projects". Les notions de session et de cookie sont développés dans une section à part.
+
+	Page d'inscription:
+
+	Sur cette page, l'utilisateur entre ses informations personnelles. L'unicité est garantie sur le nom d'utilisateur ainsi que sur l'adresse e-mail. L'utilisateur a la possiblité de suivre ou non un tutoriel, ainsi que de recevoir éventuellement des notifications.L'enregistrement se fait uniquement si tous les champs obligatoires sont remplis et ne comportent pas d'erreur (voir page d'édition)
+
+	Page d'édition
+
+	L'utilisateur, une fois connecté, peut modifier ses informations à l'exception du nom d'utilisateur. Il peut également configurer un nouveau mot de passe. Tout comme dans la page d'inscription, des messages d'erreur apparaissent si l'utilisateur entre des données erronées comme:
+
+	- un format incorrect d'adresse e-mail
+	- deux mots de passe qui ne correspondent pas
+	- un format incorrect de la photo de profil
+	- l'adresse e-mail est déjà utilisée par un autre utilisateur
+	- (uniquement pour l'inscription) le nom d'utilisateur est déjà utilisé par un autre utilisateur
+
+	Page d'envoi d'un nouveau mot de passe
+
+	Lorsque l'utilisateur a perdu ou oublié son mot de passe, il a la possiblité de le réinitialiser. Il entre alors son adresse e-mail et un e-mail content un nouveau mot de passe lui est envoyé sous la réserve que l'adresse entrée est bien stockée en base de données.
+
+	Bouton "Log out"
+
+	Le bouton "Log out" est accessible dans l'en-tête du site, et donc à chaque page. Il réinitialise la session et supprime l'éventuel cookie d'inscription existant sur le navigateur de l'utilisateur.
+
+Session PHP dans Zend
+
+	La notion de session évoquée dans la page d'accueil et dans le bouton "Log out" sont définies par le framework que nous avons utilisé : Zend.
+
+	Essentiellement, la session s'appuie sur un cookie nommé PHPSESSID qui est stocké sur le SERVEUR. Le cookie est alors utilisé pour "reconnaître" l'utilisateur lors de sa navigation sur EasyGoing. En effet, lors de la connexion de l'utilisateur au site, sa session devient active et se désactivera dans les 5 minutes qui suivent la fermeture de la page EasyGoing. 
+
+	L'activation de la session a pour effet d'octroyer à l'utilisateur toutes les pages qui le concernent, à savoir:
+
+	- ses projets et toutes les pages qui en découlent
+	- l'édition de son compte
+
+	Les pages "About" et "Help" sont accessibles en tout temps ne requièrent donc pas l'activation d'une session. Lorsque la session n'est plus active et que l'utilisateur veut accéder à ses pages personnelles, il est redirigé sur la page d'accueil où il doit alors entrer à nouveau ses identifiants. La session est désactivée soit par l'expiration du temps après que l'utilisateur ait fermé sa page EasyGoing, soit lorsqu'il clique sur le bouton "Log out"
+
+
+
+Cookies
+
+En plus du cookie utilisé par la session PHP de Zend, deux autre cookies sont utilisés: 
+
+	Cookie d'inscription
+
+	Lors de la connexion au site, l'utilisateur a la possiblité de cocher la case "Remember Me". Lorsqu'il le fait, un cookie est stocké sur la machine de l'utilisateur, contrairement au cookie utilisé par la session PHP de Zend. La présence de ce cookie active la session et confère donc le droit à la personne en possession de ce cookie d'accéder à toutes les informations relatives à l'utilisateur. Un cookie est donc lié à un utilisateur.
+
+	Ce cookie constitue alors une ressource sensible et requiert de ce fait une gestion sécuritaire. Sa valeur est une combinaison du nom d'utilisateur, de son mot de passe, et d'un sel généré aléatoirement. Le tout est encrypté à en SHA-256 puis stocké en base de données dans un champ dédié. De cette façon, il est impossible (ou très fortement improbable) qu'un utilisateur malveillant injecte un cookie contenant la bonne combinaison.
+
+	Tout comme pour la session, le clique sur le bouton "Log out" a pour effet de retirer le cookie (mais cette fois le cookie se trouve sur la machine de l'utilisateur et non pas le serveur). La durée de validité de ce cookie a été configurée à 30 jours.
+
+	Cookie de spécialisation d'un membre
+	...

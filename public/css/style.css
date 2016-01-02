@@ -691,7 +691,9 @@ hr {
    position: relative;
 }
 
-.board-user {}
+.board-user {
+   cursor: default;
+}
 
 .task-details {
    bottom: 10px;

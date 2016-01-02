@@ -5,6 +5,8 @@
 </script>
 
 <?php
+   use Application\Utility\Priority;
+
    // Send Javascript variable with Zend.
    echo $this->headScript()->appendScript('// Indicate that the user is currently in the task page. Used in the board.websocket.js script.
                                            var isProjectPage = false;
@@ -59,8 +61,13 @@
                <td class="attributeName">Priority</td>
                <td id="taskPriority">
                   <?php
-                     $priority = ['High', 'Medium', 'Low'];
-                     echo $priority[$task->priorityLevel - 1];
+                     foreach(Priority::getConstants() as $value)
+                     {
+                        if ($task->priorityLevel == $value)
+                        {
+                           echo Priority::toString($value);
+                        }
+                     }
                   ?>
                </td>
             </tr>
@@ -97,7 +104,7 @@
 
               <!-- Tab panes -->
               <div id="news" role="tutorial"></div>
-              
+
               <div class="tab-content newsFeedTab">
                  <div role="tabpanel" class="tab-pane fade in active" id="all">
                     <?php
