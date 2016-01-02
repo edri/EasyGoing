@@ -1,11 +1,11 @@
 var tutoData = [];
 var current = 0;
 
-var skipTutorial = function() {
+function skipTutorial() {
 	$("div[role=tutorial]").tooltip('hide');
-};
+}
 
-var nextTutorial = function() {
+function nextTutorial() {
 
 	if(tutoData.length != 0) { // To avoid overflow... else we have first : d = tutoData[0] and overflow
 		
@@ -30,7 +30,7 @@ var nextTutorial = function() {
         }
 	}
 
-};
+}
 
 function loadTutorial(tuto) {
     
@@ -48,5 +48,4 @@ function loadTutorial(tuto) {
             nextTutorial();
         }
     });
-
-};
+}
