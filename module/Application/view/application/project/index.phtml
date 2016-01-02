@@ -78,20 +78,34 @@
    </h1>
 
 <?php
-   if ($isManager)
+   if ($isManager || $isCreator)
    {
 ?>
-      <a class="editProjectDashboardLink" href="/project/<?php echo $project->id; ?>/edit" id="editLink">
-         <img class="editProjectDashboardIcon" data-toggle="tooltip" id="editImg" title="Edit the project..." src="/img/edit.svg" />
-      </a>
-      <img class="dashboardButtonIcon" data-toggle="tooltip" title="You are manager of this project." src="/img/manager.svg" />
+      <div class="projectButtons">
 <?php
    }
 
    if ($isCreator)
    {
 ?>
-      <img class="dashboardButtonIcon" data-toggle="tooltip" title="You are the creator and super administrator of this project." src="/img/creator.svg" />
+         <img class="dashboardButtonIcon" data-toggle="tooltip" title="You are the creator and super administrator of this project." src="/img/creator.png" />
+<?php
+   }
+
+   if ($isManager)
+   {
+?>
+         <img class="dashboardButtonIcon" data-toggle="tooltip" title="You are manager of this project." src="/img/manager.png" />
+         <a href="/project/<?php echo $project->id; ?>/edit" id="editLink">
+            <img class="editProjectDashboardIcon" data-toggle="tooltip" id="editImg" title="Edit the project..." src="/img/edit.png" />
+         </a>
+<?php
+   }
+
+   if ($isManager || $isCreator)
+   {
+?>
+      </div>
 <?php
    }
 ?>
@@ -99,10 +113,11 @@
 
 <hr>
 
-<div class="projectHeader">
-   <div class="leftPart">
-      <p><u>Description</u> : <?php echo $this->escapeHtml($project->description); ?></p>
-      <p><u>Duration</u> : from <?php echo date('d.m.Y', strtotime($project->startDate)) . ' to ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
+<div class="projectHeader" id="projectHeader">
+   <div class="leftPart" id="leftPart">
+      <p><u><b>Full name</b></u>: <?php echo $this->escapeHtml($project->name); ?></p>
+      <p><u><b>Description</b></u>:<br/><?php echo $this->escapeHtml($project->description); ?></p>
+      <p><u><b>Duration</b></u>: from <?php echo date('d.m.Y', strtotime($project->startDate)) . ' to ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
       <br/>
         <div id="addTask" role="tutorial"></div>
         <div id="addMember" role="tutorial"></div>
@@ -114,7 +129,7 @@
       </p>
    </div>
 
-    <div class="rightPart">
+    <div class="rightPart" id="rightPart">
         <div>
             <!-- Nav tabs -->
             <ul class="nav nav-tabs tabsMain" id="historicalTabs" role="tablist">
@@ -141,7 +156,7 @@
 
             <!-- Tab panes -->
             <div role="tutorial" id="historical"></div>
-            
+
             <div class="tab-content historicalTab">
                <div role="tabpanel" class="tab-pane fade in active" id="all">
                <?php
@@ -281,6 +296,10 @@
    }
 
    $(document).ready(function() {
+      $("#projectHeader").height(Math.max(288, $("#leftPart").height() + 60));
+      $("#leftPart").css("padding-top", (($("#projectHeader").height() - $("#leftPart").height()) / 2) + 12 + "px");
+      $("#rightPart").css("padding-top", (($("#projectHeader").height() - $("#rightPart").height()) / 2) + "px");
+
       loadBoardViewMembers();
 
       $('.confirmation').on('click', function (e) {

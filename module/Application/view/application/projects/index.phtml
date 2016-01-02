@@ -315,19 +315,19 @@
                 </td>
                 <td class="rightProjectTd">
                   <?php if($p->creator == $userId) : ?>
-                     <img class="managerIcon" data-toggle="tooltip" title="You are the creator and super administrator of this project." src="/img/creator.svg" />
+                     <img class="managerIcon" data-toggle="tooltip" title="You are the creator and super administrator of this project." src="/img/creator.png" />
                   <?php endif; ?>
 
                   <?php
                      if ($p->isAdmin)
                      {
                   ?>
-                        <img class="managerIcon" data-toggle="tooltip" title="You are manager of this project." src="/img/manager.svg" />
-                        <a class="projectLink" href="/project/<?php echo $p->id; ?>/edit" id="editLink"><img class="editProjectIcon" data-toggle="tooltip" id="editImg" title="Edit the project..." src="/img/edit.svg" /></a>
+                        <img class="managerIcon" data-toggle="tooltip" title="You are manager of this project." src="/img/manager.png" />
+                        <a class="projectLink" href="/project/<?php echo $p->id; ?>/edit" id="editLink"><img class="editProjectIcon" data-toggle="tooltip" id="editImg" title="Edit the project..." src="/img/edit.png" /></a>
                   <?php
                      }
                   ?>
-                  <a class="projectLink" href="/project/<?php echo $p->id; ?>" id="gotoLink"><img class="gotoIcon" data-toggle="tooltip" id="gotoImg" title="Click here to see your project's progression." src="/img/goto.svg" /></a>
+                  <a class="projectLink" href="/project/<?php echo $p->id; ?>" id="gotoLink"><img class="gotoIcon" data-toggle="tooltip" id="gotoImg" title="Click here to see your project's progression." src="/img/goto.png" /></a>
                 </td>
             </tr>
     <?php

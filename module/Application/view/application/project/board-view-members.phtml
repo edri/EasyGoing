@@ -30,8 +30,8 @@
 
       if($nbSubTask == 0)
          $subTaskText = "";
-      
-      
+
+
 
       $taskContent =
          '<div id='.$member->email.$task->id.' task-id="'.$task->id.'" class="board-task '.$priorityClass.'">' .
@@ -70,7 +70,7 @@
 <div class="board" member-id="<?php echo $member->id; ?>">
    <div class="board-first-column" section="board-user"<?php echo ($creatorId == $member->id ? "style='color: #995527; font-weight: bold;' data-toggle='tooltip' title='This user is the creator and super administrator of this project.'" : ($member->isAdmin ? "style='color: #995527; font-weight: bold;' data-toggle='tooltip' title='This user is manager so he has management rights on the project.'" : "")); ?>>
       <?php if($creatorId == $member->id): ?>
-         <img style="float: left; margin-right: -58px;"width="40px" height="40px" draggable="false" src="/img/creator.svg" >
+         <img style="float: left; height: 40px; margin-right: -58px; width: 40px;" draggable="false" src="/img/creator.png" >
       <?php endif; ?>
 
       <img class="imgMember" draggable="false" src="<?php echo $this->basePath('img/users/'.$member->filePhoto); ?>">
