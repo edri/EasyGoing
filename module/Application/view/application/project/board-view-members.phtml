@@ -5,7 +5,7 @@
                ->prependFile($this->basePath() . '/js/board.contextmenu.js')
                ->prependFile($this->basePath() . '/js/board.dragdrop.js');
 
-   function taskRendering($member, $task)
+   function taskRendering($member, $task, $subTasks)
    {
       $priorityClass = "medium-priority";
       switch($task->priorityLevel)
@@ -18,9 +18,25 @@
             break;
       }
 
+      $nbSubTask = 0;
+
+      $subTaskText = "<hr><div>";
+      foreach($subTasks[$task->id] as $subTask)
+      {
+         $nbSubTask++;
+         $subTaskText .= '<p>'.$subTask->name.'</p>';
+      }
+      $subTaskText .= "</div><hr>";
+
+      if($nbSubTask == 0)
+         $subTaskText = "";
+      
+      
+
       $taskContent =
          '<div id='.$member->email.$task->id.' task-id="'.$task->id.'" class="board-task '.$priorityClass.'">' .
             $task->name .
+            $subTaskText .
             '<div class="task-details"><a href="/project/' . $task->project . '/taskDetails/' . $task->id . '">Details...</a></div>
          </div>';
 
@@ -64,17 +80,18 @@
       <div class="membersSpecializations"<?php echo ($showSpecializations ? "" : " style='display: none;'"); ?>>
         <hr/>
         <?php
-           // Display every current member's specializations.
-           foreach ($membersSpecializations as $memSpec)
-           {
-             if ($member->username == $memSpec["username"])
-             {
-                 foreach ($memSpec["specializations"] as $spec)
-                 {
-                    echo $spec . "<br/>";
-                 }
-             }
-           }
+         // Display every current member's specializations.
+         foreach ($membersSpecializations as $memSpec)
+         {
+            if ($member->username == $memSpec["username"])
+            {
+              foreach ($memSpec["specializations"] as $spec)
+              {
+                 echo $spec . "<br/>";
+              }
+            }
+         }
+
         ?>
      </div>
   </div>
@@ -84,7 +101,7 @@
      {
         if($task->state == "TODO")
         {
-           echo taskRendering($member, $task);
+           echo taskRendering($member, $task, $subTasks);
         }
      }
      ?>
@@ -95,7 +112,7 @@
      {
         if($task->state == "DOING")
         {
-           echo taskRendering($member, $task);
+           echo taskRendering($member, $task, $subTasks);
         }
      }
      ?>
@@ -106,7 +123,7 @@
      {
         if($task->state == "DONE")
         {
-           echo taskRendering($member, $task);
+           echo taskRendering($member, $task, $subTasks);
         }
      }
      ?>

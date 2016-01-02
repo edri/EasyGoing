@@ -59,7 +59,7 @@ class UserTable
    	//mail must be unique in DB
       if($this->checkIfMailExists($email))
       {
-      	$this->_tableGateway->update(array(                 
+      	$this->_tableGateway->update(array(
          'firstName'			=> $fname,
          'lastName'				=> $lname,
          'filePhoto'			=> $picture,
@@ -67,26 +67,26 @@ class UserTable
 		 'wantNotifications'    => $wantNotifications
         ),array('id' => $id));
       }
-      else 
+      else
       {
-      	$this->_tableGateway->update(array(                  
+      	$this->_tableGateway->update(array(
          'firstName'			=> $fname,
          'lastName'				=> $lname,
          'email'				=> $email,
          'filePhoto'			=> $picture,
          'wantTutorial'    		=> $wantTutorial,
 		 'wantNotifications'    => $wantNotifications
-      	),array('id' => $id));      	
+      	),array('id' => $id));
       }
-      
+
       return $this->_tableGateway->lastInsertValue;
    }
    public function updateUserPassword($id, $pass)
    {
-	  $this->_tableGateway->update(array(         
+	  $this->_tableGateway->update(array(
 	    'hashedPassword'		=> $pass
-	   ),array('id' => $id));      	
-      
+	   ),array('id' => $id));
+
       return $this->_tableGateway->lastInsertValue;
    }
    public function getAllUsers()

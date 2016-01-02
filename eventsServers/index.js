@@ -11,6 +11,16 @@ const HTTP_PORT = 8002;
 const PROJECT_CONNECTION = "Project";
 const TASK_CONNECTION = "Task";
 
+// Will contain the users' list which are waiting for accessing a project/task's
+// websockets flow.
+// To be accepted they first have to send the project/task's ID via PHP (server side)
+// and then will be accepted or not when they'll send a "[project/task]ListeningRequest"
+// to the websockets server.
+// To be accepted, they must have a waiting request and must have an access to the
+// wanted entity.
+var projectWaitingArray = new Array();
+var taskWaitingArray = new Array();
+
 // Create websocket server.
 var socketServer = ws.createServer(function(connection) {
 	console.log("WEBSOCKET: new client's connection!");
@@ -27,23 +37,53 @@ var socketServer = ws.createServer(function(connection) {
 
 			// Do some actions, depending on the received data message's type.
 			switch (data.messageType) {
-				// When an user accessed a project page.
+				// When an user want to confirm an access a project page.
 				case "projectListeningRequest":
-					console.log("WEBSOCKET: user #" + data.userId + " joined project #" + data.projectId + "...");
-					// Set current connection's project and user's ID.
-					connection.projectId = data.projectId;
-					connection.userId = data.userId;
-					// Indicate that the connection is a project one.
-					connection.connectionType = PROJECT_CONNECTION;
+					// The user must already be in the project's waiting array and the
+					// accessed project must match with the one the project controller sent.
+					if (projectWaitingArray[data.userId] && projectWaitingArray[data.userId].waiting &&
+						projectWaitingArray[data.userId].projectId === data.projectId) {
+						console.log("WEBSOCKET: authorized access => user #" + data.userId + " joined project #" + data.projectId + ".");
+
+						// The user is not waiting anymore so we can reset array's fields.
+						projectWaitingArray[data.userId].waiting = false;
+						projectWaitingArray[data.userId].projectId = null;
+
+						// Set current connection's project and user's ID.
+						connection.projectId = data.projectId;
+						connection.userId = data.userId;
+						// Indicate that the connection is a project one.
+						connection.connectionType = PROJECT_CONNECTION;
+					}
+					else {
+						console.log("Unauthorized access from user #" + data.userId + " on project #" + data.projectId + ", I rejected it.");
+					}
+
 					break;
-				// When the user accessed a task's details page.
+				// When the user want to confirm an access to a task's details page.
 				case "taskListeningRequest":
-					console.log("WEBSOCKET: user #" + data.userId + " joined task #" + data.taskId + " of project #" + data.projectId + "...");
-					// Set current connection's task and user's ID.
-					connection.taskId = data.taskId;
-					connection.userId = data.userId;
-					// Indicate that the connection is a project one.
-					connection.connectionType = TASK_CONNECTION;
+					// The user must already be in the task's waiting array and the
+					// accessed task must match with the one the project controller sent.
+					if (taskWaitingArray[data.userId] && taskWaitingArray[data.userId].waiting &&
+						taskWaitingArray[data.userId].projectId === data.projectId &&
+						taskWaitingArray[data.userId].taskId === data.taskId) {
+						console.log("WEBSOCKET: authorized access => user #" + data.userId + " joined task #" + data.taskId + " of project #" + data.projectId + ".");
+
+						// The user is not waiting anymore so we can reset array's fields.
+						taskWaitingArray[data.userId].waiting = false;
+						taskWaitingArray[data.userId].projectId = null;
+						taskWaitingArray[data.userId].taskId = null;
+
+						// Set current connection's task and user's ID.
+						connection.taskId = data.taskId;
+						connection.userId = data.userId;
+						// Indicate that the connection is a project one.
+						connection.connectionType = TASK_CONNECTION;
+					}
+					else {
+						console.log("Unauthorized access from user #" + data.userId + " on task #" + data.taskId + " of project #" + data.projectId + ", I rejected it.");
+					}
+
 					break;
 			}
 		}
@@ -191,6 +231,25 @@ function handleRequest(req, res) {
 
 				// Do some actions, depending on the received data message's type.
 				switch (fields.requestType) {
+					// An user wants to join the project's websockets flow.
+					case "joinProjectRequest":
+						console.log("Add user #" + fields.userId + " in the project #" + fields.projectId + "' waiting array.");
+						// Add the user in the project's waiting array so he can be
+						// accepted or not when he'll send a socket request.
+						projectWaitingArray[fields.userId] = new Array();
+						projectWaitingArray[fields.userId]["waiting"] = true;
+						projectWaitingArray[fields.userId]["projectId"] = fields.projectId;
+						break;
+					// An user wants to join the task's websockets flow.
+					case "joinTaskRequest":
+						console.log("Add user #" + fields.userId + " in the task #" + fields.taskId + "' waiting array.");
+						// Add the user in the task's waiting array so he can be
+						// accepted or not when he'll send a socket request.
+						taskWaitingArray[fields.userId] = new Array();
+						taskWaitingArray[fields.userId]["waiting"] = true;
+						taskWaitingArray[fields.userId]["projectId"] = fields.projectId;
+						taskWaitingArray[fields.userId]["taskId"] = fields.taskId;
+						break;
 					// An event is received from a project or task page.
 					case "newEvent":
 						// Parse event's data to JSON.

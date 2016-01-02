@@ -169,6 +169,28 @@ title:focus,
 }
 
 
+/* ABOUT PAGE */
+.aboutTitle {
+   padding: 0 !important;
+}
+
+.aboutUsersWrapper {
+   text-align: center;
+}
+
+.aboutUser {
+   float: none;
+   display: inline-block;
+   height: 250px;
+   margin-bottom: 20px;
+   width: 360px;
+}
+
+.aboutUser h3 {
+   font-size: 22px;
+}
+
+
 /* PROJECTS LIST */
 
 .projectsHeaderTable {
@@ -669,7 +691,9 @@ hr {
    position: relative;
 }
 
-.board-user {}
+.board-user {
+   cursor: default;
+}
 
 .task-details {
    bottom: 10px;
