@@ -33,10 +33,11 @@ function nextTutorial() {
 
 }
 
-function loadTutorial(tuto) {
+function loadTutorial(tuto) 
+{
     
     // Ajax request to load requested tutorial
-    $.ajax({            
+    $.ajax({
         type: 'GET',
         url: '/tutorial/' +  tuto,
         dataType: 'json',

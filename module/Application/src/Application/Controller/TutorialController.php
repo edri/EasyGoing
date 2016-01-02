@@ -6,9 +6,6 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 use Application\Model\Tutorial;
-use Zend\View\Model\ViewModel;
-use Zend\Session\Config\SessionConfig;
-use Zend\Session\Container;
 
 class TutorialController extends AbstractActionController
 {     
@@ -26,7 +23,8 @@ class TutorialController extends AbstractActionController
       );
     }
     
-    public function taskDetailsAction() {
+    public function taskDetailsAction() 
+    {
       return new JsonModel(
          (new Tutorial())->taskDetails()
       );

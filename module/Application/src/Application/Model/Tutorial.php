@@ -19,7 +19,8 @@ class Tutorial
         );
    }
     
-    public function project() {
+    public function project() 
+    {
         return array(
             $this->_generateData('addTask', 'Here you can add a task in your project.'),
             $this->_generateData('addMember', 'Here you can add a member in your project.'),
@@ -30,7 +31,8 @@ class Tutorial
         );
     }
     
-    public function taskDetails() {
+    public function taskDetails() 
+    {
         return array(
             $this->_generateData('news', 'Here you can see the news concerning this task')
         );
