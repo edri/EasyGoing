@@ -33,17 +33,26 @@ function nextTutorial() {
 
 }
 
-function loadTutorial(tuto) {
+function loadTutorial(tuto) 
+{
     
     // Ajax request to load requested tutorial
-    $.ajax({            
+    $.ajax({
         type: 'GET',
         url: '/tutorial/' +  tuto,
         dataType: 'json',
         success: function(data) {
-
+            
+            // We have to ignore properties 'action' and 'controller'
+            var dataTransformed = [];
+            
+            for(p in data) {
+                if(p !== 'controller' && p !== 'action')
+                    dataTransformed.push(data[p]);
+            }
+            
             // Adding received informations to global variable called tutoData
-            data.forEach(function(d) {             
+            dataTransformed.forEach(function(d) {             
                 tutoData.push(d);
             });
 
