@@ -34,28 +34,19 @@ var nextTutorial = function() {
 
 function loadTutorial(tuto) {
     
-    Tutorial(tuto, function(data) {
-
+    $.ajax({            
+        type: 'GET',
+        url: '/tutorial/' +  tuto,
+        dataType: 'json',
+        success: function(data) {
         var tutoDataFiltered = [];
 
-        data.forEach(function(d) {             
-            tutoData.push(d);
-        });
+            data.forEach(function(d) {             
+                tutoData.push(d);
+            });
 
-        nextTutorial();
+            nextTutorial();
+        }
     });
 
 };
-
-/*
-$("#txtSpecialization" + currentId).attr("data-toggle", "tooltip");
-         $("#txtSpecialization" + currentId).attr("data-trigger", "manual");
-         $("#txtSpecialization" + currentId).attr("title", "You have to enter a specialization before adding another one, or press the 'Create!' button if you don't want to have specialization.");
-         $("#txtSpecialization" + currentId).tooltip("show");
-         $("#txtSpecialization" + currentId).focus();
-
-         // Hide specialization field's tooltip when the user unfocus it.
-         $("#txtSpecialization" + currentId).blur(function() {
-            $(this).tooltip("hide");
-         });
-         */
