@@ -179,7 +179,7 @@ a:focus {
 .homePageTitle {
    display: none;
    height: 200px;
-   margin: 70px auto 110px;
+   margin: 50px auto 120px;
    position: relative;
    width: 780px;
 }
@@ -189,7 +189,7 @@ a:focus {
    opacity: 0;
    position: absolute;
    top: 60px;
-   transition: opacity 700ms, left 1000ms, top 1000ms;
+   transition: opacity 800ms, left 1000ms, top 800ms;
 }
 
 .homePageLogoMoved {
