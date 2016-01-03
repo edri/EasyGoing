@@ -103,9 +103,7 @@
               </ul>
 
               <!-- Tab panes -->
-              <div id="news" role="tutorial"></div>
-
-              <div class="tab-content newsFeedTab">
+              <div data-trigger="manual" id="news" role="tutorial" class="tab-content newsFeedTab">
                  <div role="tabpanel" class="tab-pane fade in active" id="all">
                     <?php
                        foreach ($events as $e)
@@ -151,7 +149,7 @@
                    ?>
                 </ul>
              </div>
-             <input class="form-control taskEventTextInput" id="newsText" placeholder="Enter a news..." type="text" />
+             <input data-placement="bottom" data-trigger="manual" role="tutorial" class="form-control taskEventTextInput" id="newsText" placeholder="Write a new post..." type="text" />
              <span class="input-group-btn">
                 <button class="btn btnEasygoing" disabled="disabled" id="postBtn" type="button">Post!</button>
              </span>
@@ -162,7 +160,7 @@
 
 <hr/>
 
-<a class="btn btnEasygoing" href="<?php echo $_SERVER['HTTP_REFERER'] ?>">Back</a>
+<a class="btn btnEasygoing" href="/project/<?php echo $projectId; ?>">Back</a>
 
 <script>
    $(document).ready(function() {

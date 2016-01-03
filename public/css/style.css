@@ -793,6 +793,10 @@ hr {
    margin-right: 15px;
 }
 
+.dashboardShowSpecializationsChk {
+   float: right;
+}
+
 .dashboardShowSpecializationsLabel {
    float: left;
    margin-right: 10px;
@@ -1084,4 +1088,40 @@ hr {
 /* ADD MEMBER */
 .managerChk {
    margin-top: 6px;
+}
+
+/* TUTORIAL */
+.tutoText {
+   margin: 5px;
+}
+
+.tutoButtons {
+   height: 22px;
+   margin-bottom: 5px;
+   padding: 0 5px;
+   width: 100%;
+}
+
+.tutoSkip, .tutoNext {
+   width: 80px;
+}
+
+.tutoSkip {
+   float: left;
+}
+
+.tutoNext {
+   float: right;
+}
+
+.tutoHr {
+   margin: 10px 0 5px;
+}
+
+.disableTuto {
+   margin-bottom: 2px;
+}
+
+.disableTuto a:hover {
+   color: #e5ac86;
 }

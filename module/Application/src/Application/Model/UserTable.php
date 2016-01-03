@@ -57,42 +57,34 @@ class UserTable
       $this->_tableGateway->insert(array(
          'username'				=> $username,
          'hashedPassword'		=> $password,
-         'firstName'			=> isset($fname) ? $fname : "-",
-         'lastName'				=> isset($lname) ? $lname : "-",
-         'email'				=> $email,
-         'filePhoto'			=> isset($picture) ? $picture : "-",
-         'wantTutorial'    		=> $wantTutorial,
-		 'wantNotifications'    => $wantNotifications
+         'firstName'			   => $fname,
+         'lastName'				=> $lname,
+         'email'				   => $email,
+         'filePhoto'			   => $picture,
+         'wantTutorial'    	=> $wantTutorial,
+         'wantNotifications'  => $wantNotifications
       ));
       return $this->_tableGateway->lastInsertValue;
    }
 
    public function updateUser($id, $fname, $lname, $email, $picture, $wantTutorial, $wantNotifications)
    {
-   	//mail must be unique in DB
-      if($this->checkIfMailExists($email))
-      {
-      	$this->_tableGateway->update(array(
-         'firstName'			=> $fname,
+      $this->_tableGateway->update(array(
+         'firstName'			   => $fname,
          'lastName'				=> $lname,
-         'filePhoto'			=> $picture,
-         'wantTutorial'    		=> $wantTutorial,
-		 'wantNotifications'    => $wantNotifications
-        ),array('id' => $id));
-      }
-      else
-      {
-      	$this->_tableGateway->update(array(
-         'firstName'			=> $fname,
-         'lastName'				=> $lname,
-         'email'				=> $email,
-         'filePhoto'			=> $picture,
-         'wantTutorial'    		=> $wantTutorial,
-		 'wantNotifications'    => $wantNotifications
-      	),array('id' => $id));
-      }
+         'email'				   => $email,
+         'filePhoto'			   => $picture,
+         'wantTutorial'    	=> $wantTutorial,
+         'wantNotifications'  => $wantNotifications
+      ),array('id' => $id));
 
       return $this->_tableGateway->lastInsertValue;
+   }
+
+   // Disable the tutorial for the given user's ID.
+   public function disableTutorial($userId)
+   {
+      $this->_tableGateway->update(array('wantTutorial' => 0), array('id' => $userId));
    }
 
    public function updateUserPassword($id, $pass)

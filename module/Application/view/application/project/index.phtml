@@ -119,12 +119,10 @@
       <p><u><b>Description</b></u>:<br/><?php echo $this->escapeHtml($project->description); ?></p>
       <p><u><b>Duration</b></u>: from <?php echo date('d.m.Y', strtotime($project->startDate)) . ' to ' . date('d.m.Y', strtotime($project->deadLineDate)); ?></p>
       <br/>
-        <div id="addTask" role="tutorial"></div>
-        <div id="addMember" role="tutorial"></div>
        <p>
-         <a href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Add a task</a><br/>
+         <a data-placement="right" data-trigger="manual" id="addTask" role="tutorial" href="<?php echo $this->serverUrl(true) . '/addTask'; ?>">Add a task</a><br/>
          <?php if($isManager): ?>
-            <a href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Add members</a>
+            <a data-placement="right" data-trigger="manual" id="addMember" role="tutorial" href="<?php echo $this->serverUrl(true) . '/addMember'; ?>">Add members</a>
          <?php endif; ?>
       </p>
    </div>
@@ -155,9 +153,7 @@
             </ul>
 
             <!-- Tab panes -->
-            <div role="tutorial" id="historical"></div>
-
-            <div class="tab-content historicalTab">
+            <div data-trigger="manual" id="historical" role="tutorial" class="tab-content historicalTab">
                <div role="tabpanel" class="tab-pane fade in active" id="all">
                <?php
                   foreach ($events as $e)
@@ -194,7 +190,7 @@
 <p id="result"></p>
 
 <div class="boardButtons">
-   <div class="btn-group dashboardViewType" data-toggle="buttons">
+    <div class="btn-group dashboardViewType" data-toggle="buttons">
     <div role="tutorial" id="dashboardType"></div>
       <label class="btn active btnEasygoing">
          <input type="radio" name="options" id="option1" autocomplete="off" checked onchange="loadBoardViewMembers();"> View per members
@@ -205,12 +201,14 @@
    </div>
    <div class="dashboardShowSpecializations">
       <div class="dashboardShowSpecializationsLabel">Show members' specializations:</div>
-      <input id="showSpecializationsChk" data-on="success" type="checkbox" />
+      <div class="dashboardShowSpecializationsChk" data-trigger="manual" role="tutorial" id="showSpecializations">
+         <input id="showSpecializationsChk" data-on="success" type="checkbox" />
+      </div>
    </div>
 </div>
 
 <div id="board-alert-container"></div>
-<div class="board-container" id="board-container"></div>
+<div data-trigger="manual" role="tutorial" class="board-container" id="board-container"></div>
 
 <br><br><hr><br>
 <br>

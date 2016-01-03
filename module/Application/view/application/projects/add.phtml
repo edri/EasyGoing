@@ -36,7 +36,7 @@
          if (newId < MAX_FIELDS) {
             newSpecDiv +=
                   '<div class="input-group">\
-                    <input class="form-control" id="txtSpecialization' + newId + '" id-spec="' + newId + '" maxlength=50 placeholder="Enter specialization"\
+                    <input class="form-control" id="txtSpecialization' + newId + '" id-spec="' + newId + '" maxlength=50 placeholder="Enter specialization (e.g. \'Database Manager\')"\
                           name="specialization' + newId + '" type="text" />\
                    <span class="input-group-addon newSpecButton" data-toggle="tooltip" id="newSpecButton' + newId + '" title="Add a new specialization..." onClick="addNewSpec(' + newId + ');">\
                      <img class="newSpecImg" id="newSpecImg' +  newId + '" src="/img/plus.svg" />\
@@ -198,7 +198,7 @@
       <label class="control-label col-sm-2" for="name">Specialization 1</label>
       <div class="col-sm-10">
          <div class="input-group">
-           <input class="form-control" id="txtSpecialization1" id-spec="1" maxlength=50 placeholder="Enter specialization"
+           <input class="form-control" id="txtSpecialization1" id-spec="1" maxlength=50 placeholder="Enter specialization (e.g. 'Database Manager')"
                   name="specialization1" type="text"
                   value="<?php if (isset($specialization[0])) echo $this->escapeHtml($specialization[0]); ?>" />
            <span class="input-group-addon newSpecButton" data-toggle="tooltip" id="newSpecButton1" title="Add a new specialization..." onClick="addNewSpec(1);">

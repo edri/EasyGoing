@@ -225,7 +225,7 @@
     // Search for a project when the user types in the search field.
     function filterSearch()
     {
-       var text = $('#search').val();
+       var text = $('#searchProject').val();
 
        // For each tr in table...
        $.each($('#tableListProjects'), function(i, table)
@@ -268,9 +268,8 @@
         <td><h1 class="projectsTitle">Your projects</h1></td>
         <td>
              <a class="newProject" href="/projects/add">
-             <b>Create a new project !</b><img class="newProjectImg" src="/img/plus.svg" /></a>
+             <b data-placement="bottom" data-trigger="manual" id="createProject" role="tutorial">Create a new project !</b><img class="newProjectImg" src="/img/plus.svg" /></a>
         </td>
-        <td><div id="createProject" role="tutorial" data-placement="bottom"></div></td>
     </tr>
 </table>
 
@@ -281,14 +280,11 @@
         <table class="projectsToolsTable">
             <tr>
                 <td>Click on a project to see details.</td>
-                <div id="searchProject" role="tutorial"></div>
-                <td><input onkeyup="filterSearch();" type="text" id="search" class="form-control" placeholder="Search for..." /></td>
+                <td><input onkeyup="filterSearch();" type="text" class="form-control" placeholder="Search for..." data-trigger="manual" id="searchProject" role="tutorial" /></td>
             </tr>
         </table>
 
-        <div id="listOfProjects" role="tutorial"></div>
-
-        <table id="tableListProjects" class="tableListProjects">
+        <table id="tableListProjects" class="tableListProjects" data-trigger="manual" role="tutorial">
     <?php
         foreach ($userProjects as $p) :
     ?>

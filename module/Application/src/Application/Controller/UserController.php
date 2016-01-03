@@ -6,14 +6,17 @@
  * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
+ 
 // The namespace is important. It avoids us from being forced to call the Zend's methods with
 // "Application\Controller" before.
 namespace Application\Controller;
+
 // Calling some useful Zend's libraries.
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
+
 // Default controller ; will be calling when the user access the "easygoing/" page.
 // Be careful about the class' name, which must be the same as the file's name.
 class UserController extends AbstractActionController
@@ -656,11 +659,5 @@ class UserController extends AbstractActionController
 		{
 			return new ViewModel();
 		}
-	}
-
-	public function validationAction()
-	{
-		$this->redirect()->toRoute();
-		return new ViewModel();
 	}
 }

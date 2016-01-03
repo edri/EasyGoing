@@ -101,7 +101,7 @@
             $(this).find('.spe').append(
                '<div id="spe-input-' + userId + '">\
                   <div class="input-group">\
-                    <input class="form-control" id="spec' + nbSpecArray[userId] + '-' + userId + '" maxlength=50 placeholder="Enter specialization 1"\
+                    <input class="form-control" id="spec' + nbSpecArray[userId] + '-' + userId + '" maxlength=50 placeholder="Enter specialization 1 (e.g. \'Database Manager\')"\
                            name="spe'+ userId +'[]" type="text" />\
                     <span class="input-group-addon newSpecButton" data-toggle="tooltip" id="newSpecButton1" title="Add a new specialization...">\
                       <img class="newSpecImg" id="addSpec' + userId + '" src="/img/plus.svg" />\
@@ -159,7 +159,7 @@
          {
             $('#spe-input-' + userId).append(
                '<div class="input-group">\
-                 <input class="form-control" id="spec' + nbSpecArray[userId] + '-' + userId + '" imaxlength=50 placeholder="Enter specialization ' + nbSpecArray[userId] + '"\
+                 <input class="form-control" id="spec' + nbSpecArray[userId] + '-' + userId + '" imaxlength=50 placeholder="Enter specialization ' + nbSpecArray[userId] + ' (e.g. \'Database Manager\')"\
                         name="spe'+ userId +'[]" type="text" />\
                  <span class="input-group-addon newSpecButton" data-toggle="tooltip" id="newSpecButton1" title="Add a new specialization..." onClick="addNewSpec(1);">\
                    <img class="newSpecImg" id="addSpec' + userId + '" src="/img/plus.svg" />\
