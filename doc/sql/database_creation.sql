@@ -462,7 +462,7 @@ VALUES(
 	"SYSTEM_USER",
 	"SYSTEM_USER",
 	"default.png",
-	false, false, null
+	true, false, null
 );
 
 INSERT INTO users
@@ -486,7 +486,7 @@ VALUES(
 	"Karim",
 	"Ghozlani",
 	"default.png",
-	false, true, null
+	true, true, null
 );
 
 INSERT INTO users
@@ -498,7 +498,7 @@ VALUES(
 	"Thibault",
 	"Duchoud",
 	"default.png",
-	false, false, null
+	true, false, null
 );
 
 INSERT INTO users
@@ -510,7 +510,7 @@ VALUES(
 	"Miguel",
 	"Santamaria",
 	"default.png",
-	false, false, null
+	true, false, null
 );
 
 INSERT INTO users
