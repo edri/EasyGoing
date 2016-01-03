@@ -1193,7 +1193,9 @@ class ProjectController extends AbstractActionController
          							<hr/><br/>
          							Hello " . $addedMember->username .",
          							<br/><br/>
-         							User <b>" . $sessionUser->username . "</b> added you in the project \"<b><a href='" . $utilities::WEBSITE_URL . "project/" . $project->id . "'>" . $project->name . "</a></b>\".<br/><br/>
+         							User <b>" . $sessionUser->username . "</b> added you " . ($isManager ? " <u>as a manager</u> " : "") . "in the project \"<b><a href='" .
+                              $utilities::WEBSITE_URL . "project/" . $project->id . "'>" . $project->name . "</a></b>\"
+                              with " . ($specializationsString != "" ? ("specialization(s) " . $specializationsString) : "no specialization") . ".<br/><br/>
 
                               <hr/><br/>
          																		 
@@ -1298,7 +1300,7 @@ class ProjectController extends AbstractActionController
                }
 
                // Send mail.
-               $subject = "You have been removed from a project";
+               $subject = "You have been removed of a project";
                // Message.
                $message =
                   "<html>
@@ -1315,7 +1317,7 @@ class ProjectController extends AbstractActionController
                      </body>
                   </html>";
 
-               $utilities->sendMail($addedMember->email, $subject, $message);
+               $utilities->sendMail($removedMember->email, $subject, $message);
             }
          }
       }
