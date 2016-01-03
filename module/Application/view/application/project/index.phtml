@@ -16,7 +16,9 @@
                                            var projectId = "' . $project->id . '";
                                            var userId = ' . $userId . ';
                                            // Used to turn the "specializations" switch to on or off.
-                                           var showSpecializations = ' . ($showSpecializations ? "true" : "false") . ';');
+                                           var showSpecializations = ' . ($showSpecializations ? "true" : "false") . ';
+                                           // The websocket\'s server URL.
+                                           var websocketUrl = "' . $websocketUrl . '";');
    // Load websocket and javascript's cookies scripts.
    echo $this->headScript()
                ->prependFile($this->basePath() . '/js/board.websockets.js')

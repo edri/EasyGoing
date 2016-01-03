@@ -133,6 +133,7 @@ class ProjectController extends AbstractActionController
    public function indexAction()
    {
       $sessionUser = new container('user');
+      $utilities = $this->_getUtilities();
       $projectId = $this->params('id');
       $project = $this->_getTable('ProjectTable')->getProject($projectId);
       $parentTasksInProject = $this->_getTable('TaskTable')->getAllParentTasksInProject($projectId);
@@ -183,7 +184,8 @@ class ProjectController extends AbstractActionController
          'isManager'             => $isManagerOfProject,
          'userId'                => $sessionUser->id,
          'isCreator'             => $isCreatorOfProject,
-         'showSpecializations'   => $showSpecializations
+         'showSpecializations'   => $showSpecializations,
+         'websocketUrl'          => $utilities::EVENTS_SERVERS_ADDRESS
       ));
    }
 
@@ -520,6 +522,7 @@ class ProjectController extends AbstractActionController
    public function taskDetailsAction()
    {
       $taskId = $this->params('otherId');
+      $utilities = $this->_getUtilities();
       $projectId = $this->params('id');
       $sessionUser = new container('user');
       $task = $this->_getTable('TaskTable')->getTaskById($taskId);
@@ -554,7 +557,8 @@ class ProjectController extends AbstractActionController
          'projectId'    => $projectId,
          'eventsTypes'  => $eventsTypes,
          'events'       => $events,
-         'userId'       => $sessionUser->id
+         'userId'       => $sessionUser->id,
+         'websocketUrl' => $utilities::EVENTS_SERVERS_ADDRESS
       ));
    }
 
@@ -1347,9 +1351,10 @@ class ProjectController extends AbstractActionController
    */
    private function _sendRequest($postParams)
    {
+      $utilities = $this->_getUtilities();
       // Make an HTTP POST request to the event's server so he can broadcast a
       // new websocket related to the new event.
-      $client = new Client('http://127.0.0.1:8002');
+      $client = new Client('http://' . $utilities::EVENTS_SERVERS_ADDRESS . ':8002');
       $client->setMethod(Request::METHOD_POST);
       // Setting POST data.
       $client->setParameterPost($postParams);

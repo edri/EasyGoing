@@ -6,7 +6,7 @@
  * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
- 
+
 // The namespace is important. It avoids us from being forced to call the Zend's methods with
 // "Application\Controller" before.
 namespace Application\Controller;
@@ -173,6 +173,7 @@ class UserController extends AbstractActionController
       }
       else
       {
+         $utilities = $this->_getUtilities();
 			// Check if a request is posted ; in other words, check if the user pressed
 			// the "Register!" button.
          $request = $this->getRequest();
@@ -263,7 +264,7 @@ class UserController extends AbstractActionController
 					                        // avoid some extensions issues with some OS.
 					                        move_uploaded_file($_FILES['picture']['tmp_name'], getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
 		                                 // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
-		                                 $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 150);
+		                                 $utilities->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 150);
 		                              }
 		                              catch (\Exception $e)
 		                              {
@@ -335,6 +336,30 @@ class UserController extends AbstractActionController
 				// If not, redirect the user.
 				if ($result == SUCCESS_MESSAGE)
 				{
+               // Send a welcome mail if user want notifications.
+               if ($notifications)
+               {
+                  // Send mail.
+      				$subject = "Welcome home!";
+      				// Message.
+      				$message =
+      					"<html>
+      						<body style='font-family: Helvetica, Arial;'>
+      							<font size='2'>This email address was automatically generated, please do not answer.</font><br/><br/>
+      							<hr/><br/>
+      							Hello " . $user->username .",
+      							<br/><br/>
+      							Thank you for registerd on <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a> We wish you a lot of fun and hope you'll enjoy using our website!<br/>
+                           Want to change your account's settings? No problem just go in the <a href='" . $utilities::WEBSITE_URL . "edit'>account section</a>.
+      							<hr/><br/>
+      																		 
+      							We're looking forward to seeing you on <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a>
+      						</body>
+      					</html>";
+
+      				$utilities->sendMail($email, $subject, $message);
+               }
+
 					$this->redirect()->toRoute(
 						"home",
 						array(),
@@ -394,6 +419,7 @@ class UserController extends AbstractActionController
 		//If so, we send user's information to edit view
 		else
 		{
+         $utilities = $this->_getUtilities();
 			$user = $this->_getUserTable()->getUserById($sessionUser->id);
 			$request = $this->getRequest();
 
@@ -502,7 +528,7 @@ class UserController extends AbstractActionController
 					                     // avoid some extensions issues with some OS.
 					                     move_uploaded_file($_FILES['picture']['tmp_name'], getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"]);
 			                           // Then create a thumbnail (50px) of the image and save it in the hard drive of the server.
-			                           $this->_getUtilities()->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 150);
+			                           $utilities->createSquareImage(getcwd() . "/public/img/users/tmp/" . $_FILES["picture"]["name"], $extension, getcwd() . "/public/img/users/" . $fileName, 150);
 											}
 			                        catch (\Exception $e)
 			                        {
@@ -602,6 +628,7 @@ class UserController extends AbstractActionController
 
 		if ($request->isPost())
 		{
+         $utilities = $this->_getUtilities();
 			$email =  $_POST["email"];
 			$result = SUCCESS_MESSAGE;
 
@@ -632,28 +659,28 @@ class UserController extends AbstractActionController
 							<hr/><br/>
 							Hello " . $user->username .",
 							<br/><br/>
-							We received a password reset request because it seems you forgot your EasyGoing! password... Don't worry here is a new one:<br/>
-							<b>" . $newPassword . "<br/>
-							We advise you to change it as soon as possible from our website so your account's security will be totally sure!<br/><br/><br/>
+							We received a password reset request because it seems you forgot your <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a> password... Don't worry here is a new one:<br/>
+							&#9;<b>" . $newPassword . "</b><br/>
+							We advise you to change it <b><u>as soon as possible</u></b> from our website so your account's security will be totally sure!<br/><br/><br/>
 							<font size='2'><i>You did not make this request? We sent this new password only to this email address, but please change your password as soon as possible...</i></font><br/><br/>
 
 							<hr/><br/>
 																		 
-							We're looking forward to seeing you on Easygoing!
+							We're looking forward to seeing you on <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a>
 						</body>
 					</html>";
 
-				if (!$this->_getUtilities()->sendMail($email, $subject, $message))
+				if (!$utilities->sendMail($email, $subject, $message))
 				{
 					$result = "errorMailNotSent";
 					// Put back old user's password if an error occured.
 					$this->_getUserTable()->updateUserPassword($user->id, $oldPassword);
 				}
-
-				return new ViewModel(array(
-					'result'	=> $result
-				));
 			}
+
+         return new ViewModel(array(
+            'result'	=> $result
+         ));
 		}
 		else
 		{

@@ -73,7 +73,7 @@ $(document).ready(function() {
    // been initialized already.
    if ("WebSocket" in window && !connection) {
       console.log("Init socket...");
-      connection = new WebSocket('ws://127.0.0.1:8001/');
+      connection = new WebSocket('ws://' + websocketUrl + ':8001/');
 
       // When the connection is open, send current project's ID to the server
       // so it can add the current user to the project's group.

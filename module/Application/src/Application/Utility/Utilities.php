@@ -4,13 +4,18 @@ namespace Application\Utility;
 // Contains function used in multiple controllers.
 class Utilities
 {
+	// The website's default URL.
+	const WEBSITE_URL = "http://easygoing.my-chic-paradise.com/";
+	// Websockets and HTTP server's address.
+	const EVENTS_SERVERS_ADDRESS = "copperflake.com";
+
    // Inspired by https://github.com/PHPMailer/PHPMailer.
 	public function sendMail($mailAddress, $subject, $message)
    {
 		$mail = new PHPMailer;
 		// Headers
 		$mail->From = 'noreply@easygoing.com';
-		$mail->FromName = 'Easygoing!';
+		$mail->FromName = 'EasyGoing!';
 		$mail->addAddress($mailAddress);
 		$mail->addReplyTo('noreply@easygoing.com', 'No reply');
 		$mail->CharSet = 'UTF-8';
@@ -18,7 +23,7 @@ class Utilities
 		// Content.
 		// Set email format to HTML
 		$mail->isHTML(true);
-		$mail->Subject = 'Easygoing! - ' . $subject;
+		$mail->Subject = 'EasyGoing! - ' . $subject;
 		$mail->Body    = $message;
 
 		// Send the mail ans return the state as a boolean value (true => OK ; false => error).

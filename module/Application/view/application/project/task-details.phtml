@@ -12,7 +12,9 @@
                                            var isProjectPage = false;
                                            var taskId = "' . $task->id . '";
                                            var projectId = "' . $projectId . '";
-                                           var userId = ' . $userId . ';');
+                                           var userId = ' . $userId . ';
+                                           // The websocket\'s server URL.
+                                           var websocketUrl = "' . $websocketUrl . '";');
    // Load websocket script.
    echo $this->headScript()
              ->prependFile($this->basePath() . '/js/board.websockets.js');
