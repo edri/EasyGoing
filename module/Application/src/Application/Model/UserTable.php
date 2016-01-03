@@ -45,7 +45,7 @@ class UserTable
       $row = $rowset->current();
       return $row;
    }
-
+   // Add cookie to user's corresponding field
 	public function addCookie($cookie, $userId)
 	{
 		$this->_tableGateway->update(array('cookie' => $cookie), array('id' => $userId));
@@ -67,6 +67,7 @@ class UserTable
       return $this->_tableGateway->lastInsertValue;
    }
 
+   // update user's informations
    public function updateUser($id, $fname, $lname, $email, $picture, $wantTutorial, $wantNotifications)
    {
       $this->_tableGateway->update(array(
@@ -87,6 +88,7 @@ class UserTable
       $this->_tableGateway->update(array('wantTutorial' => 0), array('id' => $userId));
    }
 
+   // update user's password
    public function updateUserPassword($id, $pass)
    {
 	  $this->_tableGateway->update(array(
@@ -95,12 +97,12 @@ class UserTable
 
       return $this->_tableGateway->lastInsertValue;
    }
-
+   // retrieve all users
    public function getAllUsers()
    {
       return $this->_tableGateway->select();
    }
-
+   // get a user by its cookie stored in db
 	public function getUserByCookie($cookie)
 	{
 		$rowset = $this->_tableGateway->select(array(
@@ -109,7 +111,7 @@ class UserTable
 		$row = $rowset->current();
 		return $row;
 	}
-
+   // get a user by its id stored in db
 	public function getUserById($id)
 	{
 		$rowset = $this->_tableGateway->select(array(
@@ -118,7 +120,7 @@ class UserTable
 		$row = $rowset->current();
 		return $row;
 	}
-
+   // get a user by its mail address stored in db
 	public function getUserByMail($email)
 	{
 		$rowset = $this->_tableGateway->select(array(

@@ -127,6 +127,9 @@ class ProjectController extends AbstractActionController
       return parent::onDispatch($e);
    }
 
+   /**
+   * This action get informations relatives to the current projet and return the view to show them
+   */
    public function indexAction()
    {
       $sessionUser = new container('user');
@@ -184,6 +187,10 @@ class ProjectController extends AbstractActionController
       ));
    }
 
+   /**
+   * This action is going to update informations of a project. She is called when an user submit after
+   * editing project.
+   */
    public function editAction()
    {
       define("SUCCESS_MESSAGE", "ok");
@@ -426,7 +433,9 @@ class ProjectController extends AbstractActionController
       }
    }
 
-
+   /**
+   * This action is going to add a task to a project.
+   */
    public function addTaskAction()
    {
       $request = $this->getRequest();
@@ -505,6 +514,9 @@ class ProjectController extends AbstractActionController
       ));
    }
 
+   /**
+   * This action is going to get informations of a task and return a view who show them.
+   */
    public function taskDetailsAction()
    {
       $taskId = $this->params('otherId');
@@ -546,6 +558,9 @@ class ProjectController extends AbstractActionController
       ));
    }
 
+   /**
+   * This action is going to update informations of a task
+   */
    public function editTaskAction()
    {
       $request = $this->getRequest();
@@ -678,6 +693,9 @@ class ProjectController extends AbstractActionController
       }
    }
 
+   /**
+   * This action return the view who contain the board with the view per members.
+   */
    public function boardViewMembersAction()
    {
       // Get members of a project
@@ -724,6 +742,9 @@ class ProjectController extends AbstractActionController
       return $result;
    }
 
+   /**
+   * This action return the view who contain the board with the view per tasks.
+   */
    public function boardViewTasksAction()
    {
       // Get tasks in a project
@@ -749,6 +770,9 @@ class ProjectController extends AbstractActionController
       return $result;
    }
 
+   /**
+   * This action is going to assign task to a member of a project
+   */
    public function assignTaskAction()
    {
       $sessionUser = new container('user');
@@ -814,6 +838,9 @@ class ProjectController extends AbstractActionController
       }
    }
 
+   /**
+   * This action is going to move a task from a section to an another section or from an user to an another user or both
+   */
    public function moveTaskAction()
    {
       $sessionUser = new container('user');
@@ -904,6 +931,9 @@ class ProjectController extends AbstractActionController
       }
    }
 
+   /**
+   * This action is going to unassign a task to an user
+   */
    public function unassignTaskAction()
    {
       $projectId = $this->params('id');
@@ -969,6 +999,9 @@ class ProjectController extends AbstractActionController
       )));
    }
 
+   /**
+   * This action is going to delete a task.
+   */
    public function deleteTaskAction()
    {
       $projectId = $this->params('id');
@@ -1063,6 +1096,9 @@ class ProjectController extends AbstractActionController
       )));
    }
 
+   /**
+   * This action is going to add an user (or some users) to a project
+   */
    public function addMemberAction()
    {
       $sessionUser = new container('user');
@@ -1164,6 +1200,9 @@ class ProjectController extends AbstractActionController
       }
    }
 
+   /**
+   * This action is going to remove a member of a project.
+   */
    public function removeMemberAction()
    {
       $sessionUser = new container('user');
@@ -1233,6 +1272,9 @@ class ProjectController extends AbstractActionController
       ));
    }
 
+   /**
+   * This action get details of a project and return them
+   */
    public function detailsAction()
    {
       $sessionUser = new container('user');
@@ -1248,6 +1290,9 @@ class ProjectController extends AbstractActionController
       ));
    }
 
+   /**
+   * This action is going to send and store a news
+   */
    public function postNewsFeedAction()
    {
       $request = $this->getRequest();
