@@ -603,7 +603,7 @@ class UserController extends AbstractActionController
                      						</body>
                      					</html>";
 
-                     				$utilities->sendMail($email, $subject, $message);
+                     				$utilities->sendMail($user->email, $subject, $message);
                               }
 						        }
 				            }
