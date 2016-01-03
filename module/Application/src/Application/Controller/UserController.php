@@ -435,6 +435,8 @@ class UserController extends AbstractActionController
 				$email =  $_POST["email"];
 				$tutorial =  (isset($_POST["tutorial"]) && $_POST["tutorial"]) ? true : false;
 				$notifications =  (isset($_POST["notifications"]) && $_POST["notifications"]) ? true : false;
+            // Indicate if the user has a new password.
+            $newPassword = false;
 
 				// Some fields must have changed.
 				if ($fname != $user->firstName || $lname != $user->lastName || !empty($password1) || $email != $user->email ||
@@ -468,6 +470,7 @@ class UserController extends AbstractActionController
 			            		{
 			            			$password = $password1;
 				            		$this->_getUserTable()->updateUserPassword($id, $this->_hashPassword($password));
+                              $newPassword = true;
 			            		}
 
 									// Will be used attribute a name to the uploaded file.
@@ -588,12 +591,17 @@ class UserController extends AbstractActionController
             												<td>First Name: </td>
             												<td>" . $user->firstName . "</td>
             											</tr>
-            											<tr>
+                                             <tr>
             												<td></td>
             												<td>Last Name: </td>
             												<td>" . $user->lastName . "</td>
             											</tr>
-            										</table><br/><br/><br/>
+                                             <tr>
+            												<td></td>
+            												<td>New password? </td>
+            												<td>" . ($newPassword ? "Yes" : "No") . "</td>
+            											</tr>
+            										</table><br/><br/>
 
                                           <font size='2'><i>You did not make this request? We please change your password as soon as possible and if not possible <a href='mailto:miguel.santamaria@heig-vd.ch'>contact us</a>.</i></font><br/><br/>
 

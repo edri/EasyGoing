@@ -1114,80 +1114,101 @@ class ProjectController extends AbstractActionController
 
          if($request->isPost())
          {
+            $utilities = $this->_getUtilities();
+            $project = $this->_getTable("ProjectTable")->getProject($this->params('id'));
             // Get right event type.
             $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
 
             foreach ($_POST as $value)
             {
-
                if($value != 'isManager' && !is_array($value))
                {
-                  $isManager = isset($_POST['is-manager-'.$value]) ? true : false;
-                  $this->_getTable('ProjectsUsersMembersTable')->addMemberToProject($value, $this->params('id'), $isManager);
-
-                  $specializations = $_POST['spe'.$value];
-
-                  $MAX_SPEC_PER_USER = 5;
-                  $i = 0;
-                  // Will contain each specialization separated with a comma.
-                  $specializationsString = "";
-                  foreach($specializations as $spe)
-                  {
-                     if($i++ >= $MAX_SPEC_PER_USER)
-                        break;
-
-                     // The specialization must not already exists.
-                     if($spe != '' && strpos($specializationsString, $spe) == false)
-                     {
-                        $this->_getTable('ProjectsUsersSpecializationsTable')->addSpecialization($value, $this->params('id'), $spe);
-
-                        if ($i > 1)
-                        {
-                           $specializationsString .= ", ";
-                        }
-
-                        $specializationsString .= "\"<b>" . $spe . "</b>\"";
-                     }
-                  }
-
-
-                  // If member was successfully added, add an event.
                   // Get new member's data.
                   $addedMember = $this->_getTable("UserTable")->getUserById($value);
-                  // Then add the new event in the database.
-                  $message =
-                     "<u>" . $sessionUser->username . "</u> added user <u>" . $addedMember->username .
-                     "</u>" . ($isManager ? " (<b>manager</b>)" : "") . " with " .
-                     ($specializationsString != "" ? ("specialization(s) " . $specializationsString) : "no specialization") . ".";
-                  $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
-                  // Link the new event to the current project.
-                  $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
-                  // Finaly link the new event to the user who created it.
-                  $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
-                  // Get event's data to send them to socket server.
-                  $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
 
-                  try
+                  // The user must exist.
+                  if ($addedMember)
                   {
-                     $this->_sendRequest(array(
-                        "requestType"  => "newEvent",
-                        "event"        => json_encode($event)
-                     ));
-                  }
-                  catch (\Exception $e)
-                  {
-                     error_log("WARNING: could not connect to events servers. Maybe offline?");
+                     $isManager = isset($_POST['is-manager-'.$value]) ? true : false;
+                     $this->_getTable('ProjectsUsersMembersTable')->addMemberToProject($value, $this->params('id'), $isManager);
+
+                     $specializations = $_POST['spe'.$value];
+
+                     $MAX_SPEC_PER_USER = 5;
+                     $i = 0;
+                     // Will contain each specialization separated with a comma.
+                     $specializationsString = "";
+                     foreach($specializations as $spe)
+                     {
+                        if($i++ >= $MAX_SPEC_PER_USER)
+                           break;
+
+                        // The specialization must not already exists.
+                        if($spe != '' && strpos($specializationsString, $spe) == false)
+                        {
+                           $this->_getTable('ProjectsUsersSpecializationsTable')->addSpecialization($value, $this->params('id'), $spe);
+
+                           if ($i > 1)
+                           {
+                              $specializationsString .= ", ";
+                           }
+
+                           $specializationsString .= "\"<b>" . $spe . "</b>\"";
+                        }
+                     }
+
+                     // If member was successfully added, add an event.
+                     // Then add the new event in the database.
+                     $message =
+                        "<u>" . $sessionUser->username . "</u> added user <u>" . $addedMember->username .
+                        "</u>" . ($isManager ? " (<b>manager</b>)" : "") . " with " .
+                        ($specializationsString != "" ? ("specialization(s) " . $specializationsString) : "no specialization") . ".";
+                     $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+                     // Link the new event to the current project.
+                     $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+                     // Finaly link the new event to the user who created it.
+                     $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+                     // Get event's data to send them to socket server.
+                     $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+
+                     try
+                     {
+                        $this->_sendRequest(array(
+                           "requestType"  => "newEvent",
+                           "event"        => json_encode($event)
+                        ));
+                     }
+                     catch (\Exception $e)
+                     {
+                        error_log("WARNING: could not connect to events servers. Maybe offline?");
+                     }
+
+                     // Send mail.
+         				$subject = "You have been added to a new project!";
+         				// Message.
+         				$message =
+         					"<html>
+         						<body style='font-family: Helvetica, Arial;'>
+         							<font size='2'>This email address was automatically generated, please do not answer.</font><br/><br/>
+         							<hr/><br/>
+         							Hello " . $addedMember->username .",
+         							<br/><br/>
+         							User <b>" . $sessionUser->username . "</b> added you in the project \"<b><a href='" . $utilities::WEBSITE_URL . "project/" . $project->id . "'>" . $project->name . "</a></b>\".<br/><br/>
+
+                              <hr/><br/>
+         																		 
+         							We're looking forward to seeing you on <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a>
+         						</body>
+         					</html>";
+
+         				$utilities->sendMail($addedMember->email, $subject, $message);
                   }
                }
-
             }
-
 
             $this->redirect()->toRoute('project', array(
                 'id' => $projectId
             ));
-
-
          }
 
          $usersNotMemberOfProject = $this->_getUsersNotMemberOfProject($this->params('id'));
@@ -1219,54 +1240,82 @@ class ProjectController extends AbstractActionController
          if($this->_userIsCreatorOfProject($sessionUser->id, $projectId) ||
             $this->_userIsAdminOfProject($sessionUser->id, $projectId) && !$this->_userIsAdminOfProject($memberId, $projectId))
          {
-
-            // Remove from project
-            $this->_getTable('ProjectsUsersMembersTable')->removeMember($memberId, $projectId);
-
-            // Remove specializations
-            $this->_getTable('ProjectsUsersSpecializationsTable')->deleteSpecialization($memberId, $projectId);
-
-            // Remove all affectations in the project
-            // Foreach tasks in the project, if the user is assigned we delete it
-            $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($projectId);
-            foreach($tasks as $task)
-            {
-               $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($memberId, $task->id);
-            }
-
-            // If member was successfully removed, add an event.
             // Get removed member's data.
             $removedMember = $this->_getTable("UserTable")->getUserById($memberId);
-            // Get right event type.
-            $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
-            // Then add the new event in the database.
-            $message = "<u>" . $sessionUser->username . "</u> removed user <u>" . $removedMember->username . "</u> from project, bye bye!";
-            $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
-            // Link the new event to the current project.
-            $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
-            // Finaly link the new event to the user who created it.
-            $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
-            // Get event's data to send them to socket server.
-            $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
 
-            try
+            // The removed user must exist.
+            if ($removedMember)
             {
-               $this->_sendRequest(array(
-                  "requestType"  => "newEvent",
-                  "event"        => json_encode($event)
-               ));
+               $utilities = $this->_getUtilities();
+               // Get project action's data.
+               $project = $this->_getTable("ProjectTable")->getProject($projectId);
 
-               // Send a remove request to redirect the the concerned user out of the project.
-               $this->_sendRequest(array(
-                  "requestType"  => "memberRemoved",
-                  "projectId"    => $projectId,
-                  "memberId"     => $memberId,
-                  "username"     => $sessionUser->username
-               ));
-            }
-            catch (\Exception $e)
-            {
-               error_log("WARNING: could not connect to events servers. Maybe offline?");
+               // Remove from project
+               $this->_getTable('ProjectsUsersMembersTable')->removeMember($memberId, $projectId);
+
+               // Remove specializations
+               $this->_getTable('ProjectsUsersSpecializationsTable')->deleteSpecialization($memberId, $projectId);
+
+               // Remove all affectations in the project
+               // Foreach tasks in the project, if the user is assigned we delete it
+               $tasks = $this->_getTable('TaskTable')->getAllTasksInProject($projectId);
+               foreach($tasks as $task)
+               {
+                  $this->_getTable('UsersTasksAffectationsTable')->deleteAffectation($memberId, $task->id);
+               }
+
+               // If member was successfully removed, add an event.
+               // Get right event type.
+               $typeId = $this->_getTable("EventTypeTable")->getTypeByName("Users")->id;
+               // Then add the new event in the database.
+               $message = "<u>" . $sessionUser->username . "</u> removed user <u>" . $removedMember->username . "</u> from project, bye bye!";
+               $eventId = $this->_getTable('EventTable')->addEvent(date("Y-m-d"), $message, $typeId);
+               // Link the new event to the current project.
+               $this->_getTable("EventOnProjectsTable")->add($eventId, $projectId);
+               // Finaly link the new event to the user who created it.
+               $this->_getTable("EventUserTable")->add($sessionUser->id, $eventId);
+               // Get event's data to send them to socket server.
+               $event = $this->_getTable("ViewEventTable")->getEvent($eventId, false);
+
+               try
+               {
+                  $this->_sendRequest(array(
+                     "requestType"  => "newEvent",
+                     "event"        => json_encode($event)
+                  ));
+
+                  // Send a remove request to redirect the the concerned user out of the project.
+                  $this->_sendRequest(array(
+                     "requestType"  => "memberRemoved",
+                     "projectId"    => $projectId,
+                     "memberId"     => $memberId,
+                     "username"     => $sessionUser->username
+                  ));
+               }
+               catch (\Exception $e)
+               {
+                  error_log("WARNING: could not connect to events servers. Maybe offline?");
+               }
+
+               // Send mail.
+               $subject = "You have been removed from a project";
+               // Message.
+               $message =
+                  "<html>
+                     <body style='font-family: Helvetica, Arial;'>
+                        <font size='2'>This email address was automatically generated, please do not answer.</font><br/><br/>
+                        <hr/><br/>
+                        Hello " . $removedMember->username .",
+                        <br/><br/>
+                        This email to inform you that user <b>" . $sessionUser->username . "</b> removed you of the project \"<b>" . $project->name . "</b>\"...<br/><br/>
+
+                        <hr/><br/>
+                                                          
+                        We're looking forward to seeing you on <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a>
+                     </body>
+                  </html>";
+
+               $utilities->sendMail($addedMember->email, $subject, $message);
             }
          }
       }
