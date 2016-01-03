@@ -567,6 +567,44 @@ class UserController extends AbstractActionController
 										{
 											$result = 'errorDatabaseAdding';
 										}
+
+                              if ($result == SUCCESS_MESSAGE)
+                              {
+                                 // Send mail.
+                     				$subject = "Account updated";
+                     				// Message.
+                     				$message =
+                     					"<html>
+                     						<body style='font-family: Helvetica, Arial;'>
+                     							<font size='2'>This email address was automatically generated, please do not answer.</font><br/><br/>
+                     							<hr/><br/>
+                     							Hello " . $user->username .",
+                     							<br/><br/>
+                     							You successfully updated your account's details on <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a><br/>
+                                          Here are your new details:<br/>
+                                          <table cellpadding=10 style='font-family: Helvetica, Arial;'>
+            											<tr>
+            												<td></td>
+            												<td>First Name: </td>
+            												<td>" . $user->firstName . "</td>
+            											</tr>
+            											<tr>
+            												<td></td>
+            												<td>Last Name: </td>
+            												<td>" . $user->lastName . "</td>
+            											</tr>
+            										</table><br/><br/><br/>
+
+                                          <font size='2'><i>You did not make this request? We please change your password as soon as possible and if not possible <a href='mailto:miguel.santamaria@heig-vd.ch'>contact us</a>.</i></font><br/><br/>
+
+                     							<hr/><br/>
+                     																		 
+                     							We're looking forward to seeing you on <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a>
+                     						</body>
+                     					</html>";
+
+                     				$utilities->sendMail($email, $subject, $message);
+                              }
 						        }
 				            }
 				            else
@@ -660,7 +698,12 @@ class UserController extends AbstractActionController
 							Hello " . $user->username .",
 							<br/><br/>
 							We received a password reset request because it seems you forgot your <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a> password... Don't worry here is a new one:<br/>
-							<b>" . $newPassword . "</b><br/><br/>
+                     <table cellpadding=10 style='font-family: Helvetica, Arial;'>
+								<tr>
+									<td></td>
+									<td><b>" . $newPassword . "</b></td>
+								</tr>
+							</table><br/><br/>
 							We advise you to change it <b><u>as soon as possible</u></b> from our website so your account's security will be totally sure!<br/><br/><br/>
 							<font size='2'><i>You did not make this request? We sent this new password only to this email address, but please change your password as soon as possible...</i></font><br/><br/>
 
