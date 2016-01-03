@@ -799,6 +799,11 @@ hr {
    margin-top: 6px;
 }
 
+.board-container {
+   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+   width: 1080px
+}
+
 .board,
 .board-header {
    display: table;
@@ -810,9 +815,10 @@ hr {
 .board-section,
 .board-header-section,
 .board-first-column {
+   color: #5a2706;
    display: table-cell;
    margin: 0;
-   border: 1px solid #666;
+   border: 1px solid #5a2706;
    max-width: 270px;
    overflow: auto;
    padding: 5px;
@@ -821,8 +827,9 @@ hr {
 }
 
 .board-header {
-   margin-bottom: 10px;
-   background-color: #CCC;
+   border-bottom: 2px solid #5a2706;
+   background-color: #e5ac86;
+   color: #5a2706;
 }
 
 .droppable {
@@ -1047,4 +1054,9 @@ hr {
 
 .elemType {
    cursor: pointer;
+}
+
+/* ADD MEMBER */
+.managerChk {
+   margin-top: 6px;
 }

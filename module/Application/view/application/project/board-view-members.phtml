@@ -31,11 +31,10 @@
       if($nbSubTask == 0)
          $subTaskText = "";
 
-
-
       $taskContent =
          '<div id='.$member->email.$task->id.' task-id="'.$task->id.'" class="board-task '.$priorityClass.'">' .
             $task->name .
+            "<br/>Duration: " . $task->durationInHours . "h" .
             $subTaskText .
             '<div class="task-details"><a href="/project/' . $task->project . '/taskDetails/' . $task->id . '">Details...</a></div>
          </div>';
@@ -68,10 +67,21 @@
 
 <?php foreach ($members as $member): ?>
 <div class="board" member-id="<?php echo $member->id; ?>">
-   <div class="board-first-column" section="board-user"<?php echo ($creatorId == $member->id ? "style='color: #995527; font-weight: bold;' data-toggle='tooltip' title='This user is the creator and super administrator of this project.'" : ($member->isAdmin ? "style='color: #995527; font-weight: bold;' data-toggle='tooltip' title='This user is manager so he has management rights on the project.'" : "")); ?>>
-      <?php if($creatorId == $member->id): ?>
+   <div class="board-first-column" section="board-user"<?php echo ($creatorId == $member->id ? " data-toggle='tooltip' title='This user is the creator and super administrator of this project.'" : ($member->isAdmin ? " data-toggle='tooltip' title='This user is manager so he has management rights on the project.'" : "")); ?>>
+   <?php
+      if($creatorId == $member->id)
+      {
+   ?>
          <img style="float: left; height: 40px; margin-right: -58px; width: 40px;" draggable="false" src="/img/creator.png" >
-      <?php endif; ?>
+   <?php
+      }
+      else if ($member->isAdmin)
+      {
+   ?>
+         <img style="float: left; height: 40px; margin-right: -58px; width: 40px;" draggable="false" src="/img/manager.png" >
+   <?php
+      }
+   ?>
 
       <img class="imgMember" draggable="false" src="<?php echo $this->basePath('img/users/'.$member->filePhoto); ?>">
       <h4 class="memberName"><?php echo $member->firstName . ' ' . $member->lastName; ?></h4>

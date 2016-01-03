@@ -21,7 +21,7 @@
 
                   <div class="checkbox" style="float: right;">
                      <label>
-                        <input name="is-manager-<?php echo $user->id; ?>" id="<?php echo $user->id; ?>" class="is-manager" value="isManager" type="checkbox" style="float: right;"> Is manager
+                        <input name="is-manager-<?php echo $user->id; ?>" id="<?php echo $user->id; ?>" class="is-manager registrationChk" value="isManager" type="checkbox" style="float: right;"><div class="managerChk">Is manager</div>
                      </label>
                   </div>
                </div>
@@ -35,81 +35,145 @@
 <div style="float:left;"><a class="btn btnEasygoing" href="<?php echo $_SERVER['HTTP_REFERER'] ?>">Back</a></div>
 
 <script>
+   var nbSpecArray = [];
+   var MAX_SPEC_PER_USER = 5;
 
-var nbSpecArray = [];
-var MAX_SPEC_PER_USER = 5;
+   // Click on the right "Add Specialization" button when the user pressed the
+   // 'Enter' key.
+   // Parameters:
+   //    - event: the event object renerated by the JQuery 'keypress' function.
+   //    - userId: the ID of the user that the user want to add.
+   function pressNewSpecButton(event, userId) {
+      if (event.which == 13) {
+         // Prevent form sending.
+         event.preventDefault();
+         // Click on the right button.
+         $("#addSpec" + userId).click();
+         return false;
+      }
+   }
 
-// Users filters
-function filterSearch() {
-   var text = $('#search').val();
+   // Users filters
+   function filterSearch() {
+      var text = $('#search').val();
 
-   console.log(text);
+      console.log(text);
 
-   // For each divs in row
-   $.each($('.row'), function(i, left) {
-      $('.add-user', left).each(function(i, div) {
-         if($(div).attr('firstname').indexOf(text) > -1)
-            $(div).show("fast");
+      // For each divs in row
+      $.each($('.row'), function(i, left) {
+         $('.add-user', left).each(function(i, div) {
+            if($(div).attr('firstname').indexOf(text) > -1)
+               $(div).show("fast");
+            else
+               $(div).hide("fast");
+         });
+      })
+   }
+
+   // Check if closest add checkbox is checked. If no we check it.
+   $('.is-manager').click(function (e) {
+      var closestAddCheckbox = $('#add-' + $(this).attr('id'));
+
+      if(!closestAddCheckbox.is(':checked'))
+         $(this).closest('.add-user').click();
+
+   });
+
+   // Check checkbox when click on user div
+   $('.add-user').click(function (e) {
+      if(!$(e.target).is(':checkbox') && !$(e.target).is('label') && !$(e.target).is('a') && !$(e.target).is(':text') && !$(e.target).is('.spe')) {
+
+         var userId = $(this).attr('id');
+
+         if($(this).hasClass('add-user-selected'))
+         {
+            $(this).removeClass('add-user-selected');
+            nbSpecArray[userId] = 0;
+            $(this).find('.spe').remove();
+         }
          else
-            $(div).hide("fast");
-      });
-   })
-}
+         {
+            $(this).addClass('add-user-selected');
 
-// Check if closest add checkbox is checked. If no we check it.
-$('.is-manager').click(function (e) {
-   var closestAddCheckbox = $('#add-' + $(this).attr('id'));
+            nbSpecArray[userId] = 1;
 
-   if(!closestAddCheckbox.is(':checked'))
-      $(this).closest('.add-user').click();
+            $(this).append('<div class="spe"><hr></div>')
+            $(this).find('.spe').append(
+               '<div id="spe-input-' + userId + '">\
+                  <div class="input-group">\
+                    <input class="form-control" id="spec' + nbSpecArray[userId] + '-' + userId + '" maxlength=50 placeholder="Enter specialization 1"\
+                           name="spe'+ userId +'[]" type="text" />\
+                    <span class="input-group-addon newSpecButton" data-toggle="tooltip" id="newSpecButton1" title="Add a new specialization...">\
+                      <img class="newSpecImg" id="addSpec' + userId + '" src="/img/plus.svg" />\
+                    </span>\
+                 </div>\
+              </div>'
+            );
 
-});
+            // Add
+            $("#addSpec" + userId).click(function(event) {
+               addSpec(event, userId);
+            });
 
-// Check checkbox when click on user div
-$('.add-user').click(function (e) {
-   if(!$(e.target).is(':checkbox') && !$(e.target).is('label') && !$(e.target).is('a') && !$(e.target).is(':text') && !$(e.target).is('.spe')) {
+            // Click on the "Add Specialization" button when the user pressed the
+            $("#spec" + nbSpecArray[userId] + "-" + userId).keypress(function (event) {
+               pressNewSpecButton(event, userId);
+            });
 
-      var userId = $(this).attr('id');
+            $("#spec" + nbSpecArray[userId] + "-" + userId).focus();
+         }
 
-      if($(this).hasClass('add-user-selected'))
-      {
-         $(this).removeClass('add-user-selected');
-         nbSpecArray[userId] = 0;
-         $(this).find('.spe').remove();
+         $(this).find('input[check=add]').prop("checked", !$(this).find('input[check=add]').prop("checked"));
+      }
+   });
+
+   // Add a specialization for the current selected user.
+   // Parameters:
+   //    - event: the click event, sent from the JQuery 'click' function.
+   //    - userId: the current selected user's ID.
+   function addSpec(event, userId) {
+      // Stop event's propagation so the user's panel won't close.
+      event.stopPropagation();
+
+      if (!$("#spec" + nbSpecArray[userId] + "-" + userId).val()) {
+         // Hide other opened tooltips.
+         $("input[id^='spec'").tooltip("hide");
+
+         // Add a tooltip on the field, and focus it.
+         $("#spec" + nbSpecArray[userId] + "-" + userId).attr("data-toggle", "tooltip");
+         $("#spec" + nbSpecArray[userId] + "-" + userId).attr("data-trigger", "manual");
+         $("#spec" + nbSpecArray[userId] + "-" + userId).attr("title", "You have to enter a specialization before adding another one, or press the 'Add member(s)' button if you don't want to add specializations.");
+         $("#spec" + nbSpecArray[userId] + "-" + userId).tooltip("show");
+         $("#spec" + nbSpecArray[userId] + "-" + userId).focus();
+
+         // Hide specialization field's tooltip when the user unfocus it.
+         $("#spec" + nbSpecArray[userId] + "-" + userId).blur(function() {
+            $(this).tooltip("hide");
+         });
       }
       else
       {
-         $(this).addClass('add-user-selected');
+         if(nbSpecArray[userId]++ >= MAX_SPEC_PER_USER)
+            bootbox.alert('The maximum number of specializations for a user is ' + MAX_SPEC_PER_USER + '.');
+         else
+         {
+            $('#spe-input-' + userId).append(
+               '<div class="input-group">\
+                 <input class="form-control" id="spec' + nbSpecArray[userId] + '-' + userId + '" imaxlength=50 placeholder="Enter specialization ' + nbSpecArray[userId] + '"\
+                        name="spe'+ userId +'[]" type="text" />\
+                 <span class="input-group-addon newSpecButton" data-toggle="tooltip" id="newSpecButton1" title="Add a new specialization..." onClick="addNewSpec(1);">\
+                   <img class="newSpecImg" id="addSpec' + userId + '" src="/img/plus.svg" />\
+                 </span>\
+              </div>'
+            );
 
-         nbSpecArray[userId] = 1;
+            // Click on the "Add Specialization" button when the user pressed the
+            $("#spec" + nbSpecArray[userId] + "-" + userId).keypress(function (event) {
+               pressNewSpecButton(event, userId);
+            });
 
-         $(this).append('<div class="spe"><hr></div>')
-         $(this).find('.spe').append('<div class="spe-input" style="float: left;"><input name="spe'+ userId +'[]" type="text" maxlength=50 placeholder="Specialization" /></div>');
-         $(this).find('.spe').append('<div style="float: right;"><img class="newSpecImg" id="addSpec' + nbSpecArray[userId] + '" src="/img/plus.svg" /></div>');
-
-         // Add
-         $("#addSpec" + nbSpecArray[userId]).click(function(event) {
-            addSpec(this, event);
-         });
+            $("#spec" + nbSpecArray[userId] + "-" + userId).focus();
+         }
       }
-
-      $(this).find('input[check=add]').prop("checked", !$(this).find('input[check=add]').prop("checked"));
-   }
-});
-
-// Add a specialization for the current selected user.
-// Parameters:
-//    - context: the clicked div object.
-//    - event: the click event, sent from the JQuery 'click' function.
-function addSpec(context, event) {
-   // Stop event's propagation so the user's panel won't close.
-   event.stopPropagation();
-
-   var divSpe = $(context).parent().parent().find('.spe-input');
-   var userId = $(context).parent().parent().parent().attr('id');
-   if(nbSpecArray[userId]++ >= MAX_SPEC_PER_USER)
-      bootbox.alert('The max number of specializations for a user is ' + MAX_SPEC_PER_USER);
-   else
-      divSpe.append('<div style="margin-top: 5px"><input name="spe'+ userId +'[]" type="text" maxlength=50 placeholder="Specialization" /></div>');
-};
+   };
 </script>
