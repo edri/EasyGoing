@@ -12,7 +12,7 @@ class Tutorial
    public function projects()
    {
         return array(
-         $this->_generateData('hello', "Well, hello you!<br/>It seems that you're new here... Hum... Don't worry I'll be there for you during your first time on Easygoing, and even more often if affinities!"),
+         $this->_generateData('hello', "Well, hello you!<br/>It seems that you're new here... Huh... Don't worry I'll be there for you during your first time on Easygoing, and even more often if affinities!"),
          $this->_generateData('createProject', 'Okay first thing first, this is the link that allows you to create your <b>own</b> project &#9829;.'),
          $this->_generateData('tableListProjects', 'Here is the list of the projects you are affected in.<br/>Click on a project to see its details.'),
          $this->_generateData('searchProject', "Oh, and there you can quickly search for a project.<br/>I'm done for this page, see you!"),
@@ -24,10 +24,10 @@ class Tutorial
         return array(
             $this->_generateData('addTask', 'Hello again!<br/>Here you can add a task in your project.'),
             $this->_generateData('addMember', 'And there you can obviously add a member in your project.'),
-            $this->_generateData('historical', "<u>This</u> is the historical of the project. It will be automaticaly filled when you or other members will do actions so don't mess with this little guy..."),
+            $this->_generateData('historical', "<u>This</u> is the historical of the project. It will be automatically filled when you or other members will do actions so don't mess with this little guy..."),
             $this->_generateData('dashboardType', 'Here you can select the type of dashboard you want. Be careful about the <b>View per tasks</b> type, which is read-only.'),
-            $this->_generateData('showSpecializations', 'You can show each project\'s members\' specialization(s) or not. The choice you\'ll do will be stored for the furure.<br/>So, <font color="#D93D3D">red</font> pill or <font color="#3DB2D9">blue</font> pill?'),
-            $this->_generateData('board-container', 'And now, ladies and gentlemen, theeere is the project\'s dashboard ! All project\'s tasks are in there and members can move them.'),
+            $this->_generateData('showSpecializations', 'You can show each project\'s members\' specialization(s) or not. The choice you\'ll do will be stored for the future.<br/>So, <font color="#D93D3D">red</font> pill or <font color="#3DB2D9">blue</font> pill?'),
+            $this->_generateData('board-container', 'And now, ladies and gentlemen, <i>theeere</i> is the project\'s dashboard ! All project\'s tasks are in there and members can move them.'),
             $this->_generateData('listTasks', 'Here is the list of tasks of the project...'),
             $this->_generateData('listMembers', '...and here is the list of members of the project.<br/>See you!')
         );
