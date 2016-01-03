@@ -347,7 +347,7 @@ class UserController extends AbstractActionController
       						<body style='font-family: Helvetica, Arial;'>
       							<font size='2'>This email address was automatically generated, please do not answer.</font><br/><br/>
       							<hr/><br/>
-      							Hello " . $user->username .",
+      							Hello " . $username .",
       							<br/><br/>
       							Thank you for registerd on <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a> We wish you a lot of fun and hope you'll enjoy using our website!<br/>
                            Want to change your account's settings? No problem just go in the <a href='" . $utilities::WEBSITE_URL . "edit'>account section</a>.<br/><br/>
