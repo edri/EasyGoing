@@ -87,7 +87,10 @@ function loadTutorial(tuto)
 
             // Adding received informations to global variable called tutoData
             dataTransformed.forEach(function(d) {
-                tutoData.push(d);
+                
+                // We have to check if the div element exists
+                if($("#" + d.div + "[role=tutorial]").length > 0)
+                    tutoData.push(d);
             });
 
             // Loading next tutorial
