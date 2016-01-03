@@ -7,7 +7,7 @@ class Utilities
 	// The website's default URL.
 	const WEBSITE_URL = "http://easygoing.my-chic-paradise.com/";
 	// Websockets and HTTP server's address.
-	const EVENTS_SERVERS_ADDRESS = "copperflake.com";
+	const EVENTS_SERVERS_ADDRESS = "localhost";
 
    // Inspired by https://github.com/PHPMailer/PHPMailer.
 	public function sendMail($mailAddress, $subject, $message)

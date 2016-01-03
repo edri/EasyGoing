@@ -350,7 +350,7 @@ class UserController extends AbstractActionController
       							Hello " . $user->username .",
       							<br/><br/>
       							Thank you for registerd on <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a> We wish you a lot of fun and hope you'll enjoy using our website!<br/>
-                           Want to change your account's settings? No problem just go in the <a href='" . $utilities::WEBSITE_URL . "edit'>account section</a>.
+                           Want to change your account's settings? No problem just go in the <a href='" . $utilities::WEBSITE_URL . "edit'>account section</a>.<br/><br/>
       							<hr/><br/>
       																		 
       							We're looking forward to seeing you on <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a>
@@ -679,7 +679,8 @@ class UserController extends AbstractActionController
 			}
 
          return new ViewModel(array(
-            'result'	=> $result
+            'result'	=> $result,
+            'email'  => $email
          ));
 		}
 		else
