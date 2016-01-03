@@ -51,7 +51,7 @@
             </tr>
             <tr>
                <td class="attributeName">Deadline</td>
-               <td id="taskDeadline"><?php echo $task->deadLineDate; ?></td>
+               <td id="taskDeadline"><?php echo ($task->deadLineDate == "0000-00-00" ? "-" : $task->deadLineDate); ?></td>
             </tr>
             <tr>
                <td class="attributeName">Duration</td>

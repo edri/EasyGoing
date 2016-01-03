@@ -5,10 +5,10 @@
                ->prependFile($this->basePath() . '/js/board.contextmenu.js')
                ->prependFile($this->basePath() . '/js/board.dragdrop.js');
 
-   function taskRendering($member, $task, $subTasks)
+   function getTaskPriorityClass($priority)
    {
       $priorityClass = "medium-priority";
-      switch($task->priorityLevel)
+      switch($priority)
       {
          case 1:
             $priorityClass = "high-priority";
@@ -18,26 +18,43 @@
             break;
       }
 
+      return $priorityClass;
+   }
+
+   function taskRendering($member, $task, $subTasks)
+   {
+      $priorityClass = getTaskPriorityClass($task->priorityLevel);
+
       $nbSubTask = 0;
 
-      $subTaskText = "<hr><div>";
+      $subTaskText = "";
       foreach($subTasks[$task->id] as $subTask)
       {
-         $nbSubTask++;
-         $subTaskText .= '<p>'.$subTask->name.'</p>';
+         if ($nbSubTask++ > 1)
+         {
+            $subTaskText .= "<hr class='taskHr' />";
+         }
+
+         $subTaskText .=
+            "<div class='subtask " . getTaskPriorityClass($subTask->priorityLevel) . "'>
+               <div class='taskTitle'>" . $subTask->name . "</div><hr class='taskHr' />
+               Duration: " . $subTask->durationsInHours . "h<br/>
+               To: " . ($subTask->deadLineDate == "0000-00-00" ? "-" : $subTask->deadLineDate) . "<hr class='taskHr' />
+               <div class='taskDetails'><a href='/project/" . $subTask->project . "/taskDetails/" . $subTask->id . "'><span class='glyphicon glyphicon-list-alt'></span> Details...</a></div>
+            </div>";
       }
-      $subTaskText .= "</div><hr>";
 
       if($nbSubTask == 0)
          $subTaskText = "";
 
       $taskContent =
          '<div id='.$member->email.$task->id.' task-id="'.$task->id.'" class="board-task '.$priorityClass.'">' .
-            $task->name .
-            "<br/>Duration: " . $task->durationInHours . "h" .
+            "<div class='taskTitle'>" . $task->name . "</div><hr class='taskHr' />" .
+            "Duration: " . $task->durationInHours . "h<br/>" .
+            "To: " . ($task->deadLineDate == "0000-00-00" ? "-" : $task->deadLineDate) . "<hr class='taskHr' />" .
+            '<div class="taskDetails"><a href="/project/' . $task->project . '/taskDetails/' . $task->id . '"><span class="glyphicon glyphicon-list-alt"></span> Details...</a></div>' .
             $subTaskText .
-            '<div class="task-details"><a href="/project/' . $task->project . '/taskDetails/' . $task->id . '">Details...</a></div>
-         </div>';
+         '</div>';
 
       return $taskContent;
    }

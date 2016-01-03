@@ -852,11 +852,9 @@ hr {
    margin: 10px 5px;
    padding: 10px;
    width: 120px;
-   height: 100px;
    color: black;
    background: #ff8;
    cursor: move;
-   text-align: center;
    font-size: 12px;
    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
    box-shadow: 2px 2px 2px #eee;
@@ -884,15 +882,37 @@ hr {
    position: relative;
 }
 
-.board-user {
-   cursor: default;
+.board-task {
+   text-align: left;
 }
 
-.task-details {
-   bottom: 10px;
-   left: 0;
-   position: absolute;
+.board-user {
+   cursor: default;
+   text-align: center;
+}
+
+.taskTitle {
+   font-weight: bold;
+   text-align: center;
    width: 100%;
+}
+
+.taskHr {
+   border-color: black;
+   margin: 8px 0;
+}
+
+.taskDetails {
+   text-align: center;
+   width: 100%;
+}
+
+.subtask {
+   border: 1px solid black;
+   border-radius: 2px;
+   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+   margin-top: 10px;
+   padding: 2px;
 }
 
 .board-first-column {
@@ -905,6 +925,7 @@ hr {
    vertical-align: middle;
 }
 
+.subtask .high-priority ,
 .high-priority {
    /* Old browsers */
    background: -moz-linear-gradient(top, #fecaca 0%, #f78181 100%);
@@ -922,10 +943,12 @@ hr {
    background: linear-gradient(top, #fecaca 0%, #f78181 100%);
 }
 
+.subtask .high-priority a,
 .high-priority a {
    color: #550000;
 }
 
+.subtask .medium-priority,
 .medium-priority {
       /* Old browsers */
    background: -moz-linear-gradient(top, #fefdca 0%, #f7f381 100%);
@@ -943,6 +966,7 @@ hr {
    background: linear-gradient(top, #fefdca 0%, #f7f381 100%);
 }
 
+.subtask .low-priority,
 .low-priority {
       /* Old browsers */
    background: -moz-linear-gradient(top, #cafeca 0%, #81f786 100%);
@@ -960,6 +984,7 @@ hr {
    background: linear-gradient(top, #cafeca 0%, #81f786 100%);
 }
 
+.subtask .low-priority a,
 .low-priority a {
    color: #0F4800;
 }
