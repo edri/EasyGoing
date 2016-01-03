@@ -83,19 +83,19 @@
      <div class="input-group">
        <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
        <input type="password" name="password1" class="form-control" placeholder="Enter password"
-          required="required" value="<?php if (isset($password1)) echo $this->escapeHtml($password1); ?>"/>
+          required="required" value="<?php if (isset($password1)) echo $this->escapeHtml($password1); ?>" />
      </div>
 
      <div class="input-group">
        <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
        <input type="password" name="password2" class="form-control" placeholder="Retype password to confirm"
-          required="required" value="<?php if (isset($password2)) echo $this->escapeHtml($password2); ?>"/>
+          required="required" value="<?php if (isset($password2)) echo $this->escapeHtml($password2); ?>" />
      </div>
 
      <div class="input-group">
        <span class="input-group-addon">@</span>
        <input type="email" name="email" class="form-control" required="required" maxlength=64
-  			 placeholder="Enter valid email address"   value="<?php if (isset($email)) echo $this->escapeHtml($email); ?>"/>
+  			 placeholder="Enter a valid email address" value="<?php if (isset($email)) echo $this->escapeHtml($email); ?>" />
      </div>
 
      <hr/>

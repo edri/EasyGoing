@@ -287,6 +287,7 @@ a:focus {
 
 .btnCancelRegistration {
    float: left;
+   width: 110px;
 }
 
 
@@ -355,6 +356,16 @@ a:focus {
 
 .helpExplanations li:not(:first-child) {
    margin-top: 10px;
+}
+
+
+/* EDIT ACCOUNT */
+.accountImg {
+   border: 1px solid black;
+   border-radius: 25px;
+   height: 50px;
+   margin-right: 6px;
+   width: 50px;
 }
 
 
@@ -545,6 +556,7 @@ th {
 .btnCancel {
    float: right;
    align-items: flex-end;
+   width: 110px;
 }
 
 .btnCancel {
