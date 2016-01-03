@@ -660,7 +660,7 @@ class UserController extends AbstractActionController
 							Hello " . $user->username .",
 							<br/><br/>
 							We received a password reset request because it seems you forgot your <a href='" . $utilities::WEBSITE_URL . "'>EasyGoing!</a> password... Don't worry here is a new one:<br/>
-							&#9;<b>" . $newPassword . "</b><br/>
+							<b>" . $newPassword . "</b><br/><br/>
 							We advise you to change it <b><u>as soon as possible</u></b> from our website so your account's security will be totally sure!<br/><br/><br/>
 							<font size='2'><i>You did not make this request? We sent this new password only to this email address, but please change your password as soon as possible...</i></font><br/><br/>
 
