@@ -48,7 +48,7 @@
          // Prevent form sending.
          event.preventDefault();
          // Click on the right button.
-         $("#addSpec" + userId).click();
+         $("#addSpec" + nbSpecArray[userId] + '-' + userId).click();
          return false;
       }
    }
@@ -103,15 +103,14 @@
                   <div class="input-group">\
                     <input class="form-control" id="spec' + nbSpecArray[userId] + '-' + userId + '" maxlength=50 placeholder="Enter specialization 1 (e.g. \'Database Manager\')"\
                            name="spe'+ userId +'[]" type="text" />\
-                    <span class="input-group-addon newSpecButton" data-toggle="tooltip" id="newSpecButton1" title="Add a new specialization...">\
-                      <img class="newSpecImg" id="addSpec' + userId + '" src="/img/plus.svg" />\
+                    <span class="input-group-addon newSpecButton" data-toggle="tooltip" id="addSpec' + nbSpecArray[userId] + '-' + userId + '" title="Add a new specialization...">\
+                      <img class="newSpecImg" src="/img/plus.svg" />\
                     </span>\
                  </div>\
               </div>'
             );
 
-            // Add
-            $("#addSpec" + userId).click(function(event) {
+            $("#addSpec" + nbSpecArray[userId] + '-' + userId).click(function(event) {
                addSpec(event, userId);
             });
 
@@ -132,6 +131,7 @@
    //    - event: the click event, sent from the JQuery 'click' function.
    //    - userId: the current selected user's ID.
    function addSpec(event, userId) {
+      console.log("OK");
       // Stop event's propagation so the user's panel won't close.
       event.stopPropagation();
 
@@ -157,20 +157,43 @@
             bootbox.alert('The maximum number of specializations for a user is ' + MAX_SPEC_PER_USER + '.');
          else
          {
-            $('#spe-input-' + userId).append(
-               '<div class="input-group">\
-                 <input class="form-control" id="spec' + nbSpecArray[userId] + '-' + userId + '" imaxlength=50 placeholder="Enter specialization ' + nbSpecArray[userId] + ' (e.g. \'Database Manager\')"\
-                        name="spe'+ userId +'[]" type="text" />\
-                 <span class="input-group-addon newSpecButton" data-toggle="tooltip" id="newSpecButton1" title="Add a new specialization..." onClick="addNewSpec(1);">\
-                   <img class="newSpecImg" id="addSpec' + userId + '" src="/img/plus.svg" />\
-                 </span>\
-              </div>'
-            );
+            var text = "";
 
-            // Click on the "Add Specialization" button when the user pressed the
-            $("#spec" + nbSpecArray[userId] + "-" + userId).keypress(function (event) {
-               pressNewSpecButton(event, userId);
-            });
+            if (nbSpecArray[userId] < MAX_SPEC_PER_USER)
+            {
+               text +=
+                  '<div class="input-group">';
+            }
+
+            text +=
+                     '<input class="form-control" id="spec' + nbSpecArray[userId] + '-' + userId + '" imaxlength=50 placeholder="Enter specialization ' + nbSpecArray[userId] + ' (e.g. \'Database Manager\')"\
+                        name="spe'+ userId +'[]" type="text" />';
+
+            if (nbSpecArray[userId] < MAX_SPEC_PER_USER)
+            {
+               text +=
+                     '<span class="input-group-addon newSpecButton" data-toggle="tooltip" id="addSpec' + nbSpecArray[userId] + '-' + userId + '" title="Add a new specialization...">\
+                         <img class="newSpecImg" src="/img/plus.svg" />\
+                       </span>\
+                  </div>';
+            }
+
+            text +=
+              '</div>';
+
+            $('#spe-input-' + userId).append(text);
+
+            if (nbSpecArray[userId] < MAX_SPEC_PER_USER)
+            {
+               $("#addSpec" + nbSpecArray[userId] + '-' + userId).click(function(event) {
+                  addSpec(event, userId);
+               });
+
+               // Click on the "Add Specialization" button when the user pressed the
+               $("#spec" + nbSpecArray[userId] + "-" + userId).keypress(function (event) {
+                  pressNewSpecButton(event, userId);
+               });
+            }
 
             $("#spec" + nbSpecArray[userId] + "-" + userId).focus();
          }

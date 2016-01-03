@@ -32,11 +32,11 @@ $(document).ready(function() {
             case 'edit':
                window.location.href = window.location.href + '/editTask/' + taskId;
                break;
-               
+
             case 'unassign':
                bootbox.confirm("Are you sure you want to unassign this task ?", function(result) {
                   if(result === true) {
-                     $.post("http://easygoing/project/" + projectId + "/unassignTask", {
+                     $.post("/project/" + projectId + "/unassignTask", {
                         taskId: taskId,
                         userId: userId
                      })

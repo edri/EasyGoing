@@ -462,7 +462,7 @@ VALUES(
 	"SYSTEM_USER",
 	"SYSTEM_USER",
 	"default.png",
-	true, false, null
+	false, false, null
 );
 
 INSERT INTO users

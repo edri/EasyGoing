@@ -73,7 +73,7 @@ $(document).ready(function() {
             var targetSection = $(e.target).closest('[section]').attr('section');
 
 
-            $.post("http://easygoing/project/" + projectId + "/assignTask", {
+            $.post("/project/" + projectId + "/assignTask", {
                taskId: taskId,
                targetMemberId: targetMemberId,
                targetSection: targetSection
@@ -131,7 +131,7 @@ $(document).ready(function() {
    }
 
    function moveTask(taskId, oldMemberId, oldSection, targetMemberId, targetSection) {
-      $.post("http://easygoing/project/" + projectId + "/moveTask", {
+      $.post("/project/" + projectId + "/moveTask", {
          taskId: taskId,
          oldMemberId: oldMemberId,
          oldSection : oldSection,

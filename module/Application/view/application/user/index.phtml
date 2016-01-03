@@ -34,7 +34,7 @@
    </div>
 
    <div class="homePageLogIn" id="homePageLogIn">
-      <form action="/" class="form-horizontal" method="POST" role="form">
+      <form action="<?php echo $this->url('home', array('action'=>'index')); ?>" class="form-horizontal" method="POST" role="form">
        <h2>
           <img class="loginImg" src="/img/users/default.png" />
           Sign In
