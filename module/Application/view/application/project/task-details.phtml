@@ -164,6 +164,7 @@
 
 <a class="btn btnEasygoing" href="/project/<?php echo $projectId; ?>">Back</a>
 
+
 <script>
    $(document).ready(function() {
       // Triggered when the user choose a tag in the tags list.
@@ -174,6 +175,10 @@
          $("#imgType").attr("src", "/img/events/" + $(this).find("#spanType").attr("img-type"));
          // Enable the "Post!" button.
          $("#postBtn").prop("disabled", false);
+      });
+
+      $('#btnTag').on('mousedown', function(e) {
+        $('#btnTag').trigger(jQuery.Event( 'keydown', { which: 40 } ));
       });
 
       // Click on the "Post!" button when the user pressed the "Enter" key in the
