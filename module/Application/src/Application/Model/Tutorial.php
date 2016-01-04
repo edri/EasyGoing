@@ -54,18 +54,20 @@ class Tutorial
     {
         return array(
            $this->_generateData('news', 'There you can see the news feed concerning this task...'),
-           $this->_generateData('newsText', ".. and here you can write a new post. First select a tag and then write whatever you want: just let your imagination float in the meanders of your mind, but write something useful otherwise the project's manager will be mad about my bad advices!")
+           $this->_generateData('newsText', ".. and here you can write a new post. First select a tag and then write
+                              whatever you want: just let your imagination float in the meanders of your mind, but
+                              write something useful otherwise the project's manager will be mad about my bad advices!")
         );
     }
-    
+
     public function addMember()
     {
         return array(
-            $this->_generateData('searchMember', 'Here you can search a member to add into on the project.'),
-            $this->_generateData('selectMember', "Once you have found the member you would add into your project,
-                                                 select it with a click, then add specializations for this member
-                                                in your project. You can click on the checkbox 'Is manager' to
-                                                grade the member as one of the project's manager.")
+            $this->_generateData('search', 'Here you can search for a member to add in your project.'),
+            $this->_generateData('selectMember', "Once you found a member you would like to add,
+                                                 select it with a click, then add specialization(s) for this member
+                                                if you want. You can click on the checkbox <b>Is manager</b> to
+                                                grade the member as a project's manager.<br/>Isn't that beautiful?")
         );
     }
 }

@@ -397,6 +397,12 @@ class UserController extends AbstractActionController
 		$sessionUser->offsetUnset("wantTutorial");
 		$sessionUser->offsetUnset("wantNotifications");
 
+		// Comming from the TutorialController.
+		if (isset($sessionUser->isProjectsPageAlreadyAccessed))
+		{
+			$sessionUser->offsetUnset("isProjectsPageAlreadyAccessed");
+		}
+
 		if (isset($_COOKIE['loginCookie']))
 		{
 			 unset($_COOKIE['loginCookie']);

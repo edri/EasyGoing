@@ -1014,12 +1014,19 @@ hr {
    overflow: auto;
 }
 
+.add-user {
+   color: #5a2706;
+}
+
 .add-user:hover {
+   background-color: #E5AC86;
+   border: 1px solid #5a2706;
    cursor: pointer;
 }
 
 .add-user-selected {
    background-color: #E5AC86;
+   border: 1px solid #5a2706;
 }
 
 .spe {

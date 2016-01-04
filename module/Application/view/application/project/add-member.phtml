@@ -1,5 +1,5 @@
 <script type='text/javascript'>
-    try 
+    try
     {
         loadTutorial('addMember');
     }
@@ -12,15 +12,14 @@
 <h1>Add member to your project</h1>
 <br>
 <div class="input-group" style="float:left;">
-   <input onkeyup="filterSearch();" type="text" id="search" class="form-control" placeholder="Search for..." aria-describedby="basic-addon1">
-    <div id="searchMember" role="tutorial" data-placement="right"></div>
+   <input onkeyup="filterSearch();" type="text" id="search" role="tutorial" data-placement="bottom" data-trigger="manual" class="form-control" placeholder="Search for..." aria-describedby="basic-addon1">
 </div>
 <br><br>
 <hr>
 <?php if(empty($users)): ?>
    <h2>No available user<h2><br/>
 <?php else: ?>
-       
+
    <div id="selectMember" role="tutorial" data-placement="bottom"></div>
 
    <form method="POST" action="<?php echo $this->serverUrl(true); ?>">
