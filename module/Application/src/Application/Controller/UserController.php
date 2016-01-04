@@ -712,7 +712,7 @@ class UserController extends AbstractActionController
 									<td><b>" . $newPassword . "</b></td>
 								</tr>
 							</table><br/>
-							We advise you to change it <b><u>as soon as possible</u></b> from our website so your account's security will be totally sure!<br/><br/><br/>
+							Please change it <b><u>as soon as possible</u></b> from our website so your account's security will be totally safe!<br/><br/><br/>
 							<font size='2'><i>You did not make this request? We sent this new password only to this email address, but please change your password as soon as possible...</i></font><br/><br/>
 
 							<hr/><br/>
