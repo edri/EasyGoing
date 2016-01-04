@@ -56,7 +56,7 @@ User Controller
 
 Session PHP dans Zend
 
-	La notion de session évoquée dans la page d'accueil et dans le bouton "Log out" sont définies par le framework que nous avons utilisé : Zend.
+	La notion de session évoquée dans la page d'accueil et dans le bouton "Logout" sont définies par le framework que nous avons utilisé : Zend.
 
 	Essentiellement, la session s'appuie sur un cookie nommé PHPSESSID qui est stocké sur le SERVEUR. Le cookie est alors utilisé pour "reconnaître" l'utilisateur lors de sa navigation sur EasyGoing. En effet, lors de la connexion de l'utilisateur au site, sa session devient active et se désactivera dans les 5 minutes qui suivent la fermeture de la page EasyGoing. 
 

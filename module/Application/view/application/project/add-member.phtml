@@ -6,8 +6,9 @@
 <br><br>
 <hr>
 <?php if(empty($users)): ?>
-   <h2>No available user.<h2>
+   <h2>No available user<h2><br/>
 <?php else: ?>
+   <p>First click on an user to select it, then add his specializations if needed and finally check the checkbox (or not...) to grade it as a project's manager.</p>
    <form method="POST" action="<?php echo $this->serverUrl(true); ?>">
       <div class="container-fluid">
          <div class="row">
@@ -28,11 +29,11 @@
             <?php endforeach; ?>
          </div>
       </div>
-      <br>
+      <br/><br/>
+      <div style="float:left;"><a class="btn btnEasygoing" href="<?php echo $_SERVER['HTTP_REFERER'] ?>">Back</a></div>
       <div style="float:right;"><button type="submit" class="btn btnEasygoing">Add member(s)</a></div>
    </form>
 <?php endif; ?>
-<div style="float:left;"><a class="btn btnEasygoing" href="<?php echo $_SERVER['HTTP_REFERER'] ?>">Back</a></div>
 
 <script>
    var nbSpecArray = [];
