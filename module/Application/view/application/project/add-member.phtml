@@ -1,14 +1,28 @@
+<script type='text/javascript'>
+    try 
+    {
+        loadTutorial('addMember');
+    }
+    catch(err)
+    {
+        // Catching error if the function loadTutorial is undefined
+    }
+</script>
+
 <h1>Add member to your project</h1>
 <br>
 <div class="input-group" style="float:left;">
    <input onkeyup="filterSearch();" type="text" id="search" class="form-control" placeholder="Search for..." aria-describedby="basic-addon1">
+    <div id="searchMember" role="tutorial" data-placement="right"></div>
 </div>
 <br><br>
 <hr>
 <?php if(empty($users)): ?>
    <h2>No available user<h2><br/>
 <?php else: ?>
-   <p>First click on an user to select it, then add his specializations if needed and finally check the checkbox (or not...) to grade it as a project's manager.</p>
+       
+   <div id="selectMember" role="tutorial" data-placement="bottom"></div>
+
    <form method="POST" action="<?php echo $this->serverUrl(true); ?>">
       <div class="container-fluid">
          <div class="row">

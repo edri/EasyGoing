@@ -47,6 +47,13 @@ class TutorialController extends AbstractActionController
          (new Tutorial())->taskDetails()
       );
    }
+    
+    public function addMemberAction() 
+    {
+      return new JsonModel(
+         (new Tutorial())->addMember()
+      );
+    }
 
 	public function disableTutoAction()
 	{
@@ -76,4 +83,5 @@ class TutorialController extends AbstractActionController
          'success' => $success
       ));
 	}
+
 }
