@@ -177,9 +177,16 @@
          $("#postBtn").prop("disabled", false);
       });
 
-      $('#btnTag').on('mousedown', function(e) {
-        $('#btnTag').trigger(jQuery.Event( 'keydown', { which: 40 } ));
-      });
+   <?php
+      if($wantTuto)
+      {
+   ?>
+         $('#btnTag').on('mousedown', function(e) {
+           $('#btnTag').trigger(jQuery.Event( 'keydown', { which: 40 } ));
+         });
+   <?php
+      }
+   ?>
 
       // Click on the "Post!" button when the user pressed the "Enter" key in the
       // text field.

@@ -558,6 +558,7 @@ class ProjectController extends AbstractActionController
          'eventsTypes'  => $eventsTypes,
          'events'       => $events,
          'userId'       => $sessionUser->id,
+         'wantTuto'     => $sessionUser->wantTutorial,
          'websocketUrl' => $utilities::EVENTS_SERVERS_ADDRESS
       ));
    }
